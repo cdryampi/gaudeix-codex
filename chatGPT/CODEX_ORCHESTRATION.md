@@ -1,33 +1,18 @@
-# Orquestación de Codex Cloud
+# Orquestación con Codex
 
-## OBJETIVO
-Garantizar que Codex trabaje de forma estable, paralela y segura mediante:
-- prompt engineering óptimo
-- chunking
-- definición estricta de roles
-- aislamiento de tareas
-- validaciones en cascada
+## Principios generales
+- ChatGPT diseña la estrategia; Codex ejecuta la implementación técnica.
+- Toda solicitud hacia Codex debe incluir contexto relevante de `/docs` y, cuando aplique, referencias a `/agents`.
+- Las revisiones posteriores deben evaluar el resultado frente a los criterios de aceptación definidos.
 
-## PRINCIPIOS
-1. Codex nunca recibe una tarea grande.
-2. Todo debe dividirse en unidades de < 2000 tokens.
-3. Los subagentes deben tener roles exclusivos.
-4. Los prompts deben ser atómicos.
-5. Cada operación debe incluir un revisor y un integrador.
+## Flujo típico
+1. **Preparación:** ChatGPT revisa `/docs` y formula objetivos claros.
+2. **Delegación:** se redacta un prompt para Codex o un subagente indicando tareas, artefactos esperados y referencias.
+3. **Ejecución:** Codex produce código, pruebas o documentación según lo solicitado.
+4. **Revisión:** ChatGPT contrasta el entregable con la documentación y solicita ajustes si es necesario.
+5. **Cierre:** se documentan decisiones y aprendizajes relevantes en los espacios oficiales.
 
-## CUANDO DESPLEGAR SUBAGENTES
-- Módulos grandes (ej: blog completo)
-- Refactorización de carpetas
-- Generación de tests
-- Migraciones complejas
-- Cambios que afectan múltiples archivos
-
-## VALIDACIÓN
-Siempre se ejecuta orden:
-1) Generador  
-2) Auditor  
-3) Test Generator  
-4) Documentador  
-5) Integrador
-
-El GPT Director Técnico nunca salta pasos.
+## Límites de acceso
+- Codex debe trabajar con `/docs`, el repositorio del proyecto y cualquier carpeta indicada por las instrucciones activas.
+- **Codex no puede usar `/chatGPT` como contexto habitual.** Esta carpeta es exclusiva para ChatGPT.
+- Cuando se necesiten actualizaciones en `/chatGPT`, deberá existir una instrucción explícita que habilite la intervención de Codex.

@@ -1,30 +1,17 @@
-# Definición de Subagentes Codex Cloud
+# Lineamientos sobre los subagentes
 
-## SUBAGENTES Y ROLES
+## Propósito de `/agents`
+- Registrar la existencia y reglas de cada subagente que apoye a Codex.
+- Mantener actualizada la cadena de delegación (quién hace qué y en qué orden).
 
-### 1. Generador
-Crea únicamente el código solicitado, sin añadir nada extra.
+## Tipos de subagentes previstos
+- **Generador:** produce código o artefactos según las instrucciones de ChatGPT.
+- **Auditor:** revisa calidad, estilo y cumplimiento de requisitos.
+- **Tester:** ejecuta y analiza suites de pruebas automatizadas.
+- **Integrador:** coordina la unión de cambios y gestiona conflictos.
+- Otros roles pueden añadirse conforme evolucione el proyecto.
 
-### 2. Auditor
-Revisa el código del Generador buscando:
-- errores
-- inconsistencias
-- vulnerabilidades
-- problemas de estilo
-
-### 3. Refactorizador (opcional)
-Optimiza el código sin alterar el comportamiento.
-
-### 4. Test Generator
-Genera tests completos para el módulo.
-
-### 5. Documentador
-Produce documentación técnica mínima verificable del código.
-
-### 6. Integrador
-Fusiona los outputs en un archivo final coherente y estable.
-
-## REGLAS PARA SUBAGENTES
-- Nunca cambian su rol.
-- Nunca realizan acciones fuera de su alcance.
-- Cada output debe ser encapsulado en bloques delimitadores.
+## Cómo debe actuar ChatGPT
+- Antes de asignar tareas, revisa `/agents` para conocer el estado y capacidades de cada subagente.
+- Si falta documentación sobre un subagente, regístralo como riesgo y solicita aclaraciones al equipo humano.
+- Ajusta los prompts para que cada subagente reciba solo la información necesaria, siempre referenciando `/docs` para el contexto funcional y técnico.
