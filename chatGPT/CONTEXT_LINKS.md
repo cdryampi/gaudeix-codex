@@ -1,17 +1,17 @@
-# Enlaces de Contexto del Proyecto
+# Fuentes de contexto imprescindibles
 
-## Documentación Técnica
-- /docs/EXEC_SUMMARY.md
-- /docs/LONG_SPEC.md
-- /docs/OLD_PROJECT_OVERVIEW.md
-- /docs/SYSTEM_ARCHITECTURE.md
-- /docs/SUBAGENTS_PIPELINE.md
-- /docs/PROMPT_PATTERNS.md
-- /docs/BACKLOG.md
+## Carpeta `/docs`
+- Fuente de verdad del proyecto.
+- Incluye resúmenes ejecutivos, especificaciones largas, decisiones técnicas y backlog.
+- Antes de iniciar cualquier planificación o revisión, repasa los archivos pertinentes.
+- Si encuentras discrepancias, registra la incidencia y coordina su actualización.
 
-## Repositorios
-Proyecto viejo:
-[URL_DEL_REPO_ANTIGUO](https://github.com/cdryampi/webGaudeix)
+## Carpeta `/agents`
+- Contiene (o contendrá) la definición formal de cada subagente de Codex.
+- Allí se documentarán roles como generador, auditor, tester, integrador y cualquier pipeline de trabajo.
+- Consulta esta carpeta para saber cómo delegar tareas, qué información requieren los subagentes y cómo encadenarlos.
 
-Proyecto nuevo:
-[URL_DEL_REPO_NUEVO](https://github.com/cdryampi/gaudeix-codex)
+## Carpeta `/chatGPT`
+- Repositorio interno de directrices para ChatGPT.
+- **No debe ser consumida por Codex** salvo instrucciones explícitas de mantenimiento.
+- Mantén este contenido sincronizado con la estructura actual del proyecto y las reglas operativas.

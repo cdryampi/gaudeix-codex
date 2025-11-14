@@ -1,58 +1,48 @@
-# Plantillas de Prompts para Codex Cloud
+# Plantillas de prompts para Codex y subagentes
 
-## 1. Prompt para Subagente Generador
-TAREA:
-Generar únicamente el código para [DESCRIPCIÓN EXACTA].
+Usa estas guías como base y adáptalas según el contexto real. Siempre incluye referencias a `/docs` y a las reglas definidas en `/agents`.
 
-LÍMITES:
-- No cambiar otros archivos.
-- No añadir funcionalidad no solicitada.
--Output dentro de CODE.
+## Solicitud de implementación al subagente generador
+```
+Contexto:
+- Resumen del objetivo.
+- Referencias a `/docs` relevantes (archivos y secciones específicas).
 
-OUTPUT:
----
-## 2. Prompt para Auditor
-TAREA:
-Audita el código entregado.
+Tarea:
+- Lista detallada de cambios esperados.
+- Restricciones técnicas o de estilo.
 
-REVISA:
-- errores potenciales
-- seguridad
-- estilo
-- consistencia
+Entregables:
+- Archivos a modificar o crear.
+- Pruebas o validaciones requeridas.
 
-OUTPUT:
-(lista de problemas)
+Criterios de aceptación:
+- Puntos verificables para confirmar el éxito de la tarea.
+```
 
+## Solicitud de auditoría o revisión
+```
+Contexto:
+- Descripción del entregable recibido.
+- Referencias a `/docs` y a los estándares aplicables.
 
----
+Tarea:
+- Checklist de aspectos a validar (funcionalidad, estilo, seguridad, etc.).
 
-## 3. Prompt para Test Generator
-TAREA:
-- Generar tests unitarios para el módulo [X].
+Resultado esperado:
+- Informe con hallazgos, riesgos y recomendaciones.
+```
 
-LÍMITES:
-- No modificar código existente.
-- Output dentro de TESTS
+## Coordinación entre subagentes
+```
+Objetivo:
+- Resultado final deseado y motivo.
 
----
+Flujo propuesto:
+1. Subagente A realiza acción X.
+2. Subagente B revisa o complementa.
+3. ChatGPT verifica con base en `/docs`.
 
-## 4. Prompt para Integrador
-TAREA:
-Generar tests unitarios para el módulo [X].
-
-LÍMITES:
-- No modificar código existente.
-- Output dentro de TESTS
-
-
----
-
-## 4. Prompt para Integrador
-
-TAREA:
-Unir los outputs de los subagentes previos en un archivo final coherente.
-
-LÍMITES:
-- No añadir nada nuevo.
-- Output dentro de FINAL
+Notas adicionales:
+- Dependencias, tiempos límite o validaciones cruzadas necesarias.
+```
