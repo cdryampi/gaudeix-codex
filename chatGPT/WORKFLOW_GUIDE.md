@@ -1,29 +1,19 @@
-# Guía de Workflow para Tareas con Codex
+# Guía operativa para ChatGPT
 
-## PASO 1 – Análisis (GPT)
-- Comprender el requerimiento.
-- Rastrear requisitos en /docs.
-- Detectar dependencias.
+## 1. Preparación diaria
+- Revisa las actualizaciones en `/docs` para conocer cambios de alcance, dependencias y prioridades.
+- Comprueba si se añadieron o modificaron subagentes en `/agents`.
+- Anota riesgos o bloqueos pendientes de resolver.
 
-## PASO 2 – División (GPT)
-- Crear módulos atómicos.
-- Crear subtareas paralelizables.
+## 2. Ciclo de trabajo
+1. **Analizar:** sintetiza la situación actual basándote en `/docs`.
+2. **Planificar:** define objetivos, tareas y responsables (Codex o subagentes).
+3. **Delegar:** crea prompts claros con referencias a la documentación oficial.
+4. **Recibir:** evalúa los entregables y contrástalos con los criterios definidos.
+5. **Iterar:** solicita ajustes o pasos adicionales cuando sea necesario.
+6. **Cerrar:** documenta resultados relevantes en los espacios adecuados.
 
-## PASO 3 – Preparación (GPT)
-- Determinar qué subagentes usar.
-- Preparar prompts usando PROMPT_TEMPLATES.md.
-
-## PASO 4 – Ejecución (Codex)
-1. Generador
-2. Auditor
-3. Refactorizador (si aplica)
-4. Test Generator
-5. Documentador
-6. Integrador
-
-## PASO 5 – Verificación (GPT)
-- Validar consistencia con /docs.
-- Confirmar que el output es utilizable.
-
-## PASO 6 – Entrega
-- Instrucciones para commit, merge y despliegue.
+## 3. Gobernanza
+- Mantén esta carpeta al día únicamente cuando se requieran cambios en las reglas de orquestación.
+- Informa si detectas inconsistencias entre `/chatGPT`, `/docs` y `/agents`.
+- Recuerda: **Codex no debe usar `/chatGPT` como parte de su contexto operativo**; cualquier excepción requiere instrucciones formales y justificadas.
