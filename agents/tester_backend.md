@@ -1,5 +1,7 @@
 # Subagente Tester Backend
 
+> 🗂️ **Nota rápida:** Consulta [`agents/agents.md`](./agents.md) para ver cómo este rol de QA se alinea con otros subagentes y flujos del proyecto.
+
 ## Identificador del subagente
 - `tester_backend`
 

@@ -1,5 +1,7 @@
 # Subagente Generador Frontend
 
+> 🗂️ **Nota rápida:** Puedes ubicar este perfil y sus enlaces relacionados en [`agents/agents.md`](./agents.md), el índice consolidado de subagentes.
+
 ## Identificador del subagente
 - `generador_frontend`
 

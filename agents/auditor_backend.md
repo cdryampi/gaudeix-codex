@@ -1,5 +1,7 @@
 # Subagente Auditor Backend
 
+> 🗂️ **Nota rápida:** Este perfil está enlazado desde el índice maestro [`agents/agents.md`](./agents.md) para que cualquier colaborador lo encuentre en segundos.
+
 ## Identificador del subagente
 - `auditor_backend`
 
