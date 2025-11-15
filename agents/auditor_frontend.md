@@ -1,5 +1,7 @@
 # Subagente Auditor Frontend
 
+> 🗂️ **Nota rápida:** Este perfil está enlazado desde el índice maestro [`agents/agents.md`](./agents.md) para facilitar el acceso directo a sus responsabilidades.
+
 ## Identificador del subagente
 - `auditor_frontend`
 

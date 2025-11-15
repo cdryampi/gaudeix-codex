@@ -1,5 +1,7 @@
 # Subagente Tester Frontend
 
+> 🗂️ **Nota rápida:** Este perfil y sus dependencias están mapeados en [`agents/agents.md`](./agents.md) para agilizar las consultas de QA.
+
 ## Identificador del subagente
 - `tester_frontend`
 

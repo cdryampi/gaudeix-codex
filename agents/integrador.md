@@ -1,5 +1,7 @@
 # Subagente Integrador
 
+> 🗂️ **Nota rápida:** Encuentra el contexto completo de coordinación en [`agents/agents.md`](./agents.md), donde este rol aparece junto al resto de subagentes.
+
 ## Identificador del subagente
 - `integrador`
 

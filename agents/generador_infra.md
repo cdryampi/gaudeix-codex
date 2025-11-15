@@ -1,5 +1,7 @@
 # Subagente Generador Infraestructura
 
+> 🗂️ **Nota rápida:** Este documento está referenciado desde [`agents/agents.md`](./agents.md) para que el equipo identifique rápidamente al responsable de infraestructura.
+
 ## Identificador del subagente
 - `generador_infra`
 

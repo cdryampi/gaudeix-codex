@@ -1,5 +1,7 @@
 # Subagente Generador Backend
 
+> 🗂️ **Nota rápida:** Consulta el índice maestro en [`agents/agents.md`](./agents.md) para ver cómo este rol se coordina con otros subagentes.
+
 ## Identificador del subagente
 - `generador_backend`
 
