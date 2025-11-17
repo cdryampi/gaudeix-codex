@@ -85,6 +85,10 @@ Las carpetas `backend/`, `frontend/`, `backoffice/` e `infrastructure/` se incor
 
 Consulta la [guía de variables de entorno](docs/environment.md) para conocer los archivos `.env` requeridos, los valores obligatorios/opcionales por módulo y las recomendaciones de sincronización con GitHub Actions y Dokploy.
 
+## Backlog de migración y labels
+- Los issues listos para migrar el proceso de publicación están descritos en [`docs/migration_issues.md`](docs/migration_issues.md), con títulos, cuerpos y combinaciones de labels sugeridas.
+- Crea o sincroniza las labels del repositorio con la guía de [`docs/GITHUB_LABELS.md`](docs/GITHUB_LABELS.md) antes de registrar los issues.
+
 ## 9. Cómo Contribuir (para humanos y para IA)
 - Consulta primero `/docs` para entender alcance, prioridades, dependencias y reglas vigentes.
 - Revisa `/agents` para identificar subagentes relevantes y comprender sus responsabilidades.
