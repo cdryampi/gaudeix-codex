@@ -131,7 +131,9 @@ WORKFLOW:
 
 - `read_file` - Consultar `/agents/shared_context.md` y `/docs`
 
-> 💡 **Recuerda**: antes de ejecutar comandos de Django o pytest, activa el entorno virtual del backend con `source backend/.venv/bin/activate`.
+> 💡 **Recuerda**:
+> - En local, el entorno virtual ya existe en la raíz del repo. Actívalo con `source backend/.venv/bin/activate` (Linux/WSL) o `& C:/codigo/gaudeix/migracion/gaudeix-codex/.venv/Scripts/Activate.ps1` (PowerShell).
+> - En entornos cloud puedes crear/activar el virtualenv como prefieras, pero **para ejecutar tests allí cambia a SQLite** (usa `DATABASE_URL=sqlite:///db.sqlite3`) para que la suite corra aislada. En local mantenemos PostgreSQL con las variables `DB_*`.
 
 ## Workflow Interno
 
