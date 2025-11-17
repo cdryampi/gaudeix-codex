@@ -15,7 +15,13 @@ Esta guía centraliza las variables de entorno utilizadas por los distintos mód
 | Variable | Obligatoria | Descripción | Notas |
 | --- | --- | --- | --- |
 | `DJANGO_SECRET_KEY` | Sí | Clave secreta usada para la firma criptográfica. | Debe ser única por entorno.
-| `DATABASE_URL` | Sí | Cadena de conexión compatible con `django-environ` (`sqlite:///...`, `postgres://...`). | Cambia según el perfil (ver más abajo).
+| `DATABASE_URL` | Opcional | Cadena de conexión compatible con `django-environ` (`sqlite:///...`, `postgres://...`). | Cuando no se define, se generan los parámetros usando las variables `DB_*`.
+| `DB_ENGINE` | Opcional | Backend de base de datos de Django. | Por defecto `django.db.backends.postgresql`.
+| `DB_NAME` | Opcional | Nombre de la base de datos. | Ej. `migration` para desarrollo.
+| `DB_USER` | Opcional | Usuario de la base de datos. | Ej. `postgres`.
+| `DB_PASSWORD` | Opcional | Contraseña del usuario. | Mantenerla fuera del control de versiones.
+| `DB_HOST` | Opcional | Host del servidor de base de datos. | Usar `localhost` en desarrollo o `db` dentro de Docker.
+| `DB_PORT` | Opcional | Puerto del servidor de base de datos. | Por defecto `5432`.
 | `ALLOWED_HOSTS` | Sí | Lista separada por comas con los dominios permitidos. | Incluir `localhost` en desarrollo.
 | `DEBUG` | Sí | Activa el modo debug (`true/false`). | Mantener `false` fuera de desarrollo.
 | `DJANGO_ALLOWED_CORS_ORIGINS` | Opcional | Dominios permitidos para CORS. | Útil para separar frontend/backoffice.
@@ -55,7 +61,7 @@ Esta guía centraliza las variables de entorno utilizadas por los distintos mód
 
 ### Desarrollo Codex
 
-- **Backend**: utilizar `DATABASE_URL=sqlite:///db.sqlite3`, `DEBUG=true`, `ALLOWED_HOSTS=localhost,127.0.0.1`.
+- **Backend**: utilizar PostgreSQL local declarando `DB_ENGINE=django.db.backends.postgresql`, `DB_NAME=migration`, `DB_USER=postgres`, `DB_PASSWORD=thos`, `DB_HOST=localhost`, `DB_PORT=5432`, `DEBUG=true`, `ALLOWED_HOSTS=localhost,127.0.0.1`.
 - **Frontend**: `VITE_API_BASE_URL=http://localhost:8000/api` (o el puerto configurado para el backend local).
 - **Servicios**: normalmente no se requieren claves reales; usar tokens de desarrollo cuando sea posible.
 - **Flujo de trabajo**: crear/actualizar `backend/.env` y `frontend/.env.local` localmente. Sincronizar estos archivos con los secrets de GitHub Actions solo cuando se necesite ejecutar pipelines que dependan de variables específicas.

@@ -2,3 +2,4 @@ django
 djangorestframework
 django-environ
 psycopg[binary]
+python-dotenv

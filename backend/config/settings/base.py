@@ -12,7 +12,13 @@ env = environ.Env(
     DJANGO_SECRET_KEY=(str, ""),
     ENVIRONMENT=(str, "local"),
     DEBUG=(bool, False),
-    ALLOWED_HOSTS=(list[str], []),
+    ALLOWED_HOSTS=(list, []),
+    DB_ENGINE=(str, "django.db.backends.postgresql"),
+    DB_NAME=(str, "postgres"),
+    DB_USER=(str, "postgres"),
+    DB_PASSWORD=(str, ""),
+    DB_HOST=(str, "localhost"),
+    DB_PORT=(str, "5432"),
 )
 
 ENV_FILE = BASE_DIR / ".env"
@@ -24,9 +30,22 @@ ENVIRONMENT = env("ENVIRONMENT")
 DEBUG = env("DEBUG")
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
 
-DATABASES = {
-    "default": env.db("DATABASE_URL"),
-}
+database_url = env("DATABASE_URL", default="")
+if database_url:
+    DATABASES = {
+        "default": env.db("DATABASE_URL"),
+    }
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": env("DB_ENGINE"),
+            "NAME": env("DB_NAME"),
+            "USER": env("DB_USER"),
+            "PASSWORD": env("DB_PASSWORD"),
+            "HOST": env("DB_HOST"),
+            "PORT": env("DB_PORT"),
+        }
+    }
 
 INSTALLED_APPS = [
     "django.contrib.admin",
