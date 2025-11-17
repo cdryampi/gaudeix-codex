@@ -1,0 +1,78 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: gaudeix
+      POSTGRES_USER: gaudeix
+      POSTGRES_PASSWORD: gaudeix
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "gaudeix"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  storage:
+    image: minio/minio:RELEASE.2024-09-22T00-33-43Z
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: gaudeix
+      MINIO_ROOT_PASSWORD: gaudeixsecret
+    volumes:
+      - storage_data:/data
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    env_file:
+      - ./backend/.env.docker.example
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgres://gaudeix:gaudeix@db:5432/gaudeix}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-backend,localhost,127.0.0.1}
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-dev-secret-key}
+      ENVIRONMENT: ${ENVIRONMENT:-production}
+      DJANGO_ALLOWED_CORS_ORIGINS: ${DJANGO_ALLOWED_CORS_ORIGINS:-http://localhost:4173,http://localhost:4174}
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      storage:
+        condition: service_started
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    env_file:
+      - ./frontend/.env.local.example
+    environment:
+      VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:8000/api}
+    ports:
+      - "4173:4173"
+    depends_on:
+      - backend
+
+  backoffice:
+    build:
+      context: ./backoffice
+      dockerfile: Dockerfile
+    env_file:
+      - ./backoffice/.env.local.example
+    environment:
+      VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:8000/api}
+    ports:
+      - "4174:4174"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
+  storage_data:

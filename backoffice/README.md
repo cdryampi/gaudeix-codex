@@ -1,6 +1,6 @@
-# Frontend
+# Backoffice
 
-This project was bootstrapped with [Vite](https://vitejs.dev/) using the React + SWC template and TypeScript.
+This React + Vite project acts as the foundation for the administrative backoffice. It shares the same build tooling as the public frontend but is deployed independently.
 
 ## Requisitos previos
 
@@ -24,8 +24,6 @@ cp .env.local.example .env.local
 Variables incluidas:
 
 - `VITE_API_BASE_URL`: URL base del backend.
-- `VITE_CODEX_PROJECT_ID` y `VITE_CODEX_API_TOKEN`: credenciales/identificadores usados en despliegues de Codex.
-- `VITE_DOKPLOY_PROJECT_ID` y `VITE_DOKPLOY_ENVIRONMENT`: valores necesarios para despliegues en Dokploy.
 
 > ℹ️ Los archivos `.env` nunca deben versionarse. Asegúrate de personalizarlos localmente en cada entorno.
 

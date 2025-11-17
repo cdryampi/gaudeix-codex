@@ -33,6 +33,14 @@ Esta guía centraliza las variables de entorno utilizadas por los distintos mód
 | `VITE_PUBLIC_SENTRY_DSN` | Opcional | DSN público para capturar errores en frontend. | Útil en staging/producción.
 | `VITE_PUBLIC_FEATURE_FLAGS` | Opcional | JSON o lista con flags de funcionalidad. | Permite activar/desactivar features sin redeploy.
 
+## Backoffice (React + Vite)
+
+> Plantilla básica orientada a React Admin y consumiendo la misma API REST del backend.
+
+| Variable | Obligatoria | Descripción | Notas |
+| --- | --- | --- | --- |
+| `VITE_API_BASE_URL` | Sí | URL base para las peticiones al backend. | Usar el subdominio público del backend o la URL interna `http://backend:8000/api` en Docker Compose. |
+
 ## Servicios de Terceros
 
 | Servicio | Variable | Obligatoria | Descripción |
