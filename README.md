@@ -81,6 +81,10 @@ La estructura actual del repositorio (sujeta a expansión conforme se creen los 
 
 Las carpetas `backend/`, `frontend/`, `backoffice/` e `infrastructure/` se incorporarán conforme se materialicen los componentes correspondientes de la arquitectura.
 
+## Variables de Entorno
+
+Consulta la [guía de variables de entorno](docs/environment.md) para conocer los archivos `.env` requeridos, los valores obligatorios/opcionales por módulo y las recomendaciones de sincronización con GitHub Actions y Dokploy.
+
 ## 9. Cómo Contribuir (para humanos y para IA)
 - Consulta primero `/docs` para entender alcance, prioridades, dependencias y reglas vigentes.
 - Revisa `/agents` para identificar subagentes relevantes y comprender sus responsabilidades.
