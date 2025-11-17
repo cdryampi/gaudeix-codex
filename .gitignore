@@ -205,3 +205,26 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Frontend assets and local configuration
+node_modules/
+pnpm-lock.yaml
+yarn.lock
+.pnpm-store/
+.turbo/
+.vite/
+dist/
+coverage/
+storybook-static/
+frontend/.env.local
+frontend/.env.development
+frontend/.DS_Store
+
+# Backend generated files and media
+backend/*.sqlite3
+backend/staticfiles/
+backend/media/
+
+# Deployment and containerization artifacts
+docker-compose.override.yml
+*.env.docker
