@@ -74,12 +74,16 @@ La estructura actual del repositorio (sujeta a expansión conforme se creen los 
 ```
 .
 ├── README.md
+├── docker-compose.yml
+├── backend/
+├── frontend/
+├── backoffice/
 ├── docs/
 ├── agents/
 └── chatGPT/
 ```
 
-Las carpetas `backend/`, `frontend/`, `backoffice/` e `infrastructure/` se incorporarán conforme se materialicen los componentes correspondientes de la arquitectura.
+El `docker-compose.yml` orquesta backend, frontend, backoffice, PostgreSQL y almacenamiento de objetos para desarrollo y pruebas locales. Revisa `docs/deployment.md` para detalles de ejecución y configuración.
 
 ## Variables de Entorno
 
