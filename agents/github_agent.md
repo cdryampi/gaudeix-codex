@@ -10,6 +10,7 @@
 
 ## Propósito
 - Gestionar issues, pull requests, labels y automatizaciones vinculadas al flujo de trabajo de GitHub del proyecto.
+- Reflejar en la clasificación los ámbitos del stack: backend (API), frontend (SPA), backoffice y la infraestructura de compose/Dokploy.
 
 ## Cuándo debe activarse
 - Al crear, actualizar o cerrar issues y pull requests que requieran clasificación y seguimiento formal.
@@ -24,6 +25,7 @@
 ## Outputs esperados
 - Issues y pull requests con labels consistentes según la guía centralizada.
 - Creación automática de labels faltantes alineadas con [`docs/GITHUB_LABELS.md`](../docs/GITHUB_LABELS.md).
+- Backlog de migración cargado en GitHub usando los títulos/cuerpos definidos en [`docs/migration_issues.md`](../docs/migration_issues.md).
 - Registro (comentarios o notas internas) de las acciones realizadas: etiquetas aplicadas, creaciones nuevas y cualquier incidencia detectada.
 
 ## Lógica de labels integrada
@@ -50,6 +52,8 @@
 
 ## Checklist operativo
 - [ ] Confirmar lectura actualizada de [`docs/GITHUB_LABELS.md`](../docs/GITHUB_LABELS.md).
+- [ ] Crear labels faltantes ejecutando el script documentado en la guía de labels (requiere GitHub CLI configurado).
+- [ ] Registrar los issues del backlog de migración descritos en [`docs/migration_issues.md`](../docs/migration_issues.md) aplicando las combinaciones de labels sugeridas.
 - [ ] Validar y sincronizar el catálogo de labels con GitHub antes de etiquetar.
 - [ ] Notificar al equipo cuando se creen nuevas labels o cambien colores/descripciones.
 - [ ] Mantener historial de acciones para auditoría posterior.
