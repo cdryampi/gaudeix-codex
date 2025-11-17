@@ -10,6 +10,7 @@
 
 ## Propósito
 - Gestionar issues, pull requests, labels y automatizaciones vinculadas al flujo de trabajo de GitHub del proyecto.
+- Reflejar en la clasificación los ámbitos del stack: backend (API), frontend (SPA), backoffice y la infraestructura de compose/Dokploy.
 
 ## Cuándo debe activarse
 - Al crear, actualizar o cerrar issues y pull requests que requieran clasificación y seguimiento formal.
