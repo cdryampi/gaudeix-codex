@@ -8,7 +8,7 @@
 2. **Rellena todos los campos** marcados con `{placeholder}`
 3. **Incluye referencias** a `/docs` y `/agents/shared_context.md`
 4. **Define criterios** de aceptación claros y verificables
-5. **Invoca usando** `runSubagent` (cuando esté disponible) o delegación manual
+5. **Invoca usando** `runSubagent` (cuando esté disponible) o delegación manual a Jules
 
 ## Templates por Tipo de Subagente
 
@@ -19,7 +19,7 @@
 ````markdown
 **Contexto del Proyecto**:
 
-- Proyecto: gaudeix-codex
+- Proyecto: gaudeix-jules
 - Stack: Django 5.x + DRF + PostgreSQL + JWT
 - Módulo: {nombre_modulo} (ej: blog, events, users)
 - Versión API: v1
@@ -124,7 +124,7 @@ class {ModelName}(BaseModel):
 ````markdown
 **Contexto del Proyecto**:
 
-- Proyecto: gaudeix-codex
+- Proyecto: gaudeix-jules
 - Stack: Django 5.x + DRF + PostgreSQL
 - Componente a refactorizar: {nombre_componente}
 - Ubicación: `backend/{módulo}/{archivo}.py`
@@ -189,7 +189,7 @@ class {ModelName}(BaseModel):
 ````markdown
 **Contexto del Proyecto**:
 
-- Proyecto: gaudeix-codex
+- Proyecto: gaudeix-jules
 - Stack: React 18 + TypeScript + Vite
 - Aplicación: {frontend|backoffice}
 - Módulo/Feature: {nombre_feature}
@@ -284,7 +284,7 @@ import { {serviceName} } from '@/services/{service}';
 ````markdown
 **Contexto de Auditoría**:
 
-- Proyecto: gaudeix-codex
+- Proyecto: gaudeix-jules
 - Componente: {nombre_componente}
 - Tipo de auditoría: {Código|Arquitectura|Seguridad|Performance}
 - Alcance: {módulo|endpoint|feature completa}
@@ -446,7 +446,7 @@ Reporte detallado con la siguiente estructura:
 ````markdown
 **Contexto de Testing**:
 
-- Proyecto: gaudeix-codex
+- Proyecto: gaudeix-jules
 - Componente: {nombre_componente}
 - Tipo de tests: {Unitarios|Integración|Performance|E2E}
 - Alcance: {módulo|endpoint|feature}
@@ -551,7 +551,7 @@ pytest backend/{módulo}/tests/ --cov=backend/{módulo} --cov-report=html
 ````markdown
 **Contexto de Integración**:
 
-- Proyecto: gaudeix-codex
+- Proyecto: gaudeix-jules
 - Tipo: {Release|Hotfix|Feature merge}
 - Versión: {X.Y.Z}
 - Branch origen: {feature-branch}
@@ -694,8 +694,8 @@ Si falla el despliegue:
 ````markdown
 **Contexto**:
 
-- Proyecto: gaudeix-codex
-- Repository: cdryampi/gaudeix-codex
+- Proyecto: gaudeix-jules
+- Repository: cdryampi/gaudeix-jules
 - Fuente: `/docs/migration_issues.md`
 
 **Tarea**:
@@ -868,7 +868,7 @@ Implementar feature completa: {descripción de la feature}
 
 ---
 
-**Director Técnico (ChatGPT)**:
+**Director Técnico (Google AI)**:
 
 - Orquesta el pipeline
 - Valida cada fase
@@ -881,7 +881,7 @@ Implementar feature completa: {descripción de la feature}
 
 ## Notas de Uso
 
-### Para el Director Técnico (ChatGPT)
+### Para el Director Técnico (Google AI)
 
 1. **Selección de Template**:
 
@@ -934,7 +934,7 @@ Estos templates deben evolucionar con el proyecto. Actualiza cuando:
 - Se añadan nuevos tipos de tareas
 - Se detecten ambigüedades o errores
 
-**Responsable**: Director Técnico (ChatGPT)
+**Responsable**: Director Técnico (Google AI)
 
 ```
 

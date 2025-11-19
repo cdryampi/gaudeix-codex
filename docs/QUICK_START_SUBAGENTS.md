@@ -4,7 +4,7 @@
 
 ## 🎯 En 5 Minutos
 
-### Si eres Director Técnico (ChatGPT)
+### Si eres Director Técnico (Google AI)
 
 1. **Lee esto primero**: [`/agents/shared_context.md`](../agents/shared_context.md)
 
@@ -16,14 +16,14 @@
 
    - Busca el template apropiado
    - Copia y personaliza
-   - Delega a Codex
+   - Delega a Jules
 
 3. **Consulta cuando dudes**: [`/chatGPT/WORKFLOW_GUIDE.md`](../chatGPT/WORKFLOW_GUIDE.md)
    - Workflow completo
    - Troubleshooting
    - Ejemplos
 
-### Si eres Subagente (Codex)
+### Si eres Subagente (Jules)
 
 1. **Lee esto SIEMPRE antes de empezar**: [`/agents/shared_context.md`](../agents/shared_context.md)
 
@@ -70,30 +70,11 @@ Define criterios:
 
 #### Paso 3: Añade Contexto
 
-```markdown
-Referencias:
-
-- /agents/shared_context.md - Sección "Backend"
-- Modelo Post ya existe en backend/blog/models.py
-```
-
-#### Paso 4: Delega
+````markdown
+#### Paso 5: Jules Ejecuta
 
 ```markdown
-Invoca a Codex con:
-
-"Actúa como Generador Backend.
-
-[pega el template completo personalizado]
-
-Consulta /agents/shared_context.md para estándares.
-"
-```
-
-#### Paso 5: Codex Ejecuta
-
-```markdown
-Generador Backend (Codex):
+Generador Backend (Jules):
 
 1. Lee /agents/shared_context.md
 2. Lee /agents/generador_backend.md (su definición)
@@ -112,11 +93,12 @@ Generador Backend (Codex):
    □ README actualizado
 5. Retorna código + evidencias
 ```
+````
 
 #### Paso 6: Director Valida
 
 ```markdown
-Director Técnico (ChatGPT):
+Director Técnico (Google AI):
 
 1. Revisa entregables contra criterios
 2. Verifica evidencias (logs de tests, coverage)
@@ -219,7 +201,7 @@ Ejecutar fase por fase validando cada una
 - [ ] Probé delegar una tarea simple
 - [ ] Validé resultado contra criterios
 
-**Subagente (Codex)**:
+**Subagente (Jules)**:
 
 - [ ] Leí `/agents/shared_context.md`
 - [ ] Leí mi definición en `/agents/{mi_subagente}.md`

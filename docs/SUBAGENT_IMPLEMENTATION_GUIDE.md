@@ -1,67 +1,3 @@
-# Guía de Implementación del Sistema Mejorado de Subagentes
-
-> 🚀 **Status**: Implementación Fase 1 completada - Sistema listo para uso inmediato
-
-## Resumen Ejecutivo
-
-Se ha implementado un sistema mejorado de subagentes inspirado en el modelo de Claude/GitHub Copilot, manteniendo compatibilidad con las herramientas actuales mientras se prepara para futuras automatizaciones.
-
-### ✅ Qué se ha implementado (Fase 1)
-
-1. **Contexto Compartido** (`/agents/shared_context.md`)
-
-   - Estado centralizado del proyecto
-   - Stack técnico completo
-   - Estándares y convenciones
-   - Patrones de desarrollo
-   - Decisiones arquitectónicas (ADRs)
-
-2. **Templates de Invocación** (`/chatGPT/SUBAGENT_INVOCATION_TEMPLATES.md`)
-
-   - Templates por tipo de subagente
-   - Templates por complejidad de tarea
-   - Plantillas de coordinación multi-agente
-   - Ejemplos concretos del proyecto
-
-3. **Definiciones Mejoradas de Subagentes**
-
-   - Formato estructurado con metadata
-   - Prompts de sistema especializados
-   - Herramientas autorizadas por subagente
-   - Workflow interno detallado
-   - Ejemplos de invocación
-   - Criterios de validación
-
-4. **Workflow Mejorado** (`/chatGPT/WORKFLOW_GUIDE.md`)
-
-   - Ciclo de trabajo detallado
-   - Estrategias de delegación
-   - Patrones de coordinación
-   - Troubleshooting
-
-5. **Análisis y Roadmap** (`/docs/SUBAGENT_SYSTEM_IMPROVEMENTS.md`)
-   - Comparación con sistema Claude
-   - Plan de evolución
-   - Preparación para automatización
-
-## Cómo Usar el Sistema Mejorado
-
-### Para el Director Técnico (ChatGPT)
-
-#### 1. Inicio de Sesión
-
-```markdown
-Cada vez que inicies una sesión de trabajo:
-
-1. Lee /agents/shared_context.md para contexto actualizado
-2. Revisa /chatGPT/WORKFLOW_GUIDE.md para recordar el workflow
-3. Consulta /agents/agents.md para ver subagentes disponibles
-```
-
-#### 2. Delegar una Tarea Simple
-
-**Ejemplo: Crear un nuevo endpoint**
-
 ```markdown
 Paso 1: Identifica el subagente
 → Generador Backend
@@ -89,7 +25,7 @@ Paso 5: Define criterios
 → Sin errores linting
 → Documentado
 
-Paso 6: Invoca Codex con el prompt completo
+Paso 6: Invoca Jules con el prompt completo
 ```
 
 #### 3. Delegar Tarea Compleja (Feature Completa)
@@ -142,26 +78,11 @@ Para cada entregable:
    □ Tests pasando (captura de pytest)
    □ Linting OK (captura de ruff/black)
    □ Documentación actualizada
-   □ No hay errores en get_errors
-
-3. Si cumple: Aprobar y continuar
-4. Si NO cumple:
-   - Identificar exactamente qué falta
-   - Dar feedback específico
-   - Re-delegar con criterios más claros
-```
-
-### Para Subagentes (Codex ejecutando rol de subagente)
-
-#### 1. Al Recibir Delegación
-
-```markdown
-1. Lee COMPLETO el prompt que recibiste
-2. Lee /agents/shared_context.md
-3. Identifica tu rol (generador/auditor/tester/integrador)
-4. Lee tu definición en /agents/{tu_subagente}.md
-5. Consulta /docs referencias mencionadas en el prompt
-6. Confirma que tienes las herramientas necesarias
+3. Lee /agents/shared_context.md
+4. Identifica tu rol (generador/auditor/tester/integrador)
+5. Lee tu definición en /agents/{tu_subagente}.md
+6. Consulta /docs referencias mencionadas en el prompt
+7. Confirma que tienes las herramientas necesarias
 ```
 
 #### 2. Durante la Ejecución
@@ -227,7 +148,7 @@ Solo retorna si TODOS los checks están ✅
 ## Estructura de Archivos Actualizada
 
 ```
-gaudeix-codex/
+gaudeix-jules/
 ├── agents/
 │   ├── agents.md                    # Índice de subagentes
 │   ├── shared_context.md            # ⭐ NUEVO - Estado del proyecto
@@ -244,7 +165,7 @@ gaudeix-codex/
 ├── chatGPT/
 │   ├── WORKFLOW_GUIDE.md            # ⭐ ACTUALIZADO - Workflow detallado
 │   ├── SUBAGENT_INVOCATION_TEMPLATES.md  # ⭐ NUEVO - Templates
-│   ├── CODEX_ORCHESTRATION.md
+│   ├── JULES_ORCHESTRATION.md
 │   ├── PROJECT_OVERVIEW.md
 │   ├── PROJECT_INSTRUCTIONS.md
 │   ├── PROMPT_TEMPLATES.md          # Deprecated - usar SUBAGENT_INVOCATION_TEMPLATES

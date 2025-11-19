@@ -12,54 +12,54 @@ Esta guía centraliza las variables de entorno utilizadas por los distintos mód
 
 ## Backend (Django)
 
-| Variable | Obligatoria | Descripción | Notas |
-| --- | --- | --- | --- |
-| `DJANGO_SECRET_KEY` | Sí | Clave secreta usada para la firma criptográfica. | Debe ser única por entorno.
-| `DATABASE_URL` | Opcional | Cadena de conexión compatible con `django-environ` (`sqlite:///...`, `postgres://...`). | Cuando no se define, se generan los parámetros usando las variables `DB_*`.
-| `DB_ENGINE` | Opcional | Backend de base de datos de Django. | Por defecto `django.db.backends.postgresql`.
-| `DB_NAME` | Opcional | Nombre de la base de datos. | Ej. `migration` para desarrollo.
-| `DB_USER` | Opcional | Usuario de la base de datos. | Ej. `postgres`.
-| `DB_PASSWORD` | Opcional | Contraseña del usuario. | Mantenerla fuera del control de versiones.
-| `DB_HOST` | Opcional | Host del servidor de base de datos. | Usar `localhost` en desarrollo o `db` dentro de Docker.
-| `DB_PORT` | Opcional | Puerto del servidor de base de datos. | Por defecto `5432`.
-| `ALLOWED_HOSTS` | Sí | Lista separada por comas con los dominios permitidos. | Incluir `localhost` en desarrollo.
-| `DEBUG` | Sí | Activa el modo debug (`true/false`). | Mantener `false` fuera de desarrollo.
-| `DJANGO_ALLOWED_CORS_ORIGINS` | Opcional | Dominios permitidos para CORS. | Útil para separar frontend/backoffice.
-| `EMAIL_URL` | Opcional | Configuración SMTP en formato URL. | Requerido si se envían correos.
-| `REDIS_URL` | Opcional | Conexión a Redis para caché/colas. | Necesario solo si el despliegue lo utiliza.
+| Variable                      | Obligatoria | Descripción                                                                             | Notas                                                                       |
+| ----------------------------- | ----------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `DJANGO_SECRET_KEY`           | Sí          | Clave secreta usada para la firma criptográfica.                                        | Debe ser única por entorno.                                                 |
+| `DATABASE_URL`                | Opcional    | Cadena de conexión compatible con `django-environ` (`sqlite:///...`, `postgres://...`). | Cuando no se define, se generan los parámetros usando las variables `DB_*`. |
+| `DB_ENGINE`                   | Opcional    | Backend de base de datos de Django.                                                     | Por defecto `django.db.backends.postgresql`.                                |
+| `DB_NAME`                     | Opcional    | Nombre de la base de datos.                                                             | Ej. `migration` para desarrollo.                                            |
+| `DB_USER`                     | Opcional    | Usuario de la base de datos.                                                            | Ej. `postgres`.                                                             |
+| `DB_PASSWORD`                 | Opcional    | Contraseña del usuario.                                                                 | Mantenerla fuera del control de versiones.                                  |
+| `DB_HOST`                     | Opcional    | Host del servidor de base de datos.                                                     | Usar `localhost` en desarrollo o `db` dentro de Docker.                     |
+| `DB_PORT`                     | Opcional    | Puerto del servidor de base de datos.                                                   | Por defecto `5432`.                                                         |
+| `ALLOWED_HOSTS`               | Sí          | Lista separada por comas con los dominios permitidos.                                   | Incluir `localhost` en desarrollo.                                          |
+| `DEBUG`                       | Sí          | Activa el modo debug (`true/false`).                                                    | Mantener `false` fuera de desarrollo.                                       |
+| `DJANGO_ALLOWED_CORS_ORIGINS` | Opcional    | Dominios permitidos para CORS.                                                          | Útil para separar frontend/backoffice.                                      |
+| `EMAIL_URL`                   | Opcional    | Configuración SMTP en formato URL.                                                      | Requerido si se envían correos.                                             |
+| `REDIS_URL`                   | Opcional    | Conexión a Redis para caché/colas.                                                      | Necesario solo si el despliegue lo utiliza.                                 |
 
 ## Frontend (React + Vite)
 
 > Todas las variables deben comenzar con el prefijo `VITE_` para estar disponibles en tiempo de compilación.
 
-| Variable | Obligatoria | Descripción | Notas |
-| --- | --- | --- | --- |
-| `VITE_API_BASE_URL` | Sí | URL base para las peticiones al backend. | Ajustar al host público o local según el perfil.
-| `VITE_PUBLIC_MAPS_KEY` | Opcional | Clave pública para proveedores de mapas (Mapbox, Google Maps, etc.). | Añadirla cuando se habiliten mapas.
-| `VITE_PUBLIC_SENTRY_DSN` | Opcional | DSN público para capturar errores en frontend. | Útil en staging/producción.
-| `VITE_PUBLIC_FEATURE_FLAGS` | Opcional | JSON o lista con flags de funcionalidad. | Permite activar/desactivar features sin redeploy.
+| Variable                    | Obligatoria | Descripción                                                          | Notas                                             |
+| --------------------------- | ----------- | -------------------------------------------------------------------- | ------------------------------------------------- |
+| `VITE_API_BASE_URL`         | Sí          | URL base para las peticiones al backend.                             | Ajustar al host público o local según el perfil.  |
+| `VITE_PUBLIC_MAPS_KEY`      | Opcional    | Clave pública para proveedores de mapas (Mapbox, Google Maps, etc.). | Añadirla cuando se habiliten mapas.               |
+| `VITE_PUBLIC_SENTRY_DSN`    | Opcional    | DSN público para capturar errores en frontend.                       | Útil en staging/producción.                       |
+| `VITE_PUBLIC_FEATURE_FLAGS` | Opcional    | JSON o lista con flags de funcionalidad.                             | Permite activar/desactivar features sin redeploy. |
 
 ## Backoffice (React + Vite)
 
 > Plantilla básica orientada a React Admin y consumiendo la misma API REST del backend.
 
-| Variable | Obligatoria | Descripción | Notas |
-| --- | --- | --- | --- |
-| `VITE_API_BASE_URL` | Sí | URL base para las peticiones al backend. | Usar el subdominio público del backend o la URL interna `http://backend:8000/api` en Docker Compose. |
+| Variable            | Obligatoria | Descripción                              | Notas                                                                                                |
+| ------------------- | ----------- | ---------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `VITE_API_BASE_URL` | Sí          | URL base para las peticiones al backend. | Usar el subdominio público del backend o la URL interna `http://backend:8000/api` en Docker Compose. |
 
 ## Servicios de Terceros
 
-| Servicio | Variable | Obligatoria | Descripción |
-| --- | --- | --- | --- |
-| GitHub Actions | `GITHUB_PAT` | Opcional | Token personal con permisos de lectura si se automatiza la creación de issues/releases desde pipelines.
-| Dokploy | `DOKPLOY_API_ENDPOINT` | Sí | Endpoint de la API para gestionar despliegues.
-| Dokploy | `DOKPLOY_API_KEY` | Sí | Clave de autenticación para la API.
-| Dokploy | `DOKPLOY_PROJECT_ID` | Opcional | Identificador del proyecto si se gestiona múltiples despliegues.
-| Otros servicios | `SENTRY_DSN`, `MAPS_SECRET_KEY`, etc. | Opcional | Variables sensibles según integraciones adicionales.
+| Servicio        | Variable                              | Obligatoria | Descripción                                                                                             |
+| --------------- | ------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------- |
+| GitHub Actions  | `GITHUB_PAT`                          | Opcional    | Token personal con permisos de lectura si se automatiza la creación de issues/releases desde pipelines. |
+| Dokploy         | `DOKPLOY_API_ENDPOINT`                | Sí          | Endpoint de la API para gestionar despliegues.                                                          |
+| Dokploy         | `DOKPLOY_API_KEY`                     | Sí          | Clave de autenticación para la API.                                                                     |
+| Dokploy         | `DOKPLOY_PROJECT_ID`                  | Opcional    | Identificador del proyecto si se gestiona múltiples despliegues.                                        |
+| Otros servicios | `SENTRY_DSN`, `MAPS_SECRET_KEY`, etc. | Opcional    | Variables sensibles según integraciones adicionales.                                                    |
 
 ## Perfiles de Configuración
 
-### Desarrollo Codex
+### Desarrollo Jules
 
 - **Backend**: utilizar PostgreSQL local declarando `DB_ENGINE=django.db.backends.postgresql`, `DB_NAME=migration`, `DB_USER=postgres`, `DB_PASSWORD=thos`, `DB_HOST=localhost`, `DB_PORT=5432`, `DEBUG=true`, `ALLOWED_HOSTS=localhost,127.0.0.1`.
 - **Frontend**: `VITE_API_BASE_URL=http://localhost:8000/api` (o el puerto configurado para el backend local).

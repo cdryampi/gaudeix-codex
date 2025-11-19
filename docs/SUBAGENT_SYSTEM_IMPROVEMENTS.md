@@ -2,17 +2,6 @@
 
 ## Análisis del Sistema Actual
 
-### Fortalezas Identificadas
-
-✅ **Estructura bien definida**: El sistema actual tiene roles claros (generador, auditor, tester, integrador)
-✅ **Documentación completa**: Cada subagente tiene su archivo con inputs/outputs/responsabilidades
-✅ **Separación de contextos**: `/chatGPT` para el director, `/agents` para subagentes, `/docs` para contexto técnico
-✅ **Workflow estructurado**: Preparación → Delegación → Ejecución → Revisión → Cierre
-
-### Limitaciones Actuales vs Sistema Claude
-
-❌ **Falta de ejecución autónoma**: Los subagentes son conceptuales, no tienen mecanismos de invocación directa
-❌ **Sin herramientas específicas**: No hay herramientas MCP o funciones especializadas por subagente
 ❌ **Delegación manual**: Requiere intervención humana para cada delegación
 ❌ **Sin tracking automático**: No hay sistema de seguimiento de tareas entre subagentes
 ❌ **Sin paralelización**: Los subagentes no pueden trabajar en paralelo de forma coordinada
@@ -43,7 +32,7 @@ Cada subagente debe tener:
 # Ejemplo: Generador Backend
 
 IDENTIDAD: Eres un especialista en desarrollo backend con Django REST Framework
-CONTEXTO: Trabajas en el proyecto gaudeix-codex
+CONTEXTO: Trabajas en el proyecto gaudeix-jules
 RESTRICCIONES:
 
 - Solo generas código backend (Django/DRF/PostgreSQL)
@@ -92,7 +81,7 @@ Auditor Backend:
 
 ```mermaid
 graph TD
-    A[Director Técnico ChatGPT] -->|Analiza tarea| B{Requiere subagente?}
+    A[Director Técnico Google AI] -->|Analiza tarea| B{Requiere subagente?}
     B -->|Sí| C[Selecciona subagente]
     B -->|No| D[Ejecuta directamente]
     C -->|Prepara prompt| E[Invoca runSubagent]
@@ -243,7 +232,7 @@ Crear un sistema de contexto que los subagentes puedan consultar:
 
 Contexto del Proyecto:
 
-- Proyecto: gaudeix-codex
+- Proyecto: gaudeix-jules
 - Stack: {stack_info}
 - Módulo: {module_name}
 
@@ -330,7 +319,7 @@ Resultado Esperado:
 
 **Estado**: ⏳ Requiere soporte de plataforma
 
-1. Esperar soporte de `runSubagent` en Codex/GitHub Copilot
+1. Esperar soporte de `runSubagent` en Jules/Google AI
 2. Configurar subagentes como agentes autónomos
 3. Implementar sistema de orquestación
 4. Automatizar validaciones
@@ -420,7 +409,7 @@ Resultado Esperado:
 
 ## Comparación con Sistema Claude
 
-| Característica          | Claude/Copilot    | Actual        | Propuesto       |
+| Característica          | Claude/Google AI  | Actual        | Propuesto       |
 | ----------------------- | ----------------- | ------------- | --------------- |
 | Invocación autónoma     | ✅ runSubagent    | ❌ Manual     | ⏳ Preparado    |
 | Prompts especializados  | ✅ System prompts | ⚠️ Parcial    | ✅ Completo     |
@@ -432,7 +421,7 @@ Resultado Esperado:
 
 ## Conclusiones
 
-El sistema actual de subagentes es **conceptualmente sólido** pero requiere mejoras para alcanzar el nivel de autonomía y eficiencia de sistemas como Claude/GitHub Copilot.
+El sistema actual de subagentes es **conceptualmente sólido** pero requiere mejoras para alcanzar el nivel de autonomía y eficiencia de sistemas como Claude/Google AI.
 
 **Recomendación**: Implementar **Opción C (Híbrida)**:
 

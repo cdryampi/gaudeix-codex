@@ -436,4 +436,4 @@ No en la raíz de `seed_assets/`.
 
 ## Licencia
 
-Este módulo es parte del proyecto Gaudeix Codex.
+Este módulo es parte del proyecto Gaudeix Jules.

@@ -24,7 +24,7 @@ cp .env.local.example .env.local
 Variables incluidas:
 
 - `VITE_API_BASE_URL`: URL base del backend.
-- `VITE_CODEX_PROJECT_ID` y `VITE_CODEX_API_TOKEN`: credenciales/identificadores usados en despliegues de Codex.
+- `VITE_JULES_PROJECT_ID` y `VITE_JULES_API_TOKEN`: credenciales/identificadores usados en despliegues de Jules.
 - `VITE_DOKPLOY_PROJECT_ID` y `VITE_DOKPLOY_ENVIRONMENT`: valores necesarios para despliegues en Dokploy.
 
 > ℹ️ Los archivos `.env` nunca deben versionarse. Asegúrate de personalizarlos localmente en cada entorno.

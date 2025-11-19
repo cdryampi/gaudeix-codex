@@ -1,4 +1,4 @@
-# Guía operativa para ChatGPT (Director Técnico)
+# Guía operativa para Google AI (Director Técnico)
 
 > 📘 **Actualizado**: Noviembre 2025 - Incluye nuevo sistema de subagentes mejorado
 
@@ -57,7 +57,7 @@ Preguntas a responder:
 3. Incluye referencias a `/agents/shared_context.md` y `/docs`
 4. Define criterios de aceptación claros
 5. Especifica restricciones y límites
-6. Invoca a Codex con el prompt estructurado
+6. Invoca a Jules con el prompt estructurado
 ```
 
 #### Opción B: Con runSubagent (Futuro)
@@ -433,7 +433,7 @@ Si detectas inconsistencia:
 ```markdown
 ❌ NUNCA:
 
-- Codex no debe leer /chatGPT como contexto operativo
+- Jules no debe leer /chatGPT como contexto operativo
 - Subagentes no deben tomar decisiones arquitectónicas
 - Director Técnico no debe escribir código directamente
 
@@ -448,19 +448,19 @@ Si detectas inconsistencia:
 ### Flujo de Información
 
 ```markdown
-Director Técnico (ChatGPT):
+Director Técnico (Google AI):
 
 - Lee: /chatGPT, /docs, /agents
-- Escribe: /chatGPT, prompts para Codex
+- Escribe: /chatGPT, prompts para Jules
 - Decide: Arquitectura, estrategia, delegación
 
-Subagentes (vía Codex):
+Subagentes (vía Jules):
 
 - Leen: /agents/shared_context.md, /docs, código
 - Escriben: Código, tests, documentación técnica
 - Ejecutan: Implementación según especificación
 
-Codex (sin subagente específico):
+Jules (sin subagente específico):
 
 - Lee: /docs, código, instrucciones del director
 - Escribe: Código, documentación
@@ -633,7 +633,7 @@ Transición suave:
 - Templates: /chatGPT/SUBAGENT_INVOCATION_TEMPLATES.md
 - Subagentes disponibles: /agents/agents.md
 - Documentación técnica: /docs/
-- Reglas de orquestación: /chatGPT/CODEX_ORCHESTRATION.md
+- Reglas de orquestación: /chatGPT/JULES_ORCHESTRATION.md
 ```
 
 ---

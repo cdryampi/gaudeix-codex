@@ -284,13 +284,13 @@ Actualiza este documento cuando:
 - Se completan nuevas fases
 - Se crean nuevos templates o subagentes
 
-**Responsable**: Director Técnico (ChatGPT)
+**Responsable**: Director Técnico (Google AI)
 
 ---
 
 ## 🔗 Links Rápidos por Rol
 
-### Para Director Técnico (ChatGPT)
+### Para Director Técnico (Google AI)
 
 **Lectura Diaria**:
 
@@ -306,7 +306,7 @@ Actualiza este documento cuando:
 - [`SUBAGENT_IMPLEMENTATION_GUIDE.md`](./SUBAGENT_IMPLEMENTATION_GUIDE.md) - Guía completa
 - [`SUBAGENT_ARCHITECTURE_DIAGRAM.md`](./SUBAGENT_ARCHITECTURE_DIAGRAM.md) - Diagramas
 
-### Para Subagentes (Codex)
+### Para Subagentes (Jules)
 
 **Lectura Obligatoria**:
 
@@ -317,38 +317,6 @@ Actualiza este documento cuando:
 
 - [`/docs/environment.md`](./environment.md) - Variables de entorno
 - [`/docs/deployment.md`](./deployment.md) - Despliegue
-
-### Para Nuevos Usuarios
-
-**Empezar aquí** (en orden):
-
-1. [`QUICK_START_SUBAGENTS.md`](./QUICK_START_SUBAGENTS.md)
-2. [`/agents/shared_context.md`](../agents/shared_context.md)
-3. [`SUBAGENT_ARCHITECTURE_DIAGRAM.md`](./SUBAGENT_ARCHITECTURE_DIAGRAM.md)
-4. [`SUBAGENT_IMPLEMENTATION_GUIDE.md`](./SUBAGENT_IMPLEMENTATION_GUIDE.md)
-5. Practica con ejemplos
-
----
-
-## 📚 Documentación del Proyecto General
-
-### Documentos Core
-
-- [`README.md`](../README.md) - Visión general del proyecto
-- [`/docs/AGENTS_OVERVIEW.md`](./AGENTS_OVERVIEW.md) - Visión general de agentes
-- [`/docs/deployment.md`](./deployment.md) - Guía de despliegue
-- [`/docs/environment.md`](./environment.md) - Variables de entorno
-- [`/docs/GITHUB_LABELS.md`](./GITHUB_LABELS.md) - Sistema de labels
-- [`/docs/migration_issues.md`](./migration_issues.md) - Backlog de migración
-
-### Configuración ChatGPT (Director Técnico)
-
-- [`/chatGPT/PROJECT_OVERVIEW.md`](../chatGPT/PROJECT_OVERVIEW.md)
-- [`/chatGPT/PROJECT_INSTRUCTIONS.md`](../chatGPT/PROJECT_INSTRUCTIONS.md)
-- [`/chatGPT/CODEX_ORCHESTRATION.md`](../chatGPT/CODEX_ORCHESTRATION.md)
-- [`/chatGPT/ROLE_DIRECTOR_TECNICO.md`](../chatGPT/ROLE_DIRECTOR_TECNICO.md)
-
----
 
 **Última actualización**: 2025-11-17
 **Versión del sistema**: 2.0

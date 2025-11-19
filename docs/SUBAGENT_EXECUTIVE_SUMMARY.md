@@ -8,28 +8,6 @@
 
 ## 📋 Resumen de 1 Minuto
 
-Se ha implementado un **sistema mejorado de subagentes** para el proyecto gaudeix-codex, inspirado en el modelo de Claude/GitHub Copilot, que:
-
-✅ **Mejora la eficiencia** de delegación en un 50% estimado
-✅ **Aumenta la calidad** con criterios claros y validaciones estructuradas  
-✅ **Centraliza el contexto** en un único punto de verdad
-✅ **Proporciona templates** reutilizables para tareas comunes
-✅ **Está preparado** para automatización futura con `runSubagent`
-
----
-
-## 🎯 Objetivos Cumplidos
-
-### ✅ Objetivo Principal
-
-Mejorar el sistema de trabajo colaborativo entre ChatGPT (Director Técnico) y Codex (Subagentes) para alcanzar la eficiencia y calidad de sistemas como Claude.
-
-### ✅ Objetivos Específicos
-
-1. **Centralizar contexto del proyecto** → `/agents/shared_context.md`
-2. **Estructurar delegaciones** → Templates en `/chatGPT/SUBAGENT_INVOCATION_TEMPLATES.md`
-3. **Definir subagentes completamente** → Nuevo formato con prompts de sistema
-4. **Documentar workflow** → Guía completa en `/chatGPT/WORKFLOW_GUIDE.md`
 5. **Preparar automatización** → Compatible con `runSubagent` futuro
 
 ---
@@ -149,14 +127,14 @@ Mejorar el sistema de trabajo colaborativo entre ChatGPT (Director Técnico) y C
 
 ## 🎓 Beneficios por Rol
 
-### Para Director Técnico (ChatGPT)
+### Para Director Técnico (Google AI)
 
 ✅ **Delegación más rápida**: Templates listos, menos tiempo creando prompts
 ✅ **Mejor calidad**: Criterios claros, validaciones estructuradas
 ✅ **Trazabilidad**: Decisiones documentadas, aprendizajes capturados
 ✅ **Menos estrés**: Workflow claro, troubleshooting disponible
 
-### Para Subagentes (Codex)
+### Para Subagentes (Jules)
 
 ✅ **Contexto completo**: Toda la info en `/agents/shared_context.md`
 ✅ **Instrucciones claras**: Workflow interno paso a paso
@@ -321,7 +299,7 @@ El sistema está diseñado para migrar suavemente cuando `runSubagent` esté dis
 
 ## 📞 Contacto
 
-**Director Técnico**: ChatGPT (en sesión activa)
+**Director Técnico**: Google AI (en sesión activa)
 **Documentación**: `/docs` y `/agents`
 **Estado del Proyecto**: `/agents/shared_context.md`
 **Navegación**: [`/docs/SUBAGENT_INDEX.md`](./SUBAGENT_INDEX.md)

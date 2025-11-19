@@ -1,8 +1,9 @@
-# Plantillas de prompts para Codex y subagentes
+# Plantillas de prompts para Jules y subagentes
 
 Usa estas guías como base y adáptalas según el contexto real. Siempre incluye referencias a `/docs` y a las reglas definidas en `/agents`.
 
 ## Solicitud de implementación al subagente generador
+
 ```
 Contexto:
 - Resumen del objetivo.
@@ -21,6 +22,7 @@ Criterios de aceptación:
 ```
 
 ## Solicitud de auditoría o revisión
+
 ```
 Contexto:
 - Descripción del entregable recibido.
@@ -34,6 +36,7 @@ Resultado esperado:
 ```
 
 ## Coordinación entre subagentes
+
 ```
 Objetivo:
 - Resultado final deseado y motivo.
@@ -41,7 +44,7 @@ Objetivo:
 Flujo propuesto:
 1. Subagente A realiza acción X.
 2. Subagente B revisa o complementa.
-3. ChatGPT verifica con base en `/docs`.
+3. Google AI verifica con base en `/docs`.
 
 Notas adicionales:
 - Dependencias, tiempos límite o validaciones cruzadas necesarias.

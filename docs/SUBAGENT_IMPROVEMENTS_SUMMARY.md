@@ -313,12 +313,208 @@ Guía práctica de uso del sistema con:
 - `/agents/tester_frontend.md`
 - `/agents/integrador.md`
 - `/agents/github_agent.md`
+- WORKFLOW: proceso interno paso a paso
+
+````
+
+**Herramientas Autorizadas**:
+
+```markdown
+Lista explícita de tools que puede usar:
+
+- Lectura: read_file, grep_search, semantic_search, etc.
+- Escritura: create_file, replace_string_in_file, etc.
+- Ejecución: run_in_terminal, runTests, etc.
+- Documentación: referencias permitidas
+````
+
+**Workflow Interno**:
+
+```markdown
+Proceso detallado paso a paso:
+
+1. Preparación (qué leer antes de empezar)
+2. Análisis (cómo entender requerimientos)
+3. Implementación (pasos de ejecución)
+4. Testing (validaciones)
+5. Documentación (qué actualizar)
+6. Auto-validación (checklist final)
+7. Entrega (qué retornar)
+```
+
+**Ejemplos de Invocación**:
+
+```markdown
+Casos concretos con:
+
+- Input ejemplo
+- Output esperado
+- Criterios específicos
+```
+
+**Métricas de Éxito**:
+
+```markdown
+- Tiempo estimado
+- Coverage esperado
+- Complejidad típica
+- Indicadores de calidad
+```
+
+**Impacto**:
+
+- Subagentes tienen instrucciones claras
+- Workflow reproducible
+- Auto-validación posible
+- Mejor calidad de entregables
+
+---
+
+### 5. Workflow Mejorado y Documentado ✓
+
+**Documento**: `/chatGPT/WORKFLOW_GUIDE.md` (completamente reescrito)
+
+#### Contenido Nuevo:
+
+**1. Preparación Diaria**:
+
+- Checklist de inicio de sesión
+- Verificación de contexto
+- Identificación de cambios
+
+**2. Ciclo de Trabajo Detallado**:
+
+- 6 fases claramente definidas
+- Opción A (manual) vs Opción B (runSubagent)
+- Criterios de paso entre fases
+- Manejo de iteraciones
+
+**3. Estrategias de Delegación**:
+
+- Por tipo de tarea (simple/compleja/refactor/bugfix)
+- Cuándo usar qué subagente
+- Cómo combinar múltiples subagentes
+
+**4. Coordinación Multi-Agente**:
+
+- Patrón Pipeline Secuencial
+- Patrón Ejecución Paralela (futuro)
+- Patrón Revisión Cruzada
+- Validación entre fases
+
+**5. Uso de Templates**:
+
+- Cómo seleccionar template apropiado
+- Cómo personalizar
+- Checklist pre-envío
+
+**6. Validación de Calidad**:
+
+- Checklist general
+- Checklist específico por área (backend/frontend/infra)
+- Evidencias requeridas
+
+**7. Gobernanza**:
+
+- Cuándo actualizar qué documentos
+- Detección de inconsistencias
+- Mantenimiento del sistema
+
+**8. Troubleshooting**:
+
+- Problemas comunes
+- Soluciones paso a paso
+- Cuándo escalar
+
+**Impacto**:
+
+- Director Técnico tiene guía completa
+- Workflow reproducible y documentado
+- Menos decisiones ad-hoc
+- Mejora continua capturada
+
+---
+
+### 6. Guía de Implementación Práctica ✓
+
+**Documento**: `/docs/SUBAGENT_IMPLEMENTATION_GUIDE.md`
+
+Guía práctica de uso del sistema con:
+
+- ✅ Resumen ejecutivo de qué se implementó
+- ✅ Cómo usar el sistema (Director Técnico y Subagentes)
+- ✅ Estructura de archivos actualizada
+- ✅ Diferencias vs sistema anterior
+- ✅ 3 casos de uso prácticos completos:
+  1. Implementar autenticación de usuarios
+  2. Refactorizar código legacy
+  3. Nueva feature frontend-backend
+- ✅ Métricas de éxito
+- ✅ Próximos pasos (corto/medio/largo plazo)
+- ✅ Troubleshooting común
+- ✅ Recursos adicionales
+
+**Impacto**:
+
+- Fácil adopción del nuevo sistema
+- Casos de uso como referencia
+- Respuestas a preguntas frecuentes
+- Guía de evolución futura
+
+---
+
+### 7. Actualización del README Principal ✓
+
+**Documento**: `/README.md`
+
+- ✅ Nueva sección "Sistema de Subagentes"
+- ✅ Tabla de subagentes disponibles
+- ✅ Características del sistema mejorado
+- ✅ Inicio rápido para ambos roles
+- ✅ Comparación antes/después
+- ✅ Enlaces a documentación completa
+- ✅ Requisitos actualizados
+
+**Impacto**:
+
+- Visibilidad del nuevo sistema
+- Entry point claro para documentación
+- Contexto histórico preservado
+
+---
+
+## 📊 Resumen de Archivos Creados/Modificados
+
+### Archivos Nuevos (5)
+
+1. ✅ `/agents/shared_context.md` - Contexto centralizado del proyecto
+2. ✅ `/chatGPT/SUBAGENT_INVOCATION_TEMPLATES.md` - Templates de delegación
+3. ✅ `/docs/SUBAGENT_SYSTEM_IMPROVEMENTS.md` - Análisis técnico completo
+4. ✅ `/docs/SUBAGENT_IMPLEMENTATION_GUIDE.md` - Guía práctica de uso
+5. ✅ `/docs/SUBAGENT_IMPROVEMENTS_SUMMARY.md` - Este documento
+
+### Archivos Modificados (3)
+
+1. ✅ `/agents/generador_backend.md` - Actualizado a formato mejorado (ejemplo)
+2. ✅ `/chatGPT/WORKFLOW_GUIDE.md` - Completamente reescrito
+3. ✅ `/README.md` - Añadida sección de sistema de subagentes
+
+### Archivos a Actualizar (Próxima fase - 8)
+
+- `/agents/generador_frontend.md`
+- `/agents/generador_infra.md`
+- `/agents/auditor_backend.md`
+- `/agents/auditor_frontend.md`
+- `/agents/tester_backend.md`
+- `/agents/tester_frontend.md`
+- `/agents/integrador.md`
+- `/agents/github_agent.md`
 
 ---
 
 ## 🎯 Beneficios Inmediatos
 
-### Para el Director Técnico (ChatGPT)
+### Para el Director Técnico (Google AI)
 
 ✅ **Delegación más eficiente**:
 
@@ -338,7 +534,7 @@ Guía práctica de uso del sistema con:
 - Patrones de coordinación documentados
 - Troubleshooting disponible
 
-### Para Subagentes (Codex)
+### Para Subagentes (Jules)
 
 ✅ **Contexto completo**:
 
@@ -541,27 +737,25 @@ El sistema de subagentes ha sido **significativamente mejorado** con un enfoque 
 
 - ⏳ Claude tiene `runSubagent` nativo (automatizado)
 - ✅ Nosotros tenemos el mismo diseño (manual ahora, automatizable después)
-
-**Ventaja**:
-
-- ✅ Ya funciona hoy
-- ✅ No dependemos de tooling externo
-- ✅ Transición suave cuando haya automatización
-
----
-
-## 📞 Contacto y Soporte
-
-**Director Técnico**: ChatGPT (en sesión activa)
-**Documentación**: `/docs` y `/agents`
-**Estado del Proyecto**: `/agents/shared_context.md`
-**Dudas/Mejoras**: Documentar en `/chatGPT/WORKFLOW_GUIDE.md`
-
----
-
-**Fecha de implementación**: 17 de Noviembre de 2025
-**Versión del sistema**: 2.0
-**Status**: ✅ Operativo y listo para uso
-**Compatibilidad**: Preparado para migración a `runSubagent`
+  **Fecha de implementación**: 17 de Noviembre de 2025
+  **Versión del sistema**: 2.0
+  **Status**: ✅ Operativo y listo para uso
+  **Compatibilidad**: Preparado para migración a `runSubagent`
 
 🎉 **Sistema mejorado de subagentes implementado exitosamente!**
+
+---
+
+## 🚦 Próximos Pasos Inmediatos
+
+1. ✅ **Adopción**: Empezar a usar el sistema en delegaciones diarias
+2. ⏳ **Expansión**: Actualizar subagentes restantes (8 pendientes)
+3. ⏳ **Refinamiento**: Mejorar templates con feedback real
+4. ⏳ **Medición**: Capturar métricas de éxito
+5. 🔮 **Evolución**: Preparar migración a `runSubagent` cuando esté disponible
+
+---
+
+## 📞 Contacto
+
+**Director Técnico**: Google AI (en sesión activa)

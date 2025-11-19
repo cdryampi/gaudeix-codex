@@ -1,4 +1,4 @@
-# gaudeix-codex
+# gaudeix-jules
 
 ## 1. Resumen del Proyecto
 
@@ -45,15 +45,15 @@ Esta arquitectura fue elegida para facilitar la escalabilidad horizontal, aceler
 
 ## 4. Filosofía de Desarrollo
 
-- Desacoplamiento total entre backend y frontend: la interacción ocurre exclusivamente mediante APIs REST.
-- ChatGPT actúa como Director Técnico: diseña arquitectura, define prompts y estrategias, y revisa la calidad.
-- Codex actúa como equipo de programadores responsable de generar código y artefactos.
-- La documentación viva es el pilar de control y se mantiene actualizada para guiar cada decisión.
-- Subagentes especializados complementan al equipo para tareas concretas de generación, auditoría, pruebas e integración.
+- **Desacoplamiento total entre backend y frontend**: la interacción ocurre exclusivamente mediante APIs REST.
+- **Google AI actúa como Director Técnico**: diseña arquitectura, define prompts y estrategias, y revisa la calidad.
+- **Jules actúa como equipo de programadores** responsable de generar código y artefactos.
+- **La documentación viva es el pilar de control** y se mantiene actualizada para guiar cada decisión.
+- **Subagentes especializados** complementan al equipo para tareas concretas de generación, auditoría, pruebas e integración.
 
 ## 5. Sistema de Dirección Técnica
 
-El modelo operativo establece que ChatGPT diseña la arquitectura, promueve estrategias, detalla prompts y valida entregables sin generar código directamente. Codex ejecuta las implementaciones siguiendo dichas directrices, manteniendo una trazabilidad clara y documentada.
+El modelo operativo establece que **Google AI** diseña la arquitectura, promueve estrategias, detalla prompts y valida entregables sin generar código directamente. **Jules** ejecuta las implementaciones siguiendo dichas directrices, manteniendo una trazabilidad clara y documentada.
 
 - `/docs` es siempre la fuente de verdad para decisiones técnicas, flujos de trabajo y definiciones de producto.
 - `/agents` documenta los subagentes disponibles, sus roles y reglas de interacción.
@@ -65,7 +65,7 @@ Los subagentes son roles especializados definidos en `/agents` que extienden las
 
 - **Tipos de subagentes:** generador, auditor, tester, integrador y otros roles que se activen según las necesidades del proyecto.
 - **Delegación de tareas:** el Director Técnico asigna tareas concretas a cada subagente, proporcionando contexto y criterios de aceptación alineados con `/docs`.
-- **Interacción con Codex:** los subagentes colaboran con Codex aportando entregables específicos (código, revisiones, pruebas, integraciones) que luego se consolidan bajo la supervisión del Director Técnico.
+- **Interacción con Jules:** los subagentes colaboran con Jules aportando entregables específicos (código, revisiones, pruebas, integraciones) que luego se consolidan bajo la supervisión del Director Técnico.
 
 ## 7. Workflow Operativo
 
@@ -74,7 +74,7 @@ El flujo de trabajo real del proyecto sigue los pasos definidos por el Director 
 1. **Preparación:** revisar actualizaciones en `/docs`, estado de `/agents` y riesgos abiertos.
 2. **Análisis:** sintetizar el estado actual del proyecto utilizando la documentación oficial.
 3. **Planificación:** establecer objetivos, tareas y responsables, alineados con la arquitectura y prioridades.
-4. **Delegación:** emitir prompts precisos para Codex y subagentes, citando documentación relevante.
+4. **Delegación:** emitir prompts precisos para Jules y subagentes, citando documentación relevante.
 5. **Revisión:** validar entregables contra los criterios definidos y registrar observaciones.
 6. **Iteración:** solicitar ajustes necesarios y mantener la trazabilidad de cambios.
 7. **Cierre:** documentar resultados, actualizar aprendizajes y sincronizar la documentación viva.
@@ -116,7 +116,7 @@ Consulta la [guía de variables de entorno](docs/environment.md) para conocer lo
 
 ## 10. Sistema de Subagentes (Actualizado Nov 2025)
 
-El proyecto implementa un **sistema mejorado de subagentes** inspirado en Claude/GitHub Copilot que permite trabajo colaborativo eficiente entre ChatGPT (Director Técnico) y Codex (equipo de desarrollo).
+El proyecto implementa un **sistema mejorado de subagentes** inspirado en Claude/GitHub Copilot que permite trabajo colaborativo eficiente entre **Google AI** (Director Técnico) y **Jules** (equipo de desarrollo).
 
 ### 🎯 Componentes Clave
 
@@ -150,13 +150,13 @@ El proyecto implementa un **sistema mejorado de subagentes** inspirado en Claude
 
 ### 📖 Inicio Rápido
 
-**Para Director Técnico (ChatGPT)**:
+**Para Director Técnico (Google AI)**:
 
 1. Lee [`/agents/shared_context.md`](./agents/shared_context.md) para contexto del proyecto
 2. Consulta [`/chatGPT/WORKFLOW_GUIDE.md`](./chatGPT/WORKFLOW_GUIDE.md) para workflow
 3. Usa templates de [`/chatGPT/SUBAGENT_INVOCATION_TEMPLATES.md`](./chatGPT/SUBAGENT_INVOCATION_TEMPLATES.md)
 
-**Para Subagentes (Codex)**:
+**Para Subagentes (Jules)**:
 
 1. Lee [`/agents/shared_context.md`](./agents/shared_context.md) siempre antes de empezar
 2. Consulta tu definición en [`/agents/{tu_subagente}.md`](./agents/)
@@ -184,8 +184,24 @@ El proyecto implementa un **sistema mejorado de subagentes** inspirado en Claude
 
 - Mantener el desacoplamiento total entre backend y frontend mediante comunicación exclusiva vía APIs REST.
 - Diseñar módulos escalables y versionados que faciliten la evolución independiente de cada capa.
-- Respetar la gobernanza del proyecto: ChatGPT dirige; Codex y los subagentes implementan.
+- Respetar la gobernanza del proyecto: **Google AI** dirige; **Jules** y los subagentes implementan.
 - Consultar siempre `/docs` y `/agents` como fuentes de verdad antes de tomar decisiones técnicas.
 - **NUEVO**: Usar `/agents/shared_context.md` como referencia principal del estado del proyecto.
 - **NUEVO**: Aplicar templates de `/chatGPT/SUBAGENT_INVOCATION_TEMPLATES.md` para delegaciones.
 - Incluir pruebas, migraciones, despliegues automatizados y observabilidad como parte integral de la plataforma modernizada.
+
+## 12. Configuración Local y Automatización
+
+Para garantizar un entorno de desarrollo consistente en Windows:
+
+1.  **Entorno Virtual**:
+
+    - Se utiliza `.venv_win` (no `.venv`) para el backend.
+    - **IMPORTANTE**: Siempre que trabajes en local, debes activar este entorno antes de ejecutar comandos de Django.
+
+2.  **Inicio Rápido**:
+
+    - Ejecuta el script `start_dev.bat` en la raíz para levantar todos los servicios (Backend, Frontend, Backoffice) automáticamente.
+
+3.  **Automatización (.github)**:
+    - Se han configurado workflows en `.github/workflows` para ejecutar pruebas y verificaciones automáticamente en cada push o Pull Request.
