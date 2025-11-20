@@ -1,58 +1,154 @@
-# Backoffice
+# Gaudeix Backoffice
 
-This React + Vite project acts as the foundation for the administrative backoffice. It shares the same build tooling as the public frontend but is deployed independently.
+Dashboard administrativo construido con React, TypeScript, Tailwind CSS v4 y shadcn/ui.
 
-## Requisitos previos
+## Tecnologías
 
-- [Node.js](https://nodejs.org/) 18 o superior
-- [npm](https://www.npmjs.com/) 9 o superior
+- **React 18** + **TypeScript**
+- **Vite** - Build tool
+- **Tailwind CSS v4** - Styling
+- **shadcn/ui** - Component library
+- **React Router** - Routing
+- **React Query** - Data fetching
+- **Axios** - HTTP client
+- **Vitest** + **React Testing Library** - Testing
 
-## Instalación
+## Estructura del Proyecto
 
-```bash
-npm install
+```
+src/
+├── app/                    # Core de la aplicación
+│   ├── providers/          # Providers globales (Query, Theme, Auth)
+│   ├── routes/             # Configuración de rutas
+│   └── App.tsx
+├── layouts/                # Layouts reutilizables
+│   ├── dashboard/          # Layout del dashboard
+│   └── auth/               # Layout de autenticación
+├── features/               # Módulos por feature
+│   ├── auth/               # Autenticación
+│   ├── dashboard/          # Dashboard home
+│   ├── users/              # Gestión de usuarios
+│   ├── media/              # Gestión de media
+│   └── events/             # Gestión de eventos
+├── components/
+│   ├── ui/                 # Componentes de shadcn/ui
+│   └── common/             # Componentes reutilizables
+├── lib/                    # Utilidades y configuración
+│   ├── api/                # Cliente HTTP
+│   ├── config/             # Constantes
+│   └── utils/              # Funciones utilitarias
+├── hooks/                  # Custom hooks
+├── types/                  # TypeScript types
+└── tests/                  # Test utilities
 ```
 
-## Variables de entorno
-
-El proyecto utiliza variables con el prefijo `VITE_` que se exponen en tiempo de compilación. Copia el archivo `.env.local.example` como base y ajusta los valores para el entorno deseado.
+## Scripts Disponibles
 
 ```bash
-cp .env.local.example .env.local
+# Desarrollo
+npm run dev
+
+# Build de producción
+npm run build
+
+# Preview del build
+npm run preview
+
+# Tests
+npm run test          # Run once
+npm run test:watch    # Watch mode
 ```
 
-Variables incluidas:
+## Rutas
 
-- `VITE_API_BASE_URL`: URL base del backend.
+- `/login` - Página de inicio de sesión
+- `/dashboard` - Dashboard principal (protegido)
+- `/dashboard/users` - Gestión de usuarios (protegido)
+- `/dashboard/media` - Gestión de media (protegido)
+- `/dashboard/events` - Gestión de eventos (protegido)
 
-> ℹ️ Los archivos `.env` nunca deben versionarse. Asegúrate de personalizarlos localmente en cada entorno.
+## Añadir Componentes de shadcn/ui
+
+```bash
+npx shadcn@latest add [component-name]
+```
+
+Ejemplo:
+
+```bash
+npx shadcn@latest add table
+npx shadcn@latest add dialog
+npx shadcn@latest add dropdown-menu
+```
+
+## Configuración de API
+
+Crea un archivo `.env.local` con:
+
+```env
+VITE_API_URL=http://localhost:8000/api/v1
+```
 
 ## Desarrollo
 
-```bash
-npm run dev
+### Añadir una Nueva Feature
+
+1. Crear carpeta en `src/features/[feature-name]/`
+2. Añadir páginas en `src/features/[feature-name]/pages/`
+3. Registrar rutas en `src/app/routes/index.tsx`
+4. Añadir navegación en `src/layouts/dashboard/Sidebar.tsx`
+
+### Añadir un Nuevo Endpoint
+
+1. Crear función en `src/lib/api/` o en el feature correspondiente
+2. Usar React Query para data fetching:
+
+```typescript
+import { useQuery } from "@tanstack/react-query";
+import apiClient from "@/lib/api/client";
+
+export function useUsers() {
+  return useQuery({
+    queryKey: ["users"],
+    queryFn: async () => {
+      const { data } = await apiClient.get("/users");
+      return data;
+    },
+  });
+}
 ```
 
-La aplicación quedará disponible en `http://localhost:5173` por defecto.
+## Testing
 
-## Build de producción
+Los tests usan Vitest y React Testing Library. Usa el helper `render` de `@/tests/test-utils` que incluye todos los providers:
 
-```bash
-npm run build
+```typescript
+import { render, screen } from "@/tests/test-utils";
+import { MyComponent } from "./MyComponent";
+
+describe("MyComponent", () => {
+  it("renders correctly", () => {
+    render(<MyComponent />);
+    expect(screen.getByText("Hello")).toBeInTheDocument();
+  });
+});
 ```
 
-El resultado se genera en `dist/`. Puedes previsualizarlo con:
+## Autenticación
 
-```bash
-npm run preview
-```
+La autenticación está configurada como placeholder. Para implementar autenticación real:
 
-## Pruebas
+1. Actualizar `src/app/providers/AuthProvider.tsx` con llamadas reales a la API
+2. Configurar tokens en `src/lib/api/client.ts`
+3. Implementar refresh token logic si es necesario
 
-Si utilizas [Vitest](https://vitest.dev/) puedes ejecutar las pruebas con:
+## Próximos Pasos
 
-```bash
-npm run test
-```
-
-> ✳️ Agrega pruebas dentro de `src` utilizando el sufijo `.test.ts` o `.test.tsx`.
+- [ ] Implementar lógica de autenticación real
+- [ ] Conectar con API backend
+- [ ] Implementar CRUD completo para cada feature
+- [ ] Añadir más componentes de shadcn/ui según necesidad
+- [ ] Implementar manejo de errores global
+- [ ] Añadir loading states
+- [ ] Implementar paginación
+- [ ] Añadir filtros y búsqueda
