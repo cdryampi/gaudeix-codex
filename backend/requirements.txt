@@ -6,3 +6,13 @@ python-dotenv
 Pillow>=10,<11
 pytest
 pytest-django
+django-parler
+django-parler-rest
+drf-spectacular
+dj-rest-auth
+djangorestframework-simplejwt[crypto]
+django-allauth
+requests
+django-simple-history
+
+

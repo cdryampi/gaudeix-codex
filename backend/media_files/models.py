@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from django.db import models
+from simple_history.models import HistoricalRecords
 
 from . import utils
 
@@ -90,6 +91,9 @@ class ImageFile(BaseUploadedFile):
         blank=True,
         help_text="Ruta a variante large (1200px ancho)"
     )
+    
+    # Historical tracking
+    history = HistoricalRecords()
 
 
 class DocumentFile(BaseUploadedFile):
@@ -114,3 +118,6 @@ class DocumentFile(BaseUploadedFile):
             utils.validate_document_extension,    # Extensiones permitidas
         ],
     )
+    
+    # Historical tracking
+    history = HistoricalRecords()

@@ -5,6 +5,11 @@ from __future__ import annotations
 from pathlib import Path
 
 import environ
+import warnings
+
+# Suppress specific deprecation warnings from dj-rest-auth
+warnings.filterwarnings('ignore', message='.*USERNAME_REQUIRED is deprecated.*')
+warnings.filterwarnings('ignore', message='.*EMAIL_REQUIRED is deprecated.*')
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -54,18 +59,35 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "users",
     "rest_framework",
+    "rest_framework.authtoken",
+    "parler",
+    "social",
+    "drf_spectacular",
+    "dj_rest_auth",
+    "django.contrib.sites",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "dj_rest_auth.registration",
+    "simple_history",
     "media_files.apps.MediaFilesConfig",
 ]
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
+    "simple_history.middleware.HistoryRequestMiddleware",
 ]
 
 ROOT_URLCONF = "gaudeix_backend.urls"
@@ -104,7 +126,29 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LANGUAGE_CODE = "en-us"
+from django.utils.translation import gettext_lazy as _
+import django.conf.global_settings as global_settings
+
+LANGUAGE_CODE = env("DJANGO_LANGUAGE_CODE", default="ca")
+
+# Get list of languages from env, default to ca, es, en, fr
+_env_languages = env.list("DJANGO_LANGUAGES", default=["ca", "es", "en", "fr"])
+
+# Filter global languages to match env list, preserving order is tricky with dict, 
+# but we can iterate over env list and find name in global_settings.
+_all_languages_dict = dict(global_settings.LANGUAGES)
+LANGUAGES = [
+    (code, _all_languages_dict.get(code, code))
+    for code in _env_languages
+]
+
+PARLER_LANGUAGES = {
+    None: tuple({'code': code} for code in _env_languages),
+    'default': {
+        'fallbacks': [LANGUAGE_CODE],
+        'hide_untranslated': False,
+    }
+}
 TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
@@ -113,3 +157,33 @@ STATIC_URL = "static/"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
+    ),
+}
+
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+}
+
+REST_AUTH = {
+    'USE_JWT': True,
+    'JWT_AUTH_COOKIE': 'gaudeix-auth',
+    'JWT_AUTH_REFRESH_COOKIE': 'gaudeix-refresh-token',
+}
+
+AUTH_USER_MODEL = "users.User"
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Gaudeix Codex API',
+    'DESCRIPTION': 'API for Gaudeix Codex project',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+}
+

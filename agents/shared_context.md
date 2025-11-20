@@ -282,3 +282,7 @@ Este documento debe actualizarse cuando:
 - Se actualiza la versión del proyecto
 
 **Responsable**: Director Técnico (Google AI) con apoyo del Integrador
+
+## Coding Conventions
+
+- **Comment All Code**: All code must be fully commented to explain its functionality, parameters, and return values. This is a strict requirement for the `social` app and future development.
