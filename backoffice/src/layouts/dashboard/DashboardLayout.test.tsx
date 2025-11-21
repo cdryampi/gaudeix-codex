@@ -7,7 +7,7 @@ describe("DashboardLayout", () => {
     render(<DashboardLayout />);
 
     // Check for navigation items
-    expect(screen.getByText("Dashboard")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Dashboard" })).toBeInTheDocument();
     expect(screen.getByText("Usuarios")).toBeInTheDocument();
     expect(screen.getByText("Media")).toBeInTheDocument();
     expect(screen.getByText("Eventos")).toBeInTheDocument();

@@ -7,5 +7,5 @@ import { AuthProvider } from "./AuthProvider";
  * Order matters: Theme → Auth → Query
  */
 export function AppProviders({ children }) {
-    return (_jsx(ThemeProvider, { defaultTheme: "light", storageKey: "backoffice-theme", children: _jsx(AuthProvider, { children: _jsx(QueryProvider, { children: children }) }) }));
+    return (_jsx(ThemeProvider, { defaultTheme: "system", storageKey: "backoffice-theme", children: _jsx(AuthProvider, { children: _jsx(QueryProvider, { children: children }) }) }));
 }

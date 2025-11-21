@@ -1,1 +1,1 @@
-export declare function LoginPage(): import("react/jsx-runtime").JSX.Element;
+export declare const LoginPage: () => import("react/jsx-runtime").JSX.Element;

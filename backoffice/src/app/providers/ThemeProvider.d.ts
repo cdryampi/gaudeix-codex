@@ -1,14 +1,13 @@
-import { ReactNode } from "react";
 type Theme = "dark" | "light" | "system";
-interface ThemeProviderProps {
-    children: ReactNode;
+type ThemeProviderProps = {
+    children: React.ReactNode;
     defaultTheme?: Theme;
     storageKey?: string;
-}
-interface ThemeProviderState {
+};
+type ThemeProviderState = {
     theme: Theme;
     setTheme: (theme: Theme) => void;
-}
-export declare function ThemeProvider({ children, defaultTheme, storageKey, ...props }: ThemeProviderProps): import("react/jsx-runtime").JSX.Element;
+};
+export declare function ThemeProvider({ children, defaultTheme, storageKey, }: ThemeProviderProps): import("react/jsx-runtime").JSX.Element;
 export declare const useTheme: () => ThemeProviderState;
 export {};

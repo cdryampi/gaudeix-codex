@@ -1,9 +1,11 @@
 import { jsx as _jsx } from "react/jsx-runtime";
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import { ProtectedRoute } from "./ProtectedRoute";
-import { AuthLayout } from "@/layouts/auth/AuthLayout";
+import { AuthLayout } from "@/features/auth/components/AuthLayout";
 import { DashboardLayout } from "@/layouts/dashboard/DashboardLayout";
 import { LoginPage } from "@/features/auth/pages/LoginPage";
+import { RegisterPage } from "@/features/auth/pages/RegisterPage";
+import { ResetPasswordPage } from "@/features/auth/pages/ResetPasswordPage";
 import { DashboardHome } from "@/features/dashboard/pages/DashboardHome";
 import { UsersPage } from "@/features/users/pages/UsersPage";
 import { MediaPage } from "@/features/media/pages/MediaPage";
@@ -15,11 +17,9 @@ import { ROUTES } from "@/lib/config/constants";
  * Structure:
  * - / → redirects to /dashboard
  * - /login → AuthLayout + LoginPage
+ * - /register → AuthLayout + RegisterPage
+ * - /reset-password → AuthLayout + ResetPasswordPage
  * - /dashboard → DashboardLayout (protected)
- *   - /dashboard → DashboardHome
- *   - /dashboard/users → UsersPage
- *   - /dashboard/media → MediaPage
- *   - /dashboard/events → EventsPage
  */
 export const router = createBrowserRouter([
     {
@@ -27,12 +27,19 @@ export const router = createBrowserRouter([
         element: _jsx(Navigate, { to: ROUTES.DASHBOARD, replace: true }),
     },
     {
-        path: ROUTES.LOGIN,
         element: _jsx(AuthLayout, {}),
         children: [
             {
-                index: true,
+                path: ROUTES.LOGIN,
                 element: _jsx(LoginPage, {}),
+            },
+            {
+                path: "/register",
+                element: _jsx(RegisterPage, {}),
+            },
+            {
+                path: "/reset-password",
+                element: _jsx(ResetPasswordPage, {}),
             },
         ],
     },

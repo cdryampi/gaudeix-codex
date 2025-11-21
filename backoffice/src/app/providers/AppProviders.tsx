@@ -13,7 +13,7 @@ interface AppProvidersProps {
  */
 export function AppProviders({ children }: AppProvidersProps) {
   return (
-    <ThemeProvider defaultTheme="light" storageKey="backoffice-theme">
+    <ThemeProvider defaultTheme="system" storageKey="backoffice-theme">
       <AuthProvider>
         <QueryProvider>{children}</QueryProvider>
       </AuthProvider>
