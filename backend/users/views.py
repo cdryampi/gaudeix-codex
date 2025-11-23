@@ -15,7 +15,8 @@ from .serializers import (
     UserDetailSerializer,
     UserUpdateSerializer,
     PasswordResetRequestSerializer,
-    PasswordResetConfirmSerializer
+    PasswordResetConfirmSerializer,
+    LoginSerializer,
 )
 from .permissions import IsOwnerOrAdmin
 
@@ -148,3 +149,37 @@ class PasswordResetConfirmView(generics.GenericAPIView):
             {"detail": "Password has been reset successfully."},
             status=status.HTTP_200_OK
         )
+
+
+class LoginView(generics.GenericAPIView):
+    """
+    Login endpoint that returns JWT tokens.
+    Public endpoint - no authentication required.
+    """
+    permission_classes = [AllowAny]
+    serializer_class = LoginSerializer
+
+    def post(self, request, *args, **kwargs):
+        """
+        Authenticate user and return JWT tokens.
+        """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        user = serializer.validated_data['user']
+        
+        # Generate JWT tokens
+        from rest_framework_simplejwt.tokens import RefreshToken
+        
+        refresh = RefreshToken.for_user(user)
+        access_token = str(refresh.access_token)
+        refresh_token = str(refresh)
+        
+        # Return user data with tokens
+        user_data = UserDetailSerializer(user).data
+        
+        return Response({
+            'user': user_data,
+            'access': access_token,
+            'refresh': refresh_token,
+        }, status=status.HTTP_200_OK)

@@ -1,0 +1,75 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Start Backend (Django)",
+      "type": "shell",
+      "command": "cd backend && .venv_win\\Scripts\\activate && python manage.py runserver",
+      "windows": {
+        "command": "cd backend; .venv_win\\Scripts\\activate; python manage.py runserver"
+      },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "dev"
+      },
+      "runOptions": {
+        "runOn": "folderOpen"
+      }
+    },
+    {
+      "label": "Start Backoffice (Vite)",
+      "type": "shell",
+      "command": "cd backoffice && npm run dev",
+      "windows": {
+        "command": "cd backoffice; npm run dev"
+      },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "dev"
+      },
+      "runOptions": {
+        "runOn": "folderOpen"
+      }
+    },
+    {
+      "label": "Start Frontend (Vite)",
+      "type": "shell",
+      "command": "cd frontend && npm run dev",
+      "windows": {
+        "command": "cd frontend; npm run dev"
+      },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "dev"
+      },
+      "runOptions": {
+        "runOn": "folderOpen"
+      }
+    },
+    {
+      "label": "Start All Services",
+      "dependsOn": [
+        "Start Backend (Django)",
+        "Start Backoffice (Vite)",
+        "Start Frontend (Vite)"
+      ],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "runOptions": {
+        "runOn": "folderOpen"
+      }
+    }
+  ]
+}

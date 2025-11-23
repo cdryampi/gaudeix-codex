@@ -419,3 +419,131 @@ class TestUserList:
         
         assert response.status_code == status.HTTP_200_OK
         assert len(response.data) >= 3  # admin + user1 + user2
+
+
+class TestLogin:
+    """Tests for login functionality."""
+    
+    def test_login_success(self):
+        """Test successful login with valid credentials."""
+        user = User.objects.create_user(
+            username='testuser',
+            email='test@example.com',
+            password='TestPass123!'
+        )
+        
+        client = APIClient()
+        url = reverse('login')
+        data = {
+            'username': 'testuser',
+            'password': 'TestPass123!'
+        }
+        response = client.post(url, data, format='json')
+        
+        assert response.status_code == status.HTTP_200_OK
+        assert 'access' in response.data
+        assert 'refresh' in response.data
+        assert 'user' in response.data
+        assert response.data['user']['username'] == 'testuser'
+        assert response.data['user']['email'] == 'test@example.com'
+        assert 'password' not in response.data['user']
+    
+    def test_login_invalid_credentials(self):
+        """Test login fails with invalid credentials."""
+        user = User.objects.create_user(
+            username='testuser',
+            password='TestPass123!'
+        )
+        
+        client = APIClient()
+        url = reverse('login')
+        data = {
+            'username': 'testuser',
+            'password': 'WrongPassword'
+        }
+        response = client.post(url, data, format='json')
+        
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert 'access' not in response.data
+    
+    def test_login_nonexistent_user(self):
+        """Test login fails with non-existent username."""
+        client = APIClient()
+        url = reverse('login')
+        data = {
+            'username': 'nonexistent',
+            'password': 'TestPass123!'
+        }
+        response = client.post(url, data, format='json')
+        
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert 'access' not in response.data
+    
+    def test_login_inactive_user(self):
+        """Test login fails for inactive user."""
+        user = User.objects.create_user(
+            username='testuser',
+            password='TestPass123!',
+            is_active=False
+        )
+        
+        client = APIClient()
+        url = reverse('login')
+        data = {
+            'username': 'testuser',
+            'password': 'TestPass123!'
+        }
+        response = client.post(url, data, format='json')
+        
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert 'access' not in response.data
+    
+    def test_login_missing_username(self):
+        """Test login fails when username is missing."""
+        client = APIClient()
+        url = reverse('login')
+        data = {
+            'password': 'TestPass123!'
+        }
+        response = client.post(url, data, format='json')
+        
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+    
+    def test_login_missing_password(self):
+        """Test login fails when password is missing."""
+        client = APIClient()
+        url = reverse('login')
+        data = {
+            'username': 'testuser'
+        }
+        response = client.post(url, data, format='json')
+        
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+    
+    def test_login_returns_valid_jwt_tokens(self):
+        """Test that login returns valid JWT tokens."""
+        user = User.objects.create_user(
+            username='testuser',
+            password='TestPass123!'
+        )
+        
+        client = APIClient()
+        url = reverse('login')
+        data = {
+            'username': 'testuser',
+            'password': 'TestPass123!'
+        }
+        response = client.post(url, data, format='json')
+        
+        assert response.status_code == status.HTTP_200_OK
+        
+        # Verify access token can be used for authentication
+        access_token = response.data['access']
+        client.credentials(HTTP_AUTHORIZATION=f'Bearer {access_token}')
+        
+        # Try to access a protected endpoint
+        user_url = reverse('user-detail', kwargs={'pk': user.pk})
+        user_response = client.get(user_url)
+        
+        assert user_response.status_code == status.HTTP_200_OK
+        assert user_response.data['username'] == 'testuser'

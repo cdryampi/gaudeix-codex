@@ -1,4 +1,4 @@
-import { createBrowserRouter, Navigate } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { AuthLayout } from "@/features/auth/components/AuthLayout";
 import { DashboardLayout } from "@/layouts/dashboard/DashboardLayout";
@@ -9,13 +9,14 @@ import { DashboardHome } from "@/features/dashboard/pages/DashboardHome";
 import { UsersPage } from "@/features/users/pages/UsersPage";
 import { MediaPage } from "@/features/media/pages/MediaPage";
 import { EventsPage } from "@/features/events/pages/EventsPage";
+import { LandingPage } from "@/features/landing/pages/LandingPage";
 import { ROUTES } from "@/lib/config/constants";
 
 /**
  * Application routing configuration
  *
  * Structure:
- * - / → redirects to /dashboard
+ * - / → Landing Page
  * - /login → AuthLayout + LoginPage
  * - /register → AuthLayout + RegisterPage
  * - /reset-password → AuthLayout + ResetPasswordPage
@@ -24,7 +25,7 @@ import { ROUTES } from "@/lib/config/constants";
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <Navigate to={ROUTES.DASHBOARD} replace />,
+    element: <LandingPage />,
   },
   {
     element: <AuthLayout />,
