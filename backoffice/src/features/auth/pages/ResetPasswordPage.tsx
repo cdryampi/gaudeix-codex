@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AuthCard } from "../components/AuthCard";
 import { useAuthForm } from "../hooks/useAuthForm";
-import { RESET_URL } from "@/config/env";
+import { API_CONFIG, API_ENDPOINTS } from "@/lib/config/constants";
 import { ArrowLeft } from "lucide-react";
 
 const resetSchema = z.object({
@@ -19,7 +19,10 @@ export const ResetPasswordPage = () => {
       defaultValues: { email: "" },
       onSubmit: async (data) => {
         console.log("Reset password attempt:", data);
-        console.log("Target URL:", RESET_URL);
+        console.log(
+          "Target URL:",
+          `${API_CONFIG.BASE_URL}${API_ENDPOINTS.AUTH.PASSWORD_RESET}`
+        );
         // Placeholder for actual reset logic
       },
     });

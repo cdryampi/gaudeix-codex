@@ -18,6 +18,8 @@ env = environ.Env(
     ENVIRONMENT=(str, "local"),
     DEBUG=(bool, False),
     ALLOWED_HOSTS=(list, []),
+    DJANGO_ALLOWED_CORS_ORIGINS=(list, []),
+    DJANGO_CSRF_TRUSTED_ORIGINS=(list, []),
     DB_ENGINE=(str, "django.db.backends.postgresql"),
     DB_NAME=(str, "postgres"),
     DB_USER=(str, "postgres"),
@@ -187,8 +189,18 @@ SPECTACULAR_SETTINGS = {
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
 }
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5174",
-]
+CORS_ALLOWED_ORIGINS = env.list(
+    "DJANGO_ALLOWED_CORS_ORIGINS",
+    default=[
+        "http://localhost:4173",
+        "http://localhost:4174",
+    ],
+)
 CORS_ALLOW_CREDENTIALS = True
-
+CSRF_TRUSTED_ORIGINS = env.list(
+    "DJANGO_CSRF_TRUSTED_ORIGINS",
+    default=[
+        "http://localhost:4173",
+        "http://localhost:4174",
+    ],
+)

@@ -547,3 +547,58 @@ class TestLogin:
         
         assert user_response.status_code == status.HTTP_200_OK
         assert user_response.data['username'] == 'testuser'
+    
+    def test_login_with_email_success(self):
+        """Test successful login using email instead of username."""
+        user = User.objects.create_user(
+            username='testuser',
+            email='test@example.com',
+            password='TestPass123!'
+        )
+        
+        client = APIClient()
+        url = reverse('login')
+        data = {
+            'username': 'test@example.com',  # Using email in username field
+            'password': 'TestPass123!'
+        }
+        response = client.post(url, data, format='json')
+        
+        assert response.status_code == status.HTTP_200_OK
+        assert 'access' in response.data
+        assert 'refresh' in response.data
+        assert 'user' in response.data
+        assert response.data['user']['username'] == 'testuser'
+        assert response.data['user']['email'] == 'test@example.com'
+    
+    def test_login_with_email_wrong_password(self):
+        """Test login with email fails with wrong password."""
+        user = User.objects.create_user(
+            username='testuser',
+            email='test@example.com',
+            password='TestPass123!'
+        )
+        
+        client = APIClient()
+        url = reverse('login')
+        data = {
+            'username': 'test@example.com',
+            'password': 'WrongPassword'
+        }
+        response = client.post(url, data, format='json')
+        
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert 'access' not in response.data
+    
+    def test_login_with_nonexistent_email(self):
+        """Test login fails with non-existent email."""
+        client = APIClient()
+        url = reverse('login')
+        data = {
+            'username': 'nonexistent@example.com',
+            'password': 'TestPass123!'
+        }
+        response = client.post(url, data, format='json')
+        
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert 'access' not in response.data

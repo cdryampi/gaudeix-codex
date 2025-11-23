@@ -4,9 +4,9 @@
     {
       "label": "Start Backend (Django)",
       "type": "shell",
-      "command": "cd backend && .venv_win\\Scripts\\activate && python manage.py runserver",
+      "command": "cd backend && .venv_win\\Scripts\\activate && python manage.py runserver 0.0.0.0:8000",
       "windows": {
-        "command": "cd backend; .venv_win\\Scripts\\activate; python manage.py runserver"
+        "command": "cd backend && .venv_win\\Scripts\\activate && python manage.py runserver 0.0.0.0:8000"
       },
       "isBackground": true,
       "problemMatcher": [],
@@ -22,9 +22,9 @@
     {
       "label": "Start Backoffice (Vite)",
       "type": "shell",
-      "command": "cd backoffice && npm run dev",
+      "command": "cd backoffice && npm run dev -- --host --port 4174",
       "windows": {
-        "command": "cd backoffice; npm run dev"
+        "command": "cd backoffice && npm run dev -- --host --port 4174"
       },
       "isBackground": true,
       "problemMatcher": [],
@@ -40,9 +40,9 @@
     {
       "label": "Start Frontend (Vite)",
       "type": "shell",
-      "command": "cd frontend && npm run dev",
+      "command": "cd frontend && npm run dev -- --host --port 4173",
       "windows": {
-        "command": "cd frontend; npm run dev"
+        "command": "cd frontend && npm run dev -- --host --port 4173"
       },
       "isBackground": true,
       "problemMatcher": [],

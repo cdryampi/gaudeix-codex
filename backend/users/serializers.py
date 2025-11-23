@@ -147,8 +147,9 @@ class LoginSerializer(serializers.Serializer):
     """
     Serializer for user login.
     Validates credentials and returns user data with JWT tokens.
+    Accepts either username or email for login.
     """
-    username = serializers.CharField(required=True)
+    username = serializers.CharField(required=True, help_text="Username or email")
     password = serializers.CharField(
         required=True,
         write_only=True,
@@ -158,22 +159,38 @@ class LoginSerializer(serializers.Serializer):
     def validate(self, attrs):
         """
         Validate credentials and authenticate user.
+        Supports login with username or email.
         """
         from django.contrib.auth import authenticate
         
-        username = attrs.get('username')
+        username_or_email = attrs.get('username')
         password = attrs.get('password')
 
-        if not username or not password:
-            raise serializers.ValidationError("Both username and password are required.")
+        if not username_or_email or not password:
+            raise serializers.ValidationError("Both username/email and password are required.")
 
-        user = authenticate(username=username, password=password)
+        # Try to authenticate with username first
+        user = authenticate(username=username_or_email, password=password)
+
+        # If authentication failed, try with email
+        if not user:
+            try:
+                # Look up user by email
+                user_obj = User.objects.get(email=username_or_email)
+                # Authenticate with the username of the found user
+                user = authenticate(username=user_obj.username, password=password)
+            except User.DoesNotExist:
+                # User not found by email either
+                pass
+            except User.MultipleObjectsReturned:
+                # Handle edge case of multiple users with same email (shouldn't happen with unique constraint)
+                pass
 
         if not user:
-            raise serializers.ValidationError("Invalid credentials.")
+            raise serializers.ValidationError({"non_field_errors": ["Invalid credentials."]})
 
         if not user.is_active:
-            raise serializers.ValidationError("User account is disabled.")
+            raise serializers.ValidationError({"non_field_errors": ["User account is disabled."]})
 
         attrs['user'] = user
         return attrs

@@ -61,11 +61,42 @@ npm run test:watch    # Watch mode
 
 ## Rutas
 
+- `/` - Landing page con health check del backend
+- `/test` - Página de prueba de formularios (pública)
 - `/login` - Página de inicio de sesión
 - `/dashboard` - Dashboard principal (protegido)
 - `/dashboard/users` - Gestión de usuarios (protegido)
 - `/dashboard/media` - Gestión de media (protegido)
 - `/dashboard/events` - Gestión de eventos (protegido)
+
+## Características Implementadas
+
+### Autenticación
+
+- ✅ Sistema de login funcional conectado al backend Django
+- ✅ Autenticación JWT con access y refresh tokens
+- ✅ Provider de autenticación con localStorage
+- ✅ Rutas protegidas con redirección automática
+- ✅ Manejo de errores del servidor
+- ✅ Tokens automáticos en headers de API
+
+**Credenciales de Desarrollo:**
+Para hacer login, primero crea un superusuario en el backend:
+
+```bash
+cd backend
+python manage.py createsuperuser
+```
+
+Luego usa esas credenciales en el login del backoffice.
+
+### UI/UX
+
+- ✅ Landing page con health check del backend
+- ✅ Página de prueba de formularios (`/test`)
+- ✅ Dashboard limpio y funcional
+- ✅ Diseño responsive con Tailwind CSS v4
+- ✅ Componentes shadcn/ui integrados
 
 ## Añadir Componentes de shadcn/ui
 

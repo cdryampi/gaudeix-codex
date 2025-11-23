@@ -5,3 +5,8 @@ dist-ssr
 # *.local
 .vscode
 .idea
+
+# Compiled JavaScript files from TypeScript (should not be in source)
+src/**/*.js
+src/**/*.js.map
+!src/**/*.config.js
