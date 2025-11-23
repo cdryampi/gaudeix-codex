@@ -129,9 +129,6 @@ export function LandingPage() {
                     <span className="text-sm text-gray-500">-</span>
                   )}
                 </div>
-                <div className="text-xs text-gray-400 pt-2 border-t border-white/10 mt-2">
-                  {API_CONFIG.BASE_URL}
-                </div>
               </div>
             </CardContent>
           </Card>

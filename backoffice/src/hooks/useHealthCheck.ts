@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { API_CONFIG } from "@/lib/config/constants";
+import { HEALTH_CHECK_URL } from "@/lib/config/constants";
 
 type BackendStatus = "online" | "offline" | "checking";
 type DbStatus = "ok" | "error" | "unknown";
@@ -16,7 +16,7 @@ export function useHealthCheck() {
   useEffect(() => {
     const checkHealth = async () => {
       try {
-        const healthUrl = `${API_CONFIG.BASE_URL}/health/`;
+        const healthUrl = HEALTH_CHECK_URL;
         const response = await fetch(healthUrl);
         const data: HealthCheckResponse = await response.json();
 

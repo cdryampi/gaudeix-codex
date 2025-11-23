@@ -3,7 +3,6 @@ import { ProtectedRoute } from "./ProtectedRoute";
 import { AuthLayout } from "@/features/auth/components/AuthLayout";
 import { DashboardLayout } from "@/layouts/dashboard/DashboardLayout";
 import { LoginPage } from "@/features/auth/pages/LoginPage";
-import { LoginPageDebug } from "@/features/auth/pages/LoginPageDebug";
 import { RegisterPage } from "@/features/auth/pages/RegisterPage";
 import { ResetPasswordPage } from "@/features/auth/pages/ResetPasswordPage";
 import { DashboardHome } from "@/features/dashboard/pages/DashboardHome";
@@ -34,10 +33,6 @@ export const router = createBrowserRouter([
   {
     path: "/test",
     element: <TestFormPage />,
-  },
-  {
-    path: "/login-debug",
-    element: <LoginPageDebug />,
   },
   {
     element: <AuthLayout />,

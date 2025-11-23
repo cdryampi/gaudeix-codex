@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 import { AuthCard } from "../components/AuthCard";
 import { useAuth } from "@/app/providers/AuthProvider";
 import { ROUTES } from "@/lib/config/constants";
@@ -43,22 +45,14 @@ export const LoginPage = () => {
     e.preventDefault();
     e.stopPropagation();
 
-    console.log("📝 Form submitted", formData);
     setErrors({});
     setLoginError("");
 
     try {
-      console.log("🔍 Validando datos del formulario...");
       const validatedData = loginSchema.parse(formData);
-      console.log("✅ Datos validados:", { username: validatedData.username });
-
-      console.log("🚀 Llamando a login...");
       await login(validatedData.username, validatedData.password);
-
-      console.log("🎯 Navegando al dashboard...");
       navigate(ROUTES.DASHBOARD);
     } catch (error) {
-      console.error("❌ Error en handleSubmit:", error);
       if (error instanceof z.ZodError) {
         const formattedErrors: Partial<Record<keyof LoginFormData, string>> =
           {};
@@ -69,77 +63,103 @@ export const LoginPage = () => {
         });
         setErrors(formattedErrors);
       } else {
-        const message =
-          error instanceof Error
-            ? error.message
-            : "Error al iniciar sesión. Verifica tus credenciales.";
-        setLoginError(message);
+        const message = error instanceof Error ? error.message : null;
+        setLoginError(
+          message ?? "Error al iniciar sesión. Verifica tus credenciales."
+        );
       }
     }
   };
 
   return (
     <AuthCard title="Bienvenido" subtitle="Accede a tu cuenta">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {loginError && (
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{loginError}</AlertDescription>
-          </Alert>
-        )}
+      <div className="mx-auto w-full max-w-[520px] space-y-5 sm:space-y-6">
+        <div className="space-y-2 text-center">
+          <Badge
+            variant="outline"
+            className="border-primary/30 bg-primary/10 text-primary dark:border-primary/30 dark:bg-primary/15"
+          >
+            Acceso seguro
+          </Badge>
+          <p className="text-sm text-muted-foreground">
+            Usa tus credenciales para entrar al panel
+          </p>
+        </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="username">Usuario o Email</Label>
-          <Input
-            id="username"
-            name="username"
-            type="text"
-            placeholder="usuario o email@ejemplo.com"
-            value={formData.username}
-            onChange={handleChange}
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-4 sm:space-y-5 text-left px-10"
+          autoComplete="on"
+        >
+          {loginError && (
+            <Alert variant="destructive" className="!border-red-500/40">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{loginError}</AlertDescription>
+            </Alert>
+          )}
+
+          <div className="space-y-2">
+            <Label htmlFor="username">Usuario o Email</Label>
+            <Input
+              id="username"
+              name="username"
+              type="text"
+              placeholder="usuario o email@ejemplo.com"
+              value={formData.username}
+              onChange={handleChange}
+              disabled={isLoading}
+              autoComplete="username"
+              className="h-11 bg-background/80 !border border-border focus-visible:ring-2 focus-visible:ring-primary/50 w-full max-w-full"
+            />
+            {errors.username && (
+              <p className="text-sm text-destructive">{errors.username}</p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="password">Contraseña</Label>
+            <Input
+              id="password"
+              name="password"
+              type="password"
+              placeholder="••••••••"
+              value={formData.password}
+              onChange={handleChange}
+              disabled={isLoading}
+              autoComplete="current-password"
+              className="h-11 bg-background/80 !border border-border focus-visible:ring-2 focus-visible:ring-primary/50 w-full max-w-full"
+            />
+            {errors.password && (
+              <p className="text-sm text-destructive">{errors.password}</p>
+            )}
+          </div>
+
+          <div className="flex items-center justify-between text-sm text-muted-foreground">
+            <span>¿Olvidaste tu contraseña?</span>
+            <Link
+              to="/reset-password"
+              className="font-medium text-primary hover:underline"
+            >
+              Recuperar acceso
+            </Link>
+          </div>
+
+          <Button
+            type="submit"
+            className="w-full h-11 text-base font-medium !bg-primary text-primary-foreground hover:!bg-primary/90"
             disabled={isLoading}
-            autoComplete="username"
-          />
-          {errors.username && (
-            <p className="text-sm text-destructive">{errors.username}</p>
-          )}
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="password">Contraseña</Label>
-          <Input
-            id="password"
-            name="password"
-            type="password"
-            placeholder="••••••••"
-            value={formData.password}
-            onChange={handleChange}
-            disabled={isLoading}
-            autoComplete="current-password"
-          />
-          {errors.password && (
-            <p className="text-sm text-destructive">{errors.password}</p>
-          )}
-        </div>
-
-        <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? (
-            "Iniciando sesión..."
-          ) : (
-            <>
-              <LogIn className="mr-2 h-4 w-4" />
-              Iniciar sesión
-            </>
-          )}
-        </Button>
-
-        {/* Debug info */}
-        <div className="text-xs text-muted-foreground mt-2">
-          <p>Username: {formData.username}</p>
-          <p>Password: {formData.password ? "***" : "(vacío)"}</p>
-          <p>isLoading: {isLoading ? "true" : "false"}</p>
-        </div>
-      </form>
+          >
+            {isLoading ? (
+              "Iniciando sesión..."
+            ) : (
+              <>
+                <LogIn className="mr-2 h-4 w-4" />
+                Iniciar sesión
+              </>
+            )}
+          </Button>
+        </form>
+      </div>
     </AuthCard>
   );
 };
