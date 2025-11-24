@@ -7,11 +7,17 @@ import {
 } from "react";
 import type { User, AuthState } from "@/types";
 import { authService } from "@/lib/api/auth";
+import { authStorage } from "@/lib/storage/authStorage";
 
 interface AuthContextType extends AuthState {
-  login: (username: string, password: string) => Promise<void>;
+  login: (
+    username: string,
+    password: string,
+    options?: { remember?: boolean }
+  ) => Promise<void>;
   logout: () => void;
   isLoading: boolean;
+  isRestoringSession: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -22,32 +28,41 @@ interface AuthProviderProps {
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(
-    localStorage.getItem("auth_token")
-  );
+  const [token, setToken] = useState<string | null>(authStorage.getAccessToken());
   const [isLoading, setIsLoading] = useState(false);
+  const [isRestoringSession, setIsRestoringSession] = useState(true);
 
   const logout = () => {
     authService.logout();
+    authStorage.clear();
     setUser(null);
     setToken(null);
   };
 
   // Restore user from localStorage on mount
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser && token) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch (error) {
-        console.error("Error parsing stored user:", error);
-        logout();
+    const storedToken = authStorage.getAccessToken();
+    const storedUser = authStorage.getUser();
+
+    if (storedToken) {
+      setToken(storedToken);
+      if (storedUser) {
+        setUser(storedUser);
+      } else {
+        // Token sin usuario guardado: limpiamos para evitar estados inconsistentes
+        authStorage.clear();
       }
     }
+
+    setIsRestoringSession(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const login = async (username: string, password: string) => {
+  const login = async (
+    username: string,
+    password: string,
+    options?: { remember?: boolean }
+  ) => {
     console.log("🔐 Login iniciado con:", { username });
     setIsLoading(true);
     try {
@@ -68,9 +83,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
       console.log("💾 Guardando usuario:", userObj);
       setUser(userObj);
       setToken(response.access);
-      localStorage.setItem("auth_token", response.access);
-      localStorage.setItem("refresh_token", response.refresh);
-      localStorage.setItem("user", JSON.stringify(userObj));
+      const remember = options?.remember ?? true;
+      authStorage.saveSession(
+        { access: response.access, refresh: response.refresh },
+        userObj,
+        remember
+      );
       console.log("✅ Login completado exitosamente");
     } catch (error: any) {
       console.error("❌ Login failed:", error);
@@ -92,6 +110,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     login,
     logout,
     isLoading,
+    isRestoringSession,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

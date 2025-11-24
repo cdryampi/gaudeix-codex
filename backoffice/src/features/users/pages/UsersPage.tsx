@@ -1,10 +1,13 @@
-import { useState, useEffect } from "react";
+import type { ElementType } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { PageContainer, PageHeader } from "@/components/common";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Plus, ShieldCheck, Users as UsersIcon, UserCheck } from "lucide-react";
 import { UsersTable } from "../components/UsersTable";
 import { UserDialog } from "../components/UserDialog";
-import { User, CreateUserDTO } from "../types";
+import { CreateUserDTO, User } from "../types";
 import { usersApi } from "../api/users";
 
 export function UsersPage() {
@@ -13,6 +16,13 @@ export function UsersPage() {
   const [error, setError] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | undefined>(undefined);
+
+  const stats = useMemo(() => {
+    const total = users.length;
+    const active = users.filter((u) => u.is_active).length;
+    const admins = users.filter((u) => u.is_staff).length;
+    return { total, active, admins };
+  }, [users]);
 
   const fetchUsers = async () => {
     try {
@@ -57,10 +67,8 @@ export function UsersPage() {
   const handleSubmit = async (data: CreateUserDTO) => {
     try {
       if (editingUser) {
-        // Update
         await usersApi.update(editingUser.id, data);
       } else {
-        // Create
         await usersApi.create(data);
       }
       setIsDialogOpen(false);
@@ -84,19 +92,36 @@ export function UsersPage() {
         }
       />
 
-      <div className="rounded-lg border bg-white p-6">
-        {loading ? (
-          <p className="text-center text-gray-500">Cargando usuarios...</p>
-        ) : error ? (
-          <p className="text-center text-red-500">{error}</p>
-        ) : (
-          <UsersTable
-            users={users}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
-        )}
+      <div className="mb-4 grid gap-3 md:grid-cols-3">
+        <StatPill
+          icon={UsersIcon}
+          label="Total"
+          value={stats.total}
+          tone="primary"
+        />
+        <StatPill icon={UserCheck} label="Activos" value={stats.active} />
+        <StatPill icon={ShieldCheck} label="Admins" value={stats.admins} />
       </div>
+
+      <Card className="border shadow-sm">
+        <CardContent className="p-0">
+          {loading ? (
+            <div className="flex h-48 items-center justify-center text-muted-foreground">
+              Cargando usuarios...
+            </div>
+          ) : error ? (
+            <div className="flex h-48 items-center justify-center text-red-500">
+              {error}
+            </div>
+          ) : (
+            <UsersTable
+              users={users}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+          )}
+        </CardContent>
+      </Card>
 
       <UserDialog
         open={isDialogOpen}
@@ -105,5 +130,33 @@ export function UsersPage() {
         user={editingUser}
       />
     </PageContainer>
+  );
+}
+
+type StatPillProps = {
+  icon: ElementType;
+  label: string;
+  value: number;
+  tone?: "primary" | "neutral";
+};
+
+function StatPill({ icon: Icon, label, value, tone = "neutral" }: StatPillProps) {
+  return (
+    <div className="flex items-center gap-3 rounded-xl border bg-white px-4 py-3 shadow-sm">
+      <div
+        className={`flex h-10 w-10 items-center justify-center rounded-lg ${
+          tone === "primary" ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-600"
+        }`}
+      >
+        <Icon className="h-5 w-5" />
+      </div>
+      <div>
+        <p className="text-xs font-medium text-muted-foreground">{label}</p>
+        <p className="text-lg font-semibold text-foreground">{value}</p>
+      </div>
+      <Badge variant="outline" className="ml-auto text-xs">
+        En vivo
+      </Badge>
+    </div>
   );
 }

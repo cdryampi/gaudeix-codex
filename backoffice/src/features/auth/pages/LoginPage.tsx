@@ -17,7 +17,7 @@ const loginSchema = z.object({
   password: z.string().min(1, "La contraseña es obligatoria"),
 });
 
-type LoginFormData = z.infer<typeof loginSchema>;
+type LoginFormData = z.infer<typeof loginSchema> & { remember: boolean };
 
 export const LoginPage = () => {
   const navigate = useNavigate();
@@ -26,6 +26,7 @@ export const LoginPage = () => {
   const [formData, setFormData] = useState<LoginFormData>({
     username: "",
     password: "",
+    remember: true,
   });
   const [errors, setErrors] = useState<
     Partial<Record<keyof LoginFormData, string>>
@@ -41,6 +42,11 @@ export const LoginPage = () => {
     if (loginError) setLoginError("");
   };
 
+  const handleRememberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { checked } = e.target;
+    setFormData((prev) => ({ ...prev, remember: checked }));
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     e.stopPropagation();
@@ -50,7 +56,9 @@ export const LoginPage = () => {
 
     try {
       const validatedData = loginSchema.parse(formData);
-      await login(validatedData.username, validatedData.password);
+      await login(validatedData.username, validatedData.password, {
+        remember: formData.remember,
+      });
       navigate(ROUTES.DASHBOARD);
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -135,7 +143,16 @@ export const LoginPage = () => {
           </div>
 
           <div className="flex items-center justify-between text-sm text-muted-foreground">
-            <span>¿Olvidaste tu contraseña?</span>
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                name="remember"
+                checked={formData.remember}
+                onChange={handleRememberChange}
+                className="h-4 w-4 accent-primary"
+              />
+              <span>Mantener sesión abierta</span>
+            </label>
             <Link
               to="/reset-password"
               className="font-medium text-primary hover:underline"

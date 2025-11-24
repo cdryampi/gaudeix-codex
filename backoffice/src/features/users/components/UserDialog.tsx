@@ -59,7 +59,7 @@ export function UserDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="w-[92vw] max-w-[600px] sm:max-w-[540px]">
         <DialogHeader>
           <DialogTitle>{user ? "Editar Usuario" : "Nuevo Usuario"}</DialogTitle>
           <DialogDescription>
@@ -70,7 +70,7 @@ export function UserDialog({
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
+            <div className="grid grid-cols-4 items-center gap-3">
               <Label htmlFor="username" className="text-right">
                 Usuario
               </Label>
@@ -80,12 +80,12 @@ export function UserDialog({
                 onChange={(e) =>
                   setFormData({ ...formData, username: e.target.value })
                 }
-                className="col-span-3"
+                className="col-span-3 w-auto min-w-[220px] max-w-full"
                 required
                 disabled={!!user} // Username cannot be changed
               />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
+            <div className="grid grid-cols-4 items-center gap-3">
               <Label htmlFor="name" className="text-right">
                 Nombre
               </Label>
@@ -95,10 +95,10 @@ export function UserDialog({
                 onChange={(e) =>
                   setFormData({ ...formData, name: e.target.value })
                 }
-                className="col-span-3"
+                className="col-span-3 w-auto min-w-[220px] max-w-full"
               />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
+            <div className="grid grid-cols-4 items-center gap-3">
               <Label htmlFor="email" className="text-right">
                 Email
               </Label>
@@ -109,13 +109,13 @@ export function UserDialog({
                 onChange={(e) =>
                   setFormData({ ...formData, email: e.target.value })
                 }
-                className="col-span-3"
+                className="col-span-3 w-auto min-w-[220px] max-w-full"
                 required
               />
             </div>
             {!user && (
               <>
-                <div className="grid grid-cols-4 items-center gap-4">
+                <div className="grid grid-cols-4 items-center gap-3">
                   <Label htmlFor="password" className="text-right">
                     Contraseña
                   </Label>
@@ -126,11 +126,11 @@ export function UserDialog({
                     onChange={(e) =>
                       setFormData({ ...formData, password: e.target.value })
                     }
-                    className="col-span-3"
+                    className="col-span-3 w-auto min-w-[220px] max-w-full"
                     required
                   />
                 </div>
-                <div className="grid grid-cols-4 items-center gap-4">
+                <div className="grid grid-cols-4 items-center gap-3">
                   <Label htmlFor="password_confirm" className="text-right">
                     Confirmar
                   </Label>
@@ -144,7 +144,7 @@ export function UserDialog({
                         password_confirm: e.target.value,
                       })
                     }
-                    className="col-span-3"
+                    className="col-span-3 w-auto min-w-[220px] max-w-full"
                     required
                   />
                 </div>

@@ -1,6 +1,16 @@
 import { User } from "../types";
 import { Button } from "@/components/ui/button";
-import { Edit, Trash2 } from "lucide-react";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import {
+  Edit,
+  Mail,
+  Shield,
+  ShieldCheck,
+  Trash2,
+  User as UserIcon,
+  Wifi,
+} from "lucide-react";
 
 interface UsersTableProps {
   users: User[];
@@ -10,96 +20,126 @@ interface UsersTableProps {
 
 export function UsersTable({ users, onEdit, onDelete }: UsersTableProps) {
   return (
-    <div className="w-full overflow-auto">
-      <table className="w-full caption-bottom text-sm">
-        <thead className="[&_tr]:border-b">
-          <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-            <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-              Usuario
-            </th>
-            <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-              Email
-            </th>
-            <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-              Nombre
-            </th>
-            <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-              Rol
-            </th>
-            <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-              Estado
-            </th>
-            <th className="h-12 px-4 text-right align-middle font-medium text-muted-foreground">
-              Acciones
-            </th>
-          </tr>
-        </thead>
-        <tbody className="[&_tr:last-child]:border-0">
-          {users.length === 0 ? (
-            <tr>
-              <td colSpan={6} className="p-4 text-center text-muted-foreground">
-                No hay usuarios registrados.
-              </td>
+    <div className="w-full overflow-hidden rounded-xl border bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+      <div className="w-full">
+        <table className="w-full table-auto caption-bottom text-sm">
+          <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+            <tr className="[&_th]:px-5 [&_th]:py-3 [&_th]:text-left [&_th]:font-semibold">
+              <th>Usuario</th>
+              <th>Email</th>
+              <th>Rol</th>
+              <th>Estado</th>
+              <th className="text-right">Acciones</th>
             </tr>
-          ) : (
-            users.map((user) => (
-              <tr
-                key={user.id}
-                className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
-              >
-                <td className="p-4 align-middle font-medium">
-                  {user.username}
-                </td>
-                <td className="p-4 align-middle">{user.email}</td>
-                <td className="p-4 align-middle">{user.name || "-"}</td>
-                <td className="p-4 align-middle">
-                  {user.is_staff ? (
-                    <span className="inline-flex items-center rounded-full bg-purple-100 px-2.5 py-0.5 text-xs font-medium text-purple-800">
-                      Admin
-                    </span>
-                  ) : (
-                    <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800">
-                      Usuario
-                    </span>
-                  )}
-                </td>
-                <td className="p-4 align-middle">
-                  <span
-                    className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                      user.is_active
-                        ? "bg-green-100 text-green-800"
-                        : "bg-red-100 text-red-800"
-                    }`}
-                  >
-                    {user.is_active ? "Activo" : "Inactivo"}
-                  </span>
-                </td>
-                <td className="p-4 align-middle text-right">
-                  <div className="flex justify-end gap-2">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => onEdit(user)}
-                      aria-label={`Editar ${user.username}`}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                      onClick={() => onDelete(user.id)}
-                      aria-label={`Eliminar ${user.username}`}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
+          </thead>
+          <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+            {users.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={5}
+                  className="p-6 text-center text-muted-foreground"
+                >
+                  No hay usuarios registrados.
                 </td>
               </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+            ) : (
+              users.map((user) => (
+                <tr
+                  key={user.id}
+                  className="transition-colors hover:bg-slate-50/80 dark:hover:bg-slate-800/80"
+                >
+                  <td className="px-5 py-4 align-middle">
+                    <div className="flex items-center gap-3">
+                      <Avatar className="h-10 w-10 border bg-slate-50 dark:border-slate-700 dark:bg-slate-800">
+                        <AvatarFallback className="bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-200">
+                          {getInitials(user.name || user.username)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="space-y-0.5">
+                        <p className="font-semibold text-foreground">
+                          {user.name || user.username}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          @{user.username}
+                        </p>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-5 py-4 align-middle">
+                    <div className="flex items-center gap-2 text-sm text-foreground">
+                      <Mail className="h-4 w-4 text-muted-foreground" />
+                      <span className="truncate">
+                        {user.email || "Sin email"}
+                      </span>
+                    </div>
+                  </td>
+                  <td className="px-5 py-4 align-middle">
+                    {user.is_staff ? (
+                      <Badge className="gap-1 bg-purple-50 text-purple-700 hover:bg-purple-50 dark:bg-purple-900/30 dark:text-purple-200">
+                        <ShieldCheck className="h-3.5 w-3.5" />
+                        Admin
+                      </Badge>
+                    ) : (
+                      <Badge
+                        variant="secondary"
+                        className="gap-1 text-slate-700 dark:bg-slate-800 dark:text-slate-100"
+                      >
+                        <Shield className="h-3.5 w-3.5" />
+                        Usuario
+                      </Badge>
+                    )}
+                  </td>
+                  <td className="px-5 py-4 align-middle">
+                    {user.is_active ? (
+                      <Badge className="gap-1 bg-emerald-50 text-emerald-700 hover:bg-emerald-50 dark:bg-emerald-900/30 dark:text-emerald-200">
+                        <Wifi className="h-3.5 w-3.5" />
+                        Activo
+                      </Badge>
+                    ) : (
+                      <Badge className="gap-1 bg-rose-50 text-rose-700 hover:bg-rose-50 dark:bg-rose-900/30 dark:text-rose-200">
+                        <UserIcon className="h-3.5 w-3.5" />
+                        Inactivo
+                      </Badge>
+                    )}
+                  </td>
+                  <td className="px-5 py-4 align-middle text-right">
+                    <div className="flex justify-end gap-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="hover:bg-emerald-50 hover:text-emerald-700 dark:hover:bg-emerald-900/30 dark:hover:text-emerald-200"
+                        onClick={() => onEdit(user)}
+                        aria-label={`Editar ${user.username}`}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-rose-600 hover:bg-rose-50 hover:text-rose-700 dark:text-rose-200 dark:hover:bg-rose-900/30"
+                        onClick={() => onDelete(user.id)}
+                        aria-label={`Eliminar ${user.username}`}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
+}
+
+function getInitials(text: string) {
+  if (!text) return "U";
+  const parts = text.trim().split(" ");
+  const initials =
+    parts.length > 1
+      ? parts[0].charAt(0) + parts[1].charAt(0)
+      : text.slice(0, 2);
+  return initials.toUpperCase();
 }
