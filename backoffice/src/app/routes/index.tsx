@@ -12,6 +12,7 @@ import { EventsPage } from "@/features/events/pages/EventsPage";
 import { LandingPage } from "@/features/landing/pages/LandingPage";
 import { TestFormPage } from "@/features/test/pages/TestFormPage";
 import { ROUTES } from "@/lib/config/constants";
+import { SocialLinksPage } from "@/features/social/pages/SocialLinksPage";
 
 /**
  * Application routing configuration
@@ -74,6 +75,10 @@ export const router = createBrowserRouter([
       {
         path: "events",
         element: <EventsPage />,
+      },
+      {
+        path: "social",
+        element: <SocialLinksPage />,
       },
     ],
   },

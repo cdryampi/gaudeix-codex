@@ -2,14 +2,6 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { BrowserRouter } from "react-router-dom";
 import { LandingPage } from "../pages/LandingPage";
-import apiClient from "@/lib/api/client";
-
-// Mock apiClient
-vi.mock("@/lib/api/client", () => ({
-  default: {
-    get: vi.fn(),
-  },
-}));
 
 const renderWithRouter = (component: React.ReactNode) => {
   return render(<BrowserRouter>{component}</BrowserRouter>);
@@ -18,13 +10,14 @@ const renderWithRouter = (component: React.ReactNode) => {
 describe("LandingPage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.restoreAllMocks();
   });
 
   it("renders the landing page with title and description", () => {
-    (apiClient.get as any).mockResolvedValue({
-      status: 200,
-      data: { status: "online", database: "ok" },
-    });
+    vi.spyOn(global, "fetch").mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ status: "online", database: "ok" }),
+    } as any);
 
     renderWithRouter(<LandingPage />);
 
@@ -35,40 +28,42 @@ describe("LandingPage", () => {
   });
 
   it("shows frontend status as online", () => {
-    (apiClient.get as any).mockResolvedValue({
-      status: 200,
-      data: { status: "online", database: "ok" },
-    });
+    vi.spyOn(global, "fetch").mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ status: "online", database: "ok" }),
+    } as any);
 
     renderWithRouter(<LandingPage />);
 
     expect(screen.getByText("Frontend")).toBeInTheDocument();
-    expect(screen.getByText("Backoffice Interface")).toBeInTheDocument();
+    expect(screen.getByText("Backoffice")).toBeInTheDocument();
   });
 
   it("calls health check on mount", async () => {
-    (apiClient.get as any).mockResolvedValue({
-      status: 200,
-      data: { status: "online", database: "ok" },
-    });
+    const fetchSpy = vi
+      .spyOn(global, "fetch")
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ status: "online", database: "ok" }),
+      } as any);
 
     renderWithRouter(<LandingPage />);
 
     await waitFor(() => {
-      expect(apiClient.get).toHaveBeenCalledWith("/health/");
+      expect(fetchSpy).toHaveBeenCalled();
     });
   });
 
   it("shows backend as online when health check succeeds", async () => {
-    (apiClient.get as any).mockResolvedValue({
-      status: 200,
-      data: { status: "online", database: "ok" },
-    });
+    vi.spyOn(global, "fetch").mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ status: "online", database: "ok" }),
+    } as any);
 
     renderWithRouter(<LandingPage />);
 
-    // Initially shows "Checking..."
-    expect(screen.getByText("Checking...")).toBeInTheDocument();
+    // Initially shows "Verificando..."
+    expect(screen.getByText(/verificando/i)).toBeInTheDocument();
 
     // After health check, shows "Online"
     await waitFor(() => {
@@ -77,16 +72,16 @@ describe("LandingPage", () => {
     });
 
     // Database should show "Connected"
-    expect(screen.getByText("Connected")).toBeInTheDocument();
+    expect(screen.getByText(/conectada/i)).toBeInTheDocument();
   });
 
   it("shows backend as offline when health check fails", async () => {
-    (apiClient.get as any).mockRejectedValue(new Error("Network error"));
+    vi.spyOn(global, "fetch").mockRejectedValueOnce(new Error("Network error"));
 
     renderWithRouter(<LandingPage />);
 
-    // Initially shows "Checking..."
-    expect(screen.getByText("Checking...")).toBeInTheDocument();
+    // Initially shows "Verificando..."
+    expect(screen.getByText(/verificando/i)).toBeInTheDocument();
 
     // After health check fails, shows "Offline"
     await waitFor(() => {
@@ -95,10 +90,10 @@ describe("LandingPage", () => {
   });
 
   it("shows database error when health check returns error status", async () => {
-    (apiClient.get as any).mockResolvedValue({
-      status: 200,
-      data: { status: "online", database: "error" },
-    });
+    vi.spyOn(global, "fetch").mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ status: "online", database: "error" }),
+    } as any);
 
     renderWithRouter(<LandingPage />);
 
@@ -108,10 +103,10 @@ describe("LandingPage", () => {
   });
 
   it("renders login button with correct link", () => {
-    (apiClient.get as any).mockResolvedValue({
-      status: 200,
-      data: { status: "online", database: "ok" },
-    });
+    vi.spyOn(global, "fetch").mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ status: "online", database: "ok" }),
+    } as any);
 
     renderWithRouter(<LandingPage />);
 

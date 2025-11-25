@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { Link } from "react-router-dom";
@@ -21,7 +21,7 @@ type LoginFormData = z.infer<typeof loginSchema> & { remember: boolean };
 
 export const LoginPage = () => {
   const navigate = useNavigate();
-  const { login, isLoading } = useAuth();
+  const { login, isLoading, isAuthenticated } = useAuth();
 
   const [formData, setFormData] = useState<LoginFormData>({
     username: "",
@@ -78,6 +78,12 @@ export const LoginPage = () => {
       }
     }
   };
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate(ROUTES.DASHBOARD, { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
 
   return (
     <AuthCard title="Bienvenido" subtitle="Accede a tu cuenta">

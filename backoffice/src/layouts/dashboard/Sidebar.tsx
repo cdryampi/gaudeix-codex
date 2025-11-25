@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { LayoutDashboard, Users, Image, Calendar } from "lucide-react";
+import { LayoutDashboard, Users, Image, Calendar, Share2 } from "lucide-react";
 import { ROUTES } from "@/lib/config/constants";
 
 const navigation = [
@@ -8,6 +8,7 @@ const navigation = [
   { name: "Usuarios", href: ROUTES.USERS, icon: Users },
   { name: "Media", href: ROUTES.MEDIA, icon: Image },
   { name: "Eventos", href: ROUTES.EVENTS, icon: Calendar },
+  { name: "Social", href: ROUTES.SOCIAL, icon: Share2 },
 ];
 
 export function Sidebar() {
