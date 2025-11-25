@@ -11,6 +11,19 @@ Este directorio contiene la configuración base de Django para el proyecto **gau
    pip install -r requirements.txt
    ```
 
+### Entorno virtual usado por Codex
+
+El CLI de Codex ya tiene un entorno preparado en `backend/.venv_win`. Úsalo así:
+
+```bash
+# Activar (opcional) en bash:
+source backend/.venv_win/Scripts/activate
+
+# O ejecutar comandos directamente:
+backend/.venv_win/Scripts/python.exe manage.py migrate
+backend/.venv_win/Scripts/python.exe -m pytest
+```
+
 ## Variables de entorno
 
 Copie el archivo `.env.example` a `.env` y complete los valores necesarios:
@@ -38,3 +51,18 @@ ENVIRONMENT=test python manage.py test
 ```
 
 Si prefiere utilizar `pytest`, asegúrese de exportar `ENVIRONMENT=test` antes de ejecutarlo para que la configuración cargue la base de datos temporal.
+
+## Ejecutar con Codex/VS Code (evitar problemas de entorno)
+
+Si lanzas comandos desde el IDE o la terminal integrada, usa siempre el entorno `backend/.venv_win` para evitar errores y reintentos:
+
+```bash
+# Activar entorno (opcional):
+source backend/.venv_win/Scripts/activate
+
+# O ejecutar directo sin activar:
+backend/.venv_win/Scripts/python.exe manage.py migrate          # migraciones
+ENVIRONMENT=test backend/.venv_win/Scripts/python.exe -m pytest  # tests
+```
+
+Recomendación: configura en VS Code la opción de terminal por defecto a `backend/.venv_win/Scripts/python.exe` para que cualquier tarea o debug use ese intérprete automáticamente.

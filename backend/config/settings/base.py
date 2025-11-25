@@ -67,6 +67,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "parler",
     "social",
+    "events",
     "drf_spectacular",
     "dj_rest_auth",
     "django.contrib.sites",

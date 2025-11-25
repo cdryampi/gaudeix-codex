@@ -47,3 +47,9 @@ def register_routes(router: DefaultRouter) -> None:
     # Prefijo: media/documents (se combina con prefijo del router principal)
     # Basename: media-documents (para reverse URLs)
     router.register("media/documents", DocumentFileViewSet, basename="media-documents")
+
+
+# Uso standalone opcional (sin router global)
+router = DefaultRouter()
+register_routes(router)
+urlpatterns = router.urls

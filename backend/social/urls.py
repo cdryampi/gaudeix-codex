@@ -10,8 +10,7 @@ def register_routes(router: DefaultRouter):
     """
     router.register(r'social-links', SocialLinkViewSet, basename='sociallink')
 
-# We can keep urlpatterns for standalone usage if needed, but for now we focus on router integration.
-# If standalone is needed:
-# router = DefaultRouter()
-# register_routes(router)
-# urlpatterns = [path('', include(router.urls))]
+# Standalone usage (optional): include social.urls directly.
+router = DefaultRouter()
+register_routes(router)
+urlpatterns = router.urls
