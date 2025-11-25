@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from django.core.files.storage import default_storage
 from rest_framework import serializers
 
 from .models import DocumentFile, ImageFile
@@ -24,6 +25,8 @@ class ImageFileSerializer(serializers.ModelSerializer):
         4. super().create() guarda en BD
         5. Señal post_save genera variantes automáticamente
     """
+    original_name = serializers.CharField(required=False, allow_blank=True)
+    thumbnail_url = serializers.SerializerMethodField()
     
     class Meta:
         model = ImageFile
@@ -36,6 +39,7 @@ class ImageFileSerializer(serializers.ModelSerializer):
             "variant_thumbnail",  # Ruta a thumbnail (150px)
             "variant_medium",     # Ruta a medium (600px)
             "variant_large",      # Ruta a large (1200px)
+            "thumbnail_url",      # URL absoluta de la miniatura (útil en backoffice)
             "created_at",         # Timestamp de creación
             "updated_at",         # Timestamp de actualización
         ]
@@ -43,12 +47,12 @@ class ImageFileSerializer(serializers.ModelSerializer):
         # Se generan/extraen automáticamente
         read_only_fields = [
             "id",
-            "original_name",      # Extraído de file.name
             "mime_type",          # Extraído de file.content_type
             "size_bytes",         # Extraído de file.size
             "variant_thumbnail",  # Generado por señal
             "variant_medium",     # Generado por señal
             "variant_large",      # Generado por señal
+            "thumbnail_url",
             "created_at",         # auto_now_add=True
             "updated_at",         # auto_now=True
         ]
@@ -87,6 +91,40 @@ class ImageFileSerializer(serializers.ModelSerializer):
             validated_data["size_bytes"] = file.size
         return super().create(validated_data)
 
+    def get_thumbnail_url(self, obj: ImageFile) -> str:
+        """
+        Devuelve URL absoluta para la miniatura si existe.
+        """
+        if not obj.variant_thumbnail:
+            return ""
+        try:
+            return self.context["request"].build_absolute_uri(default_storage.url(obj.variant_thumbnail))
+        except Exception:
+            return default_storage.url(obj.variant_thumbnail)
+
+    def to_representation(self, instance):
+        """
+        Asegura que las variantes devuelvan URL absolutas cuando hay request en contexto.
+        """
+        rep = super().to_representation(instance)
+        request = self.context.get("request")
+
+        def build_url(path: str) -> str:
+            if not path:
+                return ""
+            url = default_storage.url(path)
+            if request:
+                try:
+                    return request.build_absolute_uri(url)
+                except Exception:
+                    return url
+            return url
+
+        rep["variant_thumbnail"] = build_url(instance.variant_thumbnail)
+        rep["variant_medium"] = build_url(instance.variant_medium)
+        rep["variant_large"] = build_url(instance.variant_large)
+        return rep
+
 
 class DocumentFileSerializer(serializers.ModelSerializer):
     """
@@ -121,7 +159,6 @@ class DocumentFileSerializer(serializers.ModelSerializer):
         # Campos que no pueden ser escritos directamente
         read_only_fields = [
             "id",
-            "original_name",  # Extraído de file.name
             "mime_type",      # Extraído de file.content_type
             "size_bytes",     # Extraído de file.size
             "created_at",     # auto_now_add=True
@@ -158,3 +195,4 @@ class DocumentFileSerializer(serializers.ModelSerializer):
             validated_data["mime_type"] = getattr(file, "content_type", "") or ""
             validated_data["size_bytes"] = file.size
         return super().create(validated_data)
+    original_name = serializers.CharField(required=False, allow_blank=True)

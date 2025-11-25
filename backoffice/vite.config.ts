@@ -11,6 +11,12 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  optimizeDeps: {
+    exclude: ["@radix-ui/react-scroll-area"],
+  },
+  ssr: {
+    noExternal: ["@radix-ui/react-scroll-area"],
+  },
   test: {
     globals: true,
     environment: "jsdom",

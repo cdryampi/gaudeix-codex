@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from rest_framework import mixins, viewsets
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from .models import DocumentFile, ImageFile
 from .serializers import DocumentFileSerializer, ImageFileSerializer
@@ -10,6 +11,7 @@ class ImageFileViewSet(
     mixins.ListModelMixin,      # GET /media/images/ - Listar todas
     mixins.RetrieveModelMixin,  # GET /media/images/{id}/ - Obtener una
     mixins.CreateModelMixin,    # POST /media/images/ - Crear nueva
+    mixins.UpdateModelMixin,    # PATCH /media/images/{id}/ - Actualizar (renombrar)
     mixins.DestroyModelMixin,   # DELETE /media/images/{id}/ - Eliminar
     viewsets.GenericViewSet,
 ):
@@ -45,12 +47,19 @@ class ImageFileViewSet(
     # Queryset ordenado por más recientes primero
     queryset = ImageFile.objects.order_by("-created_at")
     serializer_class = ImageFileSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_permissions(self):
+        if self.action in ["list", "retrieve"]:
+            return [AllowAny()]
+        return [IsAuthenticated()]
 
 
 class DocumentFileViewSet(
     mixins.ListModelMixin,      # GET /media/documents/ - Listar todos
     mixins.RetrieveModelMixin,  # GET /media/documents/{id}/ - Obtener uno
     mixins.CreateModelMixin,    # POST /media/documents/ - Crear nuevo
+    mixins.UpdateModelMixin,    # PATCH /media/documents/{id}/ - Actualizar (renombrar)
     mixins.DestroyModelMixin,   # DELETE /media/documents/{id}/ - Eliminar
     viewsets.GenericViewSet,
 ):
@@ -86,3 +95,9 @@ class DocumentFileViewSet(
     # Queryset ordenado por más recientes primero
     queryset = DocumentFile.objects.order_by("-created_at")
     serializer_class = DocumentFileSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_permissions(self):
+        if self.action in ["list", "retrieve"]:
+            return [AllowAny()]
+        return [IsAuthenticated()]
