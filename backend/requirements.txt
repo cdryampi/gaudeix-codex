@@ -14,5 +14,6 @@ djangorestframework-simplejwt[crypto]
 django-allauth
 requests
 django-simple-history
+django-solo
 
 

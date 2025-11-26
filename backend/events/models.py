@@ -3,14 +3,44 @@ from __future__ import annotations
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
-from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from parler.models import TranslatableModel, TranslatedFields
+from solo.models import SingletonModel
+
+from core.models import ContentBase
 
 
-class Event(TranslatableModel):
+class EventCategorySingleton(SingletonModel):
+    """
+    Singleton model to hold the default 'Events' category.
+    This ensures all events are under a single category hierarchy.
+    """
+
+    category = models.ForeignKey(
+        "core.Category",
+        on_delete=models.PROTECT,
+        related_name="event_singleton",
+        verbose_name=_("Events Category"),
+        help_text=_("The root category for all events"),
+    )
+
+    class Meta:
+        verbose_name = _("Events Category Configuration")
+
+    def __str__(self) -> str:
+        return f"Events Category: {self.category}"
+
+    @classmethod
+    def get_default_category(cls):
+        """Get the default events category, creating singleton if needed."""
+        singleton = cls.get_solo()
+        return singleton.category if singleton.category_id else None
+
+
+class Event(ContentBase, TranslatableModel):
     """
     Event model with multilingual support via django-parler.
+    Inherits slug and audit fields from ContentBase.
     """
 
     translations = TranslatedFields(
@@ -18,7 +48,16 @@ class Event(TranslatableModel):
         description=models.TextField(_("Description"), blank=True),
     )
 
-    slug = models.SlugField(_("Slug"), max_length=220, unique=True)
+    category = models.ForeignKey(
+        "core.Category",
+        on_delete=models.PROTECT,
+        related_name="events",
+        null=True,
+        blank=True,
+        verbose_name=_("Category"),
+        help_text=_("Category for this event (defaults to Events category)"),
+    )
+
     start_at = models.DateTimeField(_("Start at"))
     end_at = models.DateTimeField(_("End at"), null=True, blank=True)
     is_published = models.BooleanField(_("Is published"), default=True)
@@ -47,9 +86,6 @@ class Event(TranslatableModel):
         help_text=_("Document attachments linked to this event."),
     )
 
-    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
-    updated_at = models.DateTimeField(_("Updated at"), auto_now=True)
-
     class Meta:
         ordering = ("start_at", "id")
         verbose_name = _("Event")
@@ -62,14 +98,33 @@ class Event(TranslatableModel):
     def is_future(self) -> bool:
         return self.start_at > timezone.now()
 
+    # Backward compatibility properties for API
+    @property
+    def created_at(self):
+        """Alias for fecha_creacion from BaseModel."""
+        return self.fecha_creacion
+
+    @property
+    def updated_at(self):
+        """Alias for fecha_modificacion from BaseModel."""
+        return self.fecha_modificacion
+
     def clean(self) -> None:
         super().clean()
         if self.end_at and self.end_at < self.start_at:
             raise ValidationError({"end_at": _("End date cannot be before start date.")})
 
     def save(self, *args, **kwargs):
+        # Auto-assign default category if not set
+        if not self.category_id:
+            default_category = EventCategorySingleton.get_default_category()
+            if default_category:
+                self.category = default_category
+
+        # ContentBase handles slug generation, but we override to use translated title
         if not self.slug:
             self.slug = self._generate_unique_slug()
+        
         self.full_clean()
         super().save(*args, **kwargs)
 
@@ -77,6 +132,8 @@ class Event(TranslatableModel):
         """
         Generate a unique slug based on the translated title.
         """
+        from django.utils.text import slugify
+
         if self.pk:
             base_title = self.safe_translation_getter("title", any_language=True) or "event"
         else:

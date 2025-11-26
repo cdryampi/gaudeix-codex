@@ -9,7 +9,8 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from events.models import Event
+from core.models import Category
+from events.models import Event, EventCategorySingleton
 from media_files.models import DocumentFile, ImageFile
 
 User = get_user_model()
@@ -26,6 +27,26 @@ def media_root(settings, tmp_path):
 @pytest.fixture
 def sample_files_path() -> Path:
     return Path(__file__).resolve().parent / "files"
+
+
+@pytest.fixture
+def events_category() -> Category:
+    """Create the default events category."""
+    category = Category.objects.create(nombre="Events")
+    category.set_current_language("ca")
+    category.nombre = "Esdeveniments"
+    category.save()
+    category.set_current_language("es")
+    category.nombre = "Eventos"
+    category.save()
+    return category
+
+
+@pytest.fixture
+def events_singleton(events_category) -> EventCategorySingleton:
+    """Create the events category singleton."""
+    singleton = EventCategorySingleton.objects.create(category=events_category)
+    return singleton
 
 
 @pytest.fixture
@@ -52,7 +73,7 @@ def sample_image(sample_files_path) -> ImageFile:
         )
 
 
-def test_get_events_list(media_root):
+def test_get_events_list(media_root, events_singleton):
     Event.objects.create(
         title="Listed Event",
         start_at=timezone.now() + timezone.timedelta(days=1),
@@ -64,9 +85,13 @@ def test_get_events_list(media_root):
 
     assert response.status_code == status.HTTP_200_OK
     assert len(response.data) == 1
+    # Test backward compatibility: created_at and updated_at in response
+    event_data = response.data[0]
+    assert "created_at" in event_data
+    assert "updated_at" in event_data
 
 
-def test_create_event_requires_authentication(media_root):
+def test_create_event_requires_authentication(media_root, events_singleton):
     client = APIClient()
     url = reverse("event-list")
     data = {
@@ -80,7 +105,7 @@ def test_create_event_requires_authentication(media_root):
     assert Event.objects.count() == 0
 
 
-def test_create_event_authenticated(media_root, sample_document, sample_image):
+def test_create_event_authenticated(media_root, events_singleton, sample_document, sample_image):
     user = User.objects.create_user(username="creator", password="pass123")
     client = APIClient()
     client.force_authenticate(user=user)
@@ -112,7 +137,7 @@ def test_create_event_authenticated(media_root, sample_document, sample_image):
     assert event.attachments.count() == 1
 
 
-def test_retrieve_event_detail(media_root, sample_document, sample_image):
+def test_retrieve_event_detail(media_root, events_singleton, sample_document, sample_image):
     event = Event.objects.create(
         title="Detail Event",
         description="Detail description",
@@ -132,7 +157,7 @@ def test_retrieve_event_detail(media_root, sample_document, sample_image):
     assert len(response.data["attachments"]) == 1
 
 
-def test_update_event_authenticated(media_root):
+def test_update_event_authenticated(media_root, events_singleton):
     user = User.objects.create_user(username="editor", password="pass123")
     event = Event.objects.create(
         title="Old Title",
@@ -152,7 +177,7 @@ def test_update_event_authenticated(media_root):
     assert event.is_published is False
 
 
-def test_delete_event_authenticated(media_root):
+def test_delete_event_authenticated(media_root, events_singleton):
     user = User.objects.create_user(username="deleter", password="pass123")
     event = Event.objects.create(
         title="To Delete",
