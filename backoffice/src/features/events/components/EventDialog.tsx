@@ -8,6 +8,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import { CreateEventDTO, Event } from "../types";
 import { mediaApi } from "@/features/media/api/media";
 import { MediaItem } from "@/features/media/types";
@@ -191,12 +192,12 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
 
           <div className="space-y-2">
             <Label htmlFor="description">Descripción</Label>
-            <textarea
-              id="description"
-              name="description"
+            <RichTextEditor
               value={formData.description || ""}
-              onChange={handleChange}
-              className="min-h-[96px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+              onChange={(value) =>
+                setFormData((prev) => ({ ...prev, description: value }))
+              }
+              placeholder="Describe el evento en detalle..."
             />
           </div>
 
@@ -214,8 +215,12 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
           <div className="space-y-3 rounded-lg border border-border/60 bg-muted/30 p-3">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-semibold text-foreground">Imagen destacada</p>
-                <p className="text-xs text-muted-foreground">Miniatura visible en listados</p>
+                <p className="text-sm font-semibold text-foreground">
+                  Imagen destacada
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Miniatura visible en listados
+                </p>
               </div>
               <div className="flex gap-2">
                 <input
@@ -235,7 +240,11 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
                 </Button>
                 <select
                   value={selectedImageId ?? ""}
-                  onChange={(e) => setSelectedImageId(e.target.value ? Number(e.target.value) : null)}
+                  onChange={(e) =>
+                    setSelectedImageId(
+                      e.target.value ? Number(e.target.value) : null
+                    )
+                  }
                   className="h-10 rounded-md border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
                 >
                   <option value="">Sin imagen</option>
@@ -251,15 +260,20 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
               <div className="flex items-center gap-3 rounded-md bg-background/60 p-2">
                 <img
                   src={
-                    images.find((img) => img.id === selectedImageId)?.thumbnail_url ||
-                    images.find((img) => img.id === selectedImageId)?.variant_thumbnail ||
+                    images.find((img) => img.id === selectedImageId)
+                      ?.thumbnail_url ||
+                    images.find((img) => img.id === selectedImageId)
+                      ?.variant_thumbnail ||
                     images.find((img) => img.id === selectedImageId)?.file
                   }
                   alt="Miniatura"
                   className="h-14 w-14 rounded object-cover ring-1 ring-border"
                 />
                 <p className="text-sm text-foreground">
-                  {images.find((img) => img.id === selectedImageId)?.original_name}
+                  {
+                    images.find((img) => img.id === selectedImageId)
+                      ?.original_name
+                  }
                 </p>
                 <Button
                   type="button"
@@ -277,8 +291,12 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
           <div className="space-y-3 rounded-lg border border-border/60 bg-muted/30 p-3">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-semibold text-foreground">Adjuntos</p>
-                <p className="text-xs text-muted-foreground">Documentos vinculados al evento</p>
+                <p className="text-sm font-semibold text-foreground">
+                  Adjuntos
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Documentos vinculados al evento
+                </p>
               </div>
               <div className="flex gap-2">
                 <input
@@ -300,7 +318,9 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
                   multiple
                   value={selectedDocs.map(String)}
                   onChange={(e) => {
-                    const values = Array.from(e.target.selectedOptions).map((opt) => Number(opt.value));
+                    const values = Array.from(e.target.selectedOptions).map(
+                      (opt) => Number(opt.value)
+                    );
                     setSelectedDocs(values);
                   }}
                   className="h-24 rounded-md border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"

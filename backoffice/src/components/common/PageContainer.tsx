@@ -7,10 +7,9 @@ interface PageContainerProps {
 }
 
 /**
- * PageContainer provides consistent padding and max-width for pages
+ * PageContainer - Consistent spacing for all pages
+ * Removed from this component since DashboardLayout handles it
  */
 export function PageContainer({ children, className }: PageContainerProps) {
-  return (
-    <div className={cn("mx-auto w-full max-w-7xl", className)}>{children}</div>
-  );
+  return <div className={cn("space-y-6", className)}>{children}</div>;
 }

@@ -4,6 +4,17 @@ import { PageContainer, PageHeader } from "@/components/common";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
 import { Plus, ShieldCheck, Users as UsersIcon, UserCheck } from "lucide-react";
 import { UsersTable } from "../components/UsersTable";
 import { UserDialog } from "../components/UserDialog";
@@ -16,6 +27,7 @@ export function UsersPage() {
   const [error, setError] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | undefined>(undefined);
+  const [deleteUserId, setDeleteUserId] = useState<number | null>(null);
 
   const stats = useMemo(() => {
     const total = users.length;
@@ -53,14 +65,21 @@ export function UsersPage() {
   };
 
   const handleDelete = async (userId: number) => {
-    if (confirm("¿Estás seguro de que quieres eliminar este usuario?")) {
-      try {
-        await usersApi.delete(userId);
-        await fetchUsers();
-      } catch (err) {
-        console.error("Error deleting user:", err);
-        alert("Error al eliminar el usuario.");
-      }
+    setDeleteUserId(userId);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deleteUserId) return;
+
+    try {
+      await usersApi.delete(deleteUserId);
+      await fetchUsers();
+      toast.success("Usuario eliminado correctamente");
+    } catch (err) {
+      console.error("Error deleting user:", err);
+      toast.error("Error al eliminar el usuario");
+    } finally {
+      setDeleteUserId(null);
     }
   };
 
@@ -68,14 +87,16 @@ export function UsersPage() {
     try {
       if (editingUser) {
         await usersApi.update(editingUser.id, data);
+        toast.success("Usuario actualizado correctamente");
       } else {
         await usersApi.create(data);
+        toast.success("Usuario creado correctamente");
       }
       setIsDialogOpen(false);
       await fetchUsers();
     } catch (err) {
       console.error("Error saving user:", err);
-      alert("Error al guardar el usuario.");
+      toast.error("Error al guardar el usuario");
     }
   };
 
@@ -85,32 +106,77 @@ export function UsersPage() {
         title="Usuarios"
         description="Gestión de usuarios del sistema"
         actions={
-          <Button onClick={handleCreate}>
+          <Button onClick={handleCreate} size="sm">
             <Plus className="mr-2 h-4 w-4" />
-            Nuevo Usuario
+            Nuevo usuario
           </Button>
         }
       />
 
-      <div className="mb-4 grid gap-3 md:grid-cols-3">
-        <StatPill
-          icon={UsersIcon}
-          label="Total"
-          value={stats.total}
-          tone="primary"
-        />
-        <StatPill icon={UserCheck} label="Activos" value={stats.active} />
-        <StatPill icon={ShieldCheck} label="Admins" value={stats.admins} />
+      <div className="mb-6 grid gap-4 md:grid-cols-3">
+        <Card className="border-border bg-card">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                <UsersIcon className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Total usuarios
+                </p>
+                <p className="text-2xl font-semibold text-foreground">
+                  {stats.total}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-border bg-card">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
+                <UserCheck className="h-5 w-5 text-muted-foreground" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Activos
+                </p>
+                <p className="text-2xl font-semibold text-foreground">
+                  {stats.active}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-border bg-card">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
+                <ShieldCheck className="h-5 w-5 text-muted-foreground" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Administradores
+                </p>
+                <p className="text-2xl font-semibold text-foreground">
+                  {stats.admins}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
-      <Card className="border shadow-sm">
+      <Card className="border-border bg-card">
         <CardContent className="p-0">
           {loading ? (
             <div className="flex h-48 items-center justify-center text-muted-foreground">
               Cargando usuarios...
             </div>
           ) : error ? (
-            <div className="flex h-48 items-center justify-center text-red-500">
+            <div className="flex h-48 items-center justify-center text-destructive">
               {error}
             </div>
           ) : (
@@ -129,34 +195,30 @@ export function UsersPage() {
         onSubmit={handleSubmit}
         user={editingUser}
       />
-    </PageContainer>
-  );
-}
 
-type StatPillProps = {
-  icon: ElementType;
-  label: string;
-  value: number;
-  tone?: "primary" | "neutral";
-};
-
-function StatPill({ icon: Icon, label, value, tone = "neutral" }: StatPillProps) {
-  return (
-    <div className="flex items-center gap-3 rounded-xl border bg-white px-4 py-3 shadow-sm">
-      <div
-        className={`flex h-10 w-10 items-center justify-center rounded-lg ${
-          tone === "primary" ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-600"
-        }`}
+      <AlertDialog
+        open={deleteUserId !== null}
+        onOpenChange={() => setDeleteUserId(null)}
       >
-        <Icon className="h-5 w-5" />
-      </div>
-      <div>
-        <p className="text-xs font-medium text-muted-foreground">{label}</p>
-        <p className="text-lg font-semibold text-foreground">{value}</p>
-      </div>
-      <Badge variant="outline" className="ml-auto text-xs">
-        En vivo
-      </Badge>
-    </div>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta acción no se puede deshacer. El usuario será eliminado
+              permanentemente del sistema.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Eliminar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </PageContainer>
   );
 }

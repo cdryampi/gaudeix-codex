@@ -3,6 +3,17 @@ import { PageContainer, PageHeader } from "@/components/common";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
 import { Globe2, Link2, Plus, Share2 } from "lucide-react";
 import { SocialLinkDialog } from "../components/SocialLinkDialog";
 import { SocialLinksTable } from "../components/SocialLinksTable";
@@ -15,6 +26,7 @@ export function SocialLinksPage() {
   const [error, setError] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingLink, setEditingLink] = useState<SocialLink | undefined>();
+  const [deleteLinkId, setDeleteLinkId] = useState<number | null>(null);
 
   const stats = useMemo(() => {
     const total = links.length;
@@ -58,14 +70,21 @@ export function SocialLinksPage() {
   };
 
   const handleDelete = async (id: number) => {
-    if (confirm("¿Eliminar este enlace social?")) {
-      try {
-        await socialLinksApi.delete(id);
-        await fetchLinks();
-      } catch (err) {
-        console.error("Error deleting social link:", err);
-        alert("No se pudo eliminar el enlace.");
-      }
+    setDeleteLinkId(id);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deleteLinkId) return;
+
+    try {
+      await socialLinksApi.delete(deleteLinkId);
+      await fetchLinks();
+      toast.success("Enlace eliminado correctamente");
+    } catch (err) {
+      console.error("Error deleting social link:", err);
+      toast.error("No se pudo eliminar el enlace");
+    } finally {
+      setDeleteLinkId(null);
     }
   };
 
@@ -73,14 +92,16 @@ export function SocialLinksPage() {
     try {
       if (editingLink) {
         await socialLinksApi.update(editingLink.id, data);
+        toast.success("Enlace actualizado correctamente");
       } else {
         await socialLinksApi.create(data);
+        toast.success("Enlace creado correctamente");
       }
       setIsDialogOpen(false);
       await fetchLinks();
     } catch (err) {
       console.error("Error saving social link:", err);
-      alert("No se pudo guardar el enlace.");
+      toast.error("No se pudo guardar el enlace");
     }
   };
 
@@ -98,7 +119,12 @@ export function SocialLinksPage() {
       />
 
       <div className="mb-4 grid gap-3 md:grid-cols-3">
-        <StatPill icon={Share2} label="Total" value={stats.total} tone="primary" />
+        <StatPill
+          icon={Share2}
+          label="Total"
+          value={stats.total}
+          tone="primary"
+        />
         <StatPill icon={Globe2} label="Activos" value={stats.active} />
         <StatPill icon={Link2} label="Con idiomas" value={stats.multiLang} />
       </div>
@@ -129,6 +155,30 @@ export function SocialLinksPage() {
         onSubmit={handleSubmit}
         link={editingLink}
       />
+
+      <AlertDialog
+        open={deleteLinkId !== null}
+        onOpenChange={() => setDeleteLinkId(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta acción no se puede deshacer. El enlace social será eliminado
+              permanentemente.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Eliminar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </PageContainer>
   );
 }
@@ -140,12 +190,19 @@ type StatPillProps = {
   tone?: "primary" | "neutral";
 };
 
-function StatPill({ icon: Icon, label, value, tone = "neutral" }: StatPillProps) {
+function StatPill({
+  icon: Icon,
+  label,
+  value,
+  tone = "neutral",
+}: StatPillProps) {
   return (
-    <div className="flex items-center gap-3 rounded-xl border bg-white px-4 py-3 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+    <div className="flex items-center gap-3 rounded-xl border border-border/50 bg-card px-4 py-3 shadow-sm hover:shadow-md transition-shadow">
       <div
         className={`flex h-10 w-10 items-center justify-center rounded-lg ${
-          tone === "primary" ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-600"
+          tone === "primary"
+            ? "bg-primary/10 text-primary"
+            : "bg-muted text-muted-foreground"
         }`}
       >
         <Icon className="h-5 w-5" />

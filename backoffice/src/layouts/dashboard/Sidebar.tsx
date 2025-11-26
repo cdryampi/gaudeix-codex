@@ -1,65 +1,104 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { LayoutDashboard, Users, Image, Calendar, Share2 } from "lucide-react";
+import {
+  LayoutDashboard,
+  FileText,
+  Tag,
+  FolderOpen,
+  MessageSquare,
+  Users,
+  Image,
+  Calendar,
+  Settings,
+} from "lucide-react";
 import { ROUTES } from "@/lib/config/constants";
 
-const navigation = [
-  { name: "Dashboard", href: ROUTES.DASHBOARD_HOME, icon: LayoutDashboard },
-  { name: "Usuarios", href: ROUTES.USERS, icon: Users },
+const panelNavigation = [
+  { name: "Resumen", href: ROUTES.DASHBOARD_HOME, icon: LayoutDashboard },
+];
+
+const contentNavigation = [
+  { name: "Posts", href: ROUTES.EVENTS, icon: FileText },
+  { name: "Redes sociales", href: ROUTES.SOCIAL, icon: Tag },
+  { name: "Categorías", href: "/categorias", icon: FolderOpen },
+  { name: "Comentarios", href: "/comentarios", icon: MessageSquare },
+];
+
+const mediaNavigation = [
   { name: "Media", href: ROUTES.MEDIA, icon: Image },
-  { name: "Eventos", href: ROUTES.EVENTS, icon: Calendar },
-  { name: "Social", href: ROUTES.SOCIAL, icon: Share2 },
+  { name: "Eventos", href: "/eventos-calendario", icon: Calendar },
+  { name: "Ubicaciones", href: "/ubicaciones", icon: Calendar },
+];
+
+const systemNavigation = [
+  { name: "Usuarios", href: ROUTES.USERS, icon: Users },
+  { name: "Ajustes", href: "/ajustes", icon: Settings },
 ];
 
 export function Sidebar() {
   const location = useLocation();
 
+  const NavSection = ({
+    title,
+    items,
+  }: {
+    title?: string;
+    items: typeof panelNavigation;
+  }) => (
+    <div className="space-y-1">
+      {title && (
+        <h3 className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground/60">
+          {title}
+        </h3>
+      )}
+      {items.map((item) => {
+        const isActive = location.pathname === item.href;
+        return (
+          <Link
+            key={item.name}
+            to={item.href}
+            className={cn(
+              "group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+              isActive
+                ? "bg-primary/10 text-primary"
+                : "text-muted-foreground hover:bg-accent hover:text-foreground"
+            )}
+          >
+            <item.icon
+              className={cn(
+                "h-4 w-4 flex-shrink-0",
+                isActive ? "text-primary" : "text-muted-foreground"
+              )}
+            />
+            {item.name}
+          </Link>
+        );
+      })}
+    </div>
+  );
+
   return (
-    <div className="flex h-full w-64 flex-col bg-gray-900">
+    <aside className="flex h-screen w-[220px] flex-col border-r border-border bg-sidebar">
       {/* Logo */}
-      <div className="flex h-16 items-center px-6">
-        <h1 className="text-xl font-bold text-white">Gaudeix</h1>
+      <div className="flex h-16 items-center gap-3 border-b border-border px-6">
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
+          <span className="text-sm font-bold text-primary-foreground">YA</span>
+        </div>
+        <div className="flex flex-col">
+          <h1 className="text-sm font-bold leading-none text-sidebar-foreground">
+            Backoffice
+          </h1>
+          <p className="text-xs text-muted-foreground">Panel editorial</p>
+        </div>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 space-y-1 px-3 py-4">
-        {navigation.map((item) => {
-          const isActive = location.pathname === item.href;
-          return (
-            <Link
-              key={item.name}
-              to={item.href}
-              className={cn(
-                "group flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                isActive
-                  ? "bg-gray-800 text-white"
-                  : "text-gray-300 hover:bg-gray-800 hover:text-white"
-              )}
-            >
-              <item.icon
-                className={cn(
-                  "mr-3 h-5 w-5 flex-shrink-0",
-                  isActive
-                    ? "text-white"
-                    : "text-gray-400 group-hover:text-white"
-                )}
-              />
-              {item.name}
-            </Link>
-          );
-        })}
+      <nav className="flex-1 space-y-6 overflow-y-auto px-3 py-6">
+        <NavSection title="Panel" items={panelNavigation} />
+        <NavSection title="Contenido" items={contentNavigation} />
+        <NavSection title="Media & Eventos" items={mediaNavigation} />
+        <NavSection title="Sistema" items={systemNavigation} />
       </nav>
-
-      {/* User section */}
-      <div className="border-t border-gray-800 p-4">
-        <div className="flex items-center">
-          <div className="h-8 w-8 rounded-full bg-gray-700" />
-          <div className="ml-3">
-            <p className="text-sm font-medium text-white">Admin User</p>
-            <p className="text-xs text-gray-400">admin@gaudeix.com</p>
-          </div>
-        </div>
-      </div>
-    </div>
+    </aside>
   );
 }

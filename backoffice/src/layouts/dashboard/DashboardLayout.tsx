@@ -3,25 +3,28 @@ import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
 
 /**
- * DashboardLayout provides the main structure for the dashboard:
- * - Fixed sidebar on the left
- * - Header at the top
- * - Main content area with scroll
+ * DashboardLayout - Supabase-style dark layout:
+ * - Fixed 220px sidebar with dark bg-sidebar
+ * - Minimalist header with 56px height
+ * - Main content area with proper dark background
+ * - Consistent spacing and overflow handling
  */
 export function DashboardLayout() {
   return (
-    <div className="flex h-screen bg-gray-50">
-      {/* Sidebar */}
+    <div className="flex h-screen bg-background">
+      {/* Sidebar - fixed left */}
       <Sidebar />
 
-      {/* Main content */}
-      <div className="flex flex-1 flex-col">
+      {/* Main content area */}
+      <div className="flex flex-1 flex-col overflow-hidden">
         {/* Header */}
         <Header />
 
-        {/* Page content */}
-        <main className="flex-1 p-6">
-          <Outlet />
+        {/* Page content with scroll */}
+        <main className="flex-1 overflow-y-auto bg-background p-6">
+          <div className="mx-auto max-w-7xl">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>

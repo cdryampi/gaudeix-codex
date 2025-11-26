@@ -13,7 +13,9 @@ vi.mock("../api/socialLinks", () => ({
 }));
 
 vi.mock("@/components/common", () => ({
-  PageContainer: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  PageContainer: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
   PageHeader: ({
     title,
     actions,
@@ -78,7 +80,6 @@ describe("SocialLinksPage CRUD", () => {
   });
 
   it("deletes a social link", async () => {
-    const confirmSpy = vi.spyOn(window, "confirm").mockImplementation(() => true);
     (socialLinksApi.delete as any).mockResolvedValue({});
 
     render(<SocialLinksPage />);
@@ -88,11 +89,25 @@ describe("SocialLinksPage CRUD", () => {
     });
 
     const deleteButtons = screen.getAllByRole("button", { name: /eliminar/i });
+
+    // Click delete button to open AlertDialog
     fireEvent.click(deleteButtons[0]);
 
-    expect(confirmSpy).toHaveBeenCalled();
-    expect(socialLinksApi.delete).toHaveBeenCalledWith(1);
+    // Wait for confirmation dialog to appear
+    await waitFor(() => {
+      expect(screen.getByText(/¿Estás seguro/i)).toBeInTheDocument();
+    });
 
+    // Find and click the confirmation button by its text content
+    const confirmButton = screen.getByRole("button", { name: /^Eliminar$/ });
+    fireEvent.click(confirmButton);
+
+    // Should call delete API
+    await waitFor(() => {
+      expect(socialLinksApi.delete).toHaveBeenCalledWith(1);
+    });
+
+    // Should refetch after deletion
     await waitFor(() => {
       expect(socialLinksApi.getAll).toHaveBeenCalledTimes(2);
     });

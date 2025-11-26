@@ -74,9 +74,6 @@ describe("UsersPage CRUD", () => {
   });
 
   it("can delete a user", async () => {
-    // Mock window.confirm
-    const confirmSpy = vi.spyOn(window, "confirm");
-    confirmSpy.mockImplementation(() => true);
     (usersApi.delete as any).mockResolvedValue({});
 
     render(<UsersPage />);
@@ -89,10 +86,22 @@ describe("UsersPage CRUD", () => {
     const deleteButtons = screen.getAllByRole("button", { name: /eliminar/i });
     const deleteBtn = deleteButtons[0];
 
+    // Click delete button to open AlertDialog
     fireEvent.click(deleteBtn);
 
-    expect(confirmSpy).toHaveBeenCalled();
-    expect(usersApi.delete).toHaveBeenCalledWith(1);
+    // Wait for confirmation dialog to appear
+    await waitFor(() => {
+      expect(screen.getByText(/¿Estás seguro/i)).toBeInTheDocument();
+    });
+
+    // Find and click the confirmation button by its text content
+    const confirmButton = screen.getByRole("button", { name: /^Eliminar$/ });
+    fireEvent.click(confirmButton);
+
+    // Should call delete API
+    await waitFor(() => {
+      expect(usersApi.delete).toHaveBeenCalledWith(1);
+    });
 
     // Should refetch users
     await waitFor(() => {

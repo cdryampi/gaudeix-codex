@@ -1,5 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Search } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 type Props = {
   search: string;
@@ -18,44 +20,62 @@ export function EventsFilters({
   pageSize,
   onPageSize,
 }: Props) {
+  const tabs = [
+    { value: "all", label: "Todos" },
+    { value: "published", label: "Publicados" },
+    { value: "draft", label: "Borradores" },
+  ] as const;
+
   return (
-    <div className="mb-4 grid gap-3 md:grid-cols-3">
-      <div className="space-y-1">
-        <Label htmlFor="search">Buscar</Label>
-        <Input
-          id="search"
-          placeholder="Título o descripción..."
-          value={search}
-          onChange={(e) => onSearch(e.target.value)}
-        />
+    <div className="mb-6 space-y-3">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        {/* Search */}
+        <div className="relative w-full sm:max-w-xs">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Buscar eventos..."
+            value={search}
+            onChange={(e) => onSearch(e.target.value)}
+            className="pl-9"
+          />
+        </div>
+
+        {/* Page size selector */}
+        <div className="flex items-center gap-2">
+          <Label htmlFor="pageSize" className="text-xs text-muted-foreground">
+            Mostrar:
+          </Label>
+          <select
+            id="pageSize"
+            value={pageSize}
+            onChange={(e) => onPageSize(Number(e.target.value))}
+            className="h-9 rounded-lg border border-border bg-card px-3 text-sm transition-colors focus-visible:outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+          >
+            {[5, 10, 20, 50].map((size) => (
+              <option key={size} value={size}>
+                {size}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
-      <div className="space-y-1">
-        <Label htmlFor="status">Estado</Label>
-        <select
-          id="status"
-          value={status}
-          onChange={(e) => onStatus(e.target.value as any)}
-          className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
-        >
-          <option value="all">Todos</option>
-          <option value="published">Publicados</option>
-          <option value="draft">Borradores</option>
-        </select>
-      </div>
-      <div className="space-y-1">
-        <Label htmlFor="pageSize">Por página</Label>
-        <select
-          id="pageSize"
-          value={pageSize}
-          onChange={(e) => onPageSize(Number(e.target.value))}
-          className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
-        >
-          {[5, 10, 20, 50].map((size) => (
-            <option key={size} value={size}>
-              {size}
-            </option>
-          ))}
-        </select>
+
+      {/* Status tabs */}
+      <div className="inline-flex gap-1 rounded-lg bg-muted/50 p-1">
+        {tabs.map((tab) => (
+          <button
+            key={tab.value}
+            onClick={() => onStatus(tab.value)}
+            className={cn(
+              "rounded-md px-3 py-1.5 text-xs font-medium transition-all",
+              status === tab.value
+                ? "bg-card text-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
     </div>
   );

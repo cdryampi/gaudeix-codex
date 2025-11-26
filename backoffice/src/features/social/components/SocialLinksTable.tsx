@@ -12,10 +12,10 @@ type Props = {
 
 export function SocialLinksTable({ links, onEdit, onDelete }: Props) {
   return (
-    <div className="w-full overflow-hidden rounded-xl border bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+    <div className="w-full overflow-hidden rounded-xl border border-border bg-card shadow-sm">
       <div className="w-full overflow-x-auto">
         <table className="w-full table-auto caption-bottom text-sm">
-          <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+          <thead className="bg-muted/50 text-xs uppercase tracking-wide text-muted-foreground">
             <tr className="[&_th]:px-5 [&_th]:py-3 [&_th]:text-left [&_th]:font-semibold">
               <th>Nombre</th>
               <th>URL</th>
@@ -26,10 +26,13 @@ export function SocialLinksTable({ links, onEdit, onDelete }: Props) {
               <th className="text-right">Acciones</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+          <tbody className="divide-y divide-border">
             {links.length === 0 ? (
               <tr>
-                <td colSpan={7} className="p-6 text-center text-muted-foreground">
+                <td
+                  colSpan={7}
+                  className="p-6 text-center text-muted-foreground"
+                >
                   No hay enlaces sociales registrados.
                 </td>
               </tr>
@@ -37,7 +40,7 @@ export function SocialLinksTable({ links, onEdit, onDelete }: Props) {
               links.map((link) => (
                 <tr
                   key={link.id}
-                  className="transition-colors hover:bg-slate-50/80 dark:hover:bg-slate-800/80"
+                  className="transition-colors hover:bg-muted/30"
                 >
                   <td className="px-5 py-4 align-middle font-semibold text-foreground">
                     {link.name}
@@ -60,7 +63,7 @@ export function SocialLinksTable({ links, onEdit, onDelete }: Props) {
                     <span
                       className={cn(
                         "inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs",
-                        "border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-800"
+                        "border-border bg-muted"
                       )}
                     >
                       <span
@@ -72,11 +75,11 @@ export function SocialLinksTable({ links, onEdit, onDelete }: Props) {
                   </td>
                   <td className="px-5 py-4 align-middle">
                     {link.is_active ? (
-                      <Badge className="bg-emerald-50 text-emerald-700 hover:bg-emerald-50 dark:bg-emerald-900/30 dark:text-emerald-200">
+                      <Badge className="bg-primary/10 text-primary hover:bg-primary/10 border-primary/20">
                         Activo
                       </Badge>
                     ) : (
-                      <Badge className="bg-rose-50 text-rose-700 hover:bg-rose-50 dark:bg-rose-900/30 dark:text-rose-200">
+                      <Badge className="bg-muted text-muted-foreground hover:bg-muted border-border">
                         Inactivo
                       </Badge>
                     )}
@@ -85,11 +88,11 @@ export function SocialLinksTable({ links, onEdit, onDelete }: Props) {
                     {link.order}
                   </td>
                   <td className="px-5 py-4 align-middle text-right">
-                    <div className="flex justify-end gap-2">
+                    <div className="flex justify-end gap-1">
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="hover:bg-emerald-50 hover:text-emerald-700 dark:hover:bg-emerald-900/30 dark:hover:text-emerald-200"
+                        className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-muted"
                         onClick={() => onEdit(link)}
                         aria-label={`Editar ${link.name}`}
                       >
@@ -98,7 +101,7 @@ export function SocialLinksTable({ links, onEdit, onDelete }: Props) {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="text-rose-600 hover:bg-rose-50 hover:text-rose-700 dark:text-rose-200 dark:hover:bg-rose-900/30"
+                        className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                         onClick={() => onDelete(link.id)}
                         aria-label={`Eliminar ${link.name}`}
                       >

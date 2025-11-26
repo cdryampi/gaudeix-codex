@@ -12,10 +12,10 @@ type Props = {
 
 export function MediaTable({ items, onDelete, onRename }: Props) {
   return (
-    <div className="w-full overflow-hidden rounded-xl border bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+    <div className="w-full overflow-hidden rounded-xl border border-border bg-card shadow-sm">
       <ScrollArea className="w-full">
         <table className="w-full min-w-[720px] table-auto caption-bottom text-sm">
-          <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+          <thead className="bg-muted/50 text-xs uppercase tracking-wide text-muted-foreground">
             <tr className="[&_th]:px-5 [&_th]:py-3 [&_th]:text-left [&_th]:font-semibold">
               <th>Archivo</th>
               <th>Tipo</th>
@@ -24,10 +24,13 @@ export function MediaTable({ items, onDelete, onRename }: Props) {
               <th className="text-right">Acciones</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+          <tbody className="divide-y divide-border">
             {items.length === 0 ? (
               <tr>
-                <td colSpan={5} className="p-6 text-center text-muted-foreground">
+                <td
+                  colSpan={5}
+                  className="p-6 text-center text-muted-foreground"
+                >
                   No hay archivos.
                 </td>
               </tr>
@@ -35,7 +38,7 @@ export function MediaTable({ items, onDelete, onRename }: Props) {
               items.map((item) => (
                 <tr
                   key={`${item.type}-${item.id}`}
-                  className="transition-colors hover:bg-slate-50/80 dark:hover:bg-slate-800/80"
+                  className="transition-colors hover:bg-muted/30"
                 >
                   <td className="px-5 py-4 align-middle">
                     <div className="flex items-center gap-3">
@@ -72,10 +75,11 @@ export function MediaTable({ items, onDelete, onRename }: Props) {
                     {item.created_at ? formatDate(item.created_at) : "-"}
                   </td>
                   <td className="px-5 py-4 align-middle text-right">
-                    <div className="flex justify-end gap-2">
+                    <div className="flex justify-end gap-1">
                       <Button
                         variant="ghost"
                         size="icon"
+                        className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-muted"
                         onClick={() => onRename(item)}
                         aria-label={`Renombrar ${item.original_name}`}
                       >
@@ -84,7 +88,7 @@ export function MediaTable({ items, onDelete, onRename }: Props) {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="text-rose-600 hover:bg-rose-50 hover:text-rose-700 dark:text-rose-200 dark:hover:bg-rose-900/30"
+                        className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                         onClick={() => onDelete(item)}
                         aria-label={`Eliminar ${item.original_name}`}
                       >
@@ -123,7 +127,10 @@ function Thumb({ item }: { item: MediaItem }) {
 function formatSize(bytes: number) {
   if (!bytes) return "0 B";
   const sizes = ["B", "KB", "MB", "GB"];
-  const i = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), sizes.length - 1);
+  const i = Math.min(
+    Math.floor(Math.log(bytes) / Math.log(1024)),
+    sizes.length - 1
+  );
   const value = bytes / Math.pow(1024, i);
   return `${value.toFixed(value >= 10 || i === 0 ? 0 : 1)} ${sizes[i]}`;
 }

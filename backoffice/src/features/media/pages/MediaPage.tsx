@@ -2,6 +2,27 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { PageContainer, PageHeader } from "@/components/common";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
 import { Upload } from "lucide-react";
 import { mediaApi } from "../api/media";
 import { MediaItem, MediaType } from "../types";
@@ -16,11 +37,15 @@ export function MediaPage() {
   const [typeFilter, setTypeFilter] = useState<MediaType | "all">("all");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [deleteItem, setDeleteItem] = useState<MediaItem | null>(null);
+  const [renameItem, setRenameItem] = useState<MediaItem | null>(null);
+  const [newName, setNewName] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const filtered = useMemo(() => {
     return items.filter((item) => {
-      const matchesType = typeFilter === "all" ? true : item.type === typeFilter;
+      const matchesType =
+        typeFilter === "all" ? true : item.type === typeFilter;
       const matchesSearch = item.original_name
         .toLowerCase()
         .includes(search.toLowerCase());
@@ -61,35 +86,55 @@ export function MediaPage() {
     try {
       await mediaApi.upload(file);
       await fetchMedia();
+      toast.success("Archivo subido correctamente");
     } catch (err) {
       console.error("Error subiendo archivo:", err);
-      alert("No se pudo subir el archivo.");
+      toast.error("No se pudo subir el archivo");
     } finally {
       if (fileInputRef.current) fileInputRef.current.value = "";
     }
   };
 
   const handleDelete = async (item: MediaItem) => {
-    if (confirm(`¿Eliminar "${item.original_name}"?`)) {
-      try {
-        await mediaApi.delete(item.type, item.id);
-        await fetchMedia();
-      } catch (err) {
-        console.error("Error eliminando archivo:", err);
-        alert("No se pudo eliminar el archivo.");
-      }
+    setDeleteItem(item);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deleteItem) return;
+
+    try {
+      await mediaApi.delete(deleteItem.type, deleteItem.id);
+      await fetchMedia();
+      toast.success("Archivo eliminado correctamente");
+    } catch (err) {
+      console.error("Error eliminando archivo:", err);
+      toast.error("No se pudo eliminar el archivo");
+    } finally {
+      setDeleteItem(null);
     }
   };
 
   const handleRename = async (item: MediaItem) => {
-    const newName = prompt("Nuevo nombre de archivo", item.original_name);
-    if (!newName || newName === item.original_name) return;
+    setRenameItem(item);
+    setNewName(item.original_name);
+  };
+
+  const handleRenameConfirm = async () => {
+    if (!renameItem || !newName || newName === renameItem.original_name) {
+      setRenameItem(null);
+      return;
+    }
+
     try {
-      await mediaApi.rename(item.type, item.id, newName);
+      await mediaApi.rename(renameItem.type, renameItem.id, newName);
       await fetchMedia();
+      toast.success("Archivo renombrado correctamente");
     } catch (err) {
       console.error("Error renombrando archivo:", err);
-      alert("No se pudo renombrar el archivo.");
+      toast.error("No se pudo renombrar el archivo");
+    } finally {
+      setRenameItem(null);
+      setNewName("");
     }
   };
 
@@ -115,9 +160,9 @@ export function MediaPage() {
               onChange={handleUpload}
               className="hidden"
             />
-            <Button onClick={() => fileInputRef.current?.click()}>
+            <Button onClick={() => fileInputRef.current?.click()} size="sm">
               <Upload className="mr-2 h-4 w-4" />
-              Subir Archivo
+              Subir archivo
             </Button>
           </>
         }
@@ -132,14 +177,14 @@ export function MediaPage() {
         onPageSize={setPageSize}
       />
 
-      <Card className="border shadow-sm">
+      <Card className="border-border bg-card">
         <CardContent className="p-0">
           {loading ? (
             <div className="flex h-48 items-center justify-center text-muted-foreground">
               Cargando archivos...
             </div>
           ) : error ? (
-            <div className="flex h-48 items-center justify-center text-red-500">
+            <div className="flex h-48 items-center justify-center text-destructive">
               {error}
             </div>
           ) : (
@@ -157,14 +202,85 @@ export function MediaPage() {
           Página {page} de {totalPages} • {filtered.length} resultados
         </span>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={() => handlePageChange(page - 1)} disabled={page === 1}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handlePageChange(page - 1)}
+            disabled={page === 1}
+          >
             Anterior
           </Button>
-          <Button variant="outline" size="sm" onClick={() => handlePageChange(page + 1)} disabled={page === totalPages}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handlePageChange(page + 1)}
+            disabled={page === totalPages}
+          >
             Siguiente
           </Button>
         </div>
       </div>
+
+      <AlertDialog
+        open={deleteItem !== null}
+        onOpenChange={() => setDeleteItem(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta acción no se puede deshacer. El archivo "
+              {deleteItem?.original_name}" será eliminado permanentemente.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Eliminar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <Dialog
+        open={renameItem !== null}
+        onOpenChange={() => setRenameItem(null)}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Renombrar archivo</DialogTitle>
+            <DialogDescription>
+              Introduce el nuevo nombre para "{renameItem?.original_name}"
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="newName">Nuevo nombre</Label>
+              <Input
+                id="newName"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleRenameConfirm()}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setRenameItem(null)}
+            >
+              Cancelar
+            </Button>
+            <Button type="button" onClick={handleRenameConfirm}>
+              Renombrar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </PageContainer>
   );
 }

@@ -12,10 +12,10 @@ type Props = {
 
 export function EventsTable({ events, onEdit, onDelete }: Props) {
   return (
-    <div className="w-full overflow-hidden rounded-xl border bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+    <div className="w-full overflow-hidden rounded-xl border border-border bg-card shadow-sm">
       <ScrollArea className="w-full">
         <table className="w-full min-w-[720px] table-auto caption-bottom text-sm">
-          <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+          <thead className="bg-muted/50 text-xs uppercase tracking-wide text-muted-foreground">
             <tr className="[&_th]:px-5 [&_th]:py-3 [&_th]:text-left [&_th]:font-semibold">
               <th>Título</th>
               <th>Fechas</th>
@@ -24,7 +24,7 @@ export function EventsTable({ events, onEdit, onDelete }: Props) {
               <th className="text-right">Acciones</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+          <tbody className="divide-y divide-border">
             {events.length === 0 ? (
               <tr>
                 <td
@@ -38,7 +38,7 @@ export function EventsTable({ events, onEdit, onDelete }: Props) {
               events.map((event) => (
                 <tr
                   key={event.id}
-                  className="transition-colors hover:bg-slate-50/80 dark:hover:bg-slate-800/80"
+                  className="transition-colors hover:bg-muted/30"
                 >
                   <td className="px-5 py-4 align-middle">
                     <div className="space-y-1">
@@ -74,24 +74,21 @@ export function EventsTable({ events, onEdit, onDelete }: Props) {
                   </td>
                   <td className="px-5 py-4 align-middle">
                     {event.is_published ? (
-                      <Badge className="bg-emerald-50 text-emerald-700 hover:bg-emerald-50 dark:bg-emerald-900/30 dark:text-emerald-200">
+                      <Badge className="bg-primary/10 text-primary hover:bg-primary/10 border-primary/20">
                         Publicado
                       </Badge>
                     ) : (
-                      <Badge
-                        variant="secondary"
-                        className="text-slate-700 dark:bg-slate-800 dark:text-slate-200"
-                      >
+                      <Badge className="bg-muted text-muted-foreground hover:bg-muted border-border">
                         Borrador
                       </Badge>
                     )}
                   </td>
                   <td className="px-5 py-4 align-middle text-right">
-                    <div className="flex justify-end gap-2">
+                    <div className="flex justify-end gap-1">
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="hover:bg-emerald-50 hover:text-emerald-700 dark:hover:bg-emerald-900/30 dark:hover:text-emerald-200"
+                        className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-muted"
                         onClick={() => onEdit(event)}
                         aria-label={`Editar ${event.title}`}
                       >
@@ -100,7 +97,7 @@ export function EventsTable({ events, onEdit, onDelete }: Props) {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="text-rose-600 hover:bg-rose-50 hover:text-rose-700 dark:text-rose-200 dark:hover:bg-rose-900/30"
+                        className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                         onClick={() => onDelete(event.id)}
                         aria-label={`Eliminar ${event.title}`}
                       >
