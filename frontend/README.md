@@ -15,19 +15,35 @@ npm install
 
 ## Variables de entorno
 
-El proyecto utiliza variables con el prefijo `VITE_` que se exponen en tiempo de compilación. Copia el archivo `.env.local.example` como base y ajusta los valores para el entorno deseado.
+### Configuración Rápida
 
 ```bash
+# Opción 1: Copiar desde la raíz del proyecto
+cp ../.env_frontend .env.local
+
+# Opción 2: Copiar desde el ejemplo
 cp .env.local.example .env.local
 ```
 
-Variables incluidas:
+### Variables Principales
 
-- `VITE_API_BASE_URL`: URL base del backend.
+El proyecto utiliza variables con el prefijo `VITE_` que se exponen en tiempo de compilación.
+
+**Configuración mínima para desarrollo local:**
+
+```bash
+# API Configuration
+VITE_API_BASE_URL=http://localhost:8000/api
+```
+
+**Variables adicionales (opcionales):**
+
 - `VITE_JULES_PROJECT_ID` y `VITE_JULES_API_TOKEN`: credenciales/identificadores usados en despliegues de Jules.
 - `VITE_DOKPLOY_PROJECT_ID` y `VITE_DOKPLOY_ENVIRONMENT`: valores necesarios para despliegues en Dokploy.
 
-> ℹ️ Los archivos `.env` nunca deben versionarse. Asegúrate de personalizarlos localmente en cada entorno.
+> ℹ️ **Importante:** 
+> - Todas las variables deben empezar con `VITE_` para ser accesibles desde el código
+> - Los archivos `.env` nunca deben versionarse. Asegúrate de personalizarlos localmente en cada entorno.
 
 ## Desarrollo
 

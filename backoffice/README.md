@@ -13,6 +13,43 @@ Dashboard administrativo construido con React, TypeScript, Tailwind CSS v4 y sha
 - **Axios** - HTTP client
 - **Vitest** + **React Testing Library** - Testing
 
+## Configuración Inicial
+
+### Variables de Entorno
+
+```bash
+# Opción 1: Copiar desde la raíz del proyecto
+cp ../.env_backoffice .env.local
+
+# Opción 2: Copiar desde el ejemplo
+cp .env.local.example .env.local
+```
+
+El archivo `.env.local` debe contener:
+
+```bash
+# API Configuration
+VITE_API_BASE_URL=http://localhost:8000/api/v1
+VITE_HEALTH_CHECK_URL=http://localhost:8000/api/health/
+
+# Frontend URL
+VITE_FRONTEND_URL=http://localhost:5173
+
+# Test credentials (DO NOT USE IN PRODUCTION)
+VITE_ADMIN_USER=yampi
+VITE_ADMIN_PASSWORD=thos
+VITE_SYSTEM_USER=gaudeix
+VITE_SYSTEM_PASSWORD=gaudeix@2023
+```
+
+**Nota:** Las variables deben empezar con `VITE_` para ser accesibles desde el código.
+
+### Instalación
+
+```bash
+npm install
+```
+
 ## Estructura del Proyecto
 
 ```

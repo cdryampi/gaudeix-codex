@@ -99,6 +99,81 @@ El `docker-compose.yml` orquesta backend, frontend, backoffice, PostgreSQL y alm
 
 ## Variables de Entorno
 
+El proyecto utiliza archivos `.env` separados para cada módulo, facilitando la configuración y el despliegue independiente.
+
+### 📁 Archivos `.env` en Raíz del Proyecto
+
+Para facilitar la configuración inicial, se han creado archivos `.env` centralizados en la raíz:
+
+- **`.env_backend`**: Variables de Django, PostgreSQL y usuarios seed
+- **`.env_backoffice`**: Variables de Vite para el panel administrativo
+- **`.env_frontend`**: Variables de Vite para el sitio público
+
+### 🔧 Configuración por Módulo
+
+#### Backend (Django)
+
+```bash
+# Copiar desde raíz o usar directamente
+cp .env_backend backend/.env
+# O usar el existente: backend/.env
+```
+
+**Variables principales:**
+- `DATABASE_URL`: Conexión PostgreSQL
+- `DJANGO_SECRET_KEY`: Clave secreta de Django
+- `ADMIN_USER` / `ADMIN_PASSWORD`: Credenciales del superusuario (yampi/thos)
+- `SYSTEM_USER` / `SYSTEM_PASSWORD`: Credenciales del usuario sistema (gaudeix/gaudeix@2023)
+
+#### Backoffice (React Admin)
+
+```bash
+# Copiar desde raíz o usar directamente
+cp .env_backoffice backoffice/.env.local
+# O usar el existente: backoffice/.env.local
+```
+
+**Variables principales:**
+- `VITE_API_BASE_URL`: URL base del API (`http://localhost:8000/api/v1`)
+- `VITE_ADMIN_USER` / `VITE_ADMIN_PASSWORD`: Credenciales de test
+
+#### Frontend (React Public)
+
+```bash
+# Copiar desde raíz o usar directamente
+cp .env_frontend frontend/.env.local
+# O usar el existente: frontend/.env.local
+```
+
+**Variables principales:**
+- `VITE_API_BASE_URL`: URL base del API (`http://localhost:8000/api`)
+
+### 🗄️ Base de Datos Local
+
+```bash
+Host: localhost
+Port: 5432
+Database: migration
+User: postgres
+Password: thos
+```
+
+### 👤 Usuarios Seed
+
+El comando `python manage.py seed_users` creará automáticamente:
+
+- **Admin (Superusuario)**: 
+  - Username: `yampi`
+  - Password: `thos`
+  - Permisos: Staff + Superuser
+
+- **System (Usuario normal)**:
+  - Username: `gaudeix`
+  - Password: `gaudeix@2023`
+  - Permisos: Usuario estándar
+
+### 📚 Documentación Detallada
+
 Consulta la [guía de variables de entorno](docs/environment.md) para conocer los archivos `.env` requeridos, los valores obligatorios/opcionales por módulo y las recomendaciones de sincronización con GitHub Actions y Dokploy.
 
 ## Backlog de migración y labels

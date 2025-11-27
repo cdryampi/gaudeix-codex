@@ -33,7 +33,7 @@ export function EventsPage() {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<"all" | "published" | "draft">("all");
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(envConfig.EVENTS_PAGE_SIZE_DEFAULT);
+  const [pageSize, setPageSize] = useState(envConfig.events.pageSizeDefault);
 
   const stats = useMemo(() => {
     const total = events.length;
@@ -63,18 +63,22 @@ export function EventsPage() {
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const paginated = useMemo(() => {
     const start = (page - 1) * pageSize;
-    return filtered.slice(start, start + pageSize);
-  }, [filtered, page, pageSize]);
+    const result = filtered.slice(start, start + pageSize);
+    console.log("Paginated:", { eventsLength: events.length, filteredLength: filtered.length, paginatedLength: result.length, page, pageSize });
+    return result;
+  }, [filtered, page, pageSize, events]);
 
   const fetchEvents = async () => {
     try {
       setLoading(true);
-      const data = await eventsApi.getAll();
-      setEvents(data);
       setError(null);
+      const data = await eventsApi.getAll();
+      console.log("Events loaded:", data);
+      setEvents(data);
     } catch (err) {
       console.error("Error fetching events:", err);
       setError("Error al cargar los eventos.");
+      setEvents([]); // Clear events on error
     } finally {
       setLoading(false);
     }
