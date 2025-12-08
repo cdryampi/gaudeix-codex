@@ -15,6 +15,7 @@ from events.urls import register_routes as register_events_routes
 from media_files.urls import register_routes as register_media_routes
 from social.urls import register_routes as register_social_routes
 from users.urls import register_routes as register_users_routes
+from llm_translations.urls import register_routes as register_llm_routes
 from .views import health_check
 
 # Register DRF router routes
@@ -23,6 +24,7 @@ register_events_routes(router)
 register_media_routes(router)
 register_social_routes(router)
 register_users_routes(router)
+register_llm_routes(router)
 
 urlpatterns = [
     # Admin

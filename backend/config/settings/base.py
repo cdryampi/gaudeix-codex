@@ -26,6 +26,13 @@ env = environ.Env(
     DB_PASSWORD=(str, ""),
     DB_HOST=(str, "localhost"),
     DB_PORT=(str, "5432"),
+    # LLM Translation API Keys
+    LLM_OPENAI_API_KEY=(str, ""),
+    LLM_GEMINI_API_KEY=(str, ""),
+    LLM_ANTHROPIC_API_KEY=(str, ""),
+    LLM_MISTRAL_API_KEY=(str, ""),
+    LLM_GROQ_API_KEY=(str, ""),
+    LLM_LOCAL_API_URL=(str, "http://localhost:11434"),
 )
 
 ENV_FILE = BASE_DIR / ".env"
@@ -77,7 +84,9 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     "dj_rest_auth.registration",
     "simple_history",
+    "solo",
     "media_files.apps.MediaFilesConfig",
+    "llm_translations",
 ]
 
 SITE_ID = 1
@@ -206,3 +215,11 @@ CSRF_TRUSTED_ORIGINS = env.list(
         "http://localhost:4174",
     ],
 )
+
+# LLM Translation Settings
+LLM_OPENAI_API_KEY = env("LLM_OPENAI_API_KEY")
+LLM_GEMINI_API_KEY = env("LLM_GEMINI_API_KEY")
+LLM_ANTHROPIC_API_KEY = env("LLM_ANTHROPIC_API_KEY")
+LLM_MISTRAL_API_KEY = env("LLM_MISTRAL_API_KEY")
+LLM_GROQ_API_KEY = env("LLM_GROQ_API_KEY")
+LLM_LOCAL_API_URL = env("LLM_LOCAL_API_URL")
