@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { PageContainer, PageHeader, StatCard } from "@/components/common";
+import { PageContainer, PageHeader } from "@/components/common";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,7 +13,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { CalendarDays, CheckCircle2, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Pagination } from "@/components/ui/pagination";
 import { EventDialog } from "../components/EventDialog";
 import { EventsFilters } from "../components/EventsFilters";
@@ -35,15 +34,6 @@ export function EventsPage() {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(envConfig.events.pageSizeDefault);
 
-  const stats = useMemo(() => {
-    const total = events.length;
-    const published = events.filter((e) => e.is_published).length;
-    const upcoming = events.filter(
-      (e) => new Date(e.start_at) > new Date()
-    ).length;
-    return { total, published, upcoming };
-  }, [events]);
-
   const filtered = useMemo(() => {
     return events.filter((event) => {
       const matchesStatus =
@@ -52,9 +42,7 @@ export function EventsPage() {
           : status === "published"
           ? event.is_published
           : !event.is_published;
-      const text = `${event.title} ${event.description ?? ""} ${
-        event.location_text ?? ""
-      }`.toLowerCase();
+      const text = `${event.title} ${event.description ?? ""} ${event.location_text ?? ""}`.toLowerCase();
       const matchesSearch = text.includes(search.toLowerCase());
       return matchesStatus && matchesSearch;
     });
@@ -63,22 +51,19 @@ export function EventsPage() {
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const paginated = useMemo(() => {
     const start = (page - 1) * pageSize;
-    const result = filtered.slice(start, start + pageSize);
-    console.log("Paginated:", { eventsLength: events.length, filteredLength: filtered.length, paginatedLength: result.length, page, pageSize });
-    return result;
-  }, [filtered, page, pageSize, events]);
+    return filtered.slice(start, start + pageSize);
+  }, [filtered, page, pageSize]);
 
   const fetchEvents = async () => {
     try {
       setLoading(true);
       setError(null);
       const data = await eventsApi.getAll();
-      console.log("Events loaded:", data);
       setEvents(data);
     } catch (err) {
       console.error("Error fetching events:", err);
       setError("Error al cargar los eventos.");
-      setEvents([]); // Clear events on error
+      setEvents([]);
     } finally {
       setLoading(false);
     }
@@ -104,7 +89,6 @@ export function EventsPage() {
 
   const handleDeleteConfirm = async () => {
     if (!deleteEventId) return;
-
     try {
       await eventsApi.delete(deleteEventId);
       await fetchEvents();
@@ -147,62 +131,6 @@ export function EventsPage() {
         }
       />
 
-      <div className="mb-6 grid gap-4 md:grid-cols-3">
-        <Card className="border-border bg-card">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
-                <CalendarDays className="h-5 w-5 text-muted-foreground" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Total eventos
-                </p>
-                <p className="text-2xl font-semibold text-foreground">
-                  {stats.total}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-border bg-card">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                <CheckCircle2 className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Publicados
-                </p>
-                <p className="text-2xl font-semibold text-foreground">
-                  {stats.published}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-border bg-card">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
-                <CalendarDays className="h-5 w-5 text-muted-foreground" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Próximos
-                </p>
-                <p className="text-2xl font-semibold text-foreground">
-                  {stats.upcoming}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
       <EventsFilters
         search={search}
         onSearch={(v) => {
@@ -224,51 +152,32 @@ export function EventsPage() {
       <Card className="border-border bg-card">
         <CardContent className="p-0">
           {loading ? (
-            <div className="flex h-48 items-center justify-center text-muted-foreground">
-              Cargando eventos...
-            </div>
+            <div className="flex h-48 items-center justify-center text-muted-foreground">Cargando eventos...</div>
           ) : error ? (
-            <div className="flex h-48 items-center justify-center text-destructive">
-              {error}
-            </div>
+            <div className="flex h-48 items-center justify-center text-destructive">{error}</div>
           ) : (
-            <EventsTable
-              events={paginated}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-            />
+            <EventsTable events={paginated} onEdit={handleEdit} onDelete={handleDelete} />
           )}
         </CardContent>
       </Card>
 
-      <div className="mt-4 flex items-center justify-between text-sm text-muted-foreground">
+      <div className="mt-4 flex flex-col gap-2 text-sm text-muted-foreground md:flex-row md:items-center md:justify-between">
         <span>
           Página {page} de {totalPages} • {filtered.length} resultados
         </span>
-        <Pagination
-          page={page}
-          totalPages={totalPages}
-          onPageChange={setPage}
-        />
+        <div className="w-full md:w-auto">
+          <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+        </div>
       </div>
 
-      <EventDialog
-        open={isDialogOpen}
-        onOpenChange={setIsDialogOpen}
-        onSubmit={handleSubmit}
-        event={editingEvent}
-      />
+      <EventDialog open={isDialogOpen} onOpenChange={setIsDialogOpen} onSubmit={handleSubmit} event={editingEvent} />
 
-      <AlertDialog
-        open={deleteEventId !== null}
-        onOpenChange={() => setDeleteEventId(null)}
-      >
+      <AlertDialog open={deleteEventId !== null} onOpenChange={() => setDeleteEventId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta acción no se puede deshacer. El evento será eliminado
-              permanentemente.
+              Esta acción no se puede deshacer. El evento será eliminado permanentemente.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

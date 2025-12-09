@@ -20,6 +20,7 @@ export const ROUTES = {
   MEDIA: "/dashboard/media",
   EVENTS: "/dashboard/events",
   SOCIAL: "/dashboard/social",
+  CATEGORIES: "/dashboard/categories",
 } as const;
 
 /**
@@ -79,6 +80,10 @@ export const QUERY_KEYS = {
     LIST: ["events", "list"],
     DETAIL: (id: string) => ["events", "detail", id],
   },
+  CATEGORIES: {
+    LIST: ["categories", "list"],
+    DETAIL: (id: string) => ["categories", "detail", id],
+  },
   SOCIAL: {
     LIST: ["social", "list"],
     DETAIL: (id: string) => ["social", "detail", id],
@@ -110,6 +115,11 @@ export const API_ENDPOINTS = {
   EVENTS: {
     LIST: "/events/",
     DETAIL: (id: string) => `/events/${id}/`,
+  },
+  CATEGORIES: {
+    LIST: "/categories/",
+    DETAIL: (id: string) => `/categories/${id}/`,
+    AUTO_TRANSLATE: (id: string) => `/categories/${id}/auto_translate/`,
   },
   SOCIAL: {
     LIST: "/social-links/",

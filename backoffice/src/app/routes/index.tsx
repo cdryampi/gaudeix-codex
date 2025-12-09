@@ -13,6 +13,7 @@ import { LandingPage } from "@/features/landing/pages/LandingPage";
 import { TestFormPage } from "@/features/test/pages/TestFormPage";
 import { ROUTES } from "@/lib/config/constants";
 import { SocialLinksPage } from "@/features/social/pages/SocialLinksPage";
+import { CategoriesPage } from "@/features/categories/pages/CategoriesPage";
 
 /**
  * Application routing configuration
@@ -75,6 +76,10 @@ export const router = createBrowserRouter([
       {
         path: "events",
         element: <EventsPage />,
+      },
+      {
+        path: "categories",
+        element: <CategoriesPage />,
       },
       {
         path: "social",
