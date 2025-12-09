@@ -9,9 +9,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { TranslationDialog } from "./TranslationDialog";
 import { CreateEventDTO, Event } from "../types";
 import { mediaApi } from "@/features/media/api/media";
 import { MediaItem } from "@/features/media/types";
+import { Languages, Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import { LANGUAGES } from "@/lib/config/constants";
+import { llmApi } from "../api/llm";
 
 const emptyForm: CreateEventDTO = {
   title: "",
@@ -37,6 +43,12 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
   const [selectedDocs, setSelectedDocs] = useState<number[]>([]);
   const [images, setImages] = useState<MediaItem[]>([]);
   const [documents, setDocuments] = useState<MediaItem[]>([]);
+  const [translationDialogOpen, setTranslationDialogOpen] = useState(false);
+  const [activeLanguage, setActiveLanguage] = useState("ca");
+  const [translating, setTranslating] = useState(false);
+  const [translations, setTranslations] = useState<{
+    [lang: string]: { title: string; description: string };
+  }>({});
   const imageInputRef = useRef<HTMLInputElement>(null);
   const docInputRef = useRef<HTMLInputElement>(null);
 
@@ -54,10 +66,18 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
       });
       setSelectedImageId(event.featured_media?.id ?? null);
       setSelectedDocs((event.attachments || []).map((a) => a.id));
+      
+      // Load existing translations
+      if (event.translations) {
+        setTranslations(event.translations);
+      } else {
+        setTranslations({});
+      }
     } else {
       setFormData(emptyForm);
       setSelectedImageId(null);
       setSelectedDocs([]);
+      setTranslations({});
     }
   }, [event, open]);
 
@@ -90,12 +110,25 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Build translations object excluding the source language
+    const translationsData: { [lang: string]: { title: string; description?: string } } = {};
+    Object.entries(translations).forEach(([lang, content]) => {
+      if (lang !== "ca" && (content.title || content.description)) {
+        translationsData[lang] = {
+          title: content.title,
+          description: content.description,
+        };
+      }
+    });
+    
     onSubmit({
       ...formData,
       start_at: toIso(formData.start_at),
       end_at: formData.end_at ? toIso(formData.end_at) : null,
       featured_media_id: selectedImageId,
       attachments_ids: selectedDocs,
+      translations: Object.keys(translationsData).length > 0 ? translationsData : undefined,
     });
   };
 
@@ -135,6 +168,91 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
     setSelectedDocs((prev) => prev.filter((docId) => docId !== id));
   };
 
+  const handleTranslateToLanguage = async (targetLang: string) => {
+    if (!event) return;
+    
+    const sourceLang = "ca"; // Always translate from Catalan
+    const sourceTitle = formData.title || event.title;
+    const sourceDescription = formData.description || event.description;
+
+    if (!sourceTitle) {
+      toast.error("No hay título para traducir");
+      return;
+    }
+
+    setTranslating(true);
+    
+    try {
+      const response = await llmApi.autoTranslateEvent(String(event.id));
+      
+      if (response.success && response.translations[targetLang]) {
+        const translation = response.translations[targetLang];
+        
+        // Update translations state
+        setTranslations(prev => ({
+          ...prev,
+          [targetLang]: translation
+        }));
+        
+        toast.success(`Traducido a ${LANGUAGES.find(l => l.code === targetLang)?.name}`);
+      } else {
+        toast.error("Error al traducir", {
+          description: response.errors?.[targetLang] || "Error desconocido"
+        });
+      }
+    } catch (error) {
+      console.error("Translation error:", error);
+      toast.error("Error al conectar con el servicio de traducción");
+    } finally {
+      setTranslating(false);
+    }
+  };
+
+  const getCurrentContent = (lang: string) => {
+    if (lang === "ca") {
+      return {
+        title: formData.title,
+        description: formData.description
+      };
+    }
+    return translations[lang] || { title: "", description: "" };
+  };
+
+  const handleContentChange = (lang: string, field: "title" | "description", value: string) => {
+    if (lang === "ca") {
+      setFormData(prev => ({ ...prev, [field]: value }));
+    } else {
+      setTranslations(prev => ({
+        ...prev,
+        [lang]: {
+          ...prev[lang],
+          [field]: value
+        }
+      }));
+    }
+  };
+
+  const handleApplyTranslations = (translations: {
+    [lang: string]: { title: string; description: string };
+  }) => {
+    // The backend auto_translate endpoint already saved the translations
+    // We just need to show success feedback to the user
+    const languageCount = Object.keys(translations).length;
+    const languages = Object.keys(translations)
+      .map((lang) => lang.toUpperCase())
+      .join(", ");
+
+    toast.success(
+      `Traducciones aplicadas correctamente`,
+      {
+        description: `El evento ha sido traducido a ${languageCount} idioma${languageCount > 1 ? "s" : ""}: ${languages}`,
+      }
+    );
+
+    // Update local translations state
+    setTranslations(prev => ({ ...prev, ...translations }));
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[640px] px-6">
@@ -143,17 +261,75 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Tabs para selección de idioma */}
+          <Tabs defaultValue="ca" value={activeLanguage} onValueChange={setActiveLanguage}>
+            <TabsList className="grid w-full grid-cols-4">
+              {LANGUAGES.map((lang) => (
+                <TabsTrigger key={lang.code} value={lang.code}>
+                  {lang.emoji} {lang.name}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+
+            {LANGUAGES.map((lang) => {
+              const content = getCurrentContent(lang.code);
+              const isSourceLang = lang.code === "ca";
+
+              return (
+                <TabsContent key={lang.code} value={lang.code} className="space-y-4 mt-4">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor={`title-${lang.code}`}>
+                        Título {!isSourceLang && `(${lang.name})`}
+                      </Label>
+                      {!isSourceLang && (
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleTranslateToLanguage(lang.code)}
+                          disabled={translating || !formData.title}
+                        >
+                          {translating ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Traduciendo...
+                            </>
+                          ) : (
+                            "Traducir desde Català"
+                          )}
+                        </Button>
+                      )}
+                    </div>
+                    <Input
+                      id={`title-${lang.code}`}
+                      value={content.title || ""}
+                      onChange={(e) => handleContentChange(lang.code, "title", e.target.value)}
+                      required={isSourceLang}
+                      placeholder={isSourceLang ? "" : "Traducción automática o manual"}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor={`description-${lang.code}`}>
+                      Descripción {!isSourceLang && `(${lang.name})`}
+                    </Label>
+                    <RichTextEditor
+                      value={content.description || ""}
+                      onChange={(value) => handleContentChange(lang.code, "description", value)}
+                      placeholder={
+                        isSourceLang
+                          ? "Describe el evento en detalle..."
+                          : "Traducción automática o manual"
+                      }
+                    />
+                  </div>
+                </TabsContent>
+              );
+            })}
+          </Tabs>
+
           <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="title">Título</Label>
-              <Input
-                id="title"
-                name="title"
-                value={formData.title}
-                onChange={handleChange}
-                required
-              />
-            </div>
             <div className="space-y-2">
               <Label htmlFor="location_text">Ubicación</Label>
               <Input
@@ -164,9 +340,6 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
                 placeholder="Descripción o dirección"
               />
             </div>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="start_at">Inicio</Label>
               <Input
@@ -188,17 +361,6 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
                 onChange={handleChange}
               />
             </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="description">Descripción</Label>
-            <RichTextEditor
-              value={formData.description || ""}
-              onChange={(value) =>
-                setFormData((prev) => ({ ...prev, description: value }))
-              }
-              placeholder="Describe el evento en detalle..."
-            />
           </div>
 
           <label className="flex items-center justify-between rounded-lg border border-border/60 bg-muted/40 px-3 py-2 text-sm">
@@ -359,10 +521,32 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
             )}
           </div>
 
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-2">
+            {event && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setTranslationDialogOpen(true)}
+              >
+                <Languages className="mr-2 h-4 w-4" />
+                Traducir con IA
+              </Button>
+            )}
             <Button type="submit">{event ? "Guardar cambios" : "Crear"}</Button>
           </div>
         </form>
+
+        {/* Translation Dialog */}
+        {event && (
+          <TranslationDialog
+            open={translationDialogOpen}
+            onOpenChange={setTranslationDialogOpen}
+            eventId={String(event.id)}
+            currentTitle={formData.title}
+            currentDescription={formData.description || ""}
+            onApplyTranslations={handleApplyTranslations}
+          />
+        )}
       </DialogContent>
     </Dialog>
   );

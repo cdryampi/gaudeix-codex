@@ -13,6 +13,12 @@ export type Event = {
   attachments?: MediaItem[];
   created_at?: string;
   updated_at?: string;
+  translations?: {
+    [lang: string]: {
+      title: string;
+      description?: string;
+    };
+  };
 };
 
 export type CreateEventDTO = {
@@ -24,6 +30,12 @@ export type CreateEventDTO = {
   location_text?: string;
   featured_media_id?: number | null;
   attachments_ids?: number[];
+  translations?: {
+    [lang: string]: {
+      title: string;
+      description?: string;
+    };
+  };
 };
 
 export type UpdateEventDTO = Partial<CreateEventDTO>;

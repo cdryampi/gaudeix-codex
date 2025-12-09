@@ -115,4 +115,19 @@ export const API_ENDPOINTS = {
     LIST: "/social-links/",
     DETAIL: (id: string) => `/social-links/${id}/`,
   },
+  LLM: {
+    CONFIG: "/llm-config/",
+    TRANSLATE: "/llm-config/translate/",
+    AUTO_TRANSLATE_EVENT: (id: string) => `/events/${id}/auto_translate/`,
+  },
 } as const;
+
+/**
+ * Supported Languages with Flags
+ */
+export const LANGUAGES = [
+  { code: "ca", name: "Català", flag: "🇦🇩" },
+  { code: "es", name: "Español", flag: "🇪🇸" },
+  { code: "en", name: "English", flag: "🇬🇧" },
+  { code: "fr", name: "Français", flag: "🇫🇷" },
+] as const;

@@ -154,18 +154,19 @@ class EventViewSet(viewsets.ModelViewSet):
                         log_translation=True
                     )
                 
-                # Save translation
-                event.set_current_language(target_lang)
+                # Save translation using parler's translation system
+                # Create or update translation for target language
+                event.set_current_language(target_lang, initialize=True)
                 event.title = translated_title
                 event.description = translated_description
-                event.save()
+                event.save_translations()
                 
                 translations[target_lang] = {
                     'title': translated_title,
                     'description': translated_description
                 }
                 
-                logger.info(f"Translated event {event.id} to {target_lang}")
+                logger.info(f"Translated event {event.id} to {target_lang}: '{translated_title}'")
                 
             except TranslationError as e:
                 error_msg = str(e)
