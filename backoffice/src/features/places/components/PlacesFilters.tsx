@@ -18,7 +18,7 @@ export function PlacesFilters({ search, onSearch, status, onStatus, pageSize, on
         placeholder="Buscar lugar..."
         value={search}
         onChange={(e) => onSearch(e.target.value)}
-        className="w-full md:w-3/4"
+        className="w-3/4"
       />
 
       <div className="flex flex-wrap items-center gap-3">
