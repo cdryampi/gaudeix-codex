@@ -25,7 +25,7 @@ const contentNavigation = [
 const mediaNavigation = [
   { name: "Media", href: ROUTES.MEDIA, icon: Image },
   { name: "Eventos", href: "/eventos-calendario", icon: Calendar },
-  { name: "Ubicaciones", href: "/ubicaciones", icon: Calendar },
+  { name: "Places", href: ROUTES.PLACES, icon: Calendar },
 ];
 
 const systemNavigation = [
