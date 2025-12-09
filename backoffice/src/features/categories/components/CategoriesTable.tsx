@@ -1,6 +1,7 @@
 import { Category } from "../types";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Edit, Trash2 } from "lucide-react";
 
 type Props = {
   categories: Category[];
@@ -33,13 +34,27 @@ export function CategoriesTable({ categories, onEdit, onDelete }: Props) {
               <td className="px-4 py-2">
                 {cat.taxonomy ? <Badge variant="secondary">{cat.taxonomy}</Badge> : <span>-</span>}
               </td>
-              <td className="px-4 py-2 text-right space-x-2">
-                <Button variant="outline" size="sm" onClick={() => onEdit(cat)}>
-                  Editar
-                </Button>
-                <Button variant="destructive" size="sm" onClick={() => onDelete(cat.id)}>
-                  Eliminar
-                </Button>
+              <td className="px-4 py-2 text-right">
+                <div className="flex justify-end gap-1">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-muted"
+                    onClick={() => onEdit(cat)}
+                    aria-label={`Editar ${cat.nombre}`}
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                    onClick={() => onDelete(cat.id)}
+                    aria-label={`Eliminar ${cat.nombre}`}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
               </td>
             </tr>
           ))}

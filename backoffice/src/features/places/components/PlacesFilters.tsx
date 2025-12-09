@@ -1,6 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Search } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 type Props = {
   search: string;
@@ -12,44 +13,59 @@ type Props = {
 };
 
 export function PlacesFilters({ search, onSearch, status, onStatus, pageSize, onPageSize }: Props) {
-  return (
-    <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-      <Input
-        placeholder="Buscar lugar..."
-        value={search}
-        onChange={(e) => onSearch(e.target.value)}
-        className="w-3/4"
-      />
+  const tabs = [
+    { value: "all", label: "Todos" },
+    { value: "published", label: "Publicados" },
+    { value: "draft", label: "Borradores" },
+  ] as const;
 
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="flex items-center gap-2">
-          <Label className="text-sm text-muted-foreground">Estado</Label>
-          <Select value={status} onValueChange={(v) => onStatus(v as Props["status"])}>
-            <SelectTrigger className="w-[140px]">
-              <SelectValue placeholder="Estado" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Todos</SelectItem>
-              <SelectItem value="published">Publicado</SelectItem>
-              <SelectItem value="draft">Borrador</SelectItem>
-            </SelectContent>
-          </Select>
+  return (
+    <div className="mb-6 space-y-3">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="relative w-full sm:max-w-xs">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Buscar lugares..."
+            value={search}
+            onChange={(e) => onSearch(e.target.value)}
+            className="pl-9"
+          />
         </div>
+
         <div className="flex items-center gap-2">
-          <Label className="text-sm text-muted-foreground">Por página</Label>
-          <Select value={String(pageSize)} onValueChange={(v) => onPageSize(Number(v))}>
-            <SelectTrigger className="w-[120px]">
-              <SelectValue placeholder="10" />
-            </SelectTrigger>
-            <SelectContent>
-              {[5, 10, 20, 50].map((n) => (
-                <SelectItem key={n} value={String(n)}>
-                  {n}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <Label htmlFor="pageSize" className="text-xs text-muted-foreground">
+            Mostrar:
+          </Label>
+          <select
+            id="pageSize"
+            value={pageSize}
+            onChange={(e) => onPageSize(Number(e.target.value))}
+            className="h-9 rounded-lg border border-border bg-card px-3 text-sm transition-colors focus-visible:outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+          >
+            {[5, 10, 20, 50].map((size) => (
+              <option key={size} value={size}>
+                {size}
+              </option>
+            ))}
+          </select>
         </div>
+      </div>
+
+      <div className="inline-flex gap-1 rounded-lg bg-muted/50 p-1">
+        {tabs.map((tab) => (
+          <button
+            key={tab.value}
+            onClick={() => onStatus(tab.value)}
+            className={cn(
+              "rounded-md px-3 py-1.5 text-xs font-medium transition-all",
+              status === tab.value
+                ? "bg-card text-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
     </div>
   );

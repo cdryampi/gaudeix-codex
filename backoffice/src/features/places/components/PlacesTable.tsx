@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Place } from "../types";
+import { Edit, Trash2 } from "lucide-react";
 
 type Props = {
   places: Place[];
@@ -36,13 +37,27 @@ export function PlacesTable({ places, onEdit, onDelete }: Props) {
                   {place.is_published ? "Publicado" : "Borrador"}
                 </Badge>
               </td>
-              <td className="px-4 py-2 text-right space-x-2">
-                <Button variant="outline" size="sm" onClick={() => onEdit(place)}>
-                  Editar
-                </Button>
-                <Button variant="destructive" size="sm" onClick={() => onDelete(place.id)}>
-                  Eliminar
-                </Button>
+              <td className="px-4 py-2 text-right">
+                <div className="flex justify-end gap-1">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-muted"
+                    onClick={() => onEdit(place)}
+                    aria-label={`Editar ${place.title}`}
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                    onClick={() => onDelete(place.id)}
+                    aria-label={`Eliminar ${place.title}`}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
               </td>
             </tr>
           ))}
