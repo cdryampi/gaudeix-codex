@@ -215,6 +215,34 @@ def test_filter_by_bbox(media_root, places_singleton):
     assert response.data[0]["title"] == "Inside"
 
 
+def test_filter_by_category_slug(media_root, places_singleton):
+    cat_rest = Category.objects.create(slug="restaurant", nombre="Restaurant")
+    cat_hotel = Category.objects.create(slug="hotel", nombre="Hotel")
+    Place.objects.create(title="Food", latitude=1.0, longitude=1.0, category=cat_rest)
+    Place.objects.create(title="Sleep", latitude=2.0, longitude=2.0, category=cat_hotel)
+
+    client = APIClient()
+    url = reverse("place-list")
+    response = client.get(url, {"category": "restaurant"})
+
+    assert len(response.data) == 1
+    assert response.data[0]["title"] == "Food"
+    assert response.data[0]["category"] == cat_rest.id
+
+
+def test_filter_by_near(media_root, places_singleton):
+    near_place = Place.objects.create(title="Near", latitude=10.0, longitude=10.0)
+    Place.objects.create(title="Far", latitude=50.0, longitude=50.0)
+
+    client = APIClient()
+    url = reverse("place-list")
+    response = client.get(url, {"near": "10,10", "radius_km": "5"})
+
+    assert len(response.data) == 1
+    assert response.data[0]["title"] == "Near"
+    assert response.data[0]["id"] == near_place.id
+
+
 def test_auto_translate_success(media_root, places_singleton, auth_client, monkeypatch):
     place = Place.objects.create(title="Casa", description="Bonita casa", latitude=1.0, longitude=1.0)
 
