@@ -1,11 +1,11 @@
 """
-Management command to seed the Events category and EventCategorySingleton.
+Seed the Events category and EventCategorySingleton.
 
-This command is idempotent - it can be run multiple times safely.
-It will:
-1. Create or update the 'Events' category with translations
-2. Create the EventCategorySingleton pointing to this category
-3. Assign the category to all Events that don't have one
+Idempotent: safe to run multiple times.
+Steps:
+1) Create/update 'events' category with translations
+2) Create/update EventCategorySingleton pointing to it
+3) Assign the category to Events without one
 """
 
 from django.core.management.base import BaseCommand
@@ -20,86 +20,70 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         with transaction.atomic():
-            # 1. Create or get the Events category by slug
-            category, created = Category.objects.get_or_create(
-                slug="events",
-                defaults={"nombre": "Events"},  # Default language name
+            category = self._create_or_update_category()
+            singleton = self._create_or_update_singleton(category)
+            assigned = self._assign_category(category)
+            self._print_summary(category, singleton, assigned)
+
+    def _create_or_update_category(self) -> Category:
+        category, created = Category.objects.get_or_create(
+            slug="events",
+            defaults={"nombre": "Events"},
+        )
+
+        translations = {
+            "ca": "Esdeveniments",
+            "es": "Eventos",
+            "en": "Events",
+            "fr": "Événements",
+        }
+        for lang_code, name in translations.items():
+            category.set_current_language(lang_code)
+            if category.nombre != name:
+                category.nombre = name
+                category.save()
+
+        if created:
+            self.stdout.write(self.style.SUCCESS("Created category 'events'"))
+        else:
+            self.stdout.write(self.style.WARNING("Category 'events' already exists"))
+        return category
+
+    def _create_or_update_singleton(self, category: Category) -> EventCategorySingleton:
+        singleton, created = EventCategorySingleton.objects.get_or_create(
+            pk=1,
+            defaults={"category": category},
+        )
+        if not created and singleton.category != category:
+            singleton.category = category
+            singleton.save()
+            self.stdout.write(self.style.SUCCESS("Updated EventCategorySingleton"))
+        elif created:
+            self.stdout.write(self.style.SUCCESS("Created EventCategorySingleton"))
+        else:
+            self.stdout.write(self.style.WARNING("EventCategorySingleton already configured"))
+        return singleton
+
+    def _assign_category(self, category: Category) -> int:
+        events_without_category = Event.objects.filter(category__isnull=True)
+        count = events_without_category.count()
+        if count:
+            events_without_category.update(category=category)
+            self.stdout.write(self.style.SUCCESS(f"Assigned category to {count} event(s)"))
+        else:
+            self.stdout.write(self.style.WARNING("All events already have a category"))
+        return count
+
+    def _print_summary(self, category: Category, singleton: EventCategorySingleton, assigned: int) -> None:
+        total_events = Event.objects.count()
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"\n{'='*50}\n"
+                f"Seed completed\n"
+                f"  - Events category: {category.nombre}\n"
+                f"  - Total events: {total_events}\n"
+                f"  - Singleton points to category: {'yes' if singleton.category == category else 'no'}\n"
+                f"  - Events updated: {assigned}\n"
+                f"{'='*50}"
             )
-
-            if created:
-                self.stdout.write(
-                    self.style.SUCCESS("✓ Created Events category")
-                )
-            else:
-                self.stdout.write(
-                    self.style.WARNING("→ Events category already exists")
-                )
-
-            # 2. Add translations for the category
-            translations = {
-                "ca": "Esdeveniments",
-                "es": "Eventos",
-                "en": "Events",
-                "fr": "Événements",
-            }
-
-            for lang_code, translation in translations.items():
-                category.set_current_language(lang_code)
-                if category.nombre != translation:
-                    category.nombre = translation
-                    category.save()
-                    self.stdout.write(
-                        self.style.SUCCESS(f"✓ Updated {lang_code} translation: {translation}")
-                    )
-
-            # Reset to default language
-            category.set_current_language("en")
-
-            # 3. Create or update the EventCategorySingleton
-            singleton, singleton_created = EventCategorySingleton.objects.get_or_create(
-                pk=1,
-                defaults={"category": category},
-            )
-
-            if singleton_created:
-                self.stdout.write(
-                    self.style.SUCCESS("✓ Created EventCategorySingleton")
-                )
-            else:
-                if singleton.category != category:
-                    singleton.category = category
-                    singleton.save()
-                    self.stdout.write(
-                        self.style.SUCCESS("✓ Updated EventCategorySingleton")
-                    )
-                else:
-                    self.stdout.write(
-                        self.style.WARNING("→ EventCategorySingleton already configured")
-                    )
-
-            # 4. Assign category to all Events without one
-            events_without_category = Event.objects.filter(category__isnull=True)
-            count = events_without_category.count()
-
-            if count > 0:
-                events_without_category.update(category=category)
-                self.stdout.write(
-                    self.style.SUCCESS(f"✓ Assigned category to {count} event(s)")
-                )
-            else:
-                self.stdout.write(
-                    self.style.WARNING("→ All events already have a category")
-                )
-
-            # 5. Summary
-            total_events = Event.objects.count()
-            self.stdout.write(
-                self.style.SUCCESS(
-                    f"\n{'='*50}\n"
-                    f"✓ Seed completed successfully!\n"
-                    f"  - Events category: {category.nombre}\n"
-                    f"  - Total events: {total_events}\n"
-                    f"  - All events categorized: Yes\n"
-                    f"{'='*50}"
-                )
-            )
+        )

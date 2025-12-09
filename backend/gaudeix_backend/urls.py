@@ -12,6 +12,7 @@ from drf_spectacular.views import (
 )
 
 from events.urls import register_routes as register_events_routes
+from places.urls import register_routes as register_places_routes
 from media_files.urls import register_routes as register_media_routes
 from social.urls import register_routes as register_social_routes
 from users.urls import register_routes as register_users_routes
@@ -21,6 +22,7 @@ from .views import health_check
 # Register DRF router routes
 router = DefaultRouter()
 register_events_routes(router)
+register_places_routes(router)
 register_media_routes(router)
 register_social_routes(router)
 register_users_routes(router)

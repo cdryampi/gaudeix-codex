@@ -76,6 +76,7 @@ INSTALLED_APPS = [
     "parler",
     "social",
     "events",
+    "places",
     "drf_spectacular",
     "dj_rest_auth",
     "django.contrib.sites",
