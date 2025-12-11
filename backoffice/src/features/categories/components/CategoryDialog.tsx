@@ -17,6 +17,7 @@ type Props = {
   onOpenChange: (open: boolean) => void;
   onSubmit: (payload: CategoryPayload) => Promise<void>;
   category?: Category;
+  categories?: Category[];
 };
 
 type LocalTranslations = {
@@ -27,17 +28,19 @@ const emptyForm: CategoryPayload = {
   slug: "",
   taxonomy: "",
   icon: "",
+  parent: null,
   nombre: "",
   descripcion: "",
   translations: {},
 };
 
-export function CategoryDialog({ open, onOpenChange, onSubmit, category }: Props) {
+export function CategoryDialog({ open, onOpenChange, onSubmit, category, categories = [] }: Props) {
   const [form, setForm] = useState<CategoryPayload>(emptyForm);
   const [activeLang, setActiveLang] = useState("ca");
   const [translations, setTranslations] = useState<LocalTranslations>({});
   const [loadingTranslate, setLoadingTranslate] = useState(false);
   const IconPreview = getCategoryIcon(form.icon);
+  const parentOptions = categories.filter((c) => !category || c.id !== category.id);
 
   useEffect(() => {
     if (category) {
@@ -45,6 +48,7 @@ export function CategoryDialog({ open, onOpenChange, onSubmit, category }: Props
         slug: category.slug,
         taxonomy: category.taxonomy || "",
         icon: category.icon || "",
+        parent: category.parent ?? null,
         nombre: category.nombre,
         descripcion: category.descripcion || "",
         translations: category.translations || {},
@@ -88,6 +92,7 @@ export function CategoryDialog({ open, onOpenChange, onSubmit, category }: Props
     const iconValue = form.icon?.trim() ?? "";
     const payload: CategoryPayload = {
       ...form,
+      parent: form.parent ?? null,
       icon: iconValue,
       translations: Object.keys(translationsPayload).length ? translationsPayload : undefined,
     };
@@ -152,6 +157,22 @@ export function CategoryDialog({ open, onOpenChange, onSubmit, category }: Props
                 onChange={(e) => setForm((prev) => ({ ...prev, taxonomy: e.target.value }))}
                 placeholder="template, theme, etc."
               />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="parent">Categoría padre (opcional)</Label>
+              <select
+                id="parent"
+                value={form.parent ?? ""}
+                onChange={(e) => setForm((prev) => ({ ...prev, parent: e.target.value ? Number(e.target.value) : null }))}
+                className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+              >
+                <option value="">Sin padre</option>
+                {parentOptions.map((opt) => (
+                  <option key={opt.id} value={opt.id}>
+                    {opt.nombre} ({opt.slug})
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 

@@ -1,3 +1,4 @@
+import * as React from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
@@ -72,6 +73,16 @@ export function RichTextEditor({
       },
     },
   });
+
+  // Sync external value when it changes after mount (e.g., editing existing content)
+  React.useEffect(() => {
+    if (!editor) return;
+    const current = editor.getHTML();
+    const next = value || "";
+    if (current !== next) {
+      editor.commands.setContent(next, false);
+    }
+  }, [editor, value]);
 
   if (!editor) {
     return null;

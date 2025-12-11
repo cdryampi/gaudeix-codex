@@ -69,6 +69,31 @@ def test_create_update_delete_category(auth_client):
     assert Category.objects.count() == 0
 
 
+def test_create_category_with_parent_and_filter(auth_client):
+    root = Category.objects.create(slug="root", nombre="Root", taxonomy="template")
+    url = reverse("category-list")
+    payload = {
+        "slug": "child",
+        "taxonomy": "template",
+        "nombre": "Child",
+        "parent": root.id,
+    }
+    resp_create = auth_client.post(url, payload, format="json")
+    assert resp_create.status_code == status.HTTP_201_CREATED
+    assert resp_create.data["parent"] == root.id
+
+    # Filter by parent
+    resp_filter = auth_client.get(url, {"parent": root.id})
+    assert resp_filter.status_code == status.HTTP_200_OK
+    assert len(resp_filter.data) == 1
+    assert resp_filter.data[0]["slug"] == "child"
+
+    # Parent cannot be self
+    detail_url = reverse("category-detail", kwargs={"pk": resp_create.data["id"]})
+    resp_invalid = auth_client.patch(detail_url, {"parent": resp_create.data["id"]}, format="json")
+    assert resp_invalid.status_code == status.HTTP_400_BAD_REQUEST
+
+
 def test_auto_translate_success(auth_client, monkeypatch):
     category = Category.objects.create(slug="museum", nombre="Museu", taxonomy="template")
 

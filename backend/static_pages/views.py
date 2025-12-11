@@ -9,19 +9,15 @@ from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
-from .models import Category
-from .serializers import CategorySerializer
+from .models import StaticPage
+from .serializers import StaticPageSerializer
 
 logger = logging.getLogger(__name__)
 
 
-class CategoryViewSet(viewsets.ModelViewSet):
-    """
-    API endpoints for categories (core).
-    """
-
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
+class StaticPageViewSet(viewsets.ModelViewSet):
+    queryset = StaticPage.objects.all()
+    serializer_class = StaticPageSerializer
 
     def get_permissions(self):
         if self.action in ["list", "retrieve"]:
@@ -29,58 +25,56 @@ class CategoryViewSet(viewsets.ModelViewSet):
         return [IsAuthenticated()]
 
     def get_queryset(self):
-        queryset = Category.objects.all()
+        qs = StaticPage.objects.all()
         params = self.request.query_params
 
-        taxonomy = params.get("taxonomy")
-        if taxonomy:
-            queryset = queryset.filter(taxonomy=taxonomy)
+        template = params.get("template")
+        if template:
+            qs = qs.filter(template=template)
 
         slug = params.get("slug")
         if slug:
-            queryset = queryset.filter(slug=slug)
+            qs = qs.filter(slug=slug)
 
-        parent = params.get("parent")
-        if parent is not None:
-            if parent == "":
-                queryset = queryset.filter(parent__isnull=True)
-            else:
-                queryset = queryset.filter(parent_id=parent)
+        is_published = params.get("is_published")
+        if is_published is not None:
+            if is_published in ["true", "1", "True"]:
+                qs = qs.filter(is_published=True)
+            elif is_published in ["false", "0", "False"]:
+                qs = qs.filter(is_published=False)
 
         search = params.get("search") or params.get("q")
         if search:
-            queryset = queryset.filter(
-                Q(translations__nombre__icontains=search) | Q(translations__descripcion__icontains=search)
+            qs = qs.filter(
+                Q(translations__titulo__icontains=search)
+                | Q(translations__cuerpo__icontains=search)
+                | Q(slug__icontains=search)
             ).distinct()
 
-        return queryset
+        return qs
 
     @action(detail=True, methods=["post"], permission_classes=[IsAuthenticated])
     def auto_translate(self, request, pk=None):
-        """
-        Auto-translate category name/description to target languages.
-        Does not touch slug or taxonomy.
-        """
-        category = self.get_object()
+        page = self.get_object()
 
         source_lang = request.data.get("source_lang", settings.LANGUAGE_CODE)
         configured_langs = [lang[0] for lang in settings.LANGUAGES]
         default_targets = [lang for lang in configured_langs if lang != source_lang]
         target_langs = request.data.get("target_langs", default_targets)
 
-        if source_lang not in category.get_available_languages():
+        if source_lang not in page.get_available_languages():
             return Response(
-                {"success": False, "error": f"Category has no content in {source_lang} to translate from"},
+                {"success": False, "error": f"Page has no content in {source_lang} to translate from"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        category.set_current_language(source_lang)
-        source_nombre = category.nombre
-        source_descripcion = category.descripcion or ""
+        page.set_current_language(source_lang)
+        source_title = page.titulo
+        source_body = page.cuerpo or ""
 
-        if not source_nombre:
+        if not source_title:
             return Response(
-                {"success": False, "error": f"Category has no content in {source_lang} to translate from"},
+                {"success": False, "error": f"Page has no content in {source_lang} to translate from"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -97,42 +91,42 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
         for target_lang in target_langs:
             try:
-                translated_nombre = translate_text(
-                    text=source_nombre,
+                translated_title = translate_text(
+                    text=source_title,
                     source_lang=source_lang,
                     target_lang=target_lang,
                     log_translation=True,
                 )
 
-                translated_descripcion = ""
-                if source_descripcion:
-                    translated_descripcion = translate_text(
-                        text=source_descripcion,
+                translated_body = ""
+                if source_body:
+                    translated_body = translate_text(
+                        text=source_body,
                         source_lang=source_lang,
                         target_lang=target_lang,
                         log_translation=True,
                     )
 
-                category.set_current_language(target_lang, initialize=True)
-                category.nombre = translated_nombre
-                category.descripcion = translated_descripcion
-                category.save_translations()
+                page.set_current_language(target_lang, initialize=True)
+                page.titulo = translated_title
+                page.cuerpo = translated_body
+                page.save_translations()
 
                 translations[target_lang] = {
-                    "nombre": translated_nombre,
-                    "descripcion": translated_descripcion,
+                    "titulo": translated_title,
+                    "cuerpo": translated_body,
                 }
 
-                logger.info(f"Translated category {category.id} to {target_lang}: '{translated_nombre}'")
+                logger.info(f"Translated static page {page.id} to {target_lang}: '{translated_title}'")
 
             except TranslationError as e:
                 error_msg = str(e)
                 errors[target_lang] = error_msg
-                logger.error(f"Failed to translate category {category.id} to {target_lang}: {error_msg}")
+                logger.error(f"Failed to translate static page {page.id} to {target_lang}: {error_msg}")
             except Exception as e:
                 error_msg = f"Unexpected error: {str(e)}"
                 errors[target_lang] = error_msg
-                logger.exception(f"Unexpected error translating category {category.id} to {target_lang}")
+                logger.exception(f"Unexpected error translating static page {page.id} to {target_lang}")
 
         return Response(
             {

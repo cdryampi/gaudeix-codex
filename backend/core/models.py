@@ -3,6 +3,7 @@ from __future__ import annotations
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 from parler.models import TranslatableModel, TranslatedFields
 
 
@@ -156,10 +157,20 @@ class Category(TranslatableModel, BaseModel, MetadataModel):
     
     taxonomy = models.CharField(
         max_length=50,
-            blank=True,
-            verbose_name="Taxonomia",
-            help_text="Tipus de taxonomia (p.ex. theme, audience, season...)"
-        )
+        blank=True,
+        verbose_name="Taxonomia",
+        help_text="Tipus de taxonomia (p.ex. theme, audience, season...)"
+    )
+    
+    parent = models.ForeignKey(
+        "self",
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+        related_name="children",
+        verbose_name="Pare",
+        help_text="Categoria pare (opcional)"
+    )
     
     icon = models.CharField(
         max_length=100,
@@ -177,6 +188,24 @@ class Category(TranslatableModel, BaseModel, MetadataModel):
     def __str__(self) -> str:
         nombre = self.safe_translation_getter("nombre", any_language=True)
         return nombre if nombre else self.slug
+
+    def clean(self):
+        super().clean()
+        parent = self.parent
+        seen: set[int] = set()
+        depth = 0
+        while parent:
+            # Avoid self reference or cycles
+            if parent == self or (self.pk and parent.pk == self.pk):
+                raise ValidationError({"parent": "Una categoría no puede ser su propio padre."})
+            if parent.pk and parent.pk in seen:
+                raise ValidationError({"parent": "No se pueden crear ciclos en la jerarquía de categorías."})
+            if parent.pk:
+                seen.add(parent.pk)
+            depth += 1
+            if depth >= 3:
+                raise ValidationError({"parent": "Máximo 3 niveles (raíz > hijo > nieto)."})
+            parent = parent.parent
 
 
 class Tag(TranslatableModel, BaseModel):

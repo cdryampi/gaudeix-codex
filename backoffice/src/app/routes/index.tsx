@@ -15,6 +15,7 @@ import { TestFormPage } from "@/features/test/pages/TestFormPage";
 import { ROUTES } from "@/lib/config/constants";
 import { SocialLinksPage } from "@/features/social/pages/SocialLinksPage";
 import { CategoriesPage } from "@/features/categories/pages/CategoriesPage";
+import { StaticPagesPage } from "@/features/static-pages/pages/StaticPagesPage";
 
 /**
  * Application routing configuration
@@ -89,6 +90,10 @@ export const router = createBrowserRouter([
       {
         path: "social",
         element: <SocialLinksPage />,
+      },
+      {
+        path: "static-pages",
+        element: <StaticPagesPage />,
       },
     ],
   },

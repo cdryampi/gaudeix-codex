@@ -22,6 +22,7 @@ export const ROUTES = {
   PLACES: "/dashboard/places",
   SOCIAL: "/dashboard/social",
   CATEGORIES: "/dashboard/categories",
+  STATIC_PAGES: "/dashboard/static-pages",
 } as const;
 
 /**
@@ -85,6 +86,10 @@ export const QUERY_KEYS = {
     LIST: ["places", "list"],
     DETAIL: (id: string) => ["places", "detail", id],
   },
+  STATIC_PAGES: {
+    LIST: ["static-pages", "list"],
+    DETAIL: (id: string) => ["static-pages", "detail", id],
+  },
   CATEGORIES: {
     LIST: ["categories", "list"],
     DETAIL: (id: string) => ["categories", "detail", id],
@@ -125,6 +130,11 @@ export const API_ENDPOINTS = {
     LIST: "/places/",
     DETAIL: (id: string) => `/places/${id}/`,
     AUTO_TRANSLATE: (id: string) => `/places/${id}/auto_translate/`,
+  },
+  STATIC_PAGES: {
+    LIST: "/static-pages/",
+    DETAIL: (id: string) => `/static-pages/${id}/`,
+    AUTO_TRANSLATE: (id: string) => `/static-pages/${id}/auto_translate/`,
   },
   CATEGORIES: {
     LIST: "/categories/",

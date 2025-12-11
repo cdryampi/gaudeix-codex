@@ -88,6 +88,7 @@ INSTALLED_APPS = [
     "solo",
     "media_files.apps.MediaFilesConfig",
     "llm_translations",
+    "static_pages.apps.StaticPagesConfig",
 ]
 
 SITE_ID = 1

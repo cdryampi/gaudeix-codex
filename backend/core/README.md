@@ -86,6 +86,8 @@ cat.save()
 # Usar en otro modelo
 class Route(TranslatableModel, ContentBase):
     categories = models.ManyToManyField('core.Category')
+
+# Nota: la jerarquía de categorías está limitada a 3 niveles (raíz > hijo > nieto) y se bloquean ciclos en parent.
 ```
 
 ### `Tag`

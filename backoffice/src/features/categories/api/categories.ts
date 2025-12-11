@@ -35,6 +35,7 @@ export const categoriesApi = {
 function normalizeCategory(category: Category): Category {
   return {
     ...category,
+    parent: category.parent ?? null,
     descripcion: category.descripcion || "",
     translations: category.translations || {},
     icon: category.icon || "",

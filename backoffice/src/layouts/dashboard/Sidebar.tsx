@@ -10,6 +10,7 @@ import {
   Image,
   Calendar,
   Settings,
+  FileStack,
 } from "lucide-react";
 import { ROUTES } from "@/lib/config/constants";
 
@@ -30,6 +31,7 @@ const mediaNavigation = [
 
 const systemNavigation = [
   { name: "Usuarios", href: ROUTES.USERS, icon: Users },
+  { name: "Páginas estáticas", href: ROUTES.STATIC_PAGES, icon: FileStack },
   { name: "Ajustes", href: "/ajustes", icon: Settings },
 ];
 

@@ -21,9 +21,12 @@ export function CategoriesPage() {
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
-    return categories.filter((c) =>
-      `${c.slug} ${c.nombre} ${c.descripcion} ${c.icon || ""} ${c.taxonomy || ""}`.toLowerCase().includes(q)
-    );
+    return categories.filter((c) => {
+      const parentText = c.parent ? `parent:${c.parent}` : "";
+      return `${c.slug} ${c.nombre} ${c.descripcion} ${c.icon || ""} ${c.taxonomy || ""} ${parentText}`
+        .toLowerCase()
+        .includes(q);
+    });
   }, [categories, search]);
 
   const fetchCategories = async () => {
@@ -115,6 +118,7 @@ export function CategoriesPage() {
         }}
         onSubmit={handleSubmit}
         category={editing}
+        categories={categories}
       />
     </PageContainer>
   );

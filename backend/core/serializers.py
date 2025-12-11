@@ -18,6 +18,11 @@ class CategorySerializer(TranslatableModelSerializer):
         serializer_class=CategoryTranslationSerializer,
         required=False,
     )
+    parent = serializers.PrimaryKeyRelatedField(
+        queryset=Category.objects.all(),
+        required=False,
+        allow_null=True,
+    )
     created_at = serializers.DateTimeField(source="fecha_creacion", read_only=True)
     updated_at = serializers.DateTimeField(source="fecha_modificacion", read_only=True)
 
@@ -27,6 +32,7 @@ class CategorySerializer(TranslatableModelSerializer):
             "id",
             "slug",
             "taxonomy",
+            "parent",
             "icon",
             "nombre",
             "descripcion",
@@ -39,6 +45,28 @@ class CategorySerializer(TranslatableModelSerializer):
             "created_at",
             "updated_at",
         ]
+
+    def validate(self, attrs):
+        parent = attrs.get("parent") or getattr(self.instance, "parent", None)
+        if self.instance and parent and parent.pk == self.instance.pk:
+            raise serializers.ValidationError({"parent": "La categoría no puede ser su propia padre."})
+
+        # Depth and cycle validation (max 3 levels)
+        target_parent = parent
+        seen: set[int] = set()
+        depth = 0
+        while target_parent:
+            if self.instance and target_parent.pk == self.instance.pk:
+                raise serializers.ValidationError({"parent": "No se pueden crear ciclos."})
+            if target_parent.pk and target_parent.pk in seen:
+                raise serializers.ValidationError({"parent": "No se pueden crear ciclos."})
+            if target_parent.pk:
+                seen.add(target_parent.pk)
+            depth += 1
+            if depth >= 3:
+                raise serializers.ValidationError({"parent": "Máximo 3 niveles (raíz > hijo > nieto)."})
+            target_parent = target_parent.parent
+        return attrs
 
     def save(self, **kwargs):
         translated_data = self._pop_translated_data()
