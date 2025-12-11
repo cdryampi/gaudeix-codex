@@ -2,12 +2,14 @@
 
 ## Project Overview
 
-Gaudeix Codex is a modern, decoupled content management system migrating from a Django monolith to a microservices architecture with:
+Gaudeix Codex is a modern, decoupled CMS for a municipal content platform, migrating from a Django monolith to a microservices architecture with:
 
 - **Backend**: Django REST Framework API with JWT auth (`backend/`, port 8000)
 - **Frontend**: React + Vite SPA for public site (`frontend/`, port 5173)
-- **Backoffice**: React + Tailwind + shadcn/ui admin panel (`backoffice/`, port 5174)
-- **Infrastructure**: Docker Compose with PostgreSQL and MinIO, deployed via Dokploy
+- **Backoffice**: React 18 + Vite + TypeScript + Tailwind + shadcn/ui admin panel (`backoffice/`, port 5174)
+- **Infrastructure**: Docker Compose with PostgreSQL and MinIO for object storage, deployed via Dokploy
+
+**Key Design Principle**: Complete decoupling - frontend/backoffice communicate with backend exclusively via REST API. No shared templates or direct DB access.
 
 ## Architecture Principles
 
@@ -34,13 +36,28 @@ Backend follows modular Django apps (`users`, `social`, `media_files`, etc.). Ea
 
 ### Starting Services
 
-Run all services simultaneously using VS Code tasks (auto-start on workspace open):
+**VS Code Tasks** (auto-start on workspace open via `.vscode/tasks.json`):
+- All services start automatically when opening workspace
+- Task IDs: `shell: Start Backend (Django)`, `shell: Start Frontend (Vite)`, `shell: Start Backoffice (Vite)`
+- Backend uses `.venv_win\Scripts\python.exe` (Windows-specific virtual environment)
+- Access: Backend (http://localhost:8000), Frontend (http://localhost:5173), Backoffice (http://localhost:5174)
 
-- Backend: `.venv_win\Scripts\activate; python manage.py runserver`
-- Frontend: `npm run dev` in `frontend/`
-- Backoffice: `npm run dev` in `backoffice/`
+**Manual start**:
+```bash
+# From project root
+start_dev.bat  # Windows batch file to start all services
 
-Or use Docker Compose: `docker-compose up --build`
+# Or individually
+cd backend && .venv_win\Scripts\activate && python manage.py runserver 0.0.0.0:8000
+cd frontend && npm run dev
+cd backoffice && npm run dev
+```
+
+**Docker Compose**:
+```bash
+docker-compose up --build
+# Access: backend (8000), frontend (4173), backoffice (4174), MinIO console (9001)
+```
 
 ### Backend Development
 
@@ -49,12 +66,18 @@ cd backend
 # Activate venv: .venv_win\Scripts\activate (Windows)
 python manage.py migrate                    # Run migrations
 python manage.py createsuperuser            # Admin user
-python manage.py seed_media_files           # Example seed command
+python manage.py seed_users                 # Seed admin/system users from env vars
+python manage.py seed_media_files           # Example seed command for media_files app
 pytest                                      # Run tests (uses SQLite in-memory)
 ENVIRONMENT=local python manage.py test     # Django test runner
 ```
 
 **Environment profiles**: Set `ENVIRONMENT=local` (SQLite), `test` (in-memory), or `production` (PostgreSQL via `DATABASE_URL` or `DB_*` vars). See `backend/config/settings/`.
+
+**Default seed users** (from `seed_users` command):
+- Admin: Ver variables de entorno `ADMIN_USER` / `ADMIN_PASSWORD`
+- System: Ver variables de entorno `SYSTEM_USER` / `SYSTEM_PASSWORD`
+- Otros usuarios: Consultar con el equipo o verificar en `.env` local
 
 ### Frontend/Backoffice Development
 
@@ -77,11 +100,13 @@ Environment variables **must** start with `VITE_` prefix (e.g., `VITE_API_BASE_U
 
 ### Backend API Patterns
 
-- **ViewSets over APIViews**: Use `ModelViewSet` or `GenericViewSet` with mixins, registered in routers
-- **Permissions**: Action-based via `get_permissions()`. Example: `users/views.py` - `AllowAny` for registration, `IsAuthenticated() + IsOwnerOrAdmin()` for updates
+- **ViewSets over APIViews**: Use `ModelViewSet` or `GenericViewSet` with mixins, registered in routers. Example: `users/views.py` uses `UserViewSet` with `get_serializer_class()` and `get_permissions()` methods
+- **Permissions**: Action-based via `get_permissions()`. Example: `users/views.py` - `AllowAny` for registration, `IsAuthenticated` + `IsOwnerOrAdmin` for updates/deletes
 - **Serializers**: Separate serializers for create/update/detail (e.g., `UserRegistrationSerializer`, `UserDetailSerializer`, `UserUpdateSerializer`)
 - **Custom permissions**: See `users/permissions.py` for `IsOwnerOrAdmin`, `IsOwner` patterns
-- **JWT Authentication**: `djangorestframework-simplejwt` configured, tokens in Authorization headers
+- **JWT Authentication**: `djangorestframework-simplejwt` configured, tokens in Authorization headers. Auth endpoints: `/api/v1/auth/login/`, `/api/v1/auth/logout/`, `/api/v1/auth/token/refresh/`, `/api/v1/auth/token/verify/`
+- **API versioning**: All endpoints prefixed with `/api/v1/`
+- **Health check**: Public endpoint at `GET /api/health/` for backend status verification
 
 ### Frontend/Backoffice Patterns
 
@@ -96,12 +121,14 @@ Environment variables **must** start with `VITE_` prefix (e.g., `VITE_API_BASE_U
 
 Media uploads are handled by `media_files` app with:
 
-- Automatic image variant generation (thumbnail/medium/large) via `utils.py`
+- Automatic image variant generation (thumbnail/medium/large) via `utils.py` - variants defined: thumbnail (150px), medium (600px), large (1200px)
 - UUID-based filenames to prevent collisions
 - Automatic cleanup on delete via signals (`signals.py`)
+- File size validation: Max 10MB (configurable via `MAX_FILE_SIZE_MB` in `media_files/utils.py`)
+- Allowed extensions: Images (`.jpg`, `.jpeg`, `.png`, `.webp`, `.gif`), Documents (`.pdf`, `.ics`, `.txt`, `.docx`, `.xlsx`)
 - REST API endpoints for upload/CRUD
 
-Example: `POST /api/v1/media/images/` with multipart/form-data, returns all variants.
+Example: `POST /api/v1/media/images/` with multipart/form-data, returns all variants. Storage: MinIO (Docker) or local filesystem (development).
 
 ### Database & Migrations
 
@@ -116,6 +143,7 @@ Example: `POST /api/v1/media/images/` with multipart/form-data, returns all vari
 - **Module documentation**: Each app has a `README.md` with API examples, usage patterns
 - **Git workflow**: Conventional Commits (`feat:`, `fix:`, `docs:`, `test:`), PRs required for `main`
 - **Tasks**: `.vscode/tasks.json` defines auto-start tasks for all services
+- **LLM Translations**: Backend includes `llm_translations` app supporting OpenAI, Google Gemini, Anthropic, Mistral, Groq. API keys configured via env vars (`LLM_OPENAI_API_KEY`, etc.)
 
 ## Common Operations
 
