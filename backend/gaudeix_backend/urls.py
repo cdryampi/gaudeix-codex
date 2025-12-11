@@ -19,6 +19,7 @@ from social.urls import register_routes as register_social_routes
 from users.urls import register_routes as register_users_routes
 from llm_translations.urls import register_routes as register_llm_routes
 from static_pages.urls import register_routes as register_static_pages_routes
+from site_settings.urls import register_routes as register_site_settings_routes
 from .views import health_check
 
 # Register DRF router routes
@@ -31,6 +32,7 @@ register_social_routes(router)
 register_users_routes(router)
 register_llm_routes(router)
 register_static_pages_routes(router)
+register_site_settings_routes(router)
 
 urlpatterns = [
     # Admin
