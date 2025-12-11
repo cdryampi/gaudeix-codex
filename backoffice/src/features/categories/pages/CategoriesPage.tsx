@@ -21,7 +21,9 @@ export function CategoriesPage() {
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
-    return categories.filter((c) => `${c.slug} ${c.nombre} ${c.descripcion}`.toLowerCase().includes(q));
+    return categories.filter((c) =>
+      `${c.slug} ${c.nombre} ${c.descripcion} ${c.icon || ""} ${c.taxonomy || ""}`.toLowerCase().includes(q)
+    );
   }, [categories, search]);
 
   const fetchCategories = async () => {

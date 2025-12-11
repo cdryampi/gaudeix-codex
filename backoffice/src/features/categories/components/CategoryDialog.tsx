@@ -6,6 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { LANGUAGES } from "@/lib/config/constants";
+import { cn } from "@/lib/utils";
+import { CATEGORY_ICON_OPTIONS, getCategoryIcon } from "../constants/icons";
 import { Category, CategoryPayload } from "../types";
 import { categoriesApi } from "../api/categories";
 import { toast } from "sonner";
@@ -24,6 +26,7 @@ type LocalTranslations = {
 const emptyForm: CategoryPayload = {
   slug: "",
   taxonomy: "",
+  icon: "",
   nombre: "",
   descripcion: "",
   translations: {},
@@ -34,12 +37,14 @@ export function CategoryDialog({ open, onOpenChange, onSubmit, category }: Props
   const [activeLang, setActiveLang] = useState("ca");
   const [translations, setTranslations] = useState<LocalTranslations>({});
   const [loadingTranslate, setLoadingTranslate] = useState(false);
+  const IconPreview = getCategoryIcon(form.icon);
 
   useEffect(() => {
     if (category) {
       setForm({
         slug: category.slug,
         taxonomy: category.taxonomy || "",
+        icon: category.icon || "",
         nombre: category.nombre,
         descripcion: category.descripcion || "",
         translations: category.translations || {},
@@ -65,6 +70,10 @@ export function CategoryDialog({ open, onOpenChange, onSubmit, category }: Props
     }
   };
 
+  const handleIconChange = (value: string) => {
+    setForm((prev) => ({ ...prev, icon: value }));
+  };
+
   const getContent = (lang: string) => {
     if (lang === "ca") {
       return { nombre: form.nombre, descripcion: form.descripcion };
@@ -76,8 +85,10 @@ export function CategoryDialog({ open, onOpenChange, onSubmit, category }: Props
     e.preventDefault();
     const translationsPayload = { ...translations };
     delete translationsPayload["ca"];
+    const iconValue = form.icon?.trim() ?? "";
     const payload: CategoryPayload = {
       ...form,
+      icon: iconValue,
       translations: Object.keys(translationsPayload).length ? translationsPayload : undefined,
     };
     await onSubmit(payload);
@@ -142,6 +153,85 @@ export function CategoryDialog({ open, onOpenChange, onSubmit, category }: Props
                 placeholder="template, theme, etc."
               />
             </div>
+          </div>
+
+          <div className="space-y-3 rounded-lg border border-border/60 bg-muted/20 p-3">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <p className="text-sm font-semibold text-foreground">Icono</p>
+                <p className="text-xs text-muted-foreground">
+                  Selecciona un icono (Lucide) para mostrarlo en los listados del backoffice.
+                </p>
+              </div>
+              {IconPreview && (
+                <div className="flex h-10 w-10 items-center justify-center rounded-md border border-border/70 bg-background">
+                  <IconPreview className="h-5 w-5 text-foreground" />
+                </div>
+              )}
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+              {CATEGORY_ICON_OPTIONS.map((option) => {
+                const OptionIcon = option.icon;
+                const isActive = form.icon === option.value;
+                return (
+                  <label
+                    key={option.value}
+                    className={cn(
+                      "flex cursor-pointer items-center gap-3 rounded-md border px-3 py-2 transition",
+                      isActive ? "border-primary bg-primary/10 text-primary" : "border-border/70 hover:border-primary/40"
+                    )}
+                  >
+                    <input
+                      type="checkbox"
+                      className="sr-only"
+                      checked={isActive}
+                      onChange={() => handleIconChange(isActive ? "" : option.value)}
+                      aria-label={`Icono ${option.labelEs}`}
+                    />
+                    <div className="flex h-9 w-9 items-center justify-center rounded-md border border-border/60 bg-background">
+                      <OptionIcon className="h-4 w-4" />
+                    </div>
+                    <div className="leading-tight">
+                      <div className="text-sm font-semibold">{option.labelEs}</div>
+                      <div className="text-xs text-muted-foreground">
+                        <span className="font-bold">{option.labelCa}</span>
+                      </div>
+                    </div>
+                  </label>
+                );
+              })}
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Input
+                id="icon"
+                name="icon"
+                value={form.icon || ""}
+                onChange={(e) => handleIconChange(e.target.value)}
+                list="category-icon-suggestions"
+                placeholder="castle, flag, mountain..."
+              />
+              {form.icon && (
+                <div className="flex h-10 min-w-[2.5rem] items-center justify-center rounded-md border border-border/70 bg-background px-2">
+                  {IconPreview ? (
+                    <IconPreview className="h-5 w-5 text-foreground" />
+                  ) : (
+                    <span className="text-[11px] font-mono text-muted-foreground">?</span>
+                  )}
+                </div>
+              )}
+            </div>
+            <datalist id="category-icon-suggestions">
+              {CATEGORY_ICON_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.labelEs}
+                </option>
+              ))}
+            </datalist>
+            <p className="text-xs text-muted-foreground">
+              Usa el nombre del icono en kebab-case (ej. castle, party-popper). Puedes escribirlo o elegir uno sugerido.
+            </p>
           </div>
 
           <Tabs value={activeLang} onValueChange={setActiveLang} defaultValue="ca">

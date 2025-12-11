@@ -44,6 +44,7 @@ def test_create_update_delete_category(auth_client):
     payload = {
         "slug": "beach",
         "taxonomy": "template",
+        "icon": "umbrella",
         "nombre": "Beach",
         "descripcion": "Sun and sand",
         "translations": {
@@ -55,11 +56,13 @@ def test_create_update_delete_category(auth_client):
     resp_create = auth_client.post(url, payload, format="json")
     assert resp_create.status_code == status.HTTP_201_CREATED
     category_id = resp_create.data["id"]
+    assert resp_create.data["icon"] == "umbrella"
 
     detail_url = reverse("category-detail", kwargs={"pk": category_id})
-    resp_patch = auth_client.patch(detail_url, {"nombre": "Beach Updated"}, format="json")
+    resp_patch = auth_client.patch(detail_url, {"nombre": "Beach Updated", "icon": "flag"}, format="json")
     assert resp_patch.status_code == status.HTTP_200_OK
     assert resp_patch.data["nombre"] == "Beach Updated"
+    assert resp_patch.data["icon"] == "flag"
 
     resp_delete = auth_client.delete(detail_url)
     assert resp_delete.status_code == status.HTTP_204_NO_CONTENT

@@ -13,6 +13,7 @@ class CategoryAdmin(TranslatableAdmin):
         'slug',
         'get_nombre',
         'taxonomy',
+        'icon',
         'fecha_creacion',
         'fecha_modificacion',
     )
@@ -37,7 +38,7 @@ class CategoryAdmin(TranslatableAdmin):
     
     fieldsets = (
         ('Informació bàsica', {
-            'fields': ('slug', 'taxonomy')
+            'fields': ('slug', 'taxonomy', 'icon')
         }),
         ('Contingut traduïble', {
             'fields': ('nombre', 'descripcion')

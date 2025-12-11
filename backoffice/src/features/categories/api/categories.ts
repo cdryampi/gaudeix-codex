@@ -37,5 +37,6 @@ function normalizeCategory(category: Category): Category {
     ...category,
     descripcion: category.descripcion || "",
     translations: category.translations || {},
+    icon: category.icon || "",
   };
 }

@@ -27,6 +27,7 @@ class CategorySerializer(TranslatableModelSerializer):
             "id",
             "slug",
             "taxonomy",
+            "icon",
             "nombre",
             "descripcion",
             "translations",

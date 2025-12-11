@@ -156,9 +156,17 @@ class Category(TranslatableModel, BaseModel, MetadataModel):
     
     taxonomy = models.CharField(
         max_length=50,
+            blank=True,
+            verbose_name="Taxonomia",
+            help_text="Tipus de taxonomia (p.ex. theme, audience, season...)"
+        )
+    
+    icon = models.CharField(
+        max_length=100,
         blank=True,
-        verbose_name="Taxonomia",
-        help_text="Tipus de taxonomia (p.ex. theme, audience, season...)"
+        default="",
+        verbose_name="Icona",
+        help_text="Identificador d'icona per mostrar al front/back office"
     )
     
     class Meta:

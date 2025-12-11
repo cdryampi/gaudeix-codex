@@ -2,6 +2,7 @@ export type Category = {
   id: number;
   slug: string;
   taxonomy?: string;
+  icon?: string;
   nombre: string;
   descripcion?: string;
   translations?: {
@@ -17,6 +18,7 @@ export type Category = {
 export type CategoryPayload = {
   slug: string;
   taxonomy?: string;
+  icon?: string;
   nombre: string;
   descripcion?: string;
   translations?: {

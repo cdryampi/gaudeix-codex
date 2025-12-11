@@ -4,6 +4,7 @@ from io import BytesIO
 
 import pytest
 from django.core.files.storage import FileSystemStorage, default_storage
+from django.utils.functional import empty
 from django.core.files.uploadedfile import SimpleUploadedFile
 from PIL import Image
 from rest_framework.test import APIClient
@@ -15,7 +16,7 @@ def media_storage(tmp_path, settings):
     settings.DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
     default_storage._wrapped = FileSystemStorage(location=str(tmp_path))  # type: ignore[attr-defined]
     yield tmp_path
-    default_storage._wrapped = None  # type: ignore[attr-defined]
+    default_storage._wrapped = empty  # type: ignore[attr-defined]
 
 
 def make_test_image(name: str = "test.jpg", size=(400, 400), color=(255, 0, 0)):
