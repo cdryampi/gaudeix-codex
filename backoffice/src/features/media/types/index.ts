@@ -1,4 +1,4 @@
-export type MediaType = "image" | "document";
+export type MediaType = "image" | "document" | "video";
 
 export type MediaItem = {
   id: number;
@@ -14,4 +14,5 @@ export type MediaItem = {
   variant_medium?: string;
   variant_large?: string;
   thumbnail_url?: string;
+  // Videos (no variantes específicas)
 };

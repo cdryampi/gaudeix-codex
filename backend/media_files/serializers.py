@@ -3,87 +3,49 @@ from __future__ import annotations
 from django.core.files.storage import default_storage
 from rest_framework import serializers
 
-from .models import DocumentFile, ImageFile
 from . import utils
+from .models import DocumentFile, ImageFile, VideoFile
 
 
 class ImageFileSerializer(serializers.ModelSerializer):
-    """
-    Serializer para ImageFile con validación y extracción de metadatos.
-    
-    Campos expuestos en API:
-        - file: Campo de subida (lectura/escritura)
-        - original_name: Extraído automáticamente del archivo (solo lectura)
-        - mime_type: Extraído automáticamente (solo lectura)
-        - size_bytes: Extraído automáticamente (solo lectura)
-        - variant_*: Generadas por señal post_save (solo lectura)
-    
-    Flujo de creación:
-        1. Usuario sube 'file' mediante POST multipart/form-data
-        2. validate_file() valida tamaño y extensión
-        3. create() extrae metadatos del archivo
-        4. super().create() guarda en BD
-        5. Señal post_save genera variantes automáticamente
-    """
-    original_name = serializers.CharField(required=False, allow_blank=True)
+    """Serializer para ImageFile con validaciones y URLs absolutas para variantes."""
+
     thumbnail_url = serializers.SerializerMethodField()
-    
+    original_name = serializers.CharField(required=False, allow_blank=True)
+
     class Meta:
         model = ImageFile
         fields = [
             "id",
-            "file",                # Campo de subida (URL completa en respuesta)
-            "original_name",       # Nombre original del archivo
-            "mime_type",          # Tipo MIME (ej: image/jpeg)
-            "size_bytes",         # Tamaño en bytes
-            "variant_thumbnail",  # Ruta a thumbnail (150px)
-            "variant_medium",     # Ruta a medium (600px)
-            "variant_large",      # Ruta a large (1200px)
-            "thumbnail_url",      # URL absoluta de la miniatura (útil en backoffice)
-            "created_at",         # Timestamp de creación
-            "updated_at",         # Timestamp de actualización
+            "file",
+            "original_name",
+            "mime_type",
+            "size_bytes",
+            "variant_thumbnail",
+            "variant_medium",
+            "variant_large",
+            "thumbnail_url",
+            "created_at",
+            "updated_at",
         ]
-        # Campos que no pueden ser escritos directamente
-        # Se generan/extraen automáticamente
         read_only_fields = [
             "id",
-            "mime_type",          # Extraído de file.content_type
-            "size_bytes",         # Extraído de file.size
-            "variant_thumbnail",  # Generado por señal
-            "variant_medium",     # Generado por señal
-            "variant_large",      # Generado por señal
+            "mime_type",
+            "size_bytes",
+            "variant_thumbnail",
+            "variant_medium",
+            "variant_large",
             "thumbnail_url",
-            "created_at",         # auto_now_add=True
-            "updated_at",         # auto_now=True
+            "created_at",
+            "updated_at",
         ]
 
     def validate_file(self, value):
-        """
-        Valida el archivo subido antes de guardarlo.
-        
-        Validaciones:
-            - Tamaño máximo: 10MB (configurable en utils.MAX_FILE_SIZE_MB)
-            - Extensiones: .jpg, .jpeg, .png, .webp, .gif
-        
-        Raises:
-            ValidationError: Si falla alguna validación
-        """
         utils.validate_max_file_size(value)
         utils.validate_image_extension(value)
         return value
 
     def create(self, validated_data):
-        """
-        Crea registro extrayendo metadatos automáticamente del archivo.
-        
-        Extrae:
-            - original_name: Del nombre del archivo subido
-            - mime_type: Del content_type del archivo
-            - size_bytes: Del tamaño del archivo
-        
-        Nota:
-            Las variantes se generan después mediante señal post_save
-        """
         file = validated_data.get("file")
         if file:
             validated_data["original_name"] = file.name
@@ -92,9 +54,6 @@ class ImageFileSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
     def get_thumbnail_url(self, obj: ImageFile) -> str:
-        """
-        Devuelve URL absoluta para la miniatura si existe.
-        """
         if not obj.variant_thumbnail:
             return ""
         try:
@@ -103,9 +62,6 @@ class ImageFileSerializer(serializers.ModelSerializer):
             return default_storage.url(obj.variant_thumbnail)
 
     def to_representation(self, instance):
-        """
-        Asegura que las variantes devuelvan URL absolutas cuando hay request en contexto.
-        """
         rep = super().to_representation(instance)
         request = self.context.get("request")
 
@@ -127,72 +83,76 @@ class ImageFileSerializer(serializers.ModelSerializer):
 
 
 class DocumentFileSerializer(serializers.ModelSerializer):
-    """
-    Serializer para DocumentFile con validación y extracción de metadatos.
-    
-    Similar a ImageFileSerializer pero sin variantes (los documentos no se redimensionan).
-    
-    Campos expuestos en API:
-        - file: Campo de subida (lectura/escritura)
-        - original_name: Extraído automáticamente del archivo (solo lectura)
-        - mime_type: Extraído automáticamente (solo lectura)
-        - size_bytes: Extraído automáticamente (solo lectura)
-    
-    Flujo de creación:
-        1. Usuario sube 'file' mediante POST multipart/form-data
-        2. validate_file() valida tamaño y extensión
-        3. create() extrae metadatos del archivo
-        4. super().create() guarda en BD
-    """
-    
+    """Serializer para DocumentFile con validaciones básicas."""
+
+    original_name = serializers.CharField(required=False, allow_blank=True)
+
     class Meta:
         model = DocumentFile
         fields = [
             "id",
-            "file",            # Campo de subida (URL completa en respuesta)
-            "original_name",   # Nombre original del archivo
-            "mime_type",      # Tipo MIME (ej: application/pdf)
-            "size_bytes",     # Tamaño en bytes
-            "created_at",     # Timestamp de creación
-            "updated_at",     # Timestamp de actualización
+            "file",
+            "original_name",
+            "mime_type",
+            "size_bytes",
+            "created_at",
+            "updated_at",
         ]
-        # Campos que no pueden ser escritos directamente
         read_only_fields = [
             "id",
-            "mime_type",      # Extraído de file.content_type
-            "size_bytes",     # Extraído de file.size
-            "created_at",     # auto_now_add=True
-            "updated_at",     # auto_now=True
+            "mime_type",
+            "size_bytes",
+            "created_at",
+            "updated_at",
         ]
 
     def validate_file(self, value):
-        """
-        Valida el archivo subido antes de guardarlo.
-        
-        Validaciones:
-            - Tamaño máximo: 10MB (configurable en utils.MAX_FILE_SIZE_MB)
-            - Extensiones: .pdf, .ics, .txt, .docx, .xlsx
-        
-        Raises:
-            ValidationError: Si falla alguna validación
-        """
         utils.validate_max_file_size(value)
         utils.validate_document_extension(value)
         return value
 
     def create(self, validated_data):
-        """
-        Crea registro extrayendo metadatos automáticamente del archivo.
-        
-        Extrae:
-            - original_name: Del nombre del archivo subido
-            - mime_type: Del content_type del archivo
-            - size_bytes: Del tamaño del archivo
-        """
         file = validated_data.get("file")
         if file:
             validated_data["original_name"] = file.name
             validated_data["mime_type"] = getattr(file, "content_type", "") or ""
             validated_data["size_bytes"] = file.size
         return super().create(validated_data)
+
+
+class VideoFileSerializer(serializers.ModelSerializer):
+    """Serializer para VideoFile."""
+
     original_name = serializers.CharField(required=False, allow_blank=True)
+
+    class Meta:
+        model = VideoFile
+        fields = [
+            "id",
+            "file",
+            "original_name",
+            "mime_type",
+            "size_bytes",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = [
+            "id",
+            "mime_type",
+            "size_bytes",
+            "created_at",
+            "updated_at",
+        ]
+
+    def validate_file(self, value):
+        utils.validate_max_file_size(value)
+        utils.validate_video_extension(value)
+        return value
+
+    def create(self, validated_data):
+        file = validated_data.get("file")
+        if file:
+            validated_data["original_name"] = file.name
+            validated_data["mime_type"] = getattr(file, "content_type", "") or ""
+            validated_data["size_bytes"] = file.size
+        return super().create(validated_data)

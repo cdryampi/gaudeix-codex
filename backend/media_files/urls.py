@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from rest_framework.routers import DefaultRouter
 
-from .views import DocumentFileViewSet, ImageFileViewSet
+from .views import DocumentFileViewSet, ImageFileViewSet, VideoFileViewSet
 
 
 def register_routes(router: DefaultRouter) -> None:
@@ -47,6 +47,9 @@ def register_routes(router: DefaultRouter) -> None:
     # Prefijo: media/documents (se combina con prefijo del router principal)
     # Basename: media-documents (para reverse URLs)
     router.register("media/documents", DocumentFileViewSet, basename="media-documents")
+
+    # Registrar ViewSet de videos
+    router.register("media/videos", VideoFileViewSet, basename="media-videos")
 
 
 # Uso standalone opcional (sin router global)

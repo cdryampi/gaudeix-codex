@@ -1,7 +1,7 @@
 from django.contrib import admin
 from solo.admin import SingletonModelAdmin
 
-from .models import SiteSettings
+from .models import MenuItem, SiteSettings
 
 
 @admin.register(SiteSettings)
@@ -27,7 +27,6 @@ class SiteSettingsAdmin(SingletonModelAdmin):
                     "facebook_url",
                     "instagram_url",
                     "twitter_url",
-                    "youtube_url",
                 )
             },
         ),
@@ -62,8 +61,42 @@ class SiteSettingsAdmin(SingletonModelAdmin):
                     "default_metatitle",
                     "default_metadescription",
                     "default_og_image",
+                    "video_enabled",
+                    "video_title",
+                    "video_description_internal",
+                    "background_video",
+                    "youtube_url",
                 )
             },
         ),
     )
-    raw_id_fields = ("logo", "logo_dark", "favicon", "default_og_image", "privacy_page", "cookies_page", "legal_page", "inclusion_page")
+    raw_id_fields = (
+        "logo",
+        "logo_dark",
+        "favicon",
+        "default_og_image",
+        "background_video",
+        "privacy_page",
+        "cookies_page",
+        "legal_page",
+        "inclusion_page",
+    )
+
+
+@admin.register(MenuItem)
+class MenuItemAdmin(admin.ModelAdmin):
+    list_display = ("id", "location", "type", "label", "category", "static_page", "parent", "order")
+    list_filter = ("location", "type")
+    search_fields = (
+        "label",
+        "url",
+        "category__translations__nombre",
+        "static_page__translations__titulo",
+    )
+    raw_id_fields = ("category", "static_page", "parent")
+    ordering = ("location", "parent_id", "order", "id")
+
+    def save_model(self, request, obj, form, change):
+        if not obj.settings_id:
+            obj.settings = SiteSettings.get_solo()
+        super().save_model(request, obj, form, change)

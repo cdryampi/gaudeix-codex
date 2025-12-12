@@ -20,6 +20,9 @@ IMAGE_EXTENSIONS: set[str] = {".jpg", ".jpeg", ".png", ".webp", ".gif"}
 # Extensiones permitidas para documentos
 DOCUMENT_EXTENSIONS: set[str] = {".pdf", ".ics", ".txt", ".docx", ".xlsx"}
 
+# Extensiones permitidas para videos
+VIDEO_EXTENSIONS: set[str] = {".mp4", ".webm", ".mov"}
+
 # Especificaciones de variantes de imagen (nombre: ancho_máximo_en_pixels)
 # Las variantes mantienen aspect ratio original
 IMAGE_VARIANT_SPECS = {
@@ -157,6 +160,26 @@ def get_document_upload_path(instance, filename: str) -> str:
         Ruta con UUID (ej: "uploads/documents/xyz789.pdf")
     """
     return _build_upload_path("uploads/documents", filename)
+
+
+# Videos
+
+def validate_video_extension(file_obj) -> None:
+    """
+    Valida que el archivo tenga una extensi¢n de video v·lida.
+    
+    Extensiones permitidas: .mp4, .webm, .mov
+    """
+    validate_extension(file_obj, VIDEO_EXTENSIONS)
+
+
+def get_video_upload_path(instance, filename: str) -> str:
+    """
+    Genera la ruta de subida para videos.
+    
+    Usado en: VideoFile.file.upload_to
+    """
+    return _build_upload_path("uploads/videos", filename)
 
 
 def build_variant_path(original_path: str, suffix: str) -> str:

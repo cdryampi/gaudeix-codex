@@ -16,6 +16,9 @@ import { ROUTES } from "@/lib/config/constants";
 import { SocialLinksPage } from "@/features/social/pages/SocialLinksPage";
 import { CategoriesPage } from "@/features/categories/pages/CategoriesPage";
 import { StaticPagesPage } from "@/features/static-pages/pages/StaticPagesPage";
+import { SiteSettingsPage } from "@/features/site-settings/pages/SiteSettingsPage";
+import { VideoSettingsPage } from "@/features/site-settings/pages/VideoSettingsPage";
+import { HeaderMenuPage } from "@/features/site-settings/pages/HeaderMenuPage";
 
 /**
  * Application routing configuration
@@ -94,6 +97,22 @@ export const router = createBrowserRouter([
       {
         path: "static-pages",
         element: <StaticPagesPage />,
+      },
+      {
+        path: "settings/site",
+        element: <SiteSettingsPage />,
+      },
+      {
+        path: "settings/video",
+        element: <VideoSettingsPage />,
+      },
+      {
+        path: "settings/header",
+        element: <HeaderMenuPage />,
+      },
+      {
+        path: "settings/social",
+        element: <SocialLinksPage />,
       },
     ],
   },

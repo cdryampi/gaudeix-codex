@@ -11,6 +11,8 @@ import {
   Calendar,
   Settings,
   FileStack,
+  Video,
+  Menu,
 } from "lucide-react";
 import { ROUTES } from "@/lib/config/constants";
 
@@ -18,7 +20,6 @@ const panelNavigation = [{ name: "Resumen", href: ROUTES.DASHBOARD_HOME, icon: L
 
 const contentNavigation = [
   { name: "Events", href: ROUTES.EVENTS, icon: FileText },
-  { name: "Redes sociales", href: ROUTES.SOCIAL, icon: Tag },
   { name: "Categorías", href: ROUTES.CATEGORIES, icon: FolderOpen },
   { name: "Comentarios", href: "/comentarios", icon: MessageSquare },
 ];
@@ -32,7 +33,10 @@ const mediaNavigation = [
 const systemNavigation = [
   { name: "Usuarios", href: ROUTES.USERS, icon: Users },
   { name: "Páginas estáticas", href: ROUTES.STATIC_PAGES, icon: FileStack },
-  { name: "Ajustes", href: "/ajustes", icon: Settings },
+  { name: "Site settings", href: ROUTES.SITE_SETTINGS, icon: Settings },
+  { name: "Video", href: ROUTES.VIDEO_SETTINGS, icon: Video },
+  { name: "Header", href: ROUTES.HEADER_MENU, icon: Menu },
+  { name: "Redes sociales", href: ROUTES.SOCIAL, icon: Tag },
 ];
 
 export function Sidebar() {

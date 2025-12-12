@@ -121,3 +121,26 @@ class DocumentFile(BaseUploadedFile):
     
     # Historical tracking
     history = HistoricalRecords()
+
+
+class VideoFile(BaseUploadedFile):
+    """
+    Modelo para archivos de video.
+    
+    Características:
+    - Valida extensiones (.mp4, .webm, .mov)
+    - Valida tamaño máximo (10MB por defecto)
+    - Los archivos se guardan con UUID para evitar colisiones
+    - No genera variantes; guarda el video original
+    """
+
+    file = models.FileField(
+        upload_to=utils.get_video_upload_path,
+        validators=[
+            utils.validate_max_file_size,       # Tamaño máximo 10MB
+            utils.validate_video_extension,     # Extensiones permitidas
+        ],
+    )
+
+    # Historical tracking
+    history = HistoricalRecords()

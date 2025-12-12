@@ -3,8 +3,8 @@ from __future__ import annotations
 from rest_framework import mixins, viewsets
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
-from .models import DocumentFile, ImageFile
-from .serializers import DocumentFileSerializer, ImageFileSerializer
+from .models import DocumentFile, ImageFile, VideoFile
+from .serializers import DocumentFileSerializer, ImageFileSerializer, VideoFileSerializer
 
 
 class ImageFileViewSet(
@@ -101,3 +101,20 @@ class DocumentFileViewSet(
         if self.action in ["list", "retrieve"]:
             return [AllowAny()]
         return [IsAuthenticated()]
+
+
+class VideoFileViewSet(
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet,
+):
+    """
+    ViewSet para gestión de videos mediante API REST.
+    """
+
+    queryset = VideoFile.objects.order_by("-created_at")
+    serializer_class = VideoFileSerializer
+    permission_classes = [AllowAny]

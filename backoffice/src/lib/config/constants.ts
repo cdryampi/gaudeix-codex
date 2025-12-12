@@ -20,9 +20,12 @@ export const ROUTES = {
   MEDIA: "/dashboard/media",
   EVENTS: "/dashboard/events",
   PLACES: "/dashboard/places",
-  SOCIAL: "/dashboard/social",
   CATEGORIES: "/dashboard/categories",
   STATIC_PAGES: "/dashboard/static-pages",
+  SOCIAL: "/dashboard/settings/social",
+  SITE_SETTINGS: "/dashboard/settings/site",
+  VIDEO_SETTINGS: "/dashboard/settings/video",
+  HEADER_MENU: "/dashboard/settings/header",
 } as const;
 
 /**
@@ -144,6 +147,10 @@ export const API_ENDPOINTS = {
   SOCIAL: {
     LIST: "/social-links/",
     DETAIL: (id: string) => `/social-links/${id}/`,
+  },
+  MENU_ITEMS: {
+    LIST: "/menu-items/",
+    DETAIL: (id: string) => `/menu-items/${id}/`,
   },
   LLM: {
     CONFIG: "/llm-config/",
