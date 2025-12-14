@@ -17,6 +17,8 @@ import { StaticPage } from "@/features/static-pages/types";
 import { menuItemsApi } from "../api/menuItems";
 import { MenuItem, MenuItemPayload, MenuItemType } from "../types/menuItems";
 
+type MenuItemWithDepth = { item: MenuItem; depth: number };
+
 type FormState = {
   id?: number;
   location: "header";
@@ -40,6 +42,58 @@ function defaults(): FormState {
     url: "",
     label: "",
   };
+}
+
+function getDisplayLabel(item: MenuItem): string {
+  if (item.type === "category") {
+    return item.category?.nombre || (item.category_id ? `Categoría #${item.category_id}` : "Categoría");
+  }
+  if (item.type === "static_page") {
+    return item.static_page?.titulo || (item.static_page_id ? `Página #${item.static_page_id}` : "Página");
+  }
+  return item.label || item.url || "Link";
+}
+
+function buildOrderedWithDepth(items: MenuItem[]): MenuItemWithDepth[] {
+  const byParent = new Map<number | null, MenuItem[]>();
+  for (const item of items) {
+    const key = item.parent ?? null;
+    const bucket = byParent.get(key) ?? [];
+    bucket.push(item);
+    byParent.set(key, bucket);
+  }
+  for (const siblings of byParent.values()) {
+    siblings.sort((a, b) => (a.order - b.order) || (a.id - b.id));
+  }
+
+  const result: MenuItemWithDepth[] = [];
+  const seen = new Set<number>();
+
+  const walk = (parentId: number | null, depth: number, stack: Set<number>) => {
+    const children = byParent.get(parentId) ?? [];
+    for (const child of children) {
+      if (stack.has(child.id)) continue; // safety against inconsistent data
+      if (!seen.has(child.id)) {
+        result.push({ item: child, depth });
+        seen.add(child.id);
+      }
+      const nextStack = new Set(stack);
+      nextStack.add(child.id);
+      walk(child.id, depth + 1, nextStack);
+    }
+  };
+
+  walk(null, 0, new Set());
+
+  // Orphans fallback (should not happen normally)
+  const orphans = items
+    .filter((i) => !seen.has(i.id))
+    .sort((a, b) => (a.order - b.order) || (a.id - b.id));
+  for (const orphan of orphans) {
+    result.push({ item: orphan, depth: 0 });
+  }
+
+  return result;
 }
 
 export function HeaderMenuPage() {
@@ -77,31 +131,31 @@ export function HeaderMenuPage() {
     fetchAll();
   }, []);
 
+  const ordered = useMemo(() => buildOrderedWithDepth(items), [items]);
+  const labelById = useMemo(() => {
+    const map = new Map<number, string>();
+    for (const entry of ordered) {
+      map.set(entry.item.id, getDisplayLabel(entry.item));
+    }
+    return map;
+  }, [ordered]);
+
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
-    return items.filter((i) => {
-      const label =
-        i.type === "category"
-          ? i.category?.nombre || ""
-          : i.type === "static_page"
-            ? i.static_page?.titulo || ""
-            : i.label || "";
-      return `${label} ${i.url || ""} ${i.type} ${i.order}`.toLowerCase().includes(q);
+    return ordered.filter(({ item }) => {
+      const label = getDisplayLabel(item);
+      return `${label} ${item.url || ""} ${item.type} ${item.order}`.toLowerCase().includes(q);
     });
-  }, [items, search]);
+  }, [ordered, search]);
 
   const parentsOptions = useMemo(() => {
-    const roots = items.filter((i) => i.parent == null);
-    return roots.map((i) => ({
-      id: i.id,
-      label:
-        i.type === "category"
-          ? i.category?.nombre || `Categoría #${i.category_id}`
-          : i.type === "static_page"
-            ? i.static_page?.titulo || `Página #${i.static_page_id}`
-            : i.label || i.url,
+    const candidates = ordered.filter(({ item }) => item.id !== form.id);
+    return candidates.map(({ item, depth }) => ({
+      id: item.id,
+      depth,
+      label: getDisplayLabel(item),
     }));
-  }, [items]);
+  }, [form.id, ordered]);
 
   const openCreate = () => {
     setForm(defaults());
@@ -218,24 +272,19 @@ export function HeaderMenuPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filtered.map((item) => {
-                  const displayLabel =
-                    item.type === "category"
-                      ? item.category?.nombre || `Categoría #${item.category_id}`
-                      : item.type === "static_page"
-                        ? item.static_page?.titulo || `Página #${item.static_page_id}`
-                        : item.label || item.url;
+                {filtered.map(({ item, depth }) => {
+                  const displayLabel = getDisplayLabel(item);
                   const parentLabel =
-                    item.parent == null
-                      ? "—"
-                      : items.find((p) => p.id === item.parent)?.label ||
-                        items.find((p) => p.id === item.parent)?.category?.nombre ||
-                        items.find((p) => p.id === item.parent)?.static_page?.titulo ||
-                        `#${item.parent}`;
+                    item.parent == null ? "—" : labelById.get(item.parent) || `#${item.parent}`;
 
                   return (
                     <TableRow key={item.id}>
-                      <TableCell className="font-medium">{displayLabel}</TableCell>
+                      <TableCell className="font-medium">
+                        <div className="flex items-center gap-2" style={{ paddingLeft: depth * 12 }}>
+                          {depth > 0 ? <span className="text-muted-foreground">↳</span> : null}
+                          <span>{displayLabel}</span>
+                        </div>
+                      </TableCell>
                       <TableCell>{item.type}</TableCell>
                       <TableCell>{parentLabel}</TableCell>
                       <TableCell>{item.order}</TableCell>
@@ -288,7 +337,7 @@ export function HeaderMenuPage() {
                 <option value="">Sin padre (nivel raíz)</option>
                 {parentsOptions.map((p) => (
                   <option key={p.id} value={p.id}>
-                    {p.label}
+                    {`${"\u00A0".repeat(p.depth * 3)}${p.label}`}
                   </option>
                 ))}
               </select>
@@ -367,4 +416,3 @@ export function HeaderMenuPage() {
     </PageContainer>
   );
 }
-
