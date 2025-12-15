@@ -3,7 +3,10 @@ import { useEffect, useMemo, useState } from "react";
 import { Button } from "flowbite-react";
 
 import { SiteHeader } from "@/components/site/SiteHeader";
+import { HeroVideoFrame } from "@/features/hero/components/HeroVideo";
 import { apiGet } from "@/lib/api";
+import type { FeaturedEvent } from "@/features/events/types";
+import { SAMPLE_FEATURED_EVENTS } from "@/features/events/sampleFeaturedEvents";
 
 type SiteSettings = {
   site_name: string;
@@ -12,6 +15,7 @@ type SiteSettings = {
 
 export default function App() {
   const [settings, setSettings] = useState<SiteSettings | null>(null);
+  const [featuredEventsFromApi, setFeaturedEventsFromApi] = useState<FeaturedEvent[]>(SAMPLE_FEATURED_EVENTS);
 
   useEffect(() => {
     const load = async () => {
@@ -22,6 +26,19 @@ export default function App() {
         console.warn("Landing running in mock mode (API not available).", err);
       }
     };
+    load();
+  }, []);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const events = await apiGet<FeaturedEvent[]>("/events/featured/");
+        setFeaturedEventsFromApi(events);
+      } catch (err) {
+        console.warn("Featured events running in mock mode (API not available).", err);
+      }
+    };
+
     load();
   }, []);
 
@@ -63,7 +80,7 @@ export default function App() {
     []
   );
 
-  const featuredEvents = useMemo(
+  const _legacyFeaturedEvents = useMemo(
     () => [
       {
         title: "Festival de Música de Verano",
@@ -85,13 +102,14 @@ export default function App() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900">
+    <div className="min-h-screen bg-puerto-rico-50 text-slate-900">
       <SiteHeader siteName={settings?.site_name} />
 
       <main>
-        <section id="inicio" className="py-10">
-          <div className="container">
-            <div className="relative h-[520px] overflow-hidden rounded-3xl bg-gray-200 shadow-sm ring-1 ring-gray-200">
+        <section id="inicio">
+            <HeroVideoFrame />
+
+            <div className="hidden relative h-[520px] overflow-hidden rounded-3xl bg-gray-200 shadow-sm ring-1 ring-gray-200">
               <img
                 src="https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=2400&q=80"
                 alt="Costa de Cabrera de Mar"
@@ -113,7 +131,7 @@ export default function App() {
                       color="success"
                       size="lg"
                       href="#categorias"
-                      className="!bg-emerald-500 hover:!bg-emerald-600"
+                      className="!bg-puerto-rico-500 hover:!bg-puerto-rico-600"
                     >
                       Explorar
                     </Button>
@@ -130,7 +148,6 @@ export default function App() {
                 </div>
               </div>
             </div>
-          </div>
         </section>
 
         <section id="categorias" className="py-16">
@@ -165,22 +182,33 @@ export default function App() {
           <div className="container">
             <h2 className="text-center text-2xl font-semibold tracking-tight">Eventos destacados</h2>
             <div className="mt-10 grid gap-6 md:grid-cols-3">
-              {featuredEvents.map((e) => (
+              {featuredEventsFromApi.map((e) => (
                 <a
-                  key={e.title}
-                  href="#eventos"
+                  key={e.id}
+                  href={e.href || "#eventos"}
                   className="group block overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-gray-200 transition hover:shadow-md"
                 >
                   <div className="aspect-[16/10] overflow-hidden bg-gray-100">
                     <img
-                      src={e.img}
+                      src={e.image_url}
                       alt={e.title}
                       className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                   </div>
                   <div className="space-y-2 p-5">
                     <p className="text-sm font-semibold text-gray-900">{e.title}</p>
-                    <p className="text-sm text-gray-600">{e.desc}</p>
+                    <p className="text-sm text-gray-600">{e.description}</p>
+                    <p className="text-xs text-gray-500">
+                      {new Date(e.starts_at).toLocaleString(undefined, {
+                        weekday: "short",
+                        day: "2-digit",
+                        month: "short",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                      {" · "}
+                      {e.location}
+                    </p>
                   </div>
                 </a>
               ))}
@@ -214,7 +242,7 @@ export default function App() {
                 type="email"
               />
               <button
-                className="h-11 bg-emerald-500 px-6 text-sm font-medium text-white hover:bg-emerald-600"
+                className="h-11 bg-puerto-rico-500 px-6 text-sm font-medium text-white hover:bg-puerto-rico-600"
                 type="button"
               >
                 Suscribirse
@@ -228,10 +256,10 @@ export default function App() {
             <h2 className="text-center text-2xl font-semibold tracking-tight">Cómo llegar</h2>
             <div className="mx-auto mt-8 max-w-xl space-y-3">
               <input
-                className="h-11 w-full rounded-lg border border-gray-200 bg-white px-4 text-sm outline-none placeholder:text-gray-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
+                className="h-11 w-full rounded-lg border border-gray-200 bg-white px-4 text-sm outline-none placeholder:text-gray-500 focus:border-puerto-rico-500 focus:ring-2 focus:ring-puerto-rico-500/20"
                 placeholder="Tu ubicación (opcional)"
               />
-              <Button color="success" size="xl" className="w-full !bg-emerald-500 hover:!bg-emerald-600">
+              <Button color="success" size="xl" className="w-full !bg-puerto-rico-500 hover:!bg-puerto-rico-600">
                 Obtener indicaciones
               </Button>
             </div>

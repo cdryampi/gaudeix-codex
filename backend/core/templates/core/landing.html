@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="ca">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Gaudeix Codex · Backend</title>
+    {% load static %}
+    <link rel="icon" type="image/png" href="{% static 'core/branding/favicon-16x16.png' %}" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  </head>
+  <body class="min-h-dvh bg-slate-950 text-slate-100">
+    <div class="relative isolate overflow-hidden">
+      <div class="absolute inset-0 -z-10 bg-[radial-gradient(900px_circle_at_20%_10%,theme(colors.sky.500/20),transparent_55%),radial-gradient(700px_circle_at_80%_20%,theme(colors.violet.500/20),transparent_50%),radial-gradient(900px_circle_at_50%_100%,theme(colors.emerald.500/20),transparent_55%)]"></div>
+      <div class="absolute inset-x-0 top-0 -z-10 h-64 bg-gradient-to-b from-black/40 to-transparent"></div>
+
+      <header class="mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
+        <div class="flex items-center gap-3 font-semibold tracking-tight">
+          <img
+            src="{% static 'core/branding/logo-cabrera-white.png' %}"
+            alt="Gaudeix"
+            class="block w-full max-w-[100px] opacity-95 drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)]"
+            loading="eager"
+            decoding="async"
+          />
+          <div class="leading-tight">
+            <div>Gaudeix Codex</div>
+            <div class="text-xs font-medium text-slate-300">Backend · Django REST Framework</div>
+          </div>
+        </div>
+        <nav class="hidden items-center gap-6 text-sm text-slate-300 md:flex">
+          <a class="hover:text-white" href="/api/schema/swagger-ui/">Swagger</a>
+          <a class="hover:text-white" href="/admin/">Admin</a>
+          <a class="hover:text-white" href="/api/health/">Health</a>
+        </nav>
+        <a
+          href="/api/schema/swagger-ui/"
+          class="inline-flex items-center rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-white shadow-sm backdrop-blur hover:bg-white/10"
+        >
+          Obre docs API
+        </a>
+      </header>
+
+      <main class="mx-auto max-w-6xl px-6 pb-14 pt-8 md:pb-20 md:pt-14">
+        <div class="grid items-center gap-10 md:grid-cols-2">
+          <div>
+            <p class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-slate-200 shadow-sm backdrop-blur">
+              <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
+              Django REST Framework · JWT · API v1
+            </p>
+            <h1 class="mt-5 text-balance text-4xl font-semibold tracking-tight md:text-5xl">
+              Backend online.
+            </h1>
+            <p class="mt-4 max-w-prose text-pretty text-slate-300">
+              Aquesta és una landing mínima servida des de Django per tenir un índex visible a l’arrel. Els frontends continuen consumint el backend exclusivament via API REST.
+            </p>
+            <div class="mt-7 flex flex-wrap items-center gap-3">
+              <a
+                href="/api/v1/"
+                class="inline-flex items-center rounded-xl bg-white px-5 py-3 text-sm font-medium text-slate-950 shadow hover:bg-slate-100"
+              >
+                API v1
+              </a>
+              <a
+                href="/api/schema/swagger-ui/"
+                class="inline-flex items-center rounded-xl border border-white/10 bg-white/5 px-5 py-3 text-sm font-medium text-white shadow-sm backdrop-blur hover:bg-white/10"
+              >
+                Swagger
+              </a>
+              <a
+                href="/api/health/"
+                class="inline-flex items-center rounded-xl border border-white/10 bg-white/5 px-5 py-3 text-sm font-medium text-white shadow-sm backdrop-blur hover:bg-white/10"
+              >
+                Health
+              </a>
+            </div>
+
+            <dl class="mt-10 grid grid-cols-3 gap-4 text-sm">
+              <div class="rounded-2xl border border-white/10 bg-white/5 p-4 shadow-sm backdrop-blur">
+                <dt class="text-slate-300">Health</dt>
+                <dd class="mt-1 font-semibold">/api/health/</dd>
+              </div>
+              <div class="rounded-2xl border border-white/10 bg-white/5 p-4 shadow-sm backdrop-blur">
+                <dt class="text-slate-300">Auth</dt>
+                <dd class="mt-1 font-semibold">/api/v1/auth/</dd>
+              </div>
+              <div class="rounded-2xl border border-white/10 bg-white/5 p-4 shadow-sm backdrop-blur">
+                <dt class="text-slate-300">Schema</dt>
+                <dd class="mt-1 font-semibold">/api/schema/</dd>
+              </div>
+            </dl>
+          </div>
+
+          <div class="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-sm backdrop-blur">
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <h2 class="text-base font-semibold">Quick start</h2>
+                <p class="mt-1 text-sm text-slate-300">Comprova salut, docs i dades demo.</p>
+              </div>
+              <span class="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-slate-200">
+                ENVIRONMENT=local
+              </span>
+            </div>
+
+            <ol class="mt-5 space-y-3 text-sm text-slate-700">
+              <li class="rounded-2xl border border-white/10 bg-black/20 px-4 py-3">
+                <span class="font-medium text-white">1.</span> Seeds: <span class="font-mono text-white">python manage.py seed_all</span>
+              </li>
+              <li class="rounded-2xl border border-white/10 bg-black/20 px-4 py-3">
+                <span class="font-medium text-white">2.</span> Swagger: <span class="font-mono text-white">/api/schema/swagger-ui/</span>
+              </li>
+              <li class="rounded-2xl border border-white/10 bg-black/20 px-4 py-3">
+                <span class="font-medium text-white">3.</span> Frontend: <span class="font-mono text-white">http://localhost:5173</span>
+              </li>
+            </ol>
+
+            <div class="mt-6 grid gap-3 sm:grid-cols-2">
+              <a class="group rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm hover:border-white/20" href="/api/v1/media/images/">
+                <div class="font-medium text-white">Media</div>
+                <div class="mt-1 text-slate-300 group-hover:text-slate-200">/api/v1/media/images/</div>
+              </a>
+              <a class="group rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm hover:border-white/20" href="/api/v1/events/">
+                <div class="font-medium text-white">Events</div>
+                <div class="mt-1 text-slate-300 group-hover:text-slate-200">/api/v1/events/</div>
+              </a>
+              <a class="group rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm hover:border-white/20" href="/api/v1/places/">
+                <div class="font-medium text-white">Places</div>
+                <div class="mt-1 text-slate-300 group-hover:text-slate-200">/api/v1/places/</div>
+              </a>
+              <a class="group rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm hover:border-white/20" href="/api/v1/static-pages/">
+                <div class="font-medium text-white">Static Pages</div>
+                <div class="mt-1 text-slate-300 group-hover:text-slate-200">/api/v1/static-pages/</div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <section class="mx-auto max-w-6xl px-6 pb-10">
+        <div class="grid gap-4 md:grid-cols-3">
+          <div class="rounded-3xl border border-white/10 bg-black/20 p-6 shadow-sm">
+            <h3 class="font-semibold">Permisos per acció</h3>
+            <p class="mt-2 text-sm text-slate-300">ViewSets amb control granular segons l’acció (create/list/update...).</p>
+          </div>
+          <div class="rounded-3xl border border-white/10 bg-black/20 p-6 shadow-sm">
+            <h3 class="font-semibold">i18n amb Parler</h3>
+            <p class="mt-2 text-sm text-slate-300">Contingut traduïble (ca/es/en/fr) amb fallbacks configurats.</p>
+          </div>
+          <div class="rounded-3xl border border-white/10 bg-black/20 p-6 shadow-sm">
+            <h3 class="font-semibold">Media + variants</h3>
+            <p class="mt-2 text-sm text-slate-300">Imatges/documents amb variants i eliminació automàtica via signals.</p>
+          </div>
+        </div>
+
+        <div class="mt-10 rounded-3xl border border-white/10 bg-white/5 p-8 shadow-sm backdrop-blur">
+          <div class="flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
+            <div>
+              <h2 class="text-xl font-semibold tracking-tight">Tens el backend a punt?</h2>
+              <p class="mt-2 text-slate-300">Verifica que CORS i variables d’entorn estan ben configurades per als frontends.</p>
+            </div>
+            <div class="flex flex-wrap gap-3">
+              <a
+                class="inline-flex items-center rounded-xl bg-white px-5 py-3 text-sm font-medium text-slate-950 shadow hover:bg-slate-100"
+                href="/api/health/"
+              >
+                Comprovar salut
+              </a>
+              <a
+                class="inline-flex items-center rounded-xl border border-white/10 bg-white/5 px-5 py-3 text-sm font-medium text-white shadow-sm hover:bg-white/10"
+                href="/api/schema/redoc/"
+              >
+                ReDoc
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="border-t border-white/10 bg-black/20">
+        <div class="mx-auto max-w-6xl px-6 py-10">
+          <div class="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
+            <div class="max-w-md">
+              <div class="flex items-center gap-3">
+                <img
+                  src="{% static 'core/branding/logo-cabrera-white.png' %}"
+                  alt="Gaudeix"
+                  class="block w-full max-w-[100px] opacity-95 drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)]"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <div class="font-semibold tracking-tight">Gaudeix Codex</div>
+              </div>
+              <p class="mt-3 text-sm text-slate-300">
+                Backend per a plataforma municipal de continguts. Frontends desacoblats via API REST.
+              </p>
+            </div>
+
+            <div class="grid gap-6 sm:grid-cols-2">
+              <div>
+                <div class="text-sm font-semibold text-white">API</div>
+                <ul class="mt-3 space-y-2 text-sm text-slate-300">
+                  <li><a class="hover:text-white" href="/api/v1/">API v1</a></li>
+                  <li><a class="hover:text-white" href="/api/v1/auth/">Auth</a></li>
+                  <li><a class="hover:text-white" href="/api/v1/media/images/">Media</a></li>
+                </ul>
+              </div>
+              <div>
+                <div class="text-sm font-semibold text-white">Docs</div>
+                <ul class="mt-3 space-y-2 text-sm text-slate-300">
+                  <li><a class="hover:text-white" href="/api/schema/swagger-ui/">Swagger</a></li>
+                  <li><a class="hover:text-white" href="/api/schema/redoc/">ReDoc</a></li>
+                  <li><a class="hover:text-white" href="/admin/">Admin</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-10 flex flex-col gap-2 border-t border-white/10 pt-6 text-xs text-slate-300 md:flex-row md:items-center md:justify-between">
+            <p>© {% now "Y" %} Gaudeix Codex · Backend</p>
+            <p class="flex gap-4">
+              <a class="hover:text-white" href="/api/health/">Health</a>
+              <a class="hover:text-white" href="/api/schema/">Schema</a>
+            </p>
+          </div>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>

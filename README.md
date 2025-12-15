@@ -30,6 +30,22 @@ La arquitectura definida maximiza el desacoplamiento y la escalabilidad, permiti
 - Consumo directo de la API REST con manejo robusto de estados y caching.
 - Módulos clave: Home, Noticias, Detalle de noticia, Agenda, Detalle de evento, Mapa/Lugares, About, Selector de idioma y Layout (Header/Footer).
 
+#### Frontend (sitio público) - contexto rápido
+
+- Ruta: `frontend/`
+- Stack: React 18 + Vite + TypeScript + Tailwind CSS (v4) + Flowbite/Flowbite React
+- Puerto dev: `http://localhost:5173`
+- Alias imports: `@/` -> `frontend/src`
+- Config API: `VITE_API_BASE_URL` (si apuntas a `http://localhost:8000/api` se normaliza automáticamente a `/api/v1`; fallback por defecto: `http://localhost:8000/api/v1`)
+
+Comandos:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
 ### Backoffice
 
 - Panel administrativo en React Admin u otra solución React equivalente, autenticado mediante JWT contra la misma API.
@@ -146,7 +162,9 @@ cp .env_frontend frontend/.env.local
 ```
 
 **Variables principales:**
-- `VITE_API_BASE_URL`: URL base del API (`http://localhost:8000/api`)
+- `VITE_API_BASE_URL`: URL base del API (`http://localhost:8000/api/v1` o `http://localhost:8000/api`)
+
+Más detalle: `frontend/README.md`
 
 ### 🗄️ Base de Datos Local
 

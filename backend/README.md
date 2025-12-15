@@ -57,6 +57,16 @@ python manage.py seed_places_category
 python manage.py seed_places
 ```
 
+Seed general (secuencial):
+
+```bash
+# Seeds en orden (usuarios, media, pages, settings, social, places, events...)
+.\.venv_win\Scripts\python.exe manage.py seed_all
+
+# Hard reset (PELIGROSO): flush + migrate + seed_all
+.\.venv_win\Scripts\python.exe manage.py seed_all --hard-reset --noinput
+```
+
 `seed_places` usa las imágenes incluidas en `places/management/commands/images/` y crea datos de ejemplo con media y traducciones.
 
 Usuarios creados:

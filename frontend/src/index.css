@@ -2,6 +2,20 @@
 
 @import "tailwindcss";
 
+@theme {
+  --color-puerto-rico-50: #f1fcf9;
+  --color-puerto-rico-100: #d1f6ed;
+  --color-puerto-rico-200: #a4ebdc;
+  --color-puerto-rico-300: #6edac6;
+  --color-puerto-rico-400: #3ebfab;
+  --color-puerto-rico-500: #27a593;
+  --color-puerto-rico-600: #1c8578;
+  --color-puerto-rico-700: #1b6a62;
+  --color-puerto-rico-800: #1a554f;
+  --color-puerto-rico-900: #1a4743;
+  --color-puerto-rico-950: #092a28;
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;
@@ -10,6 +24,6 @@
   body {
     font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji",
       "Segoe UI Emoji";
-    @apply bg-gray-50 text-gray-900 antialiased;
+    @apply bg-puerto-rico-50 text-slate-900 antialiased;
   }
 }

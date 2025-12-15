@@ -2,6 +2,7 @@
 
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib import admin
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
@@ -20,7 +21,7 @@ from users.urls import register_routes as register_users_routes
 from llm_translations.urls import register_routes as register_llm_routes
 from static_pages.urls import register_routes as register_static_pages_routes
 from site_settings.urls import register_routes as register_site_settings_routes
-from .views import health_check
+from .views import health_check, landing
 
 # Register DRF router routes
 router = DefaultRouter()
@@ -35,6 +36,7 @@ register_static_pages_routes(router)
 register_site_settings_routes(router)
 
 urlpatterns = [
+    path("", landing, name="landing"),
     # Admin
     path("admin/", admin.site.urls),
     
@@ -60,3 +62,4 @@ urlpatterns = [
 # Serve media files in development
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += staticfiles_urlpatterns()
