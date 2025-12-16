@@ -7,6 +7,13 @@ import { HeroVideoFrame } from "@/features/hero/components/HeroVideo";
 import { apiGet } from "@/lib/api";
 import type { FeaturedEvent } from "@/features/events/types";
 import { SAMPLE_FEATURED_EVENTS } from "@/features/events/sampleFeaturedEvents";
+import { FEATURED_CATEGORIES } from "@/features/categories/categoriesData";
+import { FeaturedCategoryCard } from "@/features/categories/components/FeaturedCategoryCard";
+import { AnimatedCardGrid } from "@/components/animated/AnimatedCardGrid";
+import { FeaturedEventCard } from "@/features/events/components/FeaturedEventCard";
+import { AnimatedCard } from "@/components/animated/AnimatedCard";
+import { EventCard } from "@/features/agenda/components/EventCard";
+import type { EventItem } from "@/data/mockEvents";
 
 type SiteSettings = {
   site_name: string;
@@ -41,6 +48,25 @@ export default function App() {
 
     load();
   }, []);
+
+  const featuredEventsAsAgendaItems: EventItem[] = useMemo(
+    () =>
+      featuredEventsFromApi.map<EventItem>((e) => ({
+        id: e.id,
+        title: e.title,
+        category: "Altres",
+        imageUrl: e.image_url,
+        startAt: e.starts_at,
+        venueName: e.location.split(",")[0] || "Ajuntament",
+        locationText: e.location,
+        featured: true,
+        slug: e.id,
+        isFree: true,
+        descriptionShort: e.description,
+        tags: ["destacat"],
+      })),
+    [featuredEventsFromApi]
+  );
 
   const featuredCategories = useMemo(
     () => [
@@ -79,6 +105,7 @@ export default function App() {
     ],
     []
   );
+  const featuredCategoriesFromData = FEATURED_CATEGORIES;
 
   const _legacyFeaturedEvents = useMemo(
     () => [
@@ -153,37 +180,28 @@ export default function App() {
         <section id="categorias" className="py-16">
           <div className="container">
             <h2 className="text-center text-2xl font-semibold tracking-tight">Categorías destacadas</h2>
-            <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {featuredCategories.map((c) => (
-                <a
-                  key={c.title}
-                  href="#categorias"
-                  className="group block overflow-hidden rounded-2xl bg-gray-100 shadow-sm ring-1 ring-gray-200 transition hover:shadow-md"
-                >
-                  <div className="relative aspect-[4/5] overflow-hidden">
-                    <img
-                      src={c.img}
-                      alt={c.title}
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 via-black/25 to-transparent p-4">
-                      <span className="inline-flex rounded-full bg-white/90 px-3 py-1 text-xs font-medium text-gray-900 shadow-sm">
-                        {c.title}
-                      </span>
-                    </div>
-                  </div>
-                </a>
+            <AnimatedCardGrid className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {featuredCategoriesFromData.map((c) => (
+                <FeaturedCategoryCard key={c.id} category={c} />
               ))}
-            </div>
+            </AnimatedCardGrid>
           </div>
         </section>
 
         <section id="eventos" className="bg-gray-50 py-16">
           <div className="container">
             <h2 className="text-center text-2xl font-semibold tracking-tight">Eventos destacados</h2>
-            <div className="mt-10 grid gap-6 md:grid-cols-3">
+            <AnimatedCardGrid className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+              {featuredEventsAsAgendaItems.slice(0, 3).map((evt) => (
+                <EventCard key={evt.id} event={evt} />
+              ))}
+            </AnimatedCardGrid>
+
+            <div className="hidden">
+            <AnimatedCardGrid className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
               {featuredEventsFromApi.map((e) => (
-                <a
+                <AnimatedCard
+                  as="a"
                   key={e.id}
                   href={e.href || "#eventos"}
                   className="group block overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-gray-200 transition hover:shadow-md"
@@ -210,8 +228,9 @@ export default function App() {
                       {e.location}
                     </p>
                   </div>
-                </a>
+                </AnimatedCard>
               ))}
+            </AnimatedCardGrid>
             </div>
           </div>
         </section>

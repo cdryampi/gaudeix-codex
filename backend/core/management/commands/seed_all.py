@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 from django.core.management import call_command
-from django.core.management.base import CommandError
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 
 
 class Command(BaseCommand):
@@ -37,8 +36,8 @@ class Command(BaseCommand):
             ("seed_social", "Seeding social content..."),
             ("seed_places_category", "Seeding places categories..."),
             ("seed_places", "Seeding places..."),
-            ("seed_events", "Seeding events..."),
             ("seed_events_category", "Seeding events category..."),
+            ("seed_events", "Seeding events..."),
         ]
 
         for command_name, message in seed_commands:

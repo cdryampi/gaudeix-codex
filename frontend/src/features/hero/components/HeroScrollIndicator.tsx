@@ -62,7 +62,7 @@ export function HeroScrollIndicator({
 
   const wrapperClassName =
     mode === "overlay"
-      ? "pointer-events-none absolute inset-x-0 bottom-6 z-20 flex justify-center"
+      ? "pointer-events-none absolute inset-x-0 bottom-6 z-30 flex justify-center"
       : "pointer-events-none flex justify-center py-8";
 
   return (

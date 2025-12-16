@@ -88,14 +88,14 @@ class TranslateRequestSerializer(serializers.Serializer):
 class TranslateResponseSerializer(serializers.Serializer):
     """Serializer for translation response output."""
     
-    original_text = serializers.CharField(read_only=True)
-    translated_text = serializers.CharField(read_only=True)
-    source_lang = serializers.CharField(read_only=True)
-    target_lang = serializers.CharField(read_only=True)
-    provider = serializers.CharField(read_only=True)
-    model = serializers.CharField(read_only=True)
-    success = serializers.BooleanField(read_only=True)
-    error_message = serializers.CharField(read_only=True, required=False)
+    original_text = serializers.CharField()
+    translated_text = serializers.CharField()
+    source_lang = serializers.CharField()
+    target_lang = serializers.CharField()
+    provider = serializers.CharField()
+    model = serializers.CharField()
+    success = serializers.BooleanField()
+    error_message = serializers.CharField(required=False, allow_blank=True)
 
 
 class TranslationLogSerializer(serializers.ModelSerializer):
