@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "clean:js": "rimraf src/**/*.js src/**/*.js.map"
+    "clean:js": "rimraf --glob src/**/*.js src/**/*.js.map"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
