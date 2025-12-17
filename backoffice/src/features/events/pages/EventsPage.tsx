@@ -42,7 +42,8 @@ export function EventsPage() {
           : status === "published"
           ? event.is_published
           : !event.is_published;
-      const text = `${event.title} ${event.description ?? ""} ${event.location_text ?? ""}`.toLowerCase();
+      const tagsText = (event.tags || []).map((t) => `${t.nombre} ${t.slug}`).join(" ");
+      const text = `${event.title} ${event.summary ?? ""} ${event.description ?? ""} ${event.venue_name ?? ""} ${event.location_text ?? ""} ${event.price_text ?? ""} ${event.category_name ?? ""} ${event.category_slug ?? ""} ${tagsText}`.toLowerCase();
       const matchesSearch = text.includes(search.toLowerCase());
       return matchesStatus && matchesSearch;
     });

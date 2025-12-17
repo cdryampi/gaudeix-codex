@@ -9,8 +9,8 @@ from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
-from .models import Category
-from .serializers import CategorySerializer
+from .models import Category, Tag
+from .serializers import CategorySerializer, TagSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -143,3 +143,31 @@ class CategoryViewSet(viewsets.ModelViewSet):
             },
             status=status.HTTP_200_OK if len(errors) == 0 else status.HTTP_207_MULTI_STATUS,
         )
+
+
+class TagViewSet(viewsets.ModelViewSet):
+    """
+    API endpoints for tags (core).
+    """
+
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+
+    def get_permissions(self):
+        if self.action in ["list", "retrieve"]:
+            return [AllowAny()]
+        return [IsAuthenticated()]
+
+    def get_queryset(self):
+        queryset = Tag.objects.all()
+        params = self.request.query_params
+
+        slug = params.get("slug")
+        if slug:
+            queryset = queryset.filter(slug=slug)
+
+        search = params.get("search") or params.get("q")
+        if search:
+            queryset = queryset.filter(Q(translations__nombre__icontains=search) | Q(slug__icontains=search)).distinct()
+
+        return queryset

@@ -1,5 +1,4 @@
 import { HEADER_NAV, type HeaderNavItem } from "./headerNav";
-import { SAMPLE_FEATURED_EVENTS } from "@/features/events/sampleFeaturedEvents";
 
 export type MockSiteSettings = {
   site_name: string;
@@ -41,5 +40,4 @@ export const MOCK_HEADER_MENU_TREE: MockMenuItemTree[] = toMockMenuTree(HEADER_N
 export const MOCK_API_GET: Record<string, unknown> = {
   "/site-settings/": MOCK_SITE_SETTINGS,
   "/menu-items/tree/?location=header": MOCK_HEADER_MENU_TREE,
-  "/events/featured/": SAMPLE_FEATURED_EVENTS,
 };

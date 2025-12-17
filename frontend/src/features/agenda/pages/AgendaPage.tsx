@@ -1,22 +1,36 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-import { events as allEvents, getFeaturedEvents, type EventCategory } from "@/data/mockEvents";
+import { events as fallbackEvents, type EventCategory, type EventItem } from "@/data/mockEvents";
 import { AgendaFilters } from "@/features/agenda/components/AgendaFilters";
 import { FeaturedEvents } from "@/features/agenda/components/FeaturedEvents";
 import { EventDayGroup } from "@/features/agenda/components/EventDayGroup";
 import { filterEvents, groupEventsByDay, sortEventsByDate, type DateRangeFilter } from "@/features/agenda/utils";
+import { listEventItems } from "@/features/events/api";
 
 export function AgendaPage() {
+  const [events, setEvents] = useState<EventItem[]>(fallbackEvents);
   const [category, setCategory] = useState<EventCategory | "all">("all");
   const [range, setRange] = useState<DateRangeFilter>("month");
   const [query, setQuery] = useState("");
 
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const items = await listEventItems({ upcoming: true, limit: 200, isPublished: true });
+        setEvents(items);
+      } catch (err) {
+        console.warn("Agenda running in mock mode (API not available).", err);
+      }
+    };
+    load();
+  }, []);
+
   const filtered = useMemo(
-    () => filterEvents(allEvents, { category, range, query }),
-    [category, query, range]
+    () => filterEvents(events, { category, range, query }),
+    [category, events, query, range]
   );
 
-  const featured = useMemo(() => getFeaturedEvents(filtered), [filtered]);
+  const featured = useMemo(() => sortEventsByDate(filtered.filter((e) => e.featured)).slice(0, 3), [filtered]);
   const rest = useMemo(() => sortEventsByDate(filtered.filter((e) => !e.featured)), [filtered]);
   const groups = useMemo(() => groupEventsByDay(rest), [rest]);
 
@@ -63,4 +77,3 @@ export function AgendaPage() {
     </main>
   );
 }
-

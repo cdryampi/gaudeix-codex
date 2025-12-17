@@ -22,20 +22,20 @@ class EventCategorySingletonAdmin(SingletonModelAdmin):
 
 @admin.register(Event)
 class EventAdmin(TranslatableAdmin):
-    list_display = ("__str__", "category", "start_at", "end_at", "is_published")
-    list_filter = ("is_published", "start_at", "category")
+    list_display = ("__str__", "category", "start_at", "end_at", "is_published", "is_featured", "is_free")
+    list_filter = ("is_published", "is_featured", "is_free", "start_at", "category")
     search_fields = ("translations__title", "slug")
     readonly_fields = ("slug", "fecha_creacion", "fecha_modificacion", "creado_por", "modificado_por")
     
     fieldsets = (
         (None, {
-            "fields": ("category", "start_at", "end_at", "is_published")
+            "fields": ("category", "start_at", "end_at", "is_published", "is_featured", "is_free", "price_text")
         }),
         ("Content", {
-            "fields": ("title", "description", "location_text")
+            "fields": ("title", "summary", "description", "venue_name", "location_text")
         }),
         ("Media", {
-            "fields": ("featured_media", "attachments"),
+            "fields": ("featured_media", "attachments", "tags"),
             "classes": ("collapse",)
         }),
         ("Metadata", {

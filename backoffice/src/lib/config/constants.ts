@@ -97,6 +97,10 @@ export const QUERY_KEYS = {
     LIST: ["categories", "list"],
     DETAIL: (id: string) => ["categories", "detail", id],
   },
+  TAGS: {
+    LIST: ["tags", "list"],
+    DETAIL: (id: string) => ["tags", "detail", id],
+  },
   SOCIAL: {
     LIST: ["social", "list"],
     DETAIL: (id: string) => ["social", "detail", id],
@@ -143,6 +147,10 @@ export const API_ENDPOINTS = {
     LIST: "/categories/",
     DETAIL: (id: string) => `/categories/${id}/`,
     AUTO_TRANSLATE: (id: string) => `/categories/${id}/auto_translate/`,
+  },
+  TAGS: {
+    LIST: "/tags/",
+    DETAIL: (id: string) => `/tags/${id}/`,
   },
   SOCIAL: {
     LIST: "/social-links/",

@@ -34,6 +34,7 @@ class Command(BaseCommand):
             ("seed_static_pages", "Seeding static pages..."),
             ("seed_site_settings", "Seeding site settings..."),
             ("seed_social", "Seeding social content..."),
+            ("seed_tags", "Seeding tags..."),
             ("seed_places_category", "Seeding places categories..."),
             ("seed_places", "Seeding places..."),
             ("seed_events_category", "Seeding events category..."),

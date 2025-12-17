@@ -9,7 +9,7 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from core.models import Category
+from core.models import Category, Tag
 from events.models import Event, EventCategorySingleton
 from media_files.models import DocumentFile, ImageFile
 
@@ -32,7 +32,7 @@ def sample_files_path() -> Path:
 @pytest.fixture
 def events_category() -> Category:
     """Create the default events category."""
-    category = Category.objects.create(nombre="Events")
+    category = Category.objects.create(slug="events", taxonomy="events", nombre="Events")
     category.set_current_language("ca")
     category.nombre = "Esdeveniments"
     category.save()
@@ -110,17 +110,34 @@ def test_create_event_authenticated(media_root, events_singleton, sample_documen
     client = APIClient()
     client.force_authenticate(user=user)
 
+    child_category = Category.objects.create(
+        slug="cultura",
+        taxonomy="events",
+        parent=events_singleton.category,
+        nombre="Cultura",
+    )
+    tag_music = Tag.objects.create(slug="music", nombre="Music")
+    tag_family = Tag.objects.create(slug="family", nombre="Family")
+
     url = reverse("event-list")
     start = timezone.now() + timezone.timedelta(days=3)
     end = start + timezone.timedelta(hours=2)
     data = {
         "title": "API Event",
+        "summary": "Short description",
         "description": "Created via API",
         "start_at": start.isoformat(),
         "end_at": end.isoformat(),
+        "venue_name": "Centre Civic",
+        "location_text": "Plaça Major",
+        "is_featured": True,
+        "is_free": False,
+        "price_text": "10 EUR",
+        "category_id": child_category.id,
+        "tag_ids": [tag_music.id, tag_family.id],
         "translations": {
-            "es": {"title": "Evento API", "description": "Creado via API"},
-            "ca": {"title": "Esdeveniment API", "description": "Creat via API"},
+            "es": {"title": "Evento API", "summary": "Descripcion corta", "description": "Creado via API"},
+            "ca": {"title": "Esdeveniment API", "summary": "Descripcio curta", "description": "Creat via API"},
         },
         "featured_media": sample_image.id,
         "attachments": [sample_document.id],
@@ -133,8 +150,15 @@ def test_create_event_authenticated(media_root, events_singleton, sample_documen
     event = Event.objects.first()
     assert event.slug
     assert event.safe_translation_getter("title", any_language=True) == "API Event"
+    assert event.category == child_category
+    assert event.tags.count() == 2
     assert event.featured_media == sample_image
     assert event.attachments.count() == 1
+
+    assert response.data["category"] == child_category.id
+    assert response.data["category_slug"] == "cultura"
+    assert response.data["category_name"]
+    assert len(response.data["tags"]) == 2
 
 
 def test_retrieve_event_detail(media_root, events_singleton, sample_document, sample_image):
@@ -163,11 +187,12 @@ def test_update_event_authenticated(media_root, events_singleton):
         title="Old Title",
         start_at=timezone.now() + timezone.timedelta(days=1),
     )
+    tag = Tag.objects.create(slug="updated", nombre="Updated")
 
     client = APIClient()
     client.force_authenticate(user=user)
     url = reverse("event-detail", kwargs={"pk": event.pk})
-    data = {"title": "Updated Title", "is_published": False}
+    data = {"title": "Updated Title", "is_published": False, "is_featured": True, "tag_ids": [tag.id]}
 
     response = client.patch(url, data, format="json")
 
@@ -175,6 +200,8 @@ def test_update_event_authenticated(media_root, events_singleton):
     event.refresh_from_db()
     assert event.safe_translation_getter("title", any_language=True) == "Updated Title"
     assert event.is_published is False
+    assert event.is_featured is True
+    assert event.tags.count() == 1
 
 
 def test_delete_event_authenticated(media_root, events_singleton):
@@ -192,3 +219,29 @@ def test_delete_event_authenticated(media_root, events_singleton):
 
     assert response.status_code == status.HTTP_204_NO_CONTENT
     assert Event.objects.count() == 0
+
+
+def test_filter_events_by_tag_and_category(media_root, events_singleton):
+    tag = Tag.objects.create(slug="music", nombre="Music")
+    category = Category.objects.create(
+        slug="cultura",
+        taxonomy="events",
+        parent=events_singleton.category,
+        nombre="Cultura",
+    )
+    start = timezone.now() + timezone.timedelta(days=1)
+
+    match = Event.objects.create(title="Match", start_at=start, category=category)
+    match.tags.add(tag)
+    Event.objects.create(title="Nope", start_at=start + timezone.timedelta(hours=1))
+
+    client = APIClient()
+    url = reverse("event-list")
+
+    resp_tag = client.get(url, {"tag": "music"})
+    assert resp_tag.status_code == status.HTTP_200_OK
+    assert len(resp_tag.data) == 1
+
+    resp_category = client.get(url, {"category": "cultura"})
+    assert resp_category.status_code == status.HTTP_200_OK
+    assert len(resp_category.data) == 1

@@ -145,3 +145,24 @@ Para crear/ejecutar migraciones:
 .venv_win\Scripts\python.exe manage.py makemigrations core
 .venv_win\Scripts\python.exe manage.py migrate core
 ```
+
+## API
+
+Endpoints principales (prefijo `/api/v1/`):
+
+- `GET /categories/` (pذblico) + CRUD autenticado
+- `GET /tags/` (pذblico) + CRUD autenticado
+
+Filtros comunes:
+
+- `slug=<slug>`
+- `search=<texto>` / `q=<texto>`
+- En categories: `taxonomy`, `parent` (y `parent=` para root)
+
+## Seeds
+
+Seed de tags (idempotente):
+
+```bash
+python manage.py seed_tags
+```

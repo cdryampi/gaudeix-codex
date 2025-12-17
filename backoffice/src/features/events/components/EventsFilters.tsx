@@ -30,7 +30,7 @@ export function EventsFilters({
     <div className="mb-6 space-y-3">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         {/* Search */}
-        <div className="relative w-full sm:max-w-xs">
+        <div className="relative w-full sm:w-3/4">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder="Buscar eventos..."
@@ -41,7 +41,7 @@ export function EventsFilters({
         </div>
 
         {/* Page size selector */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 sm:justify-end">
           <Label htmlFor="pageSize" className="text-xs text-muted-foreground">
             Mostrar:
           </Label>
@@ -60,22 +60,24 @@ export function EventsFilters({
         </div>
       </div>
 
-      {/* Status tabs */}
-      <div className="inline-flex gap-1 rounded-lg bg-muted/50 p-1">
-        {tabs.map((tab) => (
-          <button
-            key={tab.value}
-            onClick={() => onStatus(tab.value)}
-            className={cn(
-              "rounded-md px-3 py-1.5 text-xs font-medium transition-all",
-              status === tab.value
-                ? "bg-card text-foreground shadow-sm"
-                : "text-muted-foreground hover:text-foreground"
-            )}
-          >
-            {tab.label}
-          </button>
-        ))}
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        {/* Status tabs */}
+        <div className="inline-flex gap-1 rounded-lg bg-muted/50 p-1">
+          {tabs.map((tab) => (
+            <button
+              key={tab.value}
+              onClick={() => onStatus(tab.value)}
+              className={cn(
+                "rounded-md px-3 py-1.5 text-xs font-medium transition-all",
+                status === tab.value
+                  ? "bg-card text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );

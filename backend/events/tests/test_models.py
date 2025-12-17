@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 from django.core.files import File
 from django.utils import timezone
 
-from core.models import Category
+from core.models import Category, Tag
 from events.models import Event, EventCategorySingleton
 from media_files.models import DocumentFile, ImageFile
 
@@ -27,7 +27,7 @@ def sample_files_path() -> Path:
 @pytest.fixture
 def events_category() -> Category:
     """Create the default events category."""
-    category = Category.objects.create(nombre="Events")
+    category = Category.objects.create(slug="events", taxonomy="events", nombre="Events")
     category.set_current_language("ca")
     category.nombre = "Esdeveniments"
     category.save()
@@ -74,6 +74,7 @@ def test_create_event_basic(media_root, events_singleton):
 
     event = Event.objects.create(
         title="Concert",
+        summary="Short summary",
         description="Live music in the park",
         start_at=start,
         end_at=end,
@@ -83,12 +84,15 @@ def test_create_event_basic(media_root, events_singleton):
     assert event.pk is not None
     assert event.slug.startswith("concert")
     assert event.safe_translation_getter("title", any_language=True) == "Concert"
+    assert event.safe_translation_getter("summary", any_language=True) == "Short summary"
     assert event.end_at == end
     # Test backward compatibility properties
     assert event.created_at is not None
     assert event.updated_at is not None
     # Test auto-assigned category
     assert event.category == events_singleton.category
+    assert event.is_free is True
+    assert event.is_featured is False
 
 
 def test_end_before_start_raises_validation_error(media_root, events_singleton):
@@ -135,9 +139,12 @@ def test_event_can_attach_media(media_root, events_singleton, sample_document, s
         featured_media=sample_image,
     )
     event.attachments.add(sample_document)
+    tag = Tag.objects.create(slug="music", nombre="Music")
+    event.tags.add(tag)
 
     assert event.featured_media == sample_image
     assert event.attachments.count() == 1
+    assert event.tags.count() == 1
 
 
 def test_event_category_singleton(events_category):

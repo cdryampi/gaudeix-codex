@@ -3,17 +3,15 @@ import { useEffect, useMemo, useState } from "react";
 import { Button } from "flowbite-react";
 
 import { SiteHeader } from "@/components/site/SiteHeader";
+import { InteractiveMap } from "@/components/site/InteractiveMap";
 import { HeroVideoFrame } from "@/features/hero/components/HeroVideo";
 import { apiGet } from "@/lib/api";
-import type { FeaturedEvent } from "@/features/events/types";
-import { SAMPLE_FEATURED_EVENTS } from "@/features/events/sampleFeaturedEvents";
+import { listEventItems } from "@/features/events/api";
 import { FEATURED_CATEGORIES } from "@/features/categories/categoriesData";
 import { FeaturedCategoryCard } from "@/features/categories/components/FeaturedCategoryCard";
 import { AnimatedCardGrid } from "@/components/animated/AnimatedCardGrid";
-import { FeaturedEventCard } from "@/features/events/components/FeaturedEventCard";
-import { AnimatedCard } from "@/components/animated/AnimatedCard";
 import { EventCard } from "@/features/agenda/components/EventCard";
-import type { EventItem } from "@/data/mockEvents";
+import { events as mockEvents, type EventItem } from "@/data/mockEvents";
 
 type SiteSettings = {
   site_name: string;
@@ -22,7 +20,9 @@ type SiteSettings = {
 
 export default function App() {
   const [settings, setSettings] = useState<SiteSettings | null>(null);
-  const [featuredEventsFromApi, setFeaturedEventsFromApi] = useState<FeaturedEvent[]>(SAMPLE_FEATURED_EVENTS);
+  const [featuredEvents, setFeaturedEvents] = useState<EventItem[]>(() =>
+    mockEvents.filter((e) => e.featured).slice(0, 6)
+  );
 
   useEffect(() => {
     const load = async () => {
@@ -39,8 +39,8 @@ export default function App() {
   useEffect(() => {
     const load = async () => {
       try {
-        const events = await apiGet<FeaturedEvent[]>("/events/featured/");
-        setFeaturedEventsFromApi(events);
+        const items = await listEventItems({ upcoming: true, featured: true, limit: 6, isPublished: true });
+        setFeaturedEvents(items);
       } catch (err) {
         console.warn("Featured events running in mock mode (API not available).", err);
       }
@@ -48,25 +48,6 @@ export default function App() {
 
     load();
   }, []);
-
-  const featuredEventsAsAgendaItems: EventItem[] = useMemo(
-    () =>
-      featuredEventsFromApi.map<EventItem>((e) => ({
-        id: e.id,
-        title: e.title,
-        category: "Altres",
-        imageUrl: e.image_url,
-        startAt: e.starts_at,
-        venueName: e.location.split(",")[0] || "Ajuntament",
-        locationText: e.location,
-        featured: true,
-        slug: e.id,
-        isFree: true,
-        descriptionShort: e.description,
-        tags: ["destacat"],
-      })),
-    [featuredEventsFromApi]
-  );
 
   const featuredCategories = useMemo(
     () => [
@@ -106,27 +87,6 @@ export default function App() {
     []
   );
   const featuredCategoriesFromData = FEATURED_CATEGORIES;
-
-  const _legacyFeaturedEvents = useMemo(
-    () => [
-      {
-        title: "Festival de Música de Verano",
-        desc: "Disfruta de conciertos al aire libre con artistas locales e internacionales.",
-        img: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1200&q=80",
-      },
-      {
-        title: "Exposición de Arte Contemporáneo",
-        desc: "Descubre las últimas tendencias en arte contemporáneo en un entorno único.",
-        img: "https://images.unsplash.com/photo-1520694478161-5e30f1b4b3ad?auto=format&fit=crop&w=1200&q=80",
-      },
-      {
-        title: "Mercado de Productos Locales",
-        desc: "Sabor a producto fresco y artesanía de la comarca del Maresme.",
-        img: "https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fit=crop&w=1200&q=80",
-      },
-    ],
-    []
-  );
 
   return (
     <div className="min-h-screen bg-puerto-rico-50 text-slate-900">
@@ -192,58 +152,20 @@ export default function App() {
           <div className="container">
             <h2 className="text-center text-2xl font-semibold tracking-tight">Eventos destacados</h2>
             <AnimatedCardGrid className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-              {featuredEventsAsAgendaItems.slice(0, 3).map((evt) => (
+              {featuredEvents.slice(0, 6).map((evt) => (
                 <EventCard key={evt.id} event={evt} />
               ))}
             </AnimatedCardGrid>
 
-            <div className="hidden">
-            <AnimatedCardGrid className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-              {featuredEventsFromApi.map((e) => (
-                <AnimatedCard
-                  as="a"
-                  key={e.id}
-                  href={e.href || "#eventos"}
-                  className="group block overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-gray-200 transition hover:shadow-md"
-                >
-                  <div className="aspect-[16/10] overflow-hidden bg-gray-100">
-                    <img
-                      src={e.image_url}
-                      alt={e.title}
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                  </div>
-                  <div className="space-y-2 p-5">
-                    <p className="text-sm font-semibold text-gray-900">{e.title}</p>
-                    <p className="text-sm text-gray-600">{e.description}</p>
-                    <p className="text-xs text-gray-500">
-                      {new Date(e.starts_at).toLocaleString(undefined, {
-                        weekday: "short",
-                        day: "2-digit",
-                        month: "short",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                      {" · "}
-                      {e.location}
-                    </p>
-                  </div>
-                </AnimatedCard>
-              ))}
-            </AnimatedCardGrid>
-            </div>
+
           </div>
         </section>
 
         <section id="mapa" className="py-16">
           <div className="container">
             <h2 className="text-center text-2xl font-semibold tracking-tight">Mapa interactivo</h2>
-            <div className="mx-auto mt-10 max-w-5xl overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
-              <iframe
-                title="Mapa de Cabrera de Mar"
-                className="h-[360px] w-full"
-                src="https://www.openstreetmap.org/export/embed.html?bbox=2.375%2C41.51%2C2.43%2C41.55&layer=mapnik&marker=41.525%2C2.397"
-              />
+            <div className="mx-auto mt-10 max-w-5xl">
+              <InteractiveMap />
             </div>
           </div>
         </section>

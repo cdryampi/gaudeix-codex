@@ -1,14 +1,15 @@
 import apiClient from "@/lib/api/client";
+import { API_ENDPOINTS } from "@/lib/config/constants";
 import { CreateEventDTO, Event, UpdateEventDTO } from "../types";
 
 export const eventsApi = {
   getAll: async () => {
-    const response = await apiClient.get<Event[]>("/events/");
+    const response = await apiClient.get<Event[]>(API_ENDPOINTS.EVENTS.LIST);
     return response.data.map(normalizeEvent);
   },
 
   getById: async (id: number) => {
-    const response = await apiClient.get<Event>(`/events/${id}/`);
+    const response = await apiClient.get<Event>(API_ENDPOINTS.EVENTS.DETAIL(String(id)));
     return normalizeEvent(response.data);
   },
 
@@ -16,8 +17,9 @@ export const eventsApi = {
     const payload = {
       ...data,
       attachments_ids: data.attachments_ids ?? [],
+      tag_ids: data.tag_ids ?? [],
     };
-    const response = await apiClient.post<Event>("/events/", payload);
+    const response = await apiClient.post<Event>(API_ENDPOINTS.EVENTS.LIST, payload);
     return normalizeEvent(response.data);
   },
 
@@ -25,13 +27,14 @@ export const eventsApi = {
     const payload = {
       ...data,
       attachments_ids: data.attachments_ids ?? [],
+      tag_ids: data.tag_ids ?? [],
     };
-    const response = await apiClient.patch<Event>(`/events/${id}/`, payload);
+    const response = await apiClient.patch<Event>(API_ENDPOINTS.EVENTS.DETAIL(String(id)), payload);
     return normalizeEvent(response.data);
   },
 
   delete: async (id: number) => {
-    await apiClient.delete(`/events/${id}/`);
+    await apiClient.delete(API_ENDPOINTS.EVENTS.DETAIL(String(id)));
   },
 };
 
@@ -40,5 +43,6 @@ function normalizeEvent(event: any): Event {
     ...event,
     attachments: event.attachments || [],
     featured_media: event.featured_media ?? null,
+    tags: event.tags || [],
   };
 }

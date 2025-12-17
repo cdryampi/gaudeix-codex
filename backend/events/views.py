@@ -5,6 +5,7 @@ import logging
 from django.conf import settings
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
+from django.db.models import Q
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -22,7 +23,11 @@ class EventViewSet(viewsets.ModelViewSet):
     API endpoints for events.
     """
 
-    queryset = Event.objects.all()
+    queryset = (
+        Event.objects.all()
+        .select_related("category", "featured_media")
+        .prefetch_related("attachments", "tags")
+    )
     serializer_class = EventSerializer
 
     def get_permissions(self):
@@ -36,7 +41,7 @@ class EventViewSet(viewsets.ModelViewSet):
         return super().get_serializer_class()
 
     def get_queryset(self):
-        queryset = Event.objects.all()
+        queryset = self.queryset
         params = self.request.query_params
 
         is_published = params.get("is_published")
@@ -46,6 +51,49 @@ class EventViewSet(viewsets.ModelViewSet):
                 queryset = queryset.filter(is_published=True)
             elif normalized in {"false", "0", "no"}:
                 queryset = queryset.filter(is_published=False)
+
+        featured = params.get("featured") or params.get("is_featured")
+        if featured is not None:
+            normalized = featured.lower()
+            if normalized in {"true", "1", "yes"}:
+                queryset = queryset.filter(is_featured=True)
+            elif normalized in {"false", "0", "no"}:
+                queryset = queryset.filter(is_featured=False)
+
+        is_free = params.get("is_free")
+        if is_free is not None:
+            normalized = is_free.lower()
+            if normalized in {"true", "1", "yes"}:
+                queryset = queryset.filter(is_free=True)
+            elif normalized in {"false", "0", "no"}:
+                queryset = queryset.filter(is_free=False)
+
+        category_param = params.get("category")
+        if category_param:
+            if category_param.isdigit():
+                queryset = queryset.filter(category_id=int(category_param))
+            else:
+                queryset = queryset.filter(category__slug=category_param)
+
+        tag_param = params.get("tag")
+        if tag_param:
+            queryset = queryset.filter(tags__slug=tag_param)
+        tags_param = params.get("tags")
+        if tags_param:
+            slugs = [s.strip() for s in tags_param.split(",") if s.strip()]
+            if slugs:
+                queryset = queryset.filter(tags__slug__in=slugs).distinct()
+
+        search = params.get("search") or params.get("q")
+        if search:
+            queryset = queryset.filter(
+                Q(translations__title__icontains=search)
+                | Q(translations__summary__icontains=search)
+                | Q(translations__description__icontains=search)
+                | Q(venue_name__icontains=search)
+                | Q(location_text__icontains=search)
+                | Q(slug__icontains=search)
+            ).distinct()
 
         start_from = self._parse_datetime(params.get("start_from"))
         if start_from:

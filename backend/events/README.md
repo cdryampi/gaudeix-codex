@@ -18,7 +18,7 @@ La app `events` está integrada con la app `core` para reutilizar funcionalidad 
 
 ### Event
 
-`Event` (TranslatableModel + ContentBase) con campos traducibles `title`, `description`.
+`Event` (TranslatableModel + ContentBase) con campos traducibles `title`, `summary`, `description`.
 
 **Campos propios**:
 
@@ -28,6 +28,11 @@ La app `events` está integrada con la app `core` para reutilizar funcionalidad 
 - `location_text`: Ubicación en texto libre
 - `featured_media`: ForeignKey a `ImageFile`
 - `attachments`: ManyToMany a `DocumentFile`
+- `venue_name`: Nombre del lugar/organizador (texto libre)
+- `is_featured`: Destacado (para home/portada)
+- `is_free`: Evento gratuito
+- `price_text`: Texto de precio (opcional)
+- `tags`: ManyToMany a `core.Tag`
 
 **Campos heredados de ContentBase**:
 
@@ -60,6 +65,8 @@ Singleton que mantiene la categoría raíz para todos los eventos.
 - ViewSet: `EventViewSet` (`/api/v1/events/`).
 - Serializers: `EventSerializer` (lista/creación), `EventDetailSerializer` (detalle).
 - Filtros: `is_published`, `start_from`, `start_to`, `upcoming=true` (usa `get_upcoming_events` y acepta `limit`).
+- Filtros extra: `category` (id o slug), `tag` (slug), `tags` (csv), `featured=true|false`, `is_free=true|false`, `search`/`q`.
+- Escritura: `category_id` y `tag_ids` (write-only). Lectura: `category`, `category_slug`, `category_name`, `tags`, `image_url`.
 - Permisos: lectura pública; escritura autenticada.
 - **Compatibilidad**: La API mantiene los campos `created_at` y `updated_at` en las respuestas JSON
 
@@ -82,6 +89,8 @@ Singleton que mantiene la categoría raíz para todos los eventos.
 
 ### seed_events_category
 
+Este seed tambiИn crea/actualiza subcategorias (p.ej. `cultura`, `infantil`, `esports`, ...) y ajusta `taxonomy=events`.
+
 Seed idempotente para configurar la categoría de eventos.
 
 ```bash
@@ -99,9 +108,13 @@ python manage.py seed_events_category
 
 ### seed_events
 
+Seed de eventos de ejemplo con categorias, tags y campos extra (`summary`, `venue_name`, `is_featured`, `is_free`, `price_text`).
+
 Comando existente para crear eventos de ejemplo (ver implementación anterior).
 
 ## Migraciones
+
+Cambios recientes: migraciӯn `0003_event_fields_and_tags.py` a¤ade `summary`, `venue_name`, `is_featured`, `is_free`, `price_text` y `tags`.
 
 La integración con `core` se realizó en la migración `0002_integrate_with_core.py`:
 

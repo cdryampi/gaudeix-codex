@@ -1,33 +1,48 @@
-import { useEffect, useRef, useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { TranslationDialog } from "./TranslationDialog";
+import { Languages, Loader2, X } from "lucide-react";
+import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
+import { MultiSelectHint } from "@/components/common/MultiSelectHint";
+
 import { CreateEventDTO, Event } from "../types";
 import { mediaApi } from "@/features/media/api/media";
+import { categoriesApi } from "@/features/categories/api/categories";
+import { tagsApi } from "@/features/tags/api/tags";
+import { Category } from "@/features/categories/types";
+import { Tag } from "@/features/tags/types";
 import { MediaItem } from "@/features/media/types";
-import { Languages, Loader2 } from "lucide-react";
-import { toast } from "sonner";
 import { LANGUAGES } from "@/lib/config/constants";
 import { llmApi } from "../api/llm";
+import { TranslationDialog } from "./TranslationDialog";
+
+type LocalTranslations = {
+  [lang: string]: { title: string; summary?: string; description?: string };
+};
 
 const emptyForm: CreateEventDTO = {
   title: "",
+  summary: "",
   description: "",
   start_at: "",
   end_at: "",
   is_published: true,
+  venue_name: "",
   location_text: "",
-  featured_media: null,
-  attachments: [],
+  is_featured: false,
+  is_free: true,
+  price_text: "",
+  category_id: null,
+  featured_media_id: null,
+  attachments_ids: [],
+  tag_ids: [],
+  translations: {},
 };
 
 type Props = {
@@ -38,97 +53,156 @@ type Props = {
 };
 
 export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
-  const [formData, setFormData] = useState<CreateEventDTO>(emptyForm);
-  const [selectedImageId, setSelectedImageId] = useState<number | null>(null);
-  const [selectedDocs, setSelectedDocs] = useState<number[]>([]);
+  const [form, setForm] = useState<CreateEventDTO>(emptyForm);
+  const [activeLang, setActiveLang] = useState("ca");
+  const [translations, setTranslations] = useState<LocalTranslations>({});
+  const [translating, setTranslating] = useState(false);
+
   const [images, setImages] = useState<MediaItem[]>([]);
   const [documents, setDocuments] = useState<MediaItem[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [tags, setTags] = useState<Tag[]>([]);
+
   const [translationDialogOpen, setTranslationDialogOpen] = useState(false);
-  const [activeLanguage, setActiveLanguage] = useState("ca");
-  const [translating, setTranslating] = useState(false);
-  const [translations, setTranslations] = useState<{
-    [lang: string]: { title: string; description: string };
-  }>({});
+
   const imageInputRef = useRef<HTMLInputElement>(null);
   const docInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (event) {
-      setFormData({
+      setForm({
         title: event.title,
+        summary: event.summary || "",
         description: event.description || "",
         start_at: toDatetimeLocal(event.start_at),
         end_at: event.end_at ? toDatetimeLocal(event.end_at) : "",
         is_published: event.is_published,
+        venue_name: event.venue_name || "",
         location_text: event.location_text || "",
+        is_featured: !!event.is_featured,
+        is_free: event.is_free ?? true,
+        price_text: event.price_text || "",
+        category_id: event.category ?? null,
         featured_media_id: event.featured_media?.id ?? null,
         attachments_ids: (event.attachments || []).map((a) => a.id),
+        tag_ids: (event.tags || []).map((t) => t.id),
       });
-      setSelectedImageId(event.featured_media?.id ?? null);
-      setSelectedDocs((event.attachments || []).map((a) => a.id));
-      
-      // Load existing translations
-      if (event.translations) {
-        setTranslations(event.translations);
-      } else {
-        setTranslations({});
-      }
+      setTranslations(event.translations || {});
     } else {
-      setFormData(emptyForm);
-      setSelectedImageId(null);
-      setSelectedDocs([]);
+      setForm(emptyForm);
       setTranslations({});
+      setActiveLang("ca");
     }
+
   }, [event, open]);
 
   useEffect(() => {
-    const loadMedia = async () => {
+    const loadOptions = async () => {
       try {
-        const [imgs, docs] = await Promise.all([
+        const [imgs, docs, cats, tagsList] = await Promise.all([
           mediaApi.listImages(),
           mediaApi.listDocuments(),
+          categoriesApi.list({ taxonomy: "events" }),
+          tagsApi.list(),
         ]);
         setImages(imgs);
         setDocuments(docs);
+        setCategories(cats);
+        setTags(tagsList);
       } catch (err) {
-        console.error("Error cargando media", err);
+        console.error("Error cargando opciones", err);
       }
     };
-    if (open) {
-      loadMedia();
-    }
+    if (open) loadOptions();
   }, [open]);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  const selectedTagIds = form.tag_ids ?? [];
+  const selectedTags = useMemo(() => {
+    const selected = new Set(selectedTagIds);
+    return tags.filter((tag) => selected.has(tag.id));
+  }, [selectedTagIds, tags]);
+
+  const sortedTags = useMemo(() => {
+    return [...tags].sort((a, b) =>
+      (a.nombre || a.slug).localeCompare(b.nombre || b.slug, undefined, { sensitivity: "base" })
+    );
+  }, [tags]);
+
+  const getContent = (lang: string) => {
+    if (lang === "ca") {
+      return {
+        title: form.title,
+        summary: form.summary,
+        description: form.description,
+      };
+    }
+    return translations[lang] || { title: "", summary: "", description: "" };
+  };
+
+  const updateTranslatedField = (
+    lang: string,
+    field: "title" | "summary" | "description",
+    value: string
   ) => {
-    const { name, value, type, checked } = e.target;
-    const parsedValue =
-      type === "checkbox" ? checked : type === "number" ? Number(value) : value;
-    setFormData((prev) => ({ ...prev, [name]: parsedValue }));
+    if (lang === "ca") {
+      setForm((prev) => ({ ...prev, [field]: value }));
+      return;
+    }
+    setTranslations((prev) => ({
+      ...prev,
+      [lang]: {
+        ...(prev[lang] || {}),
+        [field]: value,
+      },
+    }));
+  };
+
+  const handleAutoTranslate = async (targetLang: string) => {
+    if (!event) return;
+    if (!form.title) {
+      toast.error("No hay títol en el idioma base para traducir");
+      return;
+    }
+
+    setTranslating(true);
+    try {
+      const response = await llmApi.autoTranslateEvent(String(event.id));
+      if (response.success && response.translations[targetLang]) {
+        setTranslations((prev) => ({
+          ...prev,
+          [targetLang]: {
+            ...(prev[targetLang] || {}),
+            ...response.translations[targetLang],
+          },
+        }));
+        toast.success(`Traducido a ${targetLang.toUpperCase()}`);
+      } else {
+        toast.error("Error al traducir", {
+          description: response.errors?.[targetLang] || "Error desconocido",
+        });
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Error al conectar con el servicio de traducción");
+    } finally {
+      setTranslating(false);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Build translations object excluding the source language
-    const translationsData: { [lang: string]: { title: string; description?: string } } = {};
-    Object.entries(translations).forEach(([lang, content]) => {
-      if (lang !== "ca" && (content.title || content.description)) {
-        translationsData[lang] = {
-          title: content.title,
-          description: content.description,
-        };
-      }
-    });
-    
+
+    const translationsPayload: LocalTranslations = { ...translations };
+    delete translationsPayload["ca"];
+
     onSubmit({
-      ...formData,
-      start_at: toIso(formData.start_at),
-      end_at: formData.end_at ? toIso(formData.end_at) : null,
-      featured_media_id: selectedImageId,
-      attachments_ids: selectedDocs,
-      translations: Object.keys(translationsData).length > 0 ? translationsData : undefined,
+      ...form,
+      start_at: toIso(form.start_at),
+      end_at: form.end_at ? toIso(form.end_at) : null,
+      price_text: form.is_free ? "" : form.price_text,
+      attachments_ids: form.attachments_ids ?? [],
+      tag_ids: form.tag_ids ?? [],
+      translations: Object.keys(translationsPayload).length ? translationsPayload : undefined,
     });
   };
 
@@ -139,11 +213,11 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
       const uploaded = await mediaApi.upload(file);
       if (uploaded.type === "image") {
         setImages((prev) => [uploaded, ...prev]);
-        setSelectedImageId(uploaded.id);
+        setForm((prev) => ({ ...prev, featured_media_id: uploaded.id }));
       }
     } catch (err) {
-      console.error("Error subiendo imagen", err);
-      alert("No se pudo subir la imagen.");
+      console.error(err);
+      toast.error("No se pudo subir la imagen");
     } finally {
       if (imageInputRef.current) imageInputRef.current.value = "";
     }
@@ -155,199 +229,58 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
     try {
       const uploaded = await mediaApi.upload(file);
       setDocuments((prev) => [uploaded, ...prev]);
-      setSelectedDocs((prev) => Array.from(new Set([...prev, uploaded.id])));
+      setForm((prev) => ({
+        ...prev,
+        attachments_ids: Array.from(new Set([...(prev.attachments_ids ?? []), uploaded.id])),
+      }));
     } catch (err) {
-      console.error("Error subiendo documento", err);
-      alert("No se pudo subir el documento.");
+      console.error(err);
+      toast.error("No se pudo subir el documento");
     } finally {
       if (docInputRef.current) docInputRef.current.value = "";
     }
   };
 
-  const removeAttachment = (id: number) => {
-    setSelectedDocs((prev) => prev.filter((docId) => docId !== id));
-  };
-
-  const handleTranslateToLanguage = async (targetLang: string) => {
-    if (!event) return;
-    
-    const sourceLang = "ca"; // Always translate from Catalan
-    const sourceTitle = formData.title || event.title;
-    const sourceDescription = formData.description || event.description;
-
-    if (!sourceTitle) {
-      toast.error("No hay título para traducir");
-      return;
-    }
-
-    setTranslating(true);
-    
-    try {
-      const response = await llmApi.autoTranslateEvent(String(event.id));
-      
-      if (response.success && response.translations[targetLang]) {
-        const translation = response.translations[targetLang];
-        
-        // Update translations state
-        setTranslations(prev => ({
-          ...prev,
-          [targetLang]: translation
-        }));
-        
-        toast.success(`Traducido a ${LANGUAGES.find(l => l.code === targetLang)?.name}`);
-      } else {
-        toast.error("Error al traducir", {
-          description: response.errors?.[targetLang] || "Error desconocido"
-        });
-      }
-    } catch (error) {
-      console.error("Translation error:", error);
-      toast.error("Error al conectar con el servicio de traducción");
-    } finally {
-      setTranslating(false);
-    }
-  };
-
-  const getCurrentContent = (lang: string) => {
-    if (lang === "ca") {
-      return {
-        title: formData.title,
-        description: formData.description
-      };
-    }
-    return translations[lang] || { title: "", description: "" };
-  };
-
-  const handleContentChange = (lang: string, field: "title" | "description", value: string) => {
-    if (lang === "ca") {
-      setFormData(prev => ({ ...prev, [field]: value }));
-    } else {
-      setTranslations(prev => ({
-        ...prev,
-        [lang]: {
-          ...prev[lang],
-          [field]: value
-        }
-      }));
-    }
-  };
-
-  const handleApplyTranslations = (translations: {
-    [lang: string]: { title: string; description: string };
-  }) => {
-    // The backend auto_translate endpoint already saved the translations
-    // We just need to show success feedback to the user
-    const languageCount = Object.keys(translations).length;
-    const languages = Object.keys(translations)
-      .map((lang) => lang.toUpperCase())
-      .join(", ");
-
-    toast.success(
-      `Traducciones aplicadas correctamente`,
-      {
-        description: `El evento ha sido traducido a ${languageCount} idioma${languageCount > 1 ? "s" : ""}: ${languages}`,
-      }
-    );
-
-    // Update local translations state
-    setTranslations(prev => ({ ...prev, ...translations }));
-  };
+  const selectedImage = images.find((img) => img.id === form.featured_media_id);
+  const attachmentIds = form.attachments_ids ?? [];
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[640px] px-6">
+      <DialogContent className="max-w-[860px] px-6">
         <DialogHeader>
           <DialogTitle>{event ? "Editar evento" : "Nuevo evento"}</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Tabs para selección de idioma */}
-          <Tabs defaultValue="ca" value={activeLanguage} onValueChange={setActiveLanguage}>
-            <TabsList className="grid w-full grid-cols-4">
-              {LANGUAGES.map((lang) => (
-                <TabsTrigger key={lang.code} value={lang.code}>
-                  {lang.emoji} {lang.name}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-
-            {LANGUAGES.map((lang) => {
-              const content = getCurrentContent(lang.code);
-              const isSourceLang = lang.code === "ca";
-
-              return (
-                <TabsContent key={lang.code} value={lang.code} className="space-y-4 mt-4">
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <Label htmlFor={`title-${lang.code}`}>
-                        Título {!isSourceLang && `(${lang.name})`}
-                      </Label>
-                      {!isSourceLang && (
-                        <Button
-                          type="button"
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleTranslateToLanguage(lang.code)}
-                          disabled={translating || !formData.title}
-                        >
-                          {translating ? (
-                            <>
-                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                              Traduciendo...
-                            </>
-                          ) : (
-                            "Traducir desde Català"
-                          )}
-                        </Button>
-                      )}
-                    </div>
-                    <Input
-                      id={`title-${lang.code}`}
-                      value={content.title || ""}
-                      onChange={(e) => handleContentChange(lang.code, "title", e.target.value)}
-                      required={isSourceLang}
-                      placeholder={isSourceLang ? "" : "Traducción automática o manual"}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor={`description-${lang.code}`}>
-                      Descripción {!isSourceLang && `(${lang.name})`}
-                    </Label>
-                    <RichTextEditor
-                      value={content.description || ""}
-                      onChange={(value) => handleContentChange(lang.code, "description", value)}
-                      placeholder={
-                        isSourceLang
-                          ? "Describe el evento en detalle..."
-                          : "Traducción automática o manual"
-                      }
-                    />
-                  </div>
-                </TabsContent>
-              );
-            })}
-          </Tabs>
-
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="venue_name">Lugar / Organizador</Label>
+              <Input
+                id="venue_name"
+                value={form.venue_name || ""}
+                onChange={(e) => setForm((prev) => ({ ...prev, venue_name: e.target.value }))}
+                placeholder="Nombre del lugar o entidad"
+              />
+            </div>
             <div className="space-y-2">
               <Label htmlFor="location_text">Ubicación</Label>
               <Input
                 id="location_text"
-                name="location_text"
-                value={formData.location_text}
-                onChange={handleChange}
+                value={form.location_text || ""}
+                onChange={(e) => setForm((prev) => ({ ...prev, location_text: e.target.value }))}
                 placeholder="Descripción o dirección"
               />
             </div>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="start_at">Inicio</Label>
               <Input
                 id="start_at"
-                name="start_at"
                 type="datetime-local"
-                value={formData.start_at}
-                onChange={handleChange}
+                value={form.start_at}
+                onChange={(e) => setForm((prev) => ({ ...prev, start_at: e.target.value }))}
                 required
               />
             </div>
@@ -355,34 +288,198 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
               <Label htmlFor="end_at">Fin (opcional)</Label>
               <Input
                 id="end_at"
-                name="end_at"
                 type="datetime-local"
-                value={formData.end_at || ""}
-                onChange={handleChange}
+                value={form.end_at || ""}
+                onChange={(e) => setForm((prev) => ({ ...prev, end_at: e.target.value }))}
               />
             </div>
           </div>
 
-          <label className="flex items-center justify-between rounded-lg border border-border/60 bg-muted/40 px-3 py-2 text-sm">
-            <span>Publicado</span>
-            <input
-              type="checkbox"
-              name="is_published"
-              checked={!!formData.is_published}
-              onChange={handleChange}
-              className="h-4 w-4 accent-primary"
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="category_id">Categoría</Label>
+              <select
+                id="category_id"
+                value={form.category_id ?? ""}
+                onChange={(e) =>
+                  setForm((prev) => ({ ...prev, category_id: e.target.value ? Number(e.target.value) : null }))
+                }
+                className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+              >
+                <option value="">Por defecto</option>
+                {categories.map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.nombre} ({cat.slug})
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="tag_ids">Etiquetas</Label>
+              <MultiSelectHint />
+              <select
+                id="tag_ids"
+                multiple
+                value={(form.tag_ids ?? []).map(String)}
+                onChange={(e) => {
+                  const values = Array.from(e.target.selectedOptions).map((opt) => Number(opt.value));
+                  setForm((prev) => ({ ...prev, tag_ids: values }));
+                }}
+                className="h-24 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+              >
+                {sortedTags.map((tag) => (
+                  <option key={tag.id} value={tag.id}>
+                    {tag.nombre} ({tag.slug})
+                  </option>
+                ))}
+              </select>
+
+              {selectedTags.length > 0 && (
+                <div className="flex flex-wrap gap-1 pt-1">
+                  {selectedTags.map((tag) => (
+                    <Badge key={tag.id} variant="outline" className="border-primary/20 bg-primary/10 text-primary">
+                      <span>{tag.nombre}</span>
+                      <button
+                        type="button"
+                        className="ml-1 inline-flex h-4 w-4 items-center justify-center rounded-sm hover:bg-primary/15"
+                        aria-label={`Quitar etiqueta ${tag.nombre}`}
+                        onClick={() =>
+                          setForm((prev) => ({
+                            ...prev,
+                            tag_ids: (prev.tag_ids ?? []).filter((id) => id !== tag.id),
+                          }))
+                        }
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </Badge>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="grid gap-3 md:grid-cols-3">
+            <label className="flex items-center justify-between rounded-lg border border-border/60 bg-muted/40 px-3 py-2 text-sm">
+              <span>Publicado</span>
+              <input
+                type="checkbox"
+                checked={!!form.is_published}
+                onChange={(e) => setForm((prev) => ({ ...prev, is_published: e.target.checked }))}
+                className="h-4 w-4 accent-primary"
+              />
+            </label>
+
+            <label className="flex items-center justify-between rounded-lg border border-border/60 bg-muted/40 px-3 py-2 text-sm">
+              <span>Destacado</span>
+              <input
+                type="checkbox"
+                checked={!!form.is_featured}
+                onChange={(e) => setForm((prev) => ({ ...prev, is_featured: e.target.checked }))}
+                className="h-4 w-4 accent-primary"
+              />
+            </label>
+
+            <label className="flex items-center justify-between rounded-lg border border-border/60 bg-muted/40 px-3 py-2 text-sm">
+              <span>Gratuito</span>
+              <input
+                type="checkbox"
+                checked={form.is_free ?? true}
+                onChange={(e) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    is_free: e.target.checked,
+                    price_text: e.target.checked ? "" : prev.price_text,
+                  }))
+                }
+                className="h-4 w-4 accent-primary"
+              />
+            </label>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="price_text">Precio</Label>
+            <Input
+              id="price_text"
+              value={form.is_free ? "" : form.price_text || ""}
+              onChange={(e) => setForm((prev) => ({ ...prev, price_text: e.target.value }))}
+              placeholder={form.is_free ? "Evento gratuito" : "Ej: 10 EUR"}
+              disabled={!!form.is_free}
             />
-          </label>
+          </div>
+
+          <Tabs value={activeLang} onValueChange={setActiveLang} defaultValue="ca">
+            <TabsList className="grid w-full grid-cols-4">
+              {LANGUAGES.map((lang) => (
+                <TabsTrigger key={lang.code} value={lang.code}>
+                  {lang.name}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+
+            {LANGUAGES.map((lang) => {
+              const content = getContent(lang.code);
+              const isBase = lang.code === "ca";
+              return (
+                <TabsContent key={lang.code} value={lang.code} className="space-y-3 pt-4">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor={`title-${lang.code}`}>Título {isBase ? "" : `(${lang.name})`}</Label>
+                    {!isBase && event && (
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleAutoTranslate(lang.code)}
+                        disabled={translating || !form.title}
+                      >
+                        {translating ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Traduciendo...
+                          </>
+                        ) : (
+                          "Traducir IA"
+                        )}
+                      </Button>
+                    )}
+                  </div>
+                  <Input
+                    id={`title-${lang.code}`}
+                    value={content.title || ""}
+                    onChange={(e) => updateTranslatedField(lang.code, "title", e.target.value)}
+                    required={isBase}
+                    placeholder={isBase ? "" : "Traducción automática o manual"}
+                  />
+
+                  <div className="space-y-2">
+                    <Label htmlFor={`summary-${lang.code}`}>Resumen {isBase ? "" : `(${lang.name})`}</Label>
+                    <Textarea
+                      id={`summary-${lang.code}`}
+                      value={content.summary || ""}
+                      onChange={(e) => updateTranslatedField(lang.code, "summary", e.target.value)}
+                      placeholder={isBase ? "Resumen breve del evento" : "Traducción automática o manual"}
+                      className="min-h-[72px]"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor={`description-${lang.code}`}>Descripción {isBase ? "" : `(${lang.name})`}</Label>
+                    <RichTextEditor
+                      value={content.description || ""}
+                      onChange={(value) => updateTranslatedField(lang.code, "description", value)}
+                      placeholder={isBase ? "Describe el evento en detalle..." : "Traducción automática o manual"}
+                    />
+                  </div>
+                </TabsContent>
+              );
+            })}
+          </Tabs>
 
           <div className="space-y-3 rounded-lg border border-border/60 bg-muted/30 p-3">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-semibold text-foreground">
-                  Imagen destacada
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  Miniatura visible en listados
-                </p>
+                <p className="text-sm font-semibold text-foreground">Imagen destacada</p>
+                <p className="text-xs text-muted-foreground">Miniatura visible en listados</p>
               </div>
               <div className="flex gap-2">
                 <input
@@ -392,20 +489,13 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
                   onChange={handleUploadImage}
                   className="hidden"
                 />
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => imageInputRef.current?.click()}
-                >
+                <Button type="button" variant="outline" size="sm" onClick={() => imageInputRef.current?.click()}>
                   Subir
                 </Button>
                 <select
-                  value={selectedImageId ?? ""}
+                  value={form.featured_media_id ?? ""}
                   onChange={(e) =>
-                    setSelectedImageId(
-                      e.target.value ? Number(e.target.value) : null
-                    )
+                    setForm((prev) => ({ ...prev, featured_media_id: e.target.value ? Number(e.target.value) : null }))
                   }
                   className="h-10 rounded-md border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
                 >
@@ -418,31 +508,21 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
                 </select>
               </div>
             </div>
-            {selectedImageId && (
+
+            {selectedImage && (
               <div className="flex items-center gap-3 rounded-md bg-background/60 p-2">
                 <img
-                  src={
-                    images.find((img) => img.id === selectedImageId)
-                      ?.thumbnail_url ||
-                    images.find((img) => img.id === selectedImageId)
-                      ?.variant_thumbnail ||
-                    images.find((img) => img.id === selectedImageId)?.file
-                  }
+                  src={selectedImage.thumbnail_url || selectedImage.variant_thumbnail || selectedImage.file}
                   alt="Miniatura"
                   className="h-14 w-14 rounded object-cover ring-1 ring-border"
                 />
-                <p className="text-sm text-foreground">
-                  {
-                    images.find((img) => img.id === selectedImageId)
-                      ?.original_name
-                  }
-                </p>
+                <p className="text-sm text-foreground">{selectedImage.original_name}</p>
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
                   className="ml-auto text-rose-600"
-                  onClick={() => setSelectedImageId(null)}
+                  onClick={() => setForm((prev) => ({ ...prev, featured_media_id: null }))}
                 >
                   Quitar
                 </Button>
@@ -453,12 +533,8 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
           <div className="space-y-3 rounded-lg border border-border/60 bg-muted/30 p-3">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-semibold text-foreground">
-                  Adjuntos
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  Documentos vinculados al evento
-                </p>
+                <p className="text-sm font-semibold text-foreground">Adjuntos</p>
+                <p className="text-xs text-muted-foreground">Documentos vinculados al evento</p>
               </div>
               <div className="flex gap-2">
                 <input
@@ -468,36 +544,34 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
                   onChange={handleUploadDoc}
                   className="hidden"
                 />
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => docInputRef.current?.click()}
-                >
-                  Subir
-                </Button>
-                <select
-                  multiple
-                  value={selectedDocs.map(String)}
-                  onChange={(e) => {
-                    const values = Array.from(e.target.selectedOptions).map(
-                      (opt) => Number(opt.value)
-                    );
-                    setSelectedDocs(values);
-                  }}
-                  className="h-24 rounded-md border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
-                >
-                  {documents.map((doc) => (
-                    <option key={doc.id} value={doc.id}>
-                      {doc.original_name}
-                    </option>
-                  ))}
-                </select>
+                <div className="flex flex-col items-end gap-1">
+                  <div className="flex gap-2">
+                    <Button type="button" variant="outline" size="sm" onClick={() => docInputRef.current?.click()}>
+                      Subir
+                    </Button>
+                    <select
+                      multiple
+                      value={attachmentIds.map(String)}
+                      onChange={(e) => {
+                        const values = Array.from(e.target.selectedOptions).map((opt) => Number(opt.value));
+                        setForm((prev) => ({ ...prev, attachments_ids: values }));
+                      }}
+                      className="h-24 rounded-md border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+                    >
+                      {documents.map((doc) => (
+                        <option key={doc.id} value={doc.id}>
+                          {doc.original_name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
               </div>
             </div>
-            {selectedDocs.length > 0 && (
+
+            {attachmentIds.length > 0 && (
               <div className="space-y-1 text-sm">
-                {selectedDocs.map((id) => {
+                {attachmentIds.map((id) => {
                   const doc = documents.find((d) => d.id === id);
                   return (
                     <div
@@ -510,7 +584,12 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
                         size="sm"
                         variant="ghost"
                         className="text-rose-600"
-                        onClick={() => removeAttachment(id)}
+                        onClick={() =>
+                          setForm((prev) => ({
+                            ...prev,
+                            attachments_ids: (prev.attachments_ids ?? []).filter((docId) => docId !== id),
+                          }))
+                        }
                       >
                         Quitar
                       </Button>
@@ -523,11 +602,7 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
 
           <div className="flex justify-end gap-2">
             {event && (
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setTranslationDialogOpen(true)}
-              >
+              <Button type="button" variant="outline" onClick={() => setTranslationDialogOpen(true)}>
                 <Languages className="mr-2 h-4 w-4" />
                 Traducir con IA
               </Button>
@@ -536,15 +611,21 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
           </div>
         </form>
 
-        {/* Translation Dialog */}
         {event && (
           <TranslationDialog
             open={translationDialogOpen}
             onOpenChange={setTranslationDialogOpen}
             eventId={String(event.id)}
-            currentTitle={formData.title}
-            currentDescription={formData.description || ""}
-            onApplyTranslations={handleApplyTranslations}
+            currentTitle={form.title}
+            currentDescription={form.description || ""}
+            onApplyTranslations={(t) => {
+              setTranslations((prev) => ({
+                ...prev,
+                ...Object.fromEntries(
+                  Object.entries(t).map(([lang, values]) => [lang, { ...(prev[lang] || {}), ...values }])
+                ),
+              }));
+            }}
           />
         )}
       </DialogContent>
@@ -555,13 +636,11 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
 function toDatetimeLocal(value: string) {
   if (!value) return "";
   const date = new Date(value);
-  const iso = date.toISOString();
-  return iso.slice(0, 16);
+  return date.toISOString().slice(0, 16);
 }
 
 function toIso(value: string) {
   if (!value) return value;
-  // value comes as 'YYYY-MM-DDTHH:MM'
   const date = new Date(value);
   return date.toISOString();
 }

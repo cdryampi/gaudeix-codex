@@ -45,6 +45,7 @@ class Event(ContentBase, TranslatableModel):
 
     translations = TranslatedFields(
         title=models.CharField(_("Title"), max_length=200),
+        summary=models.CharField(_("Summary"), max_length=280, blank=True, default=""),
         description=models.TextField(_("Description"), blank=True),
     )
 
@@ -62,12 +63,37 @@ class Event(ContentBase, TranslatableModel):
     end_at = models.DateTimeField(_("End at"), null=True, blank=True)
     is_published = models.BooleanField(_("Is published"), default=True)
 
+    venue_name = models.CharField(
+        _("Venue name"),
+        max_length=200,
+        blank=True,
+        help_text=_("Name of the venue or organizer (free text)."),
+    )
+
     # Placeholder for future place model integration.
     location_text = models.CharField(
         _("Location (text)"),
         max_length=255,
         blank=True,
         help_text=_("Free text location. TODO: replace with Place relation when available."),
+    )
+
+    is_featured = models.BooleanField(_("Is featured"), default=False)
+    is_free = models.BooleanField(_("Is free"), default=True)
+    price_text = models.CharField(
+        _("Price text"),
+        max_length=120,
+        blank=True,
+        default="",
+        help_text=_("Optional display price (e.g. '10 €', 'Free entry')."),
+    )
+
+    tags = models.ManyToManyField(
+        "core.Tag",
+        blank=True,
+        related_name="events",
+        verbose_name=_("Tags"),
+        help_text=_("Tags linked to this event."),
     )
 
     featured_media = models.ForeignKey(
