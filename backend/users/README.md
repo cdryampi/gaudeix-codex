@@ -33,7 +33,7 @@ Custom user model extending `AbstractUser`:
 
 ### seed_users
 
-Populates the database with admin and system users from environment variables.
+Populates the database with users from `users/seed/users.json` and resolves credentials from environment variables.
 
 ```bash
 python manage.py seed_users

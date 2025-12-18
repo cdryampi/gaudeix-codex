@@ -83,6 +83,8 @@ Seed idempotente para configurar la categor\u00eda de lugares y subcategor\u00ed
 python manage.py seed_places_category
 ```
 
+Datos del seed: `places/seed/places_category.json`.
+
 ### seed_places
 
 Seed de datos de ejemplo (requiere categor\u00eda creada).
@@ -90,6 +92,8 @@ Seed de datos de ejemplo (requiere categor\u00eda creada).
 ```bash
 python manage.py seed_places
 ```
+
+Datos del seed: `places/seed/places.json`.
 
 ## Migraciones
 

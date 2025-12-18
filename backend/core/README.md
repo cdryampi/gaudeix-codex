@@ -166,3 +166,5 @@ Seed de tags (idempotente):
 ```bash
 python manage.py seed_tags
 ```
+
+Los datos del seed viven en `core/seed/tags.json`.

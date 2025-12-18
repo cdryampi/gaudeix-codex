@@ -1,0 +1,28 @@
+{
+  "root": {
+    "slug": "events",
+    "taxonomy": "events",
+    "translations": { "ca": "Esdeveniments", "es": "Eventos", "en": "Events", "fr": "Événements" }
+  },
+  "subcategories": [
+    { "slug": "cultura", "translations": { "ca": "Cultura", "es": "Cultura", "en": "Culture", "fr": "Culture" } },
+    { "slug": "infantil", "translations": { "ca": "Infantil", "es": "Infantil", "en": "Kids", "fr": "Enfants" } },
+    { "slug": "esports", "translations": { "ca": "Esports", "es": "Deportes", "en": "Sports", "fr": "Sports" } },
+    {
+      "slug": "fires-i-mercats",
+      "translations": {
+        "ca": "Fires i mercats",
+        "es": "Ferias y mercados",
+        "en": "Fairs and markets",
+        "fr": "Foires et marchés"
+      }
+    },
+    { "slug": "formacio", "translations": { "ca": "Formació", "es": "Formación", "en": "Training", "fr": "Formation" } },
+    { "slug": "musica", "translations": { "ca": "Música", "es": "Música", "en": "Music", "fr": "Musique" } },
+    { "slug": "teatre", "translations": { "ca": "Teatre", "es": "Teatro", "en": "Theatre", "fr": "Théâtre" } },
+    { "slug": "altres", "translations": { "ca": "Altres", "es": "Otros", "en": "Other", "fr": "Autres" } }
+  ],
+  "singleton_pk": 1,
+  "assign_to_existing_events": true
+}
+

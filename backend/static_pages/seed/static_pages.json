@@ -1,0 +1,71 @@
+{
+  "pages": [
+    {
+      "slug": "punt-info",
+      "template": "info_point",
+      "is_published": true,
+      "translations": {
+        "ca": {
+          "titulo": "Punt d'informació",
+          "cuerpo": "Benvingut/da al punt d'informació. Aquí trobaràs l'essencial per planificar la teva visita."
+        }
+      }
+    },
+    {
+      "slug": "privacitat",
+      "template": "privacy",
+      "is_published": true,
+      "translations": {
+        "ca": {
+          "titulo": "Política de privacitat",
+          "cuerpo": "Expliquem com recopilem, fem servir i protegim les teves dades personals."
+        }
+      }
+    },
+    {
+      "slug": "avis-legal",
+      "template": "legal_notice",
+      "is_published": true,
+      "translations": {
+        "ca": {
+          "titulo": "Avís legal",
+          "cuerpo": "Informació legal sobre l'ús del lloc, responsabilitats i propietat intel·lectual."
+        }
+      }
+    },
+    {
+      "slug": "cookies",
+      "template": "cookies",
+      "is_published": true,
+      "translations": {
+        "ca": {
+          "titulo": "Política de cookies",
+          "cuerpo": "Detalls sobre les cookies que utilitzem, per a què serveixen i com gestionar-les."
+        }
+      }
+    },
+    {
+      "slug": "contacte",
+      "template": "contact",
+      "is_published": true,
+      "translations": {
+        "ca": {
+          "titulo": "Contacte",
+          "cuerpo": "Posa't en contacte amb nosaltres per consultes, suggeriments o incidències."
+        }
+      }
+    },
+    {
+      "slug": "inclusio",
+      "template": "inclusion",
+      "is_published": true,
+      "translations": {
+        "ca": {
+          "titulo": "Diversitat i inclusió",
+          "cuerpo": "El nostre compromís amb l'accessibilitat i la inclusió per a totes les persones."
+        }
+      }
+    }
+  ]
+}
+

@@ -7,8 +7,12 @@ Steps:
 2) Create/update EventCategorySingleton pointing to it
 3) Assign the category to Events without one
 """
+from __future__ import annotations
 
-from django.core.management.base import BaseCommand
+import json
+from pathlib import Path
+
+from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
 from core.models import Category
@@ -19,28 +23,32 @@ class Command(BaseCommand):
     help = "Seed the Events category and assign it to all events"
 
     def handle(self, *args, **options):
+        seed_data = self._load_seed_data()
         with transaction.atomic():
-            category = self._create_or_update_category()
-            subcategories = self._create_or_update_subcategories(category)
-            singleton = self._create_or_update_singleton(category)
-            assigned = self._assign_category(category)
+            category = self._create_or_update_category(seed_data["root"])
+            subcategories = self._create_or_update_subcategories(
+                category, seed_data.get("subcategories", []) or []
+            )
+            singleton = self._create_or_update_singleton(
+                category, pk=seed_data.get("singleton_pk", 1)
+            )
+            assigned = 0
+            if seed_data.get("assign_to_existing_events", True):
+                assigned = self._assign_category(category)
             self._print_summary(category, subcategories, singleton, assigned)
 
-    def _create_or_update_category(self) -> Category:
+    def _create_or_update_category(self, definition: dict) -> Category:
+        slug = definition["slug"]
+        taxonomy = definition.get("taxonomy", "")
+        translations = definition.get("translations", {}) or {}
         category, created = Category.objects.get_or_create(
-            slug="events",
-            defaults={"nombre": "Events", "taxonomy": "events"},
+            slug=slug,
+            defaults={"nombre": translations.get("en") or slug, "taxonomy": taxonomy},
         )
-        if category.taxonomy != "events":
-            category.taxonomy = "events"
+        if taxonomy and category.taxonomy != taxonomy:
+            category.taxonomy = taxonomy
             category.save(update_fields=["taxonomy"])
 
-        translations = {
-            "ca": "Esdeveniments",
-            "es": "Eventos",
-            "en": "Events",
-            "fr": "Événements",
-        }
         for lang_code, name in translations.items():
             category.set_current_language(lang_code)
             if category.nombre != name:
@@ -48,37 +56,28 @@ class Command(BaseCommand):
                 category.save()
 
         if created:
-            self.stdout.write(self.style.SUCCESS("Created category 'events'"))
+            self.stdout.write(self.style.SUCCESS(f"Created category '{slug}'"))
         else:
-            self.stdout.write(self.style.WARNING("Category 'events' already exists"))
+            self.stdout.write(self.style.WARNING(f"Category '{slug}' already exists"))
         return category
 
-    def _create_or_update_subcategories(self, root: Category) -> int:
-        definitions: list[tuple[str, dict[str, str]]] = [
-            ("cultura", {"ca": "Cultura", "es": "Cultura", "en": "Culture", "fr": "Culture"}),
-            ("infantil", {"ca": "Infantil", "es": "Infantil", "en": "Kids", "fr": "Enfants"}),
-            ("esports", {"ca": "Esports", "es": "Deportes", "en": "Sports", "fr": "Sports"}),
-            ("fires-i-mercats", {"ca": "Fires i mercats", "es": "Ferias y mercados", "en": "Fairs and markets", "fr": "Foires et marches"}),
-            ("formacio", {"ca": "Formacio", "es": "Formacion", "en": "Training", "fr": "Formation"}),
-            ("musica", {"ca": "Musica", "es": "Musica", "en": "Music", "fr": "Musique"}),
-            ("teatre", {"ca": "Teatre", "es": "Teatro", "en": "Theatre", "fr": "Theatre"}),
-            ("altres", {"ca": "Altres", "es": "Otros", "en": "Other", "fr": "Autres"}),
-        ]
-
+    def _create_or_update_subcategories(self, root: Category, definitions: list[dict]) -> int:
         touched = 0
-        for slug, names in definitions:
+        for entry in definitions:
+            slug = entry["slug"]
+            names = entry.get("translations", {}) or {}
             category, created = Category.objects.get_or_create(
                 slug=slug,
                 defaults={
                     "nombre": names.get("en", slug),
-                    "taxonomy": "events",
+                    "taxonomy": root.taxonomy,
                     "parent": root,
                 },
             )
 
             changed = False
-            if category.taxonomy != "events":
-                category.taxonomy = "events"
+            if category.taxonomy != root.taxonomy:
+                category.taxonomy = root.taxonomy
                 changed = True
             if category.parent_id != root.id:
                 category.parent = root
@@ -98,9 +97,9 @@ class Command(BaseCommand):
 
         return touched
 
-    def _create_or_update_singleton(self, category: Category) -> EventCategorySingleton:
+    def _create_or_update_singleton(self, category: Category, pk: int) -> EventCategorySingleton:
         singleton, created = EventCategorySingleton.objects.get_or_create(
-            pk=1,
+            pk=pk,
             defaults={"category": category},
         )
         if not created and singleton.category != category:
@@ -143,3 +142,16 @@ class Command(BaseCommand):
                 f"{'='*50}"
             )
         )
+
+    def _load_seed_data(self) -> dict:
+        seed_path = Path(__file__).resolve().parents[2] / "seed" / "events_category.json"
+        try:
+            data = json.loads(seed_path.read_text(encoding="utf-8"))
+        except FileNotFoundError as exc:
+            raise CommandError(f"Seed file not found: {seed_path}") from exc
+        except json.JSONDecodeError as exc:
+            raise CommandError(f"Invalid JSON in {seed_path}: {exc}") from exc
+
+        if not isinstance(data, dict) or "root" not in data:
+            raise CommandError(f"Invalid seed data in {seed_path} (missing 'root').")
+        return data

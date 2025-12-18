@@ -1,0 +1,31 @@
+[
+  {
+    "url": "https://entradas.codetickets.com/entradas/aj-cabrera-de-mar",
+    "icon_class": "fa-solid fa-ticket",
+    "color": "#FFFFFF",
+    "order": 1,
+    "translations": { "ca": "Codetickets", "es": "Codetickets", "en": "Codetickets", "fr": "Codetickets" }
+  },
+  {
+    "url": "https://www.flickr.com/photos/194905564@N08/page4",
+    "icon_class": "fa-brands fa-flickr",
+    "color": "#24B5FF",
+    "order": 2,
+    "translations": { "ca": "Flickr", "es": "Flickr", "en": "Flickr", "fr": "Flickr" }
+  },
+  {
+    "url": "https://www.instagram.com/gaudeixcabrera/",
+    "icon_class": "fa-brands fa-instagram",
+    "color": "#24B5FF",
+    "order": 3,
+    "translations": { "ca": "Instagram", "es": "Instagram", "en": "Instagram", "fr": "Instagram" }
+  },
+  {
+    "url": "https://www.facebook.com/gaudeixcabrera/",
+    "icon_class": "fa-brands fa-facebook",
+    "color": "#24B5FF",
+    "order": 4,
+    "translations": { "ca": "Facebook", "es": "Facebook", "en": "Facebook", "fr": "Facebook" }
+  }
+]
+

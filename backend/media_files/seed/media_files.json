@@ -1,0 +1,5 @@
+{
+  "images": [{ "path": "images/test_imagen.png" }],
+  "documents": [{ "path": "documents/test_fichero.pdf" }]
+}
+

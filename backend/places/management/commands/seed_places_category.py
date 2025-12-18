@@ -4,7 +4,13 @@ Seed the Places category, template categories and PlaceCategorySingleton.
 Idempotent: safe to run multiple times.
 """
 
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
 from django.core.management.base import BaseCommand
+from django.core.management.base import CommandError
 from django.db import transaction
 
 from core.models import Category
@@ -15,25 +21,26 @@ class Command(BaseCommand):
     help = "Seed the Places category, template categories and assign root to existing places"
 
     def handle(self, *args, **options):
+        seed_data = self._load_seed_data()
         with transaction.atomic():
-            root_category = self._create_root_category()
-            self._create_template_categories()
-            singleton = self._create_singleton(root_category)
-            assigned = self._assign_root_to_places(root_category)
+            root_category = self._create_root_category(seed_data["root"])
+            self._create_template_categories(seed_data.get("templates", []) or [])
+            singleton = self._create_singleton(
+                root_category, pk=seed_data.get("singleton_pk", 1)
+            )
+            assigned = 0
+            if seed_data.get("assign_root_to_existing_places", True):
+                assigned = self._assign_root_to_places(root_category)
             self._print_summary(root_category, singleton, assigned)
 
-    def _create_root_category(self) -> Category:
+    def _create_root_category(self, definition: dict) -> Category:
+        slug = definition["slug"]
+        translations = definition.get("translations", {}) or {}
         category, created = Category.objects.get_or_create(
-            slug="places",
-            defaults={"nombre": "Places"},
+            slug=slug,
+            defaults={"nombre": translations.get("en") or slug},
         )
 
-        translations = {
-            "ca": "Llocs",
-            "es": "Lugares",
-            "en": "Places",
-            "fr": "Lieux",
-        }
         for lang_code, name in translations.items():
             category.set_current_language(lang_code)
             if category.nombre != name:
@@ -43,22 +50,13 @@ class Command(BaseCommand):
         if created:
             self.stdout.write(self.style.SUCCESS("Created root category 'places'"))
         else:
-            self.stdout.write(self.style.WARNING("Root category 'places' already exists"))
+            self.stdout.write(self.style.WARNING(f"Root category '{slug}' already exists"))
         return category
 
-    def _create_template_categories(self) -> None:
-        templates = [
-            ("poi", {"ca": "Punt d'interès", "es": "Punto de interés", "en": "Point of interest", "fr": "Point d'intérêt"}),
-            ("restaurant", {"ca": "Restaurant", "es": "Restaurante", "en": "Restaurant", "fr": "Restaurant"}),
-            ("bar", {"ca": "Bar", "es": "Bar", "en": "Bar", "fr": "Bar"}),
-            ("hotel", {"ca": "Hotel", "es": "Hotel", "en": "Hotel", "fr": "Hôtel"}),
-            ("apartment", {"ca": "Apartament", "es": "Apartamento", "en": "Apartment", "fr": "Appartement"}),
-            ("viewpoint", {"ca": "Mirador", "es": "Mirador", "en": "Viewpoint", "fr": "Point de vue"}),
-            ("museum", {"ca": "Museu", "es": "Museo", "en": "Museum", "fr": "Musée"}),
-            ("beach", {"ca": "Platja", "es": "Playa", "en": "Beach", "fr": "Plage"}),
-        ]
-
-        for slug, names in templates:
+    def _create_template_categories(self, templates: list[dict]) -> None:
+        for entry in templates:
+            slug = entry["slug"]
+            names = entry.get("translations", {}) or {}
             category, created = Category.objects.get_or_create(
                 slug=slug,
                 defaults={"nombre": names.get("en", slug), "taxonomy": "template"},
@@ -75,9 +73,9 @@ class Command(BaseCommand):
             else:
                 self.stdout.write(self.style.WARNING(f"Template category '{slug}' already exists"))
 
-    def _create_singleton(self, category: Category) -> PlaceCategorySingleton:
+    def _create_singleton(self, category: Category, pk: int) -> PlaceCategorySingleton:
         singleton, created = PlaceCategorySingleton.objects.get_or_create(
-            pk=1,
+            pk=pk,
             defaults={"category": category},
         )
         if not created and singleton.category != category:
@@ -113,3 +111,16 @@ class Command(BaseCommand):
                 f"{'='*50}"
             )
         )
+
+    def _load_seed_data(self) -> dict:
+        seed_path = Path(__file__).resolve().parents[2] / "seed" / "places_category.json"
+        try:
+            data = json.loads(seed_path.read_text(encoding="utf-8"))
+        except FileNotFoundError as exc:
+            raise CommandError(f"Seed file not found: {seed_path}") from exc
+        except json.JSONDecodeError as exc:
+            raise CommandError(f"Invalid JSON in {seed_path}: {exc}") from exc
+
+        if not isinstance(data, dict) or "root" not in data:
+            raise CommandError(f"Invalid seed data in {seed_path} (missing 'root').")
+        return data

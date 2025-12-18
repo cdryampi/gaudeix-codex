@@ -1,73 +1,94 @@
 """
-Management command to seed users from environment variables.
+Management command to seed users from JSON + environment variables.
+
+Idempotent: safe to run multiple times.
 """
-from django.core.management.base import BaseCommand
-from django.contrib.auth import get_user_model
+
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
 import environ
+from django.contrib.auth import get_user_model
+from django.core.management.base import BaseCommand, CommandError
+from django.db import transaction
 
 User = get_user_model()
+
 
 class Command(BaseCommand):
     """
     Seeds the database with admin and system users from environment variables.
     """
-    help = 'Seeds admin and system users from environment variables.'
+    help = "Seeds users from JSON + environment variables."
 
     def handle(self, *args, **options):
-        """
-        Main command handler.
-        Creates or updates admin and system users based on environment variables:
-        - ADMIN_USER, ADMIN_PASSWORD
-        - SYSTEM_USER, SYSTEM_PASSWORD
-        """
         env = environ.Env()
-        
-        self.stdout.write('Seeding users...')
+        seed_users = self._load_seed_users()
+        self.stdout.write("Seeding users...")
 
-        # Admin user
-        admin_username = env('ADMIN_USER', default='admin')
-        admin_password = env('ADMIN_PASSWORD', default='admin123')
-        
-        admin_user, created = User.objects.get_or_create(
-            username=admin_username,
-            defaults={
-                'is_staff': True,
-                'is_superuser': True,
-                'name': 'Administrator'
-            }
+        created = 0
+        updated = 0
+
+        with transaction.atomic():
+            for entry in seed_users:
+                username = self._resolve_env(
+                    env,
+                    entry.get("username_env"),
+                    entry.get("default_username", ""),
+                )
+                password = self._resolve_env(
+                    env,
+                    entry.get("password_env"),
+                    entry.get("default_password", ""),
+                )
+                defaults = entry.get("defaults", {}) or {}
+
+                user, was_created = User.objects.get_or_create(
+                    username=username,
+                    defaults=defaults,
+                )
+
+                changed = False
+                for field, value in defaults.items():
+                    if getattr(user, field) != value:
+                        setattr(user, field, value)
+                        changed = True
+
+                if password and (was_created or not user.check_password(password)):
+                    user.set_password(password)
+                    changed = True
+
+                if changed:
+                    user.save()
+
+                if was_created:
+                    created += 1
+                    self.stdout.write(self.style.SUCCESS(f"Created user: {username}"))
+                elif changed:
+                    updated += 1
+                    self.stdout.write(self.style.WARNING(f"Updated user: {username}"))
+
+        self.stdout.write(
+            self.style.SUCCESS(f"Successfully seeded users. created={created}, updated={updated}")
         )
-        
-        if created or not admin_user.check_password(admin_password):
-            admin_user.set_password(admin_password)
-            admin_user.is_staff = True
-            admin_user.is_superuser = True
-            admin_user.save()
-            
-        if created:
-            self.stdout.write(self.style.SUCCESS(f"Created admin user: {admin_username}"))
-        else:
-            self.stdout.write(self.style.WARNING(f"Updated admin user: {admin_username}"))
 
-        # System user
-        system_username = env('SYSTEM_USER', default='system')
-        system_password = env('SYSTEM_PASSWORD', default='system123')
-        
-        system_user, created = User.objects.get_or_create(
-            username=system_username,
-            defaults={
-                'is_staff': False,
-                'is_superuser': False,
-                'name': 'System User'
-            }
-        )
-        
-        if created or not system_user.check_password(system_password):
-            system_user.set_password(system_password)
-            system_user.save()
-            
-        if created:
-            self.stdout.write(self.style.SUCCESS(f"Created system user: {system_username}"))
-        else:
-            self.stdout.write(self.style.WARNING(f"Updated system user: {system_username}"))
+    def _resolve_env(self, env: environ.Env, env_key: str | None, default: str) -> str:
+        if not env_key:
+            return default
+        return env(env_key, default=default)
 
-        self.stdout.write(self.style.SUCCESS('Successfully seeded users.'))
+    def _load_seed_users(self) -> list[dict]:
+        seed_path = Path(__file__).resolve().parents[2] / "seed" / "users.json"
+        try:
+            data = json.loads(seed_path.read_text(encoding="utf-8"))
+        except FileNotFoundError as exc:
+            raise CommandError(f"Seed file not found: {seed_path}") from exc
+        except json.JSONDecodeError as exc:
+            raise CommandError(f"Invalid JSON in {seed_path}: {exc}") from exc
+
+        users = data.get("users")
+        if not isinstance(users, list):
+            raise CommandError(f"Expected a 'users' array in {seed_path}")
+        return users

@@ -265,7 +265,7 @@ python media_files/tests/test_api_access.py
 
 ### seed_media_files
 
-Puebla la base de datos con archivos de prueba desde `seed_assets/`.
+Puebla la base de datos con archivos de prueba desde `seed_assets/`, leyendo el manifiesto `media_files/seed/media_files.json`.
 
 **Uso:**
 
@@ -275,9 +275,8 @@ python manage.py seed_media_files
 
 **Funcionalidad:**
 
-- Limpia archivos existentes (opcional con `--no-clear`)
-- Carga imágenes desde `seed_assets/images/`
-- Carga documentos desde `seed_assets/documents/`
+- Limpia registros existentes (`ImageFile`/`DocumentFile`)
+- Carga los assets listados en `media_files/seed/media_files.json` (paths relativos a `seed_assets/`)
 - Genera automáticamente variantes de imágenes
 
 ## Instalación y Configuración

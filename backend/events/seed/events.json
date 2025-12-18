@@ -1,0 +1,122 @@
+[
+  {
+    "title": "Mercat de producte local",
+    "summary": "Parades de proximitat, degustacions i artesania.",
+    "description": "Activitat al centre del poble amb parades i productes locals.",
+    "start_offset": { "days": 2, "hours": 11 },
+    "end_offset": { "days": 2, "hours": 14 },
+    "venue_name": "Mercat a la plaça",
+    "location_text": "Plaça del Poble",
+    "is_featured": true,
+    "is_free": true,
+    "price_text": "",
+    "category_slug": "fires-i-mercats",
+    "tag_slugs": ["mercat", "producte-local", "artesania"],
+    "translations": {
+      "es": {
+        "title": "Mercado de producto local",
+        "summary": "Puestos de proximidad, degustaciones y artesanía.",
+        "description": "Actividad en el centro del pueblo con puestos y producto local."
+      }
+    }
+  },
+  {
+    "title": "Taller infantil: manualitats",
+    "summary": "Activitat creativa per a infants.",
+    "description": "Taller amb materials reciclats i recursos naturals.",
+    "start_offset": { "days": 3, "hours": 17 },
+    "end_offset": { "days": 3, "hours": 19 },
+    "venue_name": "Centre Cívic",
+    "location_text": "Plaça de l'Ajuntament",
+    "is_featured": false,
+    "is_free": true,
+    "price_text": "",
+    "category_slug": "infantil",
+    "tag_slugs": ["infantil", "taller", "familia"]
+  },
+  {
+    "title": "Ruta guiada pel patrimoni",
+    "summary": "Passejada amb guia per descobrir racons locals.",
+    "description": "Ruta guiada per conèixer el patrimoni i la història del municipi.",
+    "start_offset": { "days": 5, "hours": 11 },
+    "end_offset": { "days": 5, "hours": 13 },
+    "venue_name": "Punt de trobada",
+    "location_text": "Plaça Major",
+    "is_featured": false,
+    "is_free": false,
+    "price_text": "5 EUR",
+    "category_slug": "cultura",
+    "tag_slugs": ["ruta", "patrimoni", "visita-guiada"]
+  },
+  {
+    "title": "Teatre: comèdia a la fresca",
+    "summary": "Una comèdia amable per gaudir en comunitat.",
+    "description": "Representació al teatre municipal amb actors convidats.",
+    "start_offset": { "days": 7, "hours": 20 },
+    "end_offset": { "days": 7, "hours": 22 },
+    "venue_name": "Teatre La Sala",
+    "location_text": "Centre Cultural",
+    "is_featured": true,
+    "is_free": false,
+    "price_text": "10 EUR",
+    "category_slug": "teatre",
+    "tag_slugs": ["teatre", "comedia"]
+  },
+  {
+    "title": "Concert de música clàssica",
+    "summary": "Repertori clàssic amb intèrprets convidats.",
+    "description": "Concert al vespre amb peces clàssiques.",
+    "start_offset": { "days": 10, "hours": 19 },
+    "end_offset": { "days": 10, "hours": 21 },
+    "venue_name": "Església Parroquial",
+    "location_text": "Plaça de l'Església",
+    "is_featured": false,
+    "is_free": false,
+    "price_text": "Aportació voluntària",
+    "category_slug": "musica",
+    "tag_slugs": ["musica", "concert", "classica"]
+  },
+  {
+    "title": "Xerrada: convivència i civisme",
+    "summary": "Espai obert per compartir propostes.",
+    "description": "Sessió participativa per millorar el dia a dia del municipi.",
+    "start_offset": { "days": 12, "hours": 19 },
+    "end_offset": { "days": 12, "hours": 20 },
+    "venue_name": "Casal d'Entitats",
+    "location_text": "Avinguda del Maresme",
+    "is_featured": false,
+    "is_free": true,
+    "price_text": "",
+    "category_slug": "altres",
+    "tag_slugs": ["xerrada", "participacio"]
+  },
+  {
+    "title": "Formació: competències digitals bàsiques",
+    "summary": "Sessió pràctica sobre tràmits online i seguretat.",
+    "description": "Formació per fer gestions digitals i millorar la seguretat.",
+    "start_offset": { "days": 15, "hours": 18 },
+    "end_offset": { "days": 15, "hours": 20 },
+    "venue_name": "Biblioteca Municipal",
+    "location_text": "Carrer de la Riera",
+    "is_featured": false,
+    "is_free": true,
+    "price_text": "",
+    "category_slug": "formacio",
+    "tag_slugs": ["formacio", "digital", "ajuda"]
+  },
+  {
+    "title": "Activitat esportiva: caminada popular",
+    "summary": "Recorregut accessible per fomentar el benestar.",
+    "description": "Caminada popular amb ruta senyalitzada i avituallament.",
+    "start_offset": { "days": 18, "hours": 9 },
+    "end_offset": { "days": 18, "hours": 12 },
+    "venue_name": "Pavelló Municipal",
+    "location_text": "Zona Esportiva",
+    "is_featured": true,
+    "is_free": true,
+    "price_text": "",
+    "category_slug": "esports",
+    "tag_slugs": ["esports", "caminada", "salut"]
+  }
+]
+

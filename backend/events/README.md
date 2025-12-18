@@ -97,6 +97,8 @@ Seed idempotente para configurar la categoría de eventos.
 python manage.py seed_events_category
 ```
 
+Datos del seed: `events/seed/events_category.json`.
+
 **Funcionalidad**:
 
 1. Crea o actualiza la categoría "Events" (slug: `events`)
@@ -110,7 +112,11 @@ python manage.py seed_events_category
 
 Seed de eventos de ejemplo con categorias, tags y campos extra (`summary`, `venue_name`, `is_featured`, `is_free`, `price_text`).
 
-Comando existente para crear eventos de ejemplo (ver implementación anterior).
+```bash
+python manage.py seed_events
+```
+
+Datos del seed: `events/seed/events.json` (fechas relativas con `start_offset`/`end_offset`).
 
 ## Migraciones
 

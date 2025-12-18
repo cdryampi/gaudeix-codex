@@ -6,11 +6,12 @@ Usage: python manage.py seed_places
 
 from __future__ import annotations
 
+import json
 import mimetypes
 from pathlib import Path
 
 from django.core.files import File
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
 from core.models import Category
@@ -46,104 +47,7 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS(f"Removed {count} existing places."))
 
     def _create_places(self, root_category: Category, images: list[ImageFile], documents: list[DocumentFile]) -> None:
-        places_data = [
-            {
-                "title": "Central Park",
-                "description": "Large urban park with walking trails and lakes.",
-                "location_text": "City Center",
-                "latitude": 40.785091,
-                "longitude": -73.968285,
-                "category_slug": "poi",
-                "translations": {
-                    "es": {"title": "Parque Central", "description": "Gran parque urbano con senderos y lagos."},
-                    "ca": {"title": "Parc Central", "description": "Gran parc urbà amb camins i llacs."},
-                },
-            },
-            {
-                "title": "Sunset Beach",
-                "description": "Wide sandy beach ideal for sunsets.",
-                "location_text": "Coast Avenue",
-                "latitude": 36.7783,
-                "longitude": -119.4179,
-                "category_slug": "beach",
-                "translations": {
-                    "es": {"title": "Playa Sunset", "description": "Amplia playa de arena ideal para atardeceres."},
-                    "ca": {"title": "Platja Sunset", "description": "Àmplia platja de sorra ideal per a capvespres."},
-                },
-            },
-            {
-                "title": "Mountain Viewpoint",
-                "description": "Panoramic views of the valley.",
-                "location_text": "Trail KM 5",
-                "latitude": 42.0,
-                "longitude": 2.0,
-                "category_slug": "viewpoint",
-                "translations": {
-                    "es": {"title": "Mirador de la Montaña", "description": "Vistas panorámicas del valle."},
-                    "ca": {"title": "Mirador de la Muntanya", "description": "Vistes panoràmiques de la vall."},
-                },
-            },
-            {
-                "title": "Museum of Modern Art",
-                "description": "Contemporary exhibitions and guided tours.",
-                "location_text": "Old Town",
-                "latitude": 41.3874,
-                "longitude": 2.1686,
-                "category_slug": "museum",
-                "translations": {
-                    "es": {"title": "Museo de Arte Moderno", "description": "Exposiciones contemporáneas y visitas guiadas."},
-                    "ca": {"title": "Museu d'Art Modern", "description": "Exposicions contemporànies i visites guiades."},
-                },
-            },
-            {
-                "title": "Seaside Hotel",
-                "description": "4-star hotel with sea views and spa.",
-                "location_text": "Harbor Road 12",
-                "latitude": 41.0,
-                "longitude": 1.0,
-                "category_slug": "hotel",
-                "translations": {
-                    "es": {"title": "Hotel Marítimo", "description": "Hotel de 4 estrellas con vistas al mar y spa."},
-                    "ca": {"title": "Hotel Marítim", "description": "Hotel de 4 estrelles amb vistes al mar i spa."},
-                },
-            },
-            {
-                "title": "Local Bistro",
-                "description": "Seasonal cuisine with local ingredients.",
-                "location_text": "Market Square 8",
-                "latitude": 41.4,
-                "longitude": 2.17,
-                "category_slug": "restaurant",
-                "translations": {
-                    "es": {"title": "Bistró Local", "description": "Cocina de temporada con ingredientes locales."},
-                    "ca": {"title": "Bistró Local", "description": "Cuina de temporada amb ingredients locals."},
-                },
-            },
-            {
-                "title": "Boutique Apartments",
-                "description": "Serviced apartments in downtown.",
-                "location_text": "Main Street 5",
-                "latitude": 40.4168,
-                "longitude": -3.7038,
-                "category_slug": "apartment",
-                "translations": {
-                    "es": {"title": "Apartamentos Boutique", "description": "Apartamentos con servicios en el centro."},
-                    "ca": {"title": "Apartaments Boutique", "description": "Apartaments amb serveis al centre."},
-                },
-            },
-            {
-                "title": "Craft Beer Bar",
-                "description": "Taproom with rotating local brews.",
-                "location_text": "River Street 22",
-                "latitude": 41.38,
-                "longitude": 2.15,
-                "category_slug": "bar",
-                "translations": {
-                    "es": {"title": "Bar de Cerveza Artesanal", "description": "Taproom con cervezas locales rotativas."},
-                    "ca": {"title": "Bar de Cervesa Artesanal", "description": "Taproom amb cerveses locals rotatives."},
-                },
-            },
-        ]
+        places_data = self._load_seed_places()
 
         for index, data in enumerate(places_data):
             category = (
@@ -165,6 +69,19 @@ class Command(BaseCommand):
 
             self._apply_translations(place, data.get("translations", {}))
             self.stdout.write(self.style.SUCCESS(f"Created place '{place}'"))
+
+    def _load_seed_places(self) -> list[dict]:
+        seed_path = Path(__file__).resolve().parents[2] / "seed" / "places.json"
+        try:
+            data = json.loads(seed_path.read_text(encoding="utf-8"))
+        except FileNotFoundError as exc:
+            raise CommandError(f"Seed file not found: {seed_path}") from exc
+        except json.JSONDecodeError as exc:
+            raise CommandError(f"Invalid JSON in {seed_path}: {exc}") from exc
+
+        if not isinstance(data, list):
+            raise CommandError(f"Expected a JSON array in {seed_path}")
+        return data
 
     def _apply_translations(self, place: Place, translations: dict) -> None:
         for language_code, values in translations.items():

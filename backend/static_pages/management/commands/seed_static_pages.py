@@ -1,13 +1,13 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 from django.core.files.base import ContentFile
 from django.db import transaction
 
 from static_pages.models import StaticPage
-from static_pages.seed.sample_data import SAMPLE_STATIC_PAGES
 from media_files.models import ImageFile, DocumentFile
 
 
@@ -36,7 +36,7 @@ class Command(BaseCommand):
         featured_media_id = options.get("featured_media_id")
         attachment_id = options.get("attachment_id")
         reset = options.get("reset")
-        seed_dir = Path(__file__).resolve().parent.parent.parent / "seed"
+        seed_dir = Path(__file__).resolve().parents[2] / "seed"
 
         if reset:
             StaticPage.objects.all().delete()
@@ -56,32 +56,67 @@ class Command(BaseCommand):
         created = 0
         updated = 0
 
-        for entry in SAMPLE_STATIC_PAGES:
+        pages = self._load_seed_pages(seed_dir / "static_pages.json")
+        for entry in pages:
             slug = entry["slug"]
             template = entry["template"]
-            title = entry["title"]
-            body = entry.get("body", "")
+            is_published = entry.get("is_published", True)
             page, was_created = StaticPage.objects.get_or_create(
                 template=template,
                 defaults={
                     "slug": slug,
-                    "is_published": True,
+                    "is_published": is_published,
                 },
             )
-            page.set_current_language("ca")
-            page.titulo = title
-            page.cuerpo = body
-            if featured_media_id:
+
+            changed = False
+            if page.slug != slug:
+                page.slug = slug
+                changed = True
+            if page.is_published != is_published:
+                page.is_published = is_published
+                changed = True
+            if featured_media_id and page.featured_media_id != featured_media_id:
                 page.featured_media_id = featured_media_id
-            if attachment_id:
+                changed = True
+            if attachment_id and page.attachment_id != attachment_id:
                 page.attachment_id = attachment_id
-            page.save()
+                changed = True
+
+            translations = entry.get("translations", {}) or {}
+            for lang_code, values in translations.items():
+                if not isinstance(values, dict):
+                    continue
+                page.set_current_language(lang_code)
+                if "titulo" in values:
+                    page.titulo = values["titulo"]
+                    changed = True
+                if "cuerpo" in values:
+                    page.cuerpo = values["cuerpo"]
+                    changed = True
+
+            if changed:
+                page.save()
+
             if was_created:
                 created += 1
             else:
-                updated += 1
+                updated += 1 if changed else 0
 
         self.stdout.write(self.style.SUCCESS(f"Static pages created: {created}, updated: {updated}"))
+
+    def _load_seed_pages(self, seed_path: Path) -> list[dict]:
+        try:
+            data = json.loads(seed_path.read_text(encoding="utf-8"))
+        except FileNotFoundError as exc:
+            raise CommandError(f"Seed file not found: {seed_path}") from exc
+        except json.JSONDecodeError as exc:
+            raise CommandError(f"Invalid JSON in {seed_path}: {exc}") from exc
+
+        pages = data.get("pages") if isinstance(data, dict) else None
+        if not isinstance(pages, list):
+            raise CommandError(f"Expected a 'pages' array in {seed_path}")
+        return pages
 
     def _create_sample_image(self, path: Path) -> ImageFile:
         with path.open("rb") as fp:

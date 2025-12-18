@@ -1,0 +1,21 @@
+{
+  "users": [
+    {
+      "key": "admin",
+      "username_env": "ADMIN_USER",
+      "password_env": "ADMIN_PASSWORD",
+      "default_username": "admin",
+      "default_password": "admin123",
+      "defaults": { "is_staff": true, "is_superuser": true, "name": "Administrator" }
+    },
+    {
+      "key": "system",
+      "username_env": "SYSTEM_USER",
+      "password_env": "SYSTEM_PASSWORD",
+      "default_username": "system",
+      "default_password": "system123",
+      "defaults": { "is_staff": false, "is_superuser": false, "name": "System User" }
+    }
+  ]
+}
+

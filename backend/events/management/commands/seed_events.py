@@ -6,12 +6,13 @@ Usage: python manage.py seed_events
 
 from __future__ import annotations
 
+import json
 import mimetypes
 from datetime import timedelta
 from pathlib import Path
 
 from django.core.files import File
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from django.utils import timezone
 
@@ -57,137 +58,25 @@ class Command(BaseCommand):
     def _create_events(self, root_category: Category, images: list[ImageFile], documents: list[DocumentFile]) -> None:
         images = images or []
         documents = documents or []
-
-        events_data: list[dict] = [
-            {
-                "title": "Mercat de producte local",
-                "summary": "Parades de proximitat, degustacions i artesania.",
-                "description": "Activitat al centre del poble amb parades i productes locals.",
-                "start_at": self._datetime_from_now(days=2, hours=11),
-                "end_at": self._datetime_from_now(days=2, hours=14),
-                "venue_name": "Mercat a la placa",
-                "location_text": "Placa del Poble",
-                "is_featured": True,
-                "is_free": True,
-                "price_text": "",
-                "category_slug": "fires-i-mercats",
-                "tag_slugs": ["mercat", "producte-local", "artesania"],
-                "translations": {
-                    "es": {
-                        "title": "Mercado de producto local",
-                        "summary": "Puestos de proximidad, degustaciones y artesania.",
-                        "description": "Actividad en el centro del pueblo con puestos y producto local.",
-                    },
-                },
-            },
-            {
-                "title": "Taller infantil: manualitats",
-                "summary": "Activitat creativa per a infants.",
-                "description": "Taller amb materials reciclats i recursos naturals.",
-                "start_at": self._datetime_from_now(days=3, hours=17),
-                "end_at": self._datetime_from_now(days=3, hours=19),
-                "venue_name": "Centre Civic",
-                "location_text": "Placa de l'Ajuntament",
-                "is_featured": False,
-                "is_free": True,
-                "price_text": "",
-                "category_slug": "infantil",
-                "tag_slugs": ["infantil", "taller", "familia"],
-            },
-            {
-                "title": "Ruta guiada pel patrimoni",
-                "summary": "Passejada amb guia per descobrir racons locals.",
-                "description": "Ruta guiada per coneixer el patrimoni i la historia del municipi.",
-                "start_at": self._datetime_from_now(days=5, hours=11),
-                "end_at": self._datetime_from_now(days=5, hours=13),
-                "venue_name": "Punt de trobada",
-                "location_text": "Placa Major",
-                "is_featured": False,
-                "is_free": False,
-                "price_text": "5 EUR",
-                "category_slug": "cultura",
-                "tag_slugs": ["ruta", "patrimoni", "visita-guiada"],
-            },
-            {
-                "title": "Teatre: comedia a la fresca",
-                "summary": "Una comedia amable per gaudir en comunitat.",
-                "description": "Representacio al teatre municipal amb actors convidats.",
-                "start_at": self._datetime_from_now(days=7, hours=20),
-                "end_at": self._datetime_from_now(days=7, hours=22),
-                "venue_name": "Teatre La Sala",
-                "location_text": "Centre Cultural",
-                "is_featured": True,
-                "is_free": False,
-                "price_text": "10 EUR",
-                "category_slug": "teatre",
-                "tag_slugs": ["teatre", "comedia"],
-            },
-            {
-                "title": "Concert de musica classica",
-                "summary": "Repertori classic amb interprets convidats.",
-                "description": "Concert al vespre amb peces classiques.",
-                "start_at": self._datetime_from_now(days=10, hours=19),
-                "end_at": self._datetime_from_now(days=10, hours=21),
-                "venue_name": "Esglesia Parroquial",
-                "location_text": "Placa de l'Esglesia",
-                "is_featured": False,
-                "is_free": False,
-                "price_text": "Aportacio voluntaria",
-                "category_slug": "musica",
-                "tag_slugs": ["musica", "concert", "classica"],
-            },
-            {
-                "title": "Xerrada: convivencia i civisme",
-                "summary": "Espai obert per compartir propostes.",
-                "description": "Sessio participativa per millorar el dia a dia del municipi.",
-                "start_at": self._datetime_from_now(days=12, hours=19),
-                "end_at": self._datetime_from_now(days=12, hours=20),
-                "venue_name": "Casal d'Entitats",
-                "location_text": "Avinguda del Maresme",
-                "is_featured": False,
-                "is_free": True,
-                "price_text": "",
-                "category_slug": "altres",
-                "tag_slugs": ["xerrada", "participacio"],
-            },
-            {
-                "title": "Formacio: competències digitals basiques",
-                "summary": "Sessio practica sobre tramits online i seguretat.",
-                "description": "Formacio per fer gestions digitals i millorar la seguretat.",
-                "start_at": self._datetime_from_now(days=15, hours=18),
-                "end_at": self._datetime_from_now(days=15, hours=20),
-                "venue_name": "Biblioteca Municipal",
-                "location_text": "Carrer de la Riera",
-                "is_featured": False,
-                "is_free": True,
-                "price_text": "",
-                "category_slug": "formacio",
-                "tag_slugs": ["formacio", "digital", "ajuda"],
-            },
-            {
-                "title": "Activitat esportiva: caminada popular",
-                "summary": "Recorregut accessible per fomentar el benestar.",
-                "description": "Caminada popular amb ruta senyalitzada i avituallament.",
-                "start_at": self._datetime_from_now(days=18, hours=9),
-                "end_at": self._datetime_from_now(days=18, hours=12),
-                "venue_name": "Pavello Municipal",
-                "location_text": "Zona Esportiva",
-                "is_featured": True,
-                "is_free": True,
-                "price_text": "",
-                "category_slug": "esports",
-                "tag_slugs": ["esports", "caminada", "salut"],
-            },
-        ]
+        events_data = self._load_seed_events()
+        base_now = timezone.now()
 
         for index, data in enumerate(events_data):
+            start_at = data.get("start_at") or self._datetime_from_offset(
+                base_now, data.get("start_offset")
+            )
+            end_at = data.get("end_at")
+            if end_at is None:
+                end_offset = data.get("end_offset")
+                end_at = self._datetime_from_offset(base_now, end_offset) if end_offset else None
+
             category = Category.objects.filter(slug=data.get("category_slug")).first() or root_category
             event = Event.objects.create(
                 title=data["title"],
                 summary=data.get("summary", ""),
                 description=data.get("description", ""),
-                start_at=data["start_at"],
-                end_at=data.get("end_at"),
+                start_at=start_at,
+                end_at=end_at,
                 is_published=data.get("is_published", True),
                 venue_name=data.get("venue_name", ""),
                 location_text=data.get("location_text", ""),
@@ -232,8 +121,25 @@ class Command(BaseCommand):
             return None
         return images[index % len(images)]
 
-    def _datetime_from_now(self, days: int = 0, hours: int = 0):
-        return timezone.now() + timedelta(days=days, hours=hours)
+    def _datetime_from_offset(self, base, offset: dict | None):
+        if not offset or not isinstance(offset, dict):
+            return base
+        days = offset.get("days", 0) or 0
+        hours = offset.get("hours", 0) or 0
+        return base + timedelta(days=days, hours=hours)
+
+    def _load_seed_events(self) -> list[dict]:
+        seed_path = Path(__file__).resolve().parents[2] / "seed" / "events.json"
+        try:
+            data = json.loads(seed_path.read_text(encoding="utf-8"))
+        except FileNotFoundError as exc:
+            raise CommandError(f"Seed file not found: {seed_path}") from exc
+        except json.JSONDecodeError as exc:
+            raise CommandError(f"Invalid JSON in {seed_path}: {exc}") from exc
+
+        if not isinstance(data, list):
+            raise CommandError(f"Expected a JSON array in {seed_path}")
+        return data
 
     def _ensure_media_files(self) -> tuple[list[ImageFile], list[DocumentFile]]:
         """
@@ -288,4 +194,3 @@ class Command(BaseCommand):
             )
         self.stdout.write(self.style.SUCCESS(f"Seeded DocumentFile from {path}"))
         return instance
-

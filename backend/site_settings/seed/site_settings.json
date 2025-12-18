@@ -1,0 +1,30 @@
+{
+  "site_name": "Gaudeix Cabrera de Mar",
+  "tagline": "Turisme i cultura a Cabrera de Mar",
+  "phone": "+34 937 501 006",
+  "support_email": "suport@cabreradema.cat",
+  "contact_email": "turisme@cabreradema.cat",
+  "address": "Plaça de l'Ajuntament, 1, 08349 Cabrera de Mar",
+  "schedule": "Dl-Dv 9:00-14:00",
+  "facebook_url": "https://www.facebook.com/ajuntamentcabrerademar",
+  "instagram_url": "https://www.instagram.com/cabrerademar",
+  "youtube_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+  "twitter_url": "https://twitter.com/cabrerademar",
+  "maps_base_url": "https://maps.google.com/?q=Cabrera+de+Mar",
+  "analytics_id": "GAUDEIX-CA-0001",
+  "captcha_site_key": "",
+  "default_metatitle": "Gaudeix Cabrera de Mar",
+  "default_metadescription": "Explora la riquesa cultural de Cabrera de Mar amb les nostres propostes. Descobreix l'art, la història i les tradicions en aquesta localitat de la costa catalana.",
+  "logo_file": "logo-cabrera-white_UrlbLGR.png",
+  "favicon_file": "favicon-16x16.png",
+  "background_video_file": "home.mp4",
+  "video_title": "Vídeo de fons Cabrera de Mar",
+  "video_description_internal": "Vídeo silenciat per hero/background.",
+  "link_pages_by_template": {
+    "privacy_page": "privacy",
+    "cookies_page": "cookies",
+    "legal_page": "legal_notice",
+    "inclusion_page": "inclusion"
+  }
+}
+

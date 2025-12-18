@@ -1,10 +1,11 @@
 from __future__ import annotations
 
+import json
 import mimetypes
 from pathlib import Path
 
 from django.core.files import File
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
 from media_files.models import DocumentFile, ImageFile
@@ -13,19 +14,19 @@ from media_files.models import DocumentFile, ImageFile
 class Command(BaseCommand):
     help = "Seed example records for the media_files app."
 
-    assets_subdirs = {
-        "images": ImageFile,
-        "documents": DocumentFile,
-    }
-
     def handle(self, *args, **options):
         with transaction.atomic():
             self._clear_data()
-            self._seed_assets()
+            manifest = self._load_manifest()
+            self._seed_assets(manifest)
 
     @property
     def assets_root(self) -> Path:
         return Path(__file__).resolve().parents[2] / "seed_assets"
+
+    @property
+    def seed_manifest_path(self) -> Path:
+        return Path(__file__).resolve().parents[2] / "seed" / "media_files.json"
 
     def _clear_data(self) -> None:
         """Remove existing records and rely on signals to clear files."""
@@ -39,27 +40,54 @@ class Command(BaseCommand):
             )
         )
 
-    def _seed_assets(self) -> None:
-        for subdir, model in self.assets_subdirs.items():
-            directory = self.assets_root / subdir
-            if not directory.exists():
+    def _load_manifest(self) -> dict:
+        try:
+            data = json.loads(self.seed_manifest_path.read_text(encoding="utf-8"))
+        except FileNotFoundError as exc:
+            raise CommandError(f"Seed file not found: {self.seed_manifest_path}") from exc
+        except json.JSONDecodeError as exc:
+            raise CommandError(f"Invalid JSON in {self.seed_manifest_path}: {exc}") from exc
+
+        if not isinstance(data, dict):
+            raise CommandError(f"Expected a JSON object in {self.seed_manifest_path}")
+        return data
+
+    def _seed_assets(self, manifest: dict) -> None:
+        if not self.assets_root.exists():
+            self.stdout.write(
+                self.style.WARNING(
+                    f"Seed assets directory '{self.assets_root}' not found. Skipping."
+                )
+            )
+            return
+
+        entries_by_model: list[tuple[type, list[dict]]] = [
+            (ImageFile, manifest.get("images", []) or []),
+            (DocumentFile, manifest.get("documents", []) or []),
+        ]
+        for model, entries in entries_by_model:
+            if not entries:
+                continue
+            if not isinstance(entries, list):
                 self.stdout.write(
                     self.style.WARNING(
-                        f"Seed directory '{directory}' not found. Skipping {subdir}."
+                        f"Invalid entries for {model.__name__} in {self.seed_manifest_path}. Skipping."
                     )
                 )
                 continue
 
-            files = sorted(p for p in directory.iterdir() if p.is_file())
-            if not files:
-                self.stdout.write(
-                    self.style.WARNING(
-                        f"No files found inside '{directory}'. Skipping {subdir}."
-                    )
-                )
-                continue
+            for entry in entries:
+                relative_path = entry.get("path") if isinstance(entry, dict) else None
+                if not relative_path:
+                    continue
 
-            for path in files:
+                path = self.assets_root / relative_path
+                if not path.exists():
+                    self.stdout.write(
+                        self.style.WARNING(f"Seed file '{path}' not found. Skipping.")
+                    )
+                    continue
+
                 self._create_record(model, path)
 
     def _create_record(self, model, path: Path) -> None:

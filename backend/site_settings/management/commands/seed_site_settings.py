@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import json
+import mimetypes
 from pathlib import Path
 
 from django.core.files.base import ContentFile
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 
 from media_files.models import ImageFile
 from site_settings.models import SiteSettings
@@ -13,54 +15,97 @@ class Command(BaseCommand):
     help = "Seed default site settings for Cabrera de Mar (branding/contact/SEO), linking existing static pages if available."
 
     def handle(self, *args, **options):
+        seed_data = self._load_seed_settings()
         settings_obj = SiteSettings.get_solo()
-        settings_obj.site_name = settings_obj.site_name or "Gaudeix Cabrera de Mar"
-        settings_obj.tagline = settings_obj.tagline or "Turisme i cultura a Cabrera de Mar"
-        settings_obj.phone = settings_obj.phone or "+34 937 501 006"
-        settings_obj.support_email = settings_obj.support_email or "suport@cabreradema.cat"
-        settings_obj.contact_email = settings_obj.contact_email or "turisme@cabreradema.cat"
-        settings_obj.address = settings_obj.address or "Plaça de l'Ajuntament, 1, 08349 Cabrera de Mar"
-        settings_obj.schedule = settings_obj.schedule or "Dl-Dv 9:00-14:00"
-        settings_obj.facebook_url = settings_obj.facebook_url or "https://www.facebook.com/ajuntamentcabrerademar"
-        settings_obj.instagram_url = settings_obj.instagram_url or "https://www.instagram.com/cabrerademar"
-        settings_obj.youtube_url = settings_obj.youtube_url or "https://www.youtube.com"
-        settings_obj.twitter_url = settings_obj.twitter_url or "https://twitter.com/cabrerademar"
-        settings_obj.maps_base_url = settings_obj.maps_base_url or "https://maps.google.com/?q=Cabrera+de+Mar"
-        settings_obj.analytics_id = settings_obj.analytics_id or "GAUDEIX-CA-0001"
-        settings_obj.captcha_site_key = settings_obj.captcha_site_key or ""
-        settings_obj.default_metatitle = settings_obj.default_metatitle or "Gaudeix Cabrera de Mar"
-        settings_obj.default_metadescription = settings_obj.default_metadescription or (
-            "Explora la riquesa cultural de Cabrera de Mar amb les nostres propostes. Descobreix l'art, la història i les tradicions en aquesta localitat de la costa catalana."
-        )
+        for field in (
+            "site_name",
+            "tagline",
+            "phone",
+            "support_email",
+            "contact_email",
+            "address",
+            "schedule",
+            "facebook_url",
+            "instagram_url",
+            "youtube_url",
+            "twitter_url",
+            "maps_base_url",
+            "analytics_id",
+            "captcha_site_key",
+            "default_metatitle",
+            "default_metadescription",
+            "video_title",
+            "video_description_internal",
+        ):
+            self._set_if_empty(settings_obj, field, seed_data.get(field))
 
         # Try to auto-link static pages by template
-        try:
-            from static_pages.models import StaticPage
+        link_pages_by_template = seed_data.get("link_pages_by_template", {}) or {}
+        if isinstance(link_pages_by_template, dict) and link_pages_by_template:
+            try:
+                from static_pages.models import StaticPage
 
-            settings_obj.privacy_page = settings_obj.privacy_page or StaticPage.objects.filter(template="privacy").first()
-            settings_obj.cookies_page = settings_obj.cookies_page or StaticPage.objects.filter(template="cookies").first()
-            settings_obj.legal_page = settings_obj.legal_page or StaticPage.objects.filter(template="legal_notice").first()
-            settings_obj.inclusion_page = settings_obj.inclusion_page or StaticPage.objects.filter(template="inclusion").first()
-        except Exception:
-            pass
+                for field_name, template in link_pages_by_template.items():
+                    if not template or not hasattr(settings_obj, field_name):
+                        continue
+                    if getattr(settings_obj, field_name):
+                        continue
+                    page = StaticPage.objects.filter(template=template).first()
+                    if page:
+                        setattr(settings_obj, field_name, page)
+            except Exception:
+                pass
 
         # Load sample logo and favicon from static if provided
         static_dir = Path(__file__).resolve().parent / "static"
-        logo_path = static_dir / "logo-cabrera-white_UrlbLGR.png"
-        favicon_path = static_dir / "favicon-16x16.png"
-        video_path = static_dir / "home.mp4"
-        if logo_path.exists() and not settings_obj.logo:
-            settings_obj.logo = self._create_image(logo_path, "image/png")
-        if favicon_path.exists() and not settings_obj.favicon:
-            settings_obj.favicon = self._create_image(favicon_path, "image/png")
-        if video_path.exists() and not settings_obj.background_video:
-            settings_obj.background_video = self._create_video(video_path, "video/mp4")
-        settings_obj.video_title = settings_obj.video_title or "Vídeo de fons Cabrera de Mar"
-        settings_obj.video_description_internal = settings_obj.video_description_internal or "Vídeo silenciat per hero/background."
-        settings_obj.youtube_url = settings_obj.youtube_url or "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+        logo_filename = seed_data.get("logo_file")
+        favicon_filename = seed_data.get("favicon_file")
+        video_filename = seed_data.get("background_video_file")
+
+        logo_path = static_dir / logo_filename if isinstance(logo_filename, str) and logo_filename else None
+        favicon_path = (
+            static_dir / favicon_filename if isinstance(favicon_filename, str) and favicon_filename else None
+        )
+        video_path = static_dir / video_filename if isinstance(video_filename, str) and video_filename else None
+
+        if logo_path and logo_path.is_file() and not settings_obj.logo:
+            settings_obj.logo = self._create_image(
+                logo_path, mimetypes.guess_type(logo_path.name)[0] or "image/png"
+            )
+        if favicon_path and favicon_path.is_file() and not settings_obj.favicon:
+            settings_obj.favicon = self._create_image(
+                favicon_path,
+                mimetypes.guess_type(favicon_path.name)[0] or "image/png",
+            )
+        if video_path and video_path.is_file() and not settings_obj.background_video:
+            settings_obj.background_video = self._create_video(
+                video_path,
+                mimetypes.guess_type(video_path.name)[0] or "video/mp4",
+            )
 
         settings_obj.save()
         self.stdout.write(self.style.SUCCESS("Site settings seeded/updated"))
+
+    def _set_if_empty(self, instance, field: str, value) -> None:
+        if value is None:
+            return
+        current = getattr(instance, field, None)
+        if current:
+            return
+        setattr(instance, field, value)
+
+    def _load_seed_settings(self) -> dict:
+        seed_path = Path(__file__).resolve().parents[2] / "seed" / "site_settings.json"
+        try:
+            data = json.loads(seed_path.read_text(encoding="utf-8"))
+        except FileNotFoundError as exc:
+            raise CommandError(f"Seed file not found: {seed_path}") from exc
+        except json.JSONDecodeError as exc:
+            raise CommandError(f"Invalid JSON in {seed_path}: {exc}") from exc
+
+        if not isinstance(data, dict):
+            raise CommandError(f"Expected a JSON object in {seed_path}")
+        return data
 
     def _create_image(self, path: Path, mime: str) -> ImageFile:
         with path.open("rb") as fp:

@@ -1,0 +1,119 @@
+[
+  {
+    "slug": "mercat",
+    "translations": { "ca": "Mercat", "es": "Mercado", "en": "Market", "fr": "Marché" }
+  },
+  {
+    "slug": "producte-local",
+    "translations": { "ca": "Producte local", "es": "Producto local", "en": "Local produce", "fr": "Produit local" }
+  },
+  {
+    "slug": "artesania",
+    "translations": { "ca": "Artesania", "es": "Artesanía", "en": "Crafts", "fr": "Artisanat" }
+  },
+  {
+    "slug": "infantil",
+    "translations": { "ca": "Infantil", "es": "Infantil", "en": "Kids", "fr": "Enfants" }
+  },
+  {
+    "slug": "taller",
+    "translations": { "ca": "Taller", "es": "Taller", "en": "Workshop", "fr": "Atelier" }
+  },
+  {
+    "slug": "familia",
+    "translations": { "ca": "Família", "es": "Familia", "en": "Family", "fr": "Famille" }
+  },
+  {
+    "slug": "ruta",
+    "translations": { "ca": "Ruta", "es": "Ruta", "en": "Route", "fr": "Itinéraire" }
+  },
+  {
+    "slug": "patrimoni",
+    "translations": { "ca": "Patrimoni", "es": "Patrimonio", "en": "Heritage", "fr": "Patrimoine" }
+  },
+  {
+    "slug": "visita-guiada",
+    "translations": { "ca": "Visita guiada", "es": "Visita guiada", "en": "Guided tour", "fr": "Visite guidée" }
+  },
+  {
+    "slug": "teatre",
+    "translations": { "ca": "Teatre", "es": "Teatro", "en": "Theatre", "fr": "Théâtre" }
+  },
+  {
+    "slug": "comedia",
+    "translations": { "ca": "Comèdia", "es": "Comedia", "en": "Comedy", "fr": "Comédie" }
+  },
+  {
+    "slug": "musica",
+    "translations": { "ca": "Música", "es": "Música", "en": "Music", "fr": "Musique" }
+  },
+  {
+    "slug": "concert",
+    "translations": { "ca": "Concert", "es": "Concierto", "en": "Concert", "fr": "Concert" }
+  },
+  {
+    "slug": "classica",
+    "translations": { "ca": "Clàssica", "es": "Clásica", "en": "Classical", "fr": "Classique" }
+  },
+  {
+    "slug": "xerrada",
+    "translations": { "ca": "Xerrada", "es": "Charla", "en": "Talk", "fr": "Conférence" }
+  },
+  {
+    "slug": "participacio",
+    "translations": { "ca": "Participació", "es": "Participación", "en": "Participation", "fr": "Participation" }
+  },
+  {
+    "slug": "formacio",
+    "translations": { "ca": "Formació", "es": "Formación", "en": "Training", "fr": "Formation" }
+  },
+  {
+    "slug": "digital",
+    "translations": { "ca": "Digital", "es": "Digital", "en": "Digital", "fr": "Numérique" }
+  },
+  {
+    "slug": "ajuda",
+    "translations": { "ca": "Ajuda", "es": "Ayuda", "en": "Help", "fr": "Aide" }
+  },
+  {
+    "slug": "esports",
+    "translations": { "ca": "Esports", "es": "Deportes", "en": "Sports", "fr": "Sports" }
+  },
+  {
+    "slug": "caminada",
+    "translations": { "ca": "Caminada", "es": "Caminata", "en": "Walk", "fr": "Marche" }
+  },
+  {
+    "slug": "salut",
+    "translations": { "ca": "Salut", "es": "Salud", "en": "Health", "fr": "Santé" }
+  },
+  {
+    "slug": "educacio",
+    "translations": { "ca": "Educació", "es": "Educación", "en": "Education", "fr": "Éducation" }
+  },
+  {
+    "slug": "reforc",
+    "translations": { "ca": "Reforç", "es": "Refuerzo", "en": "Support", "fr": "Soutien" }
+  },
+  {
+    "slug": "inscripcions",
+    "translations": { "ca": "Inscripcions", "es": "Inscripciones", "en": "Registration", "fr": "Inscriptions" }
+  },
+  {
+    "slug": "nadal",
+    "translations": { "ca": "Nadal", "es": "Navidad", "en": "Christmas", "fr": "Noël" }
+  },
+  {
+    "slug": "fira",
+    "translations": { "ca": "Fira", "es": "Feria", "en": "Fair", "fr": "Foire" }
+  },
+  {
+    "slug": "reis",
+    "translations": { "ca": "Reis", "es": "Reyes", "en": "Kings", "fr": "Rois" }
+  },
+  {
+    "slug": "tradicio",
+    "translations": { "ca": "Tradició", "es": "Tradición", "en": "Tradition", "fr": "Tradition" }
+  }
+]
+

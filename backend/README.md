@@ -48,7 +48,7 @@ Ejecuta estos comandos tras migrar para evitar errores en admin/API:
 .\.venv_win\Scripts\python.exe manage.py seed_users
 .\.venv_win\Scripts\python.exe manage.py seed_events_category
 .\.venv_win\Scripts\python.exe manage.py seed_places_category
-.\.venv_win\Scripts\python.exe seed_places
+.\.venv_win\Scripts\python.exe manage.py seed_places
 
 # Linux/Mac
 python manage.py seed_users
@@ -68,10 +68,11 @@ Seed general (secuencial):
 ```
 
 `seed_places` usa las imágenes incluidas en `places/management/commands/images/` y crea datos de ejemplo con media y traducciones.
+Los datos de seeds están separados en JSON por app (p.ej. `places/seed/places.json`, `events/seed/events.json`, `core/seed/tags.json`).
 
 Usuarios creados:
-- **Admin**: `yampi` / `thos`
-- **System**: `gaudeix` / `gaudeix@2023`
+- **Admin**: `ADMIN_USER` / `ADMIN_PASSWORD` (defaults: `admin` / `admin123`)
+- **System**: `SYSTEM_USER` / `SYSTEM_PASSWORD` (defaults: `system` / `system123`)
 
 ## Pruebas
 
