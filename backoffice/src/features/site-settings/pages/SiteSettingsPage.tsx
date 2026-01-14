@@ -315,28 +315,31 @@ export function SiteSettingsPage() {
                       onCheckedChange={(checked) => handleChange("show_social_footer", checked)}
                     />
                   </label>
-                  {[
-                    ["privacy_page_id", "Página de privacidad", optionsByTemplate.privacy],
-                    ["cookies_page_id", "Página de cookies", optionsByTemplate.cookies],
-                    ["legal_page_id", "Avís legal", optionsByTemplate.legal_notice],
-                    ["inclusion_page_id", "Diversitat i inclusió", optionsByTemplate.inclusion],
-                  ].map(([field, label, opts]) => (
-                    <div key={field} className="space-y-2">
-                      <Label>{label}</Label>
-                      <select
-                        value={(form as any)[field] ?? ""}
-                        onChange={(e) => handleChange(field as keyof FormState, e.target.value ? Number(e.target.value) : null)}
-                        className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
-                      >
-                        <option value="">Sin asignar</option>
-                        {opts.map((opt) => (
-                          <option key={opt.id} value={opt.id}>
-                            {opt.label}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  ))}
+                  {(() => {
+                    const fieldConfigs = [
+                      ["privacy_page_id", "Página de privacidad", optionsByTemplate.privacy],
+                      ["cookies_page_id", "Página de cookies", optionsByTemplate.cookies],
+                      ["legal_page_id", "Avís legal", optionsByTemplate.legal_notice],
+                      ["inclusion_page_id", "Diversitat i inclusió", optionsByTemplate.inclusion],
+                    ] as const;
+                    return fieldConfigs.map(([field, label, opts]) => (
+                      <div key={field} className="space-y-2">
+                        <Label>{label}</Label>
+                        <select
+                          value={(form as any)[field] ?? ""}
+                          onChange={(e) => handleChange(field as keyof FormState, e.target.value ? Number(e.target.value) : null)}
+                          className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+                        >
+                          <option value="">Sin asignar</option>
+                          {opts.map((opt) => (
+                            <option key={opt.id} value={opt.id}>
+                              {opt.label}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    ));
+                  })()}
                 </div>
               </section>
 

@@ -55,6 +55,8 @@ class EventSerializer(TranslatableModelSerializer):
         write_only=True,
     )
     is_future = serializers.SerializerMethodField()
+    is_favorited = serializers.SerializerMethodField()
+    favorites_count = serializers.IntegerField(read_only=True)
     image_url = serializers.SerializerMethodField()
 
     class Meta:
@@ -72,6 +74,7 @@ class EventSerializer(TranslatableModelSerializer):
             "start_at",
             "end_at",
             "is_published",
+            "points_value",
             "venue_name",
             "location_text",
             "is_featured",
@@ -86,6 +89,8 @@ class EventSerializer(TranslatableModelSerializer):
             "created_at",
             "updated_at",
             "is_future",
+            "is_favorited",
+            "favorites_count",
             "image_url",
             "translations",
         ]
@@ -99,6 +104,8 @@ class EventSerializer(TranslatableModelSerializer):
             "created_at",
             "updated_at",
             "is_future",
+            "is_favorited",
+            "favorites_count",
             "featured_media",
             "attachments",
             "image_url",
@@ -106,6 +113,14 @@ class EventSerializer(TranslatableModelSerializer):
 
     def get_is_future(self, obj: Event) -> bool:
         return obj.is_future()
+
+    def get_is_favorited(self, obj: Event) -> bool:
+        if hasattr(obj, "is_favorited"):
+            return bool(obj.is_favorited)
+        request = self.context.get("request")
+        if request and request.user.is_authenticated:
+            return obj.favorited_by.filter(user=request.user).exists()
+        return False
 
     def get_category_slug(self, obj: Event) -> str:
         if not obj.category_id:
@@ -115,7 +130,10 @@ class EventSerializer(TranslatableModelSerializer):
     def get_category_name(self, obj: Event) -> str:
         if not obj.category_id:
             return ""
-        return obj.category.safe_translation_getter("nombre", any_language=True) or obj.category.slug
+        return (
+            obj.category.safe_translation_getter("nombre", any_language=True)
+            or obj.category.slug
+        )
 
     def get_image_url(self, obj: Event) -> str:
         if not obj.featured_media_id:
@@ -162,8 +180,12 @@ class EventSerializer(TranslatableModelSerializer):
         category = validated_data.pop("category_id", None)
         base_language = settings.LANGUAGE_CODE
         title = validated_data.pop("title", None) or self.initial_data.get("title")
-        summary = validated_data.pop("summary", None) or self.initial_data.get("summary")
-        description = validated_data.pop("description", None) or self.initial_data.get("description")
+        summary = validated_data.pop("summary", None) or self.initial_data.get(
+            "summary"
+        )
+        description = validated_data.pop("description", None) or self.initial_data.get(
+            "description"
+        )
         featured_media = validated_data.pop("featured_media_id", None)
 
         # Backward compatibility: allow featured_media / attachments keys as in tests
@@ -195,7 +217,9 @@ class EventSerializer(TranslatableModelSerializer):
             instance.save()
 
         if translations_data:
-            self._apply_translations(instance, translations_data, skip_language=base_language)
+            self._apply_translations(
+                instance, translations_data, skip_language=base_language
+            )
             instance.set_current_language(base_language)
         if title is not None or summary is not None or description is not None:
             if title is not None:
@@ -218,8 +242,12 @@ class EventSerializer(TranslatableModelSerializer):
         category = validated_data.pop("category_id", None)
         base_language = settings.LANGUAGE_CODE
         title = validated_data.pop("title", None) or self.initial_data.get("title")
-        summary = validated_data.pop("summary", None) or self.initial_data.get("summary")
-        description = validated_data.pop("description", None) or self.initial_data.get("description")
+        summary = validated_data.pop("summary", None) or self.initial_data.get(
+            "summary"
+        )
+        description = validated_data.pop("description", None) or self.initial_data.get(
+            "description"
+        )
         featured_media = validated_data.pop("featured_media_id", None)
         if featured_media is None and self.initial_data.get("featured_media"):
             featured_media = ImageFile.objects.filter(
@@ -247,7 +275,9 @@ class EventSerializer(TranslatableModelSerializer):
             instance.featured_media = featured_media
             instance.save()
         if translations_data:
-            self._apply_translations(instance, translations_data, skip_language=base_language)
+            self._apply_translations(
+                instance, translations_data, skip_language=base_language
+            )
             instance.set_current_language(base_language)
         if title is not None or summary is not None or description is not None:
             if title is not None:
@@ -263,7 +293,9 @@ class EventSerializer(TranslatableModelSerializer):
             instance.tags.set(tags)
         return instance
 
-    def _apply_translations(self, instance: Event, translations: dict, skip_language: str | None = None) -> None:
+    def _apply_translations(
+        self, instance: Event, translations: dict, skip_language: str | None = None
+    ) -> None:
         for language_code, values in translations.items():
             if skip_language and language_code == skip_language:
                 continue

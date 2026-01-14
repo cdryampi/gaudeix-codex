@@ -1,0 +1,5 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, } from "@/components/ui/card";
+export const AuthCard = ({ title, subtitle, footer, children, }) => {
+    return (_jsx(Card, { className: "w-full max-w-[640px] mx-auto rounded-xl border border-border bg-card text-foreground shadow-xl backdrop-blur-md transition-all duration-300 hover:shadow-2xl p-0", children: _jsxs("div", { className: "px-4 py-6 sm:px-6 sm:py-8 md:px-8 md:py-10 xl:px-12 xl:py-12 space-y-5", children: [_jsxs(CardHeader, { className: "space-y-2 text-center p-0", children: [_jsx(CardTitle, { className: "text-2xl sm:text-3xl font-semibold tracking-tight text-foreground", children: title }), subtitle && (_jsx(CardDescription, { className: "text-sm sm:text-base text-muted-foreground font-normal", children: subtitle }))] }), _jsx(CardContent, { className: "p-0 space-y-4 sm:space-y-5", children: children }), footer && (_jsx(CardFooter, { className: "p-0 pt-5 text-sm text-muted-foreground text-center border-t border-border", children: footer }))] }) }));
+};

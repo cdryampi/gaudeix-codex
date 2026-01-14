@@ -6,15 +6,12 @@ import {
   useEffect,
 } from "react";
 import type { User, AuthState } from "@/types";
-import { authService } from "@/lib/api/auth";
+import { authApi } from "@/features/auth/api";
 import { authStorage } from "@/lib/storage/authStorage";
+import { LoginCredentials } from "@/types";
 
 interface AuthContextType extends AuthState {
-  login: (
-    username: string,
-    password: string,
-    options?: { remember?: boolean }
-  ) => Promise<void>;
+  login: (credentials: LoginCredentials) => Promise<void>;
   logout: () => void;
   isLoading: boolean;
   isRestoringSession: boolean;
@@ -33,7 +30,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [isRestoringSession, setIsRestoringSession] = useState(true);
 
   const logout = () => {
-    authService.logout();
+    authApi.logout();
     authStorage.clear();
     setUser(null);
     setToken(null);
@@ -41,63 +38,61 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   // Restore user from localStorage on mount
   useEffect(() => {
-    const storedToken = authStorage.getAccessToken();
-    const storedUser = authStorage.getUser();
-
-    if (storedToken) {
-      setToken(storedToken);
-      if (storedUser) {
-        setUser(storedUser);
-      } else {
-        // Token sin usuario guardado: limpiamos para evitar estados inconsistentes
-        authStorage.clear();
+    const initAuth = async () => {
+      const storedToken = authStorage.getAccessToken();
+      if (storedToken) {
+        setToken(storedToken);
+        try {
+          // If we have a token but no user, fetch user data
+          // For now, we assume if we have a token, we are somewhat authenticated
+          // Ideally, we should validate the token or fetch user profile here
+          const userData = await authApi.getCurrentUser();
+          setUser({
+            id: userData.id,
+            email: userData.email,
+            name: userData.name || userData.username,
+            role: userData.is_staff ? 'admin' : 'user',
+            username: userData.username
+          });
+        } catch (error) {
+          console.error("Failed to restore session:", error);
+          logout();
+        }
       }
-    }
+      setIsRestoringSession(false);
+    };
 
-    setIsRestoringSession(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    initAuth();
   }, []);
 
-  const login = async (
-    username: string,
-    password: string,
-    options?: { remember?: boolean }
-  ) => {
-    console.log("🔐 Login iniciado con:", { username });
+  const login = async (credentials: LoginCredentials) => {
     setIsLoading(true);
     try {
-      console.log("📡 Enviando request al backend...");
-      const response = await authService.login({ username, password });
-      console.log("✅ Respuesta del backend:", response);
-
+      const response = await authApi.login(credentials);
+      
+      // Fetch user profile after successful login
+      // Note: The login response might not include full user details depending on backend
+      // Adjust this based on actual backend response or fetch user separately
+      
+      // Assuming response contains user object or we fetch it
+      // Let's fetch it to be sure
+      const userData = await authApi.getCurrentUser();
+      
       const userObj: User = {
-        id: response.user.id,
-        email: response.user.email,
-        name:
-          response.user.first_name && response.user.last_name
-            ? `${response.user.first_name} ${response.user.last_name}`
-            : response.user.username,
-        role: response.user.is_staff ? "admin" : "user",
+        id: userData.id,
+        email: userData.email,
+        name: userData.name || userData.username,
+        role: userData.is_staff ? "admin" : "user",
+        username: userData.username,
       };
 
-      console.log("💾 Guardando usuario:", userObj);
       setUser(userObj);
       setToken(response.access);
-      const remember = options?.remember ?? true;
-      authStorage.saveSession(
-        { access: response.access, refresh: response.refresh },
-        userObj,
-        remember
-      );
-      console.log("✅ Login completado exitosamente");
+      
+      // Tokens are already stored by authApi.login -> authStorage.setTokens
     } catch (error: any) {
-      console.error("❌ Login failed:", error);
-      console.error("Error response:", error.response?.data);
-      const errorMessage =
-        error.response?.data?.non_field_errors?.[0] ||
-        error.response?.data?.detail ||
-        "Error al iniciar sesión. Verifica tus credenciales.";
-      throw new Error(errorMessage);
+      console.error("Login failed:", error);
+      throw error;
     } finally {
       setIsLoading(false);
     }
@@ -106,7 +101,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const value: AuthContextType = {
     user,
     token,
-    isAuthenticated: !!token && !!user,
+    isAuthenticated: !!token,
     login,
     logout,
     isLoading,

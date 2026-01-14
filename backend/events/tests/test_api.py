@@ -32,7 +32,9 @@ def sample_files_path() -> Path:
 @pytest.fixture
 def events_category() -> Category:
     """Create the default events category."""
-    category = Category.objects.create(slug="events", taxonomy="events", nombre="Events")
+    category = Category.objects.create(
+        slug="events", taxonomy="events", nombre="Events"
+    )
     category.set_current_language("ca")
     category.nombre = "Esdeveniments"
     category.save()
@@ -105,7 +107,9 @@ def test_create_event_requires_authentication(media_root, events_singleton):
     assert Event.objects.count() == 0
 
 
-def test_create_event_authenticated(media_root, events_singleton, sample_document, sample_image):
+def test_create_event_authenticated(
+    media_root, events_singleton, sample_document, sample_image
+):
     user = User.objects.create_user(username="creator", password="pass123")
     client = APIClient()
     client.force_authenticate(user=user)
@@ -136,8 +140,16 @@ def test_create_event_authenticated(media_root, events_singleton, sample_documen
         "category_id": child_category.id,
         "tag_ids": [tag_music.id, tag_family.id],
         "translations": {
-            "es": {"title": "Evento API", "summary": "Descripcion corta", "description": "Creado via API"},
-            "ca": {"title": "Esdeveniment API", "summary": "Descripcio curta", "description": "Creat via API"},
+            "es": {
+                "title": "Evento API",
+                "summary": "Descripcion corta",
+                "description": "Creado via API",
+            },
+            "ca": {
+                "title": "Esdeveniment API",
+                "summary": "Descripcio curta",
+                "description": "Creat via API",
+            },
         },
         "featured_media": sample_image.id,
         "attachments": [sample_document.id],
@@ -161,7 +173,9 @@ def test_create_event_authenticated(media_root, events_singleton, sample_documen
     assert len(response.data["tags"]) == 2
 
 
-def test_retrieve_event_detail(media_root, events_singleton, sample_document, sample_image):
+def test_retrieve_event_detail(
+    media_root, events_singleton, sample_document, sample_image
+):
     event = Event.objects.create(
         title="Detail Event",
         description="Detail description",
@@ -192,7 +206,12 @@ def test_update_event_authenticated(media_root, events_singleton):
     client = APIClient()
     client.force_authenticate(user=user)
     url = reverse("event-detail", kwargs={"pk": event.pk})
-    data = {"title": "Updated Title", "is_published": False, "is_featured": True, "tag_ids": [tag.id]}
+    data = {
+        "title": "Updated Title",
+        "is_published": False,
+        "is_featured": True,
+        "tag_ids": [tag.id],
+    }
 
     response = client.patch(url, data, format="json")
 
@@ -245,3 +264,35 @@ def test_filter_events_by_tag_and_category(media_root, events_singleton):
     resp_category = client.get(url, {"category": "cultura"})
     assert resp_category.status_code == status.HTTP_200_OK
     assert len(resp_category.data) == 1
+
+
+def test_favorite_event_flow(media_root, events_singleton):
+    user = User.objects.create_user(username="fan", password="pass123")
+    event = Event.objects.create(
+        title="Favorite Event",
+        start_at=timezone.now() + timezone.timedelta(days=1),
+    )
+
+    client = APIClient()
+    client.force_authenticate(user=user)
+
+    favorite_url = reverse("event-favorite", kwargs={"pk": event.pk})
+    response = client.post(favorite_url)
+
+    assert response.status_code == status.HTTP_201_CREATED
+    assert response.data["is_favorited"] is True
+    assert response.data["favorites_count"] == 1
+
+    detail_url = reverse("event-detail", kwargs={"pk": event.pk})
+    detail_response = client.get(detail_url)
+
+    assert detail_response.status_code == status.HTTP_200_OK
+    assert detail_response.data["is_favorited"] is True
+    assert detail_response.data["favorites_count"] == 1
+
+    delete_response = client.delete(favorite_url)
+    assert delete_response.status_code == status.HTTP_204_NO_CONTENT
+
+    detail_response = client.get(detail_url)
+    assert detail_response.data["is_favorited"] is False
+    assert detail_response.data["favorites_count"] == 0

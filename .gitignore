@@ -149,6 +149,17 @@ env.bak/
 venv.bak/
 
 # Environment files (keep only examples)
+.env
+.envrc
+.venv
+.venv_win
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Environment files (keep only examples)
 .env_backend
 .env_frontend
 .env_backoffice
@@ -158,6 +169,11 @@ backoffice/.env.local
 *.env.local
 *.env.production
 *.env.development
+
+# Secrets
+backend/secrets/
+backend/secrets/*.json
+
 
 # Spyder project settings
 .spyderproject

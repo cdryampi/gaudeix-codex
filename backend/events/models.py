@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from django.core.exceptions import ValidationError
+from django.conf import settings
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -62,6 +63,11 @@ class Event(ContentBase, TranslatableModel):
     start_at = models.DateTimeField(_("Start at"))
     end_at = models.DateTimeField(_("End at"), null=True, blank=True)
     is_published = models.BooleanField(_("Is published"), default=True)
+    points_value = models.PositiveIntegerField(
+        _("Points value"),
+        default=20,
+        help_text=_("Points awarded for event check-in."),
+    )
 
     venue_name = models.CharField(
         _("Venue name"),
@@ -75,7 +81,9 @@ class Event(ContentBase, TranslatableModel):
         _("Location (text)"),
         max_length=255,
         blank=True,
-        help_text=_("Free text location. TODO: replace with Place relation when available."),
+        help_text=_(
+            "Free text location. TODO: replace with Place relation when available."
+        ),
     )
 
     is_featured = models.BooleanField(_("Is featured"), default=False)
@@ -138,7 +146,9 @@ class Event(ContentBase, TranslatableModel):
     def clean(self) -> None:
         super().clean()
         if self.end_at and self.end_at < self.start_at:
-            raise ValidationError({"end_at": _("End date cannot be before start date.")})
+            raise ValidationError(
+                {"end_at": _("End date cannot be before start date.")}
+            )
 
     def save(self, *args, **kwargs):
         # Auto-assign default category if not set
@@ -150,7 +160,7 @@ class Event(ContentBase, TranslatableModel):
         # ContentBase handles slug generation, but we override to use translated title
         if not self.slug:
             self.slug = self._generate_unique_slug()
-        
+
         self.full_clean()
         super().save(*args, **kwargs)
 
@@ -161,7 +171,9 @@ class Event(ContentBase, TranslatableModel):
         from django.utils.text import slugify
 
         if self.pk:
-            base_title = self.safe_translation_getter("title", any_language=True) or "event"
+            base_title = (
+                self.safe_translation_getter("title", any_language=True) or "event"
+            )
         else:
             base_title = getattr(self, "title", None) or "event"
         base_slug = slugify(base_title) or "event"
@@ -173,3 +185,26 @@ class Event(ContentBase, TranslatableModel):
             counter += 1
 
         return slug_candidate
+
+
+class UserFavoriteEvent(models.Model):
+    """Eventos favoritos del usuario."""
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="favorite_events",
+    )
+    event = models.ForeignKey(
+        Event,
+        on_delete=models.CASCADE,
+        related_name="favorited_by",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ["user", "event"]
+        ordering = ("-created_at",)
+
+    def __str__(self) -> str:
+        return f"{self.user} -> {self.event}"

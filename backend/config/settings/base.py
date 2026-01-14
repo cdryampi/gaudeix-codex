@@ -8,8 +8,8 @@ import environ
 import warnings
 
 # Suppress specific deprecation warnings from dj-rest-auth
-warnings.filterwarnings('ignore', message='.*USERNAME_REQUIRED is deprecated.*')
-warnings.filterwarnings('ignore', message='.*EMAIL_REQUIRED is deprecated.*')
+warnings.filterwarnings("ignore", message=".*USERNAME_REQUIRED is deprecated.*")
+warnings.filterwarnings("ignore", message=".*EMAIL_REQUIRED is deprecated.*")
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -33,6 +33,7 @@ env = environ.Env(
     LLM_MISTRAL_API_KEY=(str, ""),
     LLM_GROQ_API_KEY=(str, ""),
     LLM_LOCAL_API_URL=(str, "http://localhost:11434"),
+    FCM_CREDENTIALS_FILE=(str, ""),
 )
 
 ENV_FILE = BASE_DIR / ".env"
@@ -76,6 +77,8 @@ INSTALLED_APPS = [
     "parler",
     "social",
     "events",
+    "gamification.apps.GamificationConfig",
+    "notifications.apps.NotificationsConfig",
     "places",
     "drf_spectacular",
     "dj_rest_auth",
@@ -151,20 +154,17 @@ LANGUAGE_CODE = env("DJANGO_LANGUAGE_CODE", default="ca")
 # Get list of languages from env, default to ca, es, en, fr
 _env_languages = env.list("DJANGO_LANGUAGES", default=["ca", "es", "en", "fr"])
 
-# Filter global languages to match env list, preserving order is tricky with dict, 
+# Filter global languages to match env list, preserving order is tricky with dict,
 # but we can iterate over env list and find name in global_settings.
 _all_languages_dict = dict(global_settings.LANGUAGES)
-LANGUAGES = [
-    (code, _all_languages_dict.get(code, code))
-    for code in _env_languages
-]
+LANGUAGES = [(code, _all_languages_dict.get(code, code)) for code in _env_languages]
 
 PARLER_LANGUAGES = {
-    None: tuple({'code': code} for code in _env_languages),
-    'default': {
-        'fallbacks': [LANGUAGE_CODE],
-        'hide_untranslated': False,
-    }
+    None: tuple({"code": code} for code in _env_languages),
+    "default": {
+        "fallbacks": [LANGUAGE_CODE],
+        "hide_untranslated": False,
+    },
 }
 TIME_ZONE = "UTC"
 USE_I18N = True
@@ -177,32 +177,32 @@ MEDIA_ROOT = BASE_DIR / "media"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REST_FRAMEWORK = {
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
     ),
 }
 
 from datetime import timedelta
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
 }
 
 REST_AUTH = {
-    'USE_JWT': True,
-    'JWT_AUTH_COOKIE': 'gaudeix-auth',
-    'JWT_AUTH_REFRESH_COOKIE': 'gaudeix-refresh-token',
+    "USE_JWT": True,
+    "JWT_AUTH_COOKIE": "gaudeix-auth",
+    "JWT_AUTH_REFRESH_COOKIE": "gaudeix-refresh-token",
 }
 
 AUTH_USER_MODEL = "users.User"
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'Gaudeix Codex API',
-    'DESCRIPTION': 'API for Gaudeix Codex project',
-    'VERSION': '1.0.0',
-    'SERVE_INCLUDE_SCHEMA': False,
+    "TITLE": "Gaudeix Codex API",
+    "DESCRIPTION": "API for Gaudeix Codex project",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
 }
 CORS_ALLOWED_ORIGINS = env.list(
     "DJANGO_ALLOWED_CORS_ORIGINS",
@@ -227,3 +227,4 @@ LLM_ANTHROPIC_API_KEY = env("LLM_ANTHROPIC_API_KEY")
 LLM_MISTRAL_API_KEY = env("LLM_MISTRAL_API_KEY")
 LLM_GROQ_API_KEY = env("LLM_GROQ_API_KEY")
 LLM_LOCAL_API_URL = env("LLM_LOCAL_API_URL")
+FCM_CREDENTIALS_FILE = env("FCM_CREDENTIALS_FILE")

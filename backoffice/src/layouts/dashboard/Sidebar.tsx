@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { LucideIcon } from "lucide-react";
 import {
   LayoutDashboard,
   FileText,
@@ -17,21 +18,27 @@ import {
 } from "lucide-react";
 import { ROUTES } from "@/lib/config/constants";
 
-const panelNavigation = [{ name: "Resumen", href: ROUTES.DASHBOARD_HOME, icon: LayoutDashboard }];
+interface NavItem {
+  name: string;
+  href: string;
+  icon: LucideIcon;
+}
 
-const contentNavigation = [
+const panelNavigation: NavItem[] = [{ name: "Resumen", href: ROUTES.DASHBOARD_HOME, icon: LayoutDashboard }];
+
+const contentNavigation: NavItem[] = [
   { name: "Events", href: ROUTES.EVENTS, icon: FileText },
   { name: "Categorías", href: ROUTES.CATEGORIES, icon: FolderOpen },
   { name: "Comentarios", href: "/comentarios", icon: MessageSquare },
 ];
 
-const mediaNavigation = [
+const mediaNavigation: NavItem[] = [
   { name: "Media", href: ROUTES.MEDIA, icon: Image },
   { name: "Eventos", href: "/eventos-calendario", icon: Calendar },
   { name: "Places", href: ROUTES.PLACES, icon: Calendar },
 ];
 
-const systemNavigation = [
+const systemNavigation: NavItem[] = [
   { name: "Usuarios", href: ROUTES.USERS, icon: Users },
   { name: "Páginas estáticas", href: ROUTES.STATIC_PAGES, icon: FileStack },
   { name: "Site settings", href: ROUTES.SITE_SETTINGS, icon: Settings },
@@ -44,7 +51,7 @@ const systemNavigation = [
 export function Sidebar() {
   const location = useLocation();
 
-  const NavSection = ({ title, items }: { title?: string; items: typeof panelNavigation }) => (
+  const NavSection = ({ title, items }: { title?: string; items: NavItem[] }) => (
     <div className="space-y-1">
       {title && (
         <h3 className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground/60">

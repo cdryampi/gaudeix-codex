@@ -36,3 +36,12 @@ export function formatTime(date: Date, locale = DEFAULT_LOCALE) {
   return new Intl.DateTimeFormat(locale, { hour: "2-digit", minute: "2-digit" }).format(date);
 }
 
+export function formatDateTime(dateString: string, locale = DEFAULT_LOCALE) {
+  const date = new Date(dateString);
+  return new Intl.DateTimeFormat(locale, {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  }).format(date);
+}
+

@@ -4,7 +4,7 @@
  */
 
 import { envConfig } from "@/lib/config/env";
-import type { User } from "@/types";
+import type { User, DjangoUser } from "@/types";
 
 interface LoginCredentials {
   username: string;
@@ -14,7 +14,7 @@ interface LoginCredentials {
 interface LoginResponse {
   access: string;
   refresh: string;
-  user: User;
+  user: DjangoUser;
 }
 
 interface RefreshResponse {

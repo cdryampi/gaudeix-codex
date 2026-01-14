@@ -1,0 +1,7 @@
+/**
+ * Global CSS for NativeWind
+ * This file is imported by App.tsx to enable Tailwind CSS classes
+ */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

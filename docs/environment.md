@@ -27,6 +27,8 @@ Esta guía centraliza las variables de entorno utilizadas por los distintos mód
 | `DJANGO_ALLOWED_CORS_ORIGINS` | Opcional    | Dominios permitidos para CORS.                                                          | Útil para separar frontend/backoffice.                                      |
 | `EMAIL_URL`                   | Opcional    | Configuración SMTP en formato URL.                                                      | Requerido si se envían correos.                                             |
 | `REDIS_URL`                   | Opcional    | Conexión a Redis para caché/colas.                                                      | Necesario solo si el despliegue lo utiliza.                                 |
+| `FCM_CREDENTIALS_FILE`        | Opcional    | Ruta al JSON de Service Account de Firebase para Push Notifications (FCM/APNs). | Requerido para envío de notificaciones push reales.                           |
+
 
 ## Frontend (React + Vite)
 

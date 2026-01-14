@@ -7,6 +7,7 @@
 - **Backend**: Django REST Framework (puerto 8000) - API JSON con autenticación JWT
 - **Frontend público**: React + Vite (puerto 5173) - Sitio web municipal
 - **Backoffice**: React 18 + TypeScript + Tailwind + shadcn/ui (puerto 5174) - Panel administrativo
+- **Mobile**: React Native + Expo (puerto N/A) - App móvil iOS/Android
 - **Infraestructura**: PostgreSQL + MinIO (almacenamiento de objetos) vía Docker Compose
 
 **Principio arquitectónico crítico**: Frontends se comunican con backend **exclusivamente vía API REST**. No hay templates compartidos ni acceso directo a base de datos.
@@ -153,6 +154,23 @@ El app `llm_translations` permite traducciones automáticas vía múltiples prov
 - Acceso directo a backend (siempre usar API)
 - Importaciones relativas largas (usar `@/`)
 
+### Mobile (React Native + Expo)
+
+✅ **Hacer**:
+- Importaciones con alias: `@/` para `src/` (configurado en tsconfig)
+- Estructura por features: `src/features/[feature]/pages|components|api`
+- NativeWind (Tailwind CSS) para estilos: `className="flex-1 bg-primary"`
+- Variables de entorno con prefijo `EXPO_PUBLIC_`
+- Zustand para state management global
+- React Query para data fetching y caching
+- Expo Secure Store para tokens/credenciales sensibles
+
+❌ **Evitar**:
+- StyleSheet de React Native (usar NativeWind)
+- Acceso directo a backend (usar API client centralizado)
+- Hardcodear API URLs (usar env vars)
+- Importaciones relativas largas (usar `@/`)
+
 ### Comandos Esenciales
 
 **Backend**:
@@ -173,6 +191,17 @@ npm run build                         # Build producción
 npm test                              # Tests Vitest
 npm run lint                          # ESLint
 npx shadcn@latest add [componente]    # Agregar componente UI
+```
+
+**Mobile**:
+```bash
+cd mobile
+npm start                             # Iniciar Expo dev server
+npm run android                       # Android Emulator
+npm run ios                           # iOS Simulator (solo macOS)
+npm run lint                          # ESLint
+npm run format                        # Prettier
+npm run type-check                    # TypeScript check
 ```
 
 ## 🔧 Entornos y Configuración
@@ -202,6 +231,11 @@ DJANGO_ALLOWED_CORS_ORIGINS=http://localhost:5173,http://localhost:5174
 **Frontend/Backoffice** (prefijo `VITE_` obligatorio):
 ```bash
 VITE_API_BASE_URL=http://localhost:8000/api/v1
+```
+
+**Mobile** (prefijo `EXPO_PUBLIC_` obligatorio):
+```bash
+EXPO_PUBLIC_API_BASE_URL=http://localhost:8000/api/v1
 ```
 
 ## 📦 Flujos de Trabajo Comunes
@@ -403,5 +437,5 @@ export function StatsCard({ title, value, trend }: {
 
 ---
 
-**Última actualización**: Diciembre 2024  
-**Versión**: Django 5.2 + React 18 + PostgreSQL 16
+**Última actualización**: Enero 2025  
+**Versión**: Django 5.2 + React 18 + React Native 0.81 + PostgreSQL 16

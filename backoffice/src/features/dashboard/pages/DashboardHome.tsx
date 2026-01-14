@@ -1,181 +1,127 @@
+import { useEffect, useState } from "react";
+import { Users, Calendar, MapPin, Bell } from "lucide-react";
+import { StatCard } from "../components/StatCard";
+import { dashboardApi, DashboardStats } from "../api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  LineChart,
-  Line,
-  AreaChart,
-  Area,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
-
-// Datos para gráficos
-const revenueData = [
-  { month: "Ene", value: 12450 },
-  { month: "Feb", value: 13230 },
-  { month: "Mar", value: 11890 },
-  { month: "Abr", value: 14567 },
-  { month: "May", value: 13890 },
-  { month: "Jun", value: 15231 },
-];
-
-const subscriptionsData = [
-  { month: "Ene", value: 1890 },
-  { month: "Feb", value: 2015 },
-  { month: "Mar", value: 1967 },
-  { month: "Abr", value: 2156 },
-  { month: "May", value: 2234 },
-  { month: "Jun", value: 2350 },
-];
-
-const activityData = [
-  { day: "Lun", users: 234, events: 45, posts: 23 },
-  { day: "Mar", users: 312, events: 52, posts: 31 },
-  { day: "Mié", users: 289, events: 48, posts: 28 },
-  { day: "Jue", users: 356, events: 61, posts: 35 },
-  { day: "Vie", users: 423, events: 58, posts: 42 },
-  { day: "Sáb", users: 198, events: 31, posts: 18 },
-  { day: "Dom", users: 167, events: 27, posts: 15 },
-];
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 export function DashboardHome() {
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadStats = async () => {
+      try {
+        const data = await dashboardApi.getStats();
+        setStats(data);
+      } catch (error) {
+        console.error("Failed to load dashboard stats", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadStats();
+  }, []);
+
+  if (loading) {
+    return <div className="p-8 text-center">Cargando dashboard...</div>;
+  }
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 animate-in fade-in duration-500">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-foreground">
-          Resumen
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          Estadísticas y métricas del sistema
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+          <p className="text-muted-foreground">
+            Resumen general de la plataforma Gaudeix
+          </p>
+        </div>
+        <div className="flex items-center space-x-2">
+          <Button variant="outline">Descargar Reporte</Button>
+        </div>
       </div>
 
-      {/* Gráficos compactos */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {/* Revenue Chart */}
-        <Card className="overflow-hidden border-border bg-card">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-xs font-normal uppercase tracking-wider text-muted-foreground">
-              Total Revenue
-            </CardTitle>
-            <div className="mt-2 text-3xl font-bold tracking-tight text-foreground">
-              $15,231.89
-            </div>
-            <p className="text-xs font-medium text-primary">
-              +20.1% from last month
-            </p>
+      {/* KPI Cards */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <StatCard
+          title="Total Usuarios"
+          value={stats?.totalUsers || 0}
+          icon={Users}
+          description="+180 este mes"
+        />
+        <StatCard
+          title="Eventos Activos"
+          value={stats?.activeEvents || 0}
+          icon={Calendar}
+          description="4 pendientes de aprobación"
+        />
+        <StatCard
+          title="Lugares"
+          value={stats?.totalPlaces || 0}
+          icon={MapPin}
+          description="Total registrados"
+        />
+        <StatCard
+          title="Avisos"
+          value={stats?.pendingNotifications || 0}
+          icon={Bell}
+          description="Pendientes de envío"
+        />
+      </div>
+
+      {/* Main Content Area */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+        
+        {/* Recent Activity */}
+        <Card className="col-span-4 shadow-sm">
+          <CardHeader>
+            <CardTitle>Actividad Reciente</CardTitle>
           </CardHeader>
-          <CardContent className="px-0 pb-0">
-            <ResponsiveContainer width="100%" height={120}>
-              <AreaChart
-                data={revenueData}
-                margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
-              >
-                <defs>
-                  <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                    <stop
-                      offset="0%"
-                      stopColor="hsl(var(--primary))"
-                      stopOpacity={0.4}
-                    />
-                    <stop
-                      offset="100%"
-                      stopColor="hsl(var(--primary))"
-                      stopOpacity={0}
-                    />
-                  </linearGradient>
-                </defs>
-                <Area
-                  type="monotone"
-                  dataKey="value"
-                  stroke="hsl(var(--primary))"
-                  strokeWidth={1.5}
-                  fill="url(#colorRevenue)"
-                  isAnimationActive={true}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
+          <CardContent>
+            <div className="space-y-8">
+              {stats?.recentActivity.map((activity) => (
+                <div key={activity.id} className="flex items-center">
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium leading-none">
+                      {activity.message}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      {new Date(activity.timestamp).toLocaleString()}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </CardContent>
         </Card>
 
-        {/* Subscriptions Chart */}
-        <Card className="overflow-hidden border-border bg-card">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-xs font-normal uppercase tracking-wider text-muted-foreground">
-              Subscriptions
-            </CardTitle>
-            <div className="mt-2 text-3xl font-bold tracking-tight text-foreground">
-              +2,350
-            </div>
-            <p className="text-xs font-medium text-primary">
-              +180.1% from last month
-            </p>
+        {/* Quick Actions */}
+        <Card className="col-span-3 shadow-sm">
+          <CardHeader>
+            <CardTitle>Accesos Rápidos</CardTitle>
           </CardHeader>
-          <CardContent className="px-0 pb-0">
-            <ResponsiveContainer width="100%" height={120}>
-              <LineChart
-                data={subscriptionsData}
-                margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
-              >
-                <defs>
-                  <linearGradient id="colorLine" x1="0" y1="0" x2="0" y2="1">
-                    <stop
-                      offset="0%"
-                      stopColor="hsl(var(--primary))"
-                      stopOpacity={0.4}
-                    />
-                    <stop
-                      offset="100%"
-                      stopColor="hsl(var(--primary))"
-                      stopOpacity={0}
-                    />
-                  </linearGradient>
-                </defs>
-                <Area
-                  type="monotone"
-                  dataKey="value"
-                  stroke="hsl(var(--primary))"
-                  strokeWidth={1.5}
-                  fill="url(#colorLine)"
-                  isAnimationActive={true}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        {/* Activity Chart */}
-        <Card className="overflow-hidden border-border bg-card">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-xs font-normal uppercase tracking-wider text-muted-foreground">
-              Active Now
-            </CardTitle>
-            <div className="mt-2 text-3xl font-bold tracking-tight text-foreground">
-              +573
-            </div>
-            <p className="text-xs font-medium text-primary">
-              +201 since last hour
-            </p>
-          </CardHeader>
-          <CardContent className="px-0 pb-0">
-            <ResponsiveContainer width="100%" height={120}>
-              <BarChart
-                data={activityData}
-                margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
-              >
-                <Bar
-                  dataKey="users"
-                  fill="hsl(var(--primary))"
-                  radius={[2, 2, 0, 0]}
-                  maxBarSize={8}
-                />
-              </BarChart>
-            </ResponsiveContainer>
+          <CardContent className="space-y-4">
+            <Link to="/dashboard/events/new" className="block">
+              <Button variant="outline" className="w-full justify-start mb-2">
+                <Calendar className="mr-2 h-4 w-4" />
+                Crear Nuevo Evento
+              </Button>
+            </Link>
+            <Link to="/dashboard/notifications/new" className="block">
+              <Button variant="outline" className="w-full justify-start mb-2">
+                <Bell className="mr-2 h-4 w-4" />
+                Enviar Aviso
+              </Button>
+            </Link>
+            <Link to="/dashboard/users" className="block">
+              <Button variant="outline" className="w-full justify-start">
+                <Users className="mr-2 h-4 w-4" />
+                Gestionar Usuarios
+              </Button>
+            </Link>
           </CardContent>
         </Card>
       </div>

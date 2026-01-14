@@ -1,7 +1,17 @@
+export interface DjangoUser {
+    id: string;
+    email: string;
+    username: string;
+    first_name: string;
+    last_name: string;
+    is_staff: boolean;
+    is_active: boolean;
+}
 export interface User {
     id: string;
     email: string;
     name: string;
+    username?: string;
     role: "admin" | "user";
 }
 export interface AuthState {
@@ -24,4 +34,13 @@ export interface RouteConfig {
     path: string;
     element: React.ReactNode;
     protected?: boolean;
+}
+export interface LoginCredentials {
+    username: string;
+    password: string;
+}
+export interface LoginResponse {
+    access: string;
+    refresh: string;
+    user: DjangoUser;
 }

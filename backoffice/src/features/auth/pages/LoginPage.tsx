@@ -56,8 +56,10 @@ export const LoginPage = () => {
 
     try {
       const validatedData = loginSchema.parse(formData);
-      await login(validatedData.username, validatedData.password, {
-        remember: formData.remember,
+      // login method now takes object: { username, password }
+      await login({
+        username: validatedData.username,
+        password: validatedData.password,
       });
       navigate(ROUTES.DASHBOARD);
     } catch (error) {

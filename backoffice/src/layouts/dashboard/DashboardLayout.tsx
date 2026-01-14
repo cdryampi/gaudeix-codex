@@ -1,28 +1,25 @@
+import { useState } from "react";
 import { Outlet } from "react-router-dom";
-import { Sidebar } from "./Sidebar";
-import { Header } from "./Header";
+import { Sidebar } from "@/components/layout/Sidebar";
+import { Header } from "@/components/layout/Header";
 
-/**
- * DashboardLayout - Supabase-style dark layout:
- * - Fixed 220px sidebar with dark bg-sidebar
- * - Minimalist header with 56px height
- * - Main content area with proper dark background
- * - Consistent spacing and overflow handling
- */
-export function DashboardLayout() {
+export default function DashboardLayout() {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   return (
-    <div className="flex h-screen bg-background">
-      {/* Sidebar - fixed left */}
-      <Sidebar />
+    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-950">
+      {/* Sidebar */}
+      <Sidebar 
+        isOpen={isSidebarOpen} 
+        onClose={() => setIsSidebarOpen(false)} 
+      />
 
-      {/* Main content area */}
-      <div className="flex flex-1 flex-col overflow-hidden">
-        {/* Header */}
-        <Header />
-
-        {/* Page content with scroll */}
-        <main className="flex-1 overflow-y-auto bg-background p-6">
-          <div className="mx-auto max-w-7xl">
+      {/* Main Content */}
+      <div className="flex flex-1 flex-col transition-all duration-200 ease-in-out w-full">
+        <Header onMenuClick={() => setIsSidebarOpen(true)} />
+        
+        <main className="flex-1 overflow-x-hidden p-4 md:p-6 lg:p-8">
+          <div className="mx-auto max-w-7xl animate-in fade-in duration-500">
             <Outlet />
           </div>
         </main>

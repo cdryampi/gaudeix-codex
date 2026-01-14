@@ -13,6 +13,8 @@ from drf_spectacular.views import (
 )
 
 from events.urls import register_routes as register_events_routes
+from gamification.urls import register_routes as register_gamification_routes
+from notifications.urls import register_routes as register_notifications_routes
 from core.urls import register_routes as register_core_routes
 from places.urls import register_routes as register_places_routes
 from media_files.urls import register_routes as register_media_routes
@@ -27,6 +29,8 @@ from .views import health_check, landing
 router = DefaultRouter()
 register_core_routes(router)
 register_events_routes(router)
+register_gamification_routes(router)
+register_notifications_routes(router)
 register_places_routes(router)
 register_media_routes(router)
 register_social_routes(router)
@@ -39,24 +43,27 @@ urlpatterns = [
     path("", landing, name="landing"),
     # Admin
     path("admin/", admin.site.urls),
-    
     # Health check (public endpoint)
     path("api/health/", health_check, name="health_check"),
-    
     # API v1 - Authentication
     path("api/v1/auth/", include("dj_rest_auth.urls")),
     path("api/v1/auth/registration/", include("dj_rest_auth.registration.urls")),
-    
     # API v1 - Users (includes password reset URLs)
     path("api/v1/", include("users.urls")),
-    
     # API v1 - Router (users, media, social viewsets)
     path("api/v1/", include(router.urls)),
-    
     # API Documentation
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
-    path("api/schema/swagger-ui/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
-    path("api/schema/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
+    path(
+        "api/schema/swagger-ui/",
+        SpectacularSwaggerView.as_view(url_name="schema"),
+        name="swagger-ui",
+    ),
+    path(
+        "api/schema/redoc/",
+        SpectacularRedocView.as_view(url_name="schema"),
+        name="redoc",
+    ),
 ]
 
 # Serve media files in development

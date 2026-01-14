@@ -1,7 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { AuthLayout } from "@/features/auth/components/AuthLayout";
-import { DashboardLayout } from "@/layouts/dashboard/DashboardLayout";
+import DashboardLayout from "@/layouts/dashboard/DashboardLayout";
 import { LoginPage } from "@/features/auth/pages/LoginPage";
 import { RegisterPage } from "@/features/auth/pages/RegisterPage";
 import { ResetPasswordPage } from "@/features/auth/pages/ResetPasswordPage";
