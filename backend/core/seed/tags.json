@@ -114,6 +114,50 @@
   {
     "slug": "tradicio",
     "translations": { "ca": "Tradició", "es": "Tradición", "en": "Tradition", "fr": "Tradition" }
+  },
+  {
+    "slug": "cabrera-de-mar",
+    "translations": {
+      "ca": "Cabrera de Mar",
+      "es": "Cabrera de Mar",
+      "en": "Cabrera de Mar",
+      "fr": "Cabrera de Mar"
+    }
+  },
+  {
+    "slug": "biblioteca",
+    "translations": { "ca": "Biblioteca", "es": "Biblioteca", "en": "Library", "fr": "Bibliothèque" }
+  },
+  {
+    "slug": "contacontes",
+    "translations": { "ca": "Contacontes", "es": "Cuentacuentos", "en": "Storytelling", "fr": "Conte" }
+  },
+  {
+    "slug": "nadons",
+    "translations": { "ca": "Nadons", "es": "Bebés", "en": "Babies", "fr": "Bébés" }
+  },
+  {
+    "slug": "festes",
+    "translations": { "ca": "Festes", "es": "Fiestas", "en": "Festivities", "fr": "Fêtes" }
+  },
+  {
+    "slug": "pessebre-vivent",
+    "translations": { "ca": "Pessebre vivent", "es": "Belén viviente", "en": "Living nativity", "fr": "Crèche vivante" }
+  },
+  {
+    "slug": "cultura",
+    "translations": { "ca": "Cultura", "es": "Cultura", "en": "Culture", "fr": "Culture" }
+  },
+  {
+    "slug": "foodtrucks",
+    "translations": { "ca": "Food trucks", "es": "Food trucks", "en": "Food trucks", "fr": "Food trucks" }
+  },
+  {
+    "slug": "orgue",
+    "translations": { "ca": "Orgue", "es": "Órgano", "en": "Organ", "fr": "Orgue" }
+  },
+  {
+    "slug": "joves",
+    "translations": { "ca": "Joves", "es": "Jóvenes", "en": "Youth", "fr": "Jeunes" }
   }
 ]
-

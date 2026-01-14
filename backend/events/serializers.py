@@ -122,7 +122,14 @@ class EventSerializer(TranslatableModelSerializer):
             return ""
         try:
             data = ImageFileSerializer(obj.featured_media, context=self.context).data
-            return data.get("thumbnail_url") or data.get("file") or ""
+            return (
+                data.get("variant_large")
+                or data.get("variant_medium")
+                or data.get("file")
+                or data.get("thumbnail_url")
+                or data.get("variant_thumbnail")
+                or ""
+            )
         except Exception:
             return ""
 

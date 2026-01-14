@@ -206,6 +206,10 @@ LLM_GROQ_API_KEY=...
 LLM_LOCAL_API_URL=http://127.0.0.1:1234
 ```
 
+You can also store provider credentials in the database via the singleton config (`PATCH /api/v1/llm-config/1/` with
+`api_key` / `local_api_url`) or from the Backoffice (**Sistema → LLM**). Env vars are still supported and used as a
+fallback.
+
 **Local LLM Setup** (Ollama/LM Studio):
 1. Install Ollama or LM Studio
 2. Start server on default port (1234 for LM Studio)
@@ -214,7 +218,7 @@ LLM_LOCAL_API_URL=http://127.0.0.1:1234
 
 ## Usage
 
-### 1. Configure Provider (Django Admin)
+### 1. Configure Provider (Backoffice or Django Admin)
 
 1. Navigate to **Admin → LLM Provider Configuration**
 2. Select provider (e.g., `local` for LM Studio)
@@ -222,6 +226,10 @@ LLM_LOCAL_API_URL=http://127.0.0.1:1234
 4. Set temperature (0.3 recommended for translations)
 5. Enable `is_active`
 6. Save
+
+**Provider credentials**:
+- Use Backoffice (**Sistema → LLM**) to store the API key / local URL in DB (recommended for dev).
+- Or set the corresponding `LLM_*` env vars (recommended for production).
 
 ### 2. Translate Text Programmatically
 
@@ -381,8 +389,8 @@ Cost estimates are calculated based on token usage and provider pricing.
 
 ## Security
 
-- ✅ API keys stored in environment variables, never in code
-- ✅ All endpoints require authentication
+- ✅ API keys are never returned by the API (write-only); can be configured via env vars or stored in DB
+- ✅ Config and logs endpoints are admin-only
 - ✅ Translation logs are read-only via API
 - ✅ Singleton config prevents accidental deletion
 - ✅ Error messages don't expose sensitive data

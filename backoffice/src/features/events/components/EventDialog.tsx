@@ -4,6 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import { Languages, Loader2, X } from "lucide-react";
@@ -360,41 +361,44 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
           </div>
 
           <div className="grid gap-3 md:grid-cols-3">
-            <label className="flex items-center justify-between rounded-lg border border-border/60 bg-muted/40 px-3 py-2 text-sm">
-              <span>Publicado</span>
-              <input
-                type="checkbox"
+            <div className="flex items-center justify-between rounded-lg border border-border/60 bg-muted/40 px-3 py-2 text-sm">
+              <Label htmlFor="event-is-published" className="cursor-pointer text-sm font-normal">
+                Publicado
+              </Label>
+              <Switch
+                id="event-is-published"
                 checked={!!form.is_published}
-                onChange={(e) => setForm((prev) => ({ ...prev, is_published: e.target.checked }))}
-                className="h-4 w-4 accent-primary"
+                onCheckedChange={(checked) => setForm((prev) => ({ ...prev, is_published: checked }))}
               />
-            </label>
+            </div>
 
-            <label className="flex items-center justify-between rounded-lg border border-border/60 bg-muted/40 px-3 py-2 text-sm">
-              <span>Destacado</span>
-              <input
-                type="checkbox"
+            <div className="flex items-center justify-between rounded-lg border border-border/60 bg-muted/40 px-3 py-2 text-sm">
+              <Label htmlFor="event-is-featured" className="cursor-pointer text-sm font-normal">
+                Destacado
+              </Label>
+              <Switch
+                id="event-is-featured"
                 checked={!!form.is_featured}
-                onChange={(e) => setForm((prev) => ({ ...prev, is_featured: e.target.checked }))}
-                className="h-4 w-4 accent-primary"
+                onCheckedChange={(checked) => setForm((prev) => ({ ...prev, is_featured: checked }))}
               />
-            </label>
+            </div>
 
-            <label className="flex items-center justify-between rounded-lg border border-border/60 bg-muted/40 px-3 py-2 text-sm">
-              <span>Gratuito</span>
-              <input
-                type="checkbox"
+            <div className="flex items-center justify-between rounded-lg border border-border/60 bg-muted/40 px-3 py-2 text-sm">
+              <Label htmlFor="event-is-free" className="cursor-pointer text-sm font-normal">
+                Gratuito
+              </Label>
+              <Switch
+                id="event-is-free"
                 checked={form.is_free ?? true}
-                onChange={(e) =>
+                onCheckedChange={(checked) =>
                   setForm((prev) => ({
                     ...prev,
-                    is_free: e.target.checked,
-                    price_text: e.target.checked ? "" : prev.price_text,
+                    is_free: checked,
+                    price_text: checked ? "" : prev.price_text,
                   }))
                 }
-                className="h-4 w-4 accent-primary"
               />
-            </label>
+            </div>
           </div>
 
           <div className="space-y-2">

@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { AuthCard } from "../components/AuthCard";
 import { useAuth } from "@/app/providers/AuthProvider";
@@ -42,8 +43,7 @@ export const LoginPage = () => {
     if (loginError) setLoginError("");
   };
 
-  const handleRememberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { checked } = e.target;
+  const handleRememberChange = (checked: boolean) => {
     setFormData((prev) => ({ ...prev, remember: checked }));
   };
 
@@ -150,12 +150,10 @@ export const LoginPage = () => {
 
           <div className="flex items-center justify-between text-sm text-muted-foreground">
             <label className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                name="remember"
+              <Switch
+                id="remember"
                 checked={formData.remember}
-                onChange={handleRememberChange}
-                className="h-4 w-4 accent-primary"
+                onCheckedChange={handleRememberChange}
               />
               <span>Mantener sesión abierta</span>
             </label>

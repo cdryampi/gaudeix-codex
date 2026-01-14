@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+from django.conf import settings
 from rest_framework import serializers
+from rest_framework.fields import empty
 
 from .models import LLMProviderConfig, TranslationLog
 
@@ -12,6 +14,16 @@ class LLMProviderConfigSerializer(serializers.ModelSerializer):
     
     provider_display = serializers.CharField(source='get_provider_display', read_only=True)
     model_display = serializers.CharField(source='get_model_name_display', read_only=True)
+    api_key = serializers.CharField(write_only=True, required=False, allow_blank=True, allow_null=True)
+    credentials_configured = serializers.SerializerMethodField()
+    credentials_source = serializers.SerializerMethodField()
+    credentials = serializers.SerializerMethodField()
+
+    openai_api_key = serializers.CharField(write_only=True, required=False, allow_blank=True, allow_null=True)
+    gemini_api_key = serializers.CharField(write_only=True, required=False, allow_blank=True, allow_null=True)
+    anthropic_api_key = serializers.CharField(write_only=True, required=False, allow_blank=True, allow_null=True)
+    mistral_api_key = serializers.CharField(write_only=True, required=False, allow_blank=True, allow_null=True)
+    groq_api_key = serializers.CharField(write_only=True, required=False, allow_blank=True, allow_null=True)
     
     class Meta:
         model = LLMProviderConfig
@@ -24,6 +36,16 @@ class LLMProviderConfigSerializer(serializers.ModelSerializer):
             'is_active',
             'temperature',
             'max_tokens',
+            'local_api_url',
+            'api_key',
+            'openai_api_key',
+            'gemini_api_key',
+            'anthropic_api_key',
+            'mistral_api_key',
+            'groq_api_key',
+            'credentials_configured',
+            'credentials_source',
+            'credentials',
         ]
         read_only_fields = ['id']
     
@@ -32,6 +54,115 @@ class LLMProviderConfigSerializer(serializers.ModelSerializer):
         if not 0.0 <= value <= 2.0:
             raise serializers.ValidationError("Temperature must be between 0.0 and 2.0")
         return value
+
+    def get_credentials_configured(self, obj: LLMProviderConfig) -> bool:
+        provider = obj.provider
+        match provider:
+            case LLMProviderConfig.Provider.OPENAI:
+                return bool(obj.openai_api_key or settings.LLM_OPENAI_API_KEY)
+            case LLMProviderConfig.Provider.GEMINI:
+                return bool(obj.gemini_api_key or settings.LLM_GEMINI_API_KEY)
+            case LLMProviderConfig.Provider.ANTHROPIC:
+                return bool(obj.anthropic_api_key or settings.LLM_ANTHROPIC_API_KEY)
+            case LLMProviderConfig.Provider.MISTRAL:
+                return bool(obj.mistral_api_key or settings.LLM_MISTRAL_API_KEY)
+            case LLMProviderConfig.Provider.GROQ:
+                return bool(obj.groq_api_key or settings.LLM_GROQ_API_KEY)
+            case LLMProviderConfig.Provider.LOCAL:
+                return bool(obj.local_api_url or settings.LLM_LOCAL_API_URL)
+            case _:
+                return False
+
+    def get_credentials_source(self, obj: LLMProviderConfig) -> str | None:
+        provider = obj.provider
+        match provider:
+            case LLMProviderConfig.Provider.OPENAI:
+                return "db" if obj.openai_api_key else ("env" if settings.LLM_OPENAI_API_KEY else None)
+            case LLMProviderConfig.Provider.GEMINI:
+                return "db" if obj.gemini_api_key else ("env" if settings.LLM_GEMINI_API_KEY else None)
+            case LLMProviderConfig.Provider.ANTHROPIC:
+                return "db" if obj.anthropic_api_key else ("env" if settings.LLM_ANTHROPIC_API_KEY else None)
+            case LLMProviderConfig.Provider.MISTRAL:
+                return "db" if obj.mistral_api_key else ("env" if settings.LLM_MISTRAL_API_KEY else None)
+            case LLMProviderConfig.Provider.GROQ:
+                return "db" if obj.groq_api_key else ("env" if settings.LLM_GROQ_API_KEY else None)
+            case LLMProviderConfig.Provider.LOCAL:
+                return "db" if obj.local_api_url else ("env" if settings.LLM_LOCAL_API_URL else None)
+            case _:
+                return None
+
+    def _provider_credentials(self, obj: LLMProviderConfig, provider: str) -> dict:
+        match provider:
+            case LLMProviderConfig.Provider.OPENAI:
+                configured = bool(obj.openai_api_key or settings.LLM_OPENAI_API_KEY)
+                source = "db" if obj.openai_api_key else ("env" if settings.LLM_OPENAI_API_KEY else None)
+            case LLMProviderConfig.Provider.GEMINI:
+                configured = bool(obj.gemini_api_key or settings.LLM_GEMINI_API_KEY)
+                source = "db" if obj.gemini_api_key else ("env" if settings.LLM_GEMINI_API_KEY else None)
+            case LLMProviderConfig.Provider.ANTHROPIC:
+                configured = bool(obj.anthropic_api_key or settings.LLM_ANTHROPIC_API_KEY)
+                source = "db" if obj.anthropic_api_key else ("env" if settings.LLM_ANTHROPIC_API_KEY else None)
+            case LLMProviderConfig.Provider.MISTRAL:
+                configured = bool(obj.mistral_api_key or settings.LLM_MISTRAL_API_KEY)
+                source = "db" if obj.mistral_api_key else ("env" if settings.LLM_MISTRAL_API_KEY else None)
+            case LLMProviderConfig.Provider.GROQ:
+                configured = bool(obj.groq_api_key or settings.LLM_GROQ_API_KEY)
+                source = "db" if obj.groq_api_key else ("env" if settings.LLM_GROQ_API_KEY else None)
+            case LLMProviderConfig.Provider.LOCAL:
+                configured = bool(obj.local_api_url or settings.LLM_LOCAL_API_URL)
+                source = "db" if obj.local_api_url else ("env" if settings.LLM_LOCAL_API_URL else None)
+            case _:
+                configured = False
+                source = None
+
+        return {"configured": configured, "source": source}
+
+    def get_credentials(self, obj: LLMProviderConfig) -> dict:
+        return {
+            "openai": self._provider_credentials(obj, LLMProviderConfig.Provider.OPENAI),
+            "gemini": self._provider_credentials(obj, LLMProviderConfig.Provider.GEMINI),
+            "anthropic": self._provider_credentials(obj, LLMProviderConfig.Provider.ANTHROPIC),
+            "mistral": self._provider_credentials(obj, LLMProviderConfig.Provider.MISTRAL),
+            "groq": self._provider_credentials(obj, LLMProviderConfig.Provider.GROQ),
+            "local": self._provider_credentials(obj, LLMProviderConfig.Provider.LOCAL),
+        }
+
+    def update(self, instance: LLMProviderConfig, validated_data):
+        api_key = validated_data.pop("api_key", empty)
+        provider = validated_data.get("provider", instance.provider)
+
+        for field in (
+            "openai_api_key",
+            "gemini_api_key",
+            "anthropic_api_key",
+            "mistral_api_key",
+            "groq_api_key",
+        ):
+            if field in validated_data:
+                validated_data[field] = (validated_data[field] or "").strip()
+
+        if "local_api_url" in validated_data:
+            validated_data["local_api_url"] = (validated_data["local_api_url"] or "").strip()
+
+        if api_key is not empty:
+            normalized_key = (api_key or "").strip()
+            match provider:
+                case LLMProviderConfig.Provider.OPENAI:
+                    instance.openai_api_key = normalized_key
+                case LLMProviderConfig.Provider.GEMINI:
+                    instance.gemini_api_key = normalized_key
+                case LLMProviderConfig.Provider.ANTHROPIC:
+                    instance.anthropic_api_key = normalized_key
+                case LLMProviderConfig.Provider.MISTRAL:
+                    instance.mistral_api_key = normalized_key
+                case LLMProviderConfig.Provider.GROQ:
+                    instance.groq_api_key = normalized_key
+                case LLMProviderConfig.Provider.LOCAL:
+                    raise serializers.ValidationError({"api_key": "Local provider does not use an API key"})
+                case _:
+                    raise serializers.ValidationError({"provider": "Unsupported provider"})
+
+        return super().update(instance, validated_data)
 
 
 class TranslateRequestSerializer(serializers.Serializer):

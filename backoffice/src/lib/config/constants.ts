@@ -26,6 +26,7 @@ export const ROUTES = {
   SITE_SETTINGS: "/dashboard/settings/site",
   VIDEO_SETTINGS: "/dashboard/settings/video",
   HEADER_MENU: "/dashboard/settings/header",
+  LLM_SETTINGS: "/dashboard/settings/llm",
 } as const;
 
 /**
@@ -164,6 +165,7 @@ export const API_ENDPOINTS = {
     CONFIG: "/llm-config/",
     TRANSLATE: "/llm-config/translate/",
     AUTO_TRANSLATE_EVENT: (id: string) => `/events/${id}/auto_translate/`,
+    LOGS: "/translation-logs/",
   },
 } as const;
 

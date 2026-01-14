@@ -19,6 +19,7 @@ import { StaticPagesPage } from "@/features/static-pages/pages/StaticPagesPage";
 import { SiteSettingsPage } from "@/features/site-settings/pages/SiteSettingsPage";
 import { VideoSettingsPage } from "@/features/site-settings/pages/VideoSettingsPage";
 import { HeaderMenuPage } from "@/features/site-settings/pages/HeaderMenuPage";
+import { LLMSettingsPage } from "@/features/llm-settings/pages/LLMSettingsPage";
 
 /**
  * Application routing configuration
@@ -113,6 +114,10 @@ export const router = createBrowserRouter([
       {
         path: "settings/social",
         element: <SocialLinksPage />,
+      },
+      {
+        path: "settings/llm",
+        element: <LLMSettingsPage />,
       },
     ],
   },

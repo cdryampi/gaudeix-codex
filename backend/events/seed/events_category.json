@@ -6,7 +6,9 @@
   },
   "subcategories": [
     { "slug": "cultura", "translations": { "ca": "Cultura", "es": "Cultura", "en": "Culture", "fr": "Culture" } },
+    { "slug": "festes", "translations": { "ca": "Festes", "es": "Fiestas", "en": "Festivities", "fr": "Fêtes" } },
     { "slug": "infantil", "translations": { "ca": "Infantil", "es": "Infantil", "en": "Kids", "fr": "Enfants" } },
+    { "slug": "joves", "translations": { "ca": "Joves", "es": "Jóvenes", "en": "Youth", "fr": "Jeunes" } },
     { "slug": "esports", "translations": { "ca": "Esports", "es": "Deportes", "en": "Sports", "fr": "Sports" } },
     {
       "slug": "fires-i-mercats",
@@ -25,4 +27,3 @@
   "singleton_pk": 1,
   "assign_to_existing_events": true
 }
-

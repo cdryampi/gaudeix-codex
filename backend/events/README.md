@@ -116,7 +116,7 @@ Seed de eventos de ejemplo con categorias, tags y campos extra (`summary`, `venu
 python manage.py seed_events
 ```
 
-Datos del seed: `events/seed/events.json` (fechas relativas con `start_offset`/`end_offset`).
+Datos del seed: `events/seed/events.json` (fechas ISO en `start_at`/`end_at` + imágenes con `featured_image_filename` desde `events/management/commands/media/`).
 
 ## Migraciones
 

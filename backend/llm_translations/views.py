@@ -6,7 +6,7 @@ import logging
 
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from rest_framework.response import Response
 
 from .models import LLMProviderConfig, TranslationLog
@@ -32,8 +32,10 @@ class LLMProviderConfigViewSet(viewsets.ModelViewSet):
     serializer_class = LLMProviderConfigSerializer
     
     def get_permissions(self):
-        """Only authenticated users can view/modify configuration."""
-        return [IsAuthenticated()]
+        """Authenticated can view; only admins can modify configuration."""
+        if self.action in {"list", "retrieve"}:
+            return [IsAuthenticated()]
+        return [IsAdminUser()]
     
     def list(self, request, *args, **kwargs):
         """Return the singleton configuration as a single object, not a list."""
@@ -62,7 +64,7 @@ class LLMProviderConfigViewSet(viewsets.ModelViewSet):
             status=status.HTTP_405_METHOD_NOT_ALLOWED
         )
     
-    @action(detail=False, methods=['post'], permission_classes=[IsAuthenticated])
+    @action(detail=False, methods=['post'], permission_classes=[IsAdminUser])
     def translate(self, request):
         """
         Translate text using the configured LLM provider.
@@ -152,8 +154,8 @@ class TranslationLogViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = TranslationLogSerializer
     
     def get_permissions(self):
-        """Only authenticated users can view logs."""
-        return [IsAuthenticated()]
+        """Only admins can view logs."""
+        return [IsAdminUser()]
     
     def get_queryset(self):
         """Filter logs by query parameters."""

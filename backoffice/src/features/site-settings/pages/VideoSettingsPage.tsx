@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { TriangleAlert } from "lucide-react";
@@ -115,11 +116,9 @@ export function VideoSettingsPage() {
               <div className="grid gap-4 md:grid-cols-2">
                 <label className="flex items-center justify-between rounded-lg border border-border/60 bg-background px-3 py-2 text-sm md:col-span-2">
                   <span>Activar vídeo de fondo (hero)</span>
-                  <input
-                    type="checkbox"
+                  <Switch
                     checked={!!form.video_enabled}
-                    onChange={(e) => handleChange("video_enabled", e.target.checked)}
-                    className="h-4 w-4 accent-primary"
+                    onCheckedChange={(checked) => handleChange("video_enabled", checked)}
                   />
                 </label>
 

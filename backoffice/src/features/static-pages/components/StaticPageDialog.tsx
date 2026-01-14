@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { LANGUAGES } from "@/lib/config/constants";
 import { StaticPage, StaticPagePayload, StaticPageTemplate } from "../types";
@@ -181,15 +182,16 @@ export function StaticPageDialog({ open, onOpenChange, onSubmit, page }: Props) 
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">
-            <label className="flex items-center justify-between rounded-lg border border-border/60 bg-muted/30 px-3 py-2 text-sm">
-              <span>Publicado</span>
-              <input
-                type="checkbox"
+            <div className="flex items-center justify-between rounded-lg border border-border/60 bg-muted/30 px-3 py-2 text-sm">
+              <Label htmlFor="static-page-is-published" className="cursor-pointer text-sm font-normal">
+                Publicado
+              </Label>
+              <Switch
+                id="static-page-is-published"
                 checked={!!form.is_published}
-                onChange={(e) => setForm((prev) => ({ ...prev, is_published: e.target.checked }))}
-                className="h-4 w-4 accent-primary"
+                onCheckedChange={(checked) => setForm((prev) => ({ ...prev, is_published: checked }))}
               />
-            </label>
+            </div>
           </div>
 
           <Tabs value={activeLang} onValueChange={setActiveLang} defaultValue="ca">

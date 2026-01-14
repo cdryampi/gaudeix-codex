@@ -13,6 +13,7 @@ import {
   FileStack,
   Video,
   Menu,
+  Bot,
 } from "lucide-react";
 import { ROUTES } from "@/lib/config/constants";
 
@@ -37,6 +38,7 @@ const systemNavigation = [
   { name: "Video", href: ROUTES.VIDEO_SETTINGS, icon: Video },
   { name: "Header", href: ROUTES.HEADER_MENU, icon: Menu },
   { name: "Redes sociales", href: ROUTES.SOCIAL, icon: Tag },
+  { name: "LLM", href: ROUTES.LLM_SETTINGS, icon: Bot },
 ];
 
 export function Sidebar() {

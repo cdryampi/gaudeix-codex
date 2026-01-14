@@ -3,6 +3,7 @@ import { PageContainer, PageHeader } from "@/components/common";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { TriangleAlert } from "lucide-react";
@@ -251,11 +252,9 @@ export function SiteSettingsPage() {
                 <div className="grid gap-4 md:grid-cols-2">
                   <label className="flex items-center justify-between rounded-lg border border-border/60 bg-background px-3 py-2 text-sm md:col-span-2">
                     <span>Activar vídeo de fondo (hero)</span>
-                    <input
-                      type="checkbox"
+                    <Switch
                       checked={!!form.video_enabled}
-                      onChange={(e) => handleChange("video_enabled", e.target.checked)}
-                      className="h-4 w-4 accent-primary"
+                      onCheckedChange={(checked) => handleChange("video_enabled", checked)}
                     />
                   </label>
                   <div className="space-y-2">
@@ -304,20 +303,16 @@ export function SiteSettingsPage() {
                 <div className="grid gap-4 md:grid-cols-2">
                   <label className="flex items-center justify-between rounded-lg border border-border/60 bg-background px-3 py-2 text-sm">
                     <span>Mostrar selector de idioma</span>
-                    <input
-                      type="checkbox"
+                    <Switch
                       checked={!!form.show_language_switcher}
-                      onChange={(e) => handleChange("show_language_switcher", e.target.checked)}
-                      className="h-4 w-4 accent-primary"
+                      onCheckedChange={(checked) => handleChange("show_language_switcher", checked)}
                     />
                   </label>
                   <label className="flex items-center justify-between rounded-lg border border-border/60 bg-background px-3 py-2 text-sm">
                     <span>Mostrar redes en footer</span>
-                    <input
-                      type="checkbox"
+                    <Switch
                       checked={!!form.show_social_footer}
-                      onChange={(e) => handleChange("show_social_footer", e.target.checked)}
-                      className="h-4 w-4 accent-primary"
+                      onCheckedChange={(checked) => handleChange("show_social_footer", checked)}
                     />
                   </label>
                   {[

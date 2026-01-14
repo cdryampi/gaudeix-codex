@@ -8,6 +8,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import type { CreateSocialLinkDTO, SocialLink } from "../types";
 
 const iconSuggestions = [
@@ -225,12 +226,7 @@ function ToggleRow({ label, checked, onCheckedChange }: ToggleRowProps) {
   return (
     <label className="flex items-center justify-between rounded-lg border border-border/60 bg-muted/40 px-3 py-2 text-sm">
       <span>{label}</span>
-      <input
-        type="checkbox"
-        checked={checked}
-        onChange={(e) => onCheckedChange(e.target.checked)}
-        className="h-4 w-4 accent-primary"
-      />
+      <Switch checked={checked} onCheckedChange={onCheckedChange} />
     </label>
   );
 }

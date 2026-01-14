@@ -47,34 +47,40 @@ def get_provider(provider_name: str, config: LLMProviderConfig) -> BaseProvider:
     """
     match provider_name:
         case LLMProviderConfig.Provider.OPENAI:
-            if not settings.LLM_OPENAI_API_KEY:
+            api_key = config.openai_api_key or settings.LLM_OPENAI_API_KEY
+            if not api_key:
                 raise TranslationError("OpenAI API key not configured")
-            return OpenAIProvider(api_key=settings.LLM_OPENAI_API_KEY)
+            return OpenAIProvider(api_key=api_key)
         
         case LLMProviderConfig.Provider.GEMINI:
-            if not settings.LLM_GEMINI_API_KEY:
+            api_key = config.gemini_api_key or settings.LLM_GEMINI_API_KEY
+            if not api_key:
                 raise TranslationError("Gemini API key not configured")
-            return GeminiProvider(api_key=settings.LLM_GEMINI_API_KEY)
+            return GeminiProvider(api_key=api_key)
         
         case LLMProviderConfig.Provider.ANTHROPIC:
-            if not settings.LLM_ANTHROPIC_API_KEY:
+            api_key = config.anthropic_api_key or settings.LLM_ANTHROPIC_API_KEY
+            if not api_key:
                 raise TranslationError("Anthropic API key not configured")
-            return AnthropicProvider(api_key=settings.LLM_ANTHROPIC_API_KEY)
+            return AnthropicProvider(api_key=api_key)
         
         case LLMProviderConfig.Provider.MISTRAL:
-            if not settings.LLM_MISTRAL_API_KEY:
+            api_key = config.mistral_api_key or settings.LLM_MISTRAL_API_KEY
+            if not api_key:
                 raise TranslationError("Mistral API key not configured")
-            return MistralProvider(api_key=settings.LLM_MISTRAL_API_KEY)
+            return MistralProvider(api_key=api_key)
         
         case LLMProviderConfig.Provider.GROQ:
-            if not settings.LLM_GROQ_API_KEY:
+            api_key = config.groq_api_key or settings.LLM_GROQ_API_KEY
+            if not api_key:
                 raise TranslationError("Groq API key not configured")
-            return GroqProvider(api_key=settings.LLM_GROQ_API_KEY)
+            return GroqProvider(api_key=api_key)
         
         case LLMProviderConfig.Provider.LOCAL:
-            if not settings.LLM_LOCAL_API_URL:
+            base_url = config.local_api_url or settings.LLM_LOCAL_API_URL
+            if not base_url:
                 raise TranslationError("Local LLM API URL not configured")
-            return LocalProvider(base_url=settings.LLM_LOCAL_API_URL)
+            return LocalProvider(base_url=base_url)
         
         case _:
             raise TranslationError(f"Unsupported provider: {provider_name}")

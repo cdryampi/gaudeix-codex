@@ -86,6 +86,48 @@ class LLMProviderConfig(SingletonModel):
         help_text=_("Maximum tokens for translation output"),
     )
 
+    openai_api_key = models.TextField(
+        _("OpenAI API Key"),
+        blank=True,
+        default="",
+        help_text=_("Optional. Overrides LLM_OPENAI_API_KEY env var."),
+    )
+
+    gemini_api_key = models.TextField(
+        _("Gemini API Key"),
+        blank=True,
+        default="",
+        help_text=_("Optional. Overrides LLM_GEMINI_API_KEY env var."),
+    )
+
+    anthropic_api_key = models.TextField(
+        _("Anthropic API Key"),
+        blank=True,
+        default="",
+        help_text=_("Optional. Overrides LLM_ANTHROPIC_API_KEY env var."),
+    )
+
+    mistral_api_key = models.TextField(
+        _("Mistral API Key"),
+        blank=True,
+        default="",
+        help_text=_("Optional. Overrides LLM_MISTRAL_API_KEY env var."),
+    )
+
+    groq_api_key = models.TextField(
+        _("Groq API Key"),
+        blank=True,
+        default="",
+        help_text=_("Optional. Overrides LLM_GROQ_API_KEY env var."),
+    )
+
+    local_api_url = models.URLField(
+        _("Local API URL"),
+        blank=True,
+        default="",
+        help_text=_("Optional. Overrides LLM_LOCAL_API_URL env var."),
+    )
+
     class Meta:
         verbose_name = _("LLM Provider Configuration")
 
