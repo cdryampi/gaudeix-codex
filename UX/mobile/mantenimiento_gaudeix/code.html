@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1abc9c",
+                        "background-light": "#fafafa",
+                        "background-dark": "#1d1d20",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+        .ios-status-bar {
+            height: 44px;
+        }
+        .illustration-bg {
+            background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark min-h-screen flex flex-col font-display transition-colors duration-300">
+<!-- Top Navigation Area (iOS Style) -->
+<div class="flex items-center bg-background-light dark:bg-background-dark p-4 pb-2 justify-between sticky top-0 z-10">
+<div class="text-[#0e1b18] dark:text-white flex size-12 shrink-0 items-center justify-center">
+<span class="material-symbols-outlined text-2xl">close</span>
+</div>
+<h2 class="text-[#0e1b18] dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-12">Gaudeix</h2>
+</div>
+<!-- Main Content Container -->
+<main class="flex-1 flex flex-col items-center justify-center px-6 py-8 max-w-md mx-auto w-full">
+<!-- Custom Illustration Component -->
+<div class="w-full aspect-square relative mb-12 group">
+<div class="absolute inset-0 bg-primary/10 dark:bg-primary/5 rounded-full scale-90 blur-3xl"></div>
+<div class="relative w-full h-full flex items-center justify-center bg-white dark:bg-[#252529] rounded-3xl shadow-xl overflow-hidden border border-gray-100 dark:border-gray-800">
+<!-- Illustration Placeholder using SVG logic within a DIV for consistent styling -->
+<div class="w-full h-full flex flex-col">
+<div class="flex-1 bg-center bg-no-repeat bg-cover" data-alt="People decorating a festive town plaza with turquoise banners" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuActy6FgeIX1WRp1KJRN-M9CMZo9tPJhw3YqH445hL3ZJZ3lyWwy9ETQLqYP17EHpukrmjnvv19CBUYCMLPMCj0sG6bMHMcwVencxTFzbKXUWglEy5Fo9DlAqAcrXNYaSC0SHqqcDlucDFk7aQaPcSKJb9ItUXHmS1mp5rqA1IZs0SHt8jkCS9wM-zOlL_dEsIRLo27QfquNBZlx33O2m7Yu5f7kW6mQ7IfUH2_BwiJbx7lWNwqEzAHHZh0LUafv4Sp1ke8fkQCQ4E");'>
+</div>
+<div class="h-1/3 p-4 flex items-center justify-center bg-primary/10 dark:bg-primary/20">
+<span class="material-symbols-outlined text-primary text-5xl">celebration</span>
+</div>
+</div>
+</div>
+<!-- Floating Decorative Elements -->
+<div class="absolute -top-4 -right-4 size-16 bg-primary rounded-2xl flex items-center justify-center text-white shadow-lg rotate-12">
+<span class="material-symbols-outlined">brush</span>
+</div>
+<div class="absolute -bottom-2 -left-4 size-14 bg-white dark:bg-[#333] rounded-full flex items-center justify-center text-primary shadow-md -rotate-12 border border-primary/20">
+<span class="material-symbols-outlined">event</span>
+</div>
+</div>
+<!-- Headline Text Component -->
+<div class="text-center w-full mb-4">
+<h2 class="text-[#0e1b18] dark:text-white tracking-tight text-[28px] font-extrabold leading-tight px-2">
+                Estamos preparando el próximo evento
+            </h2>
+</div>
+<!-- Body Text Component -->
+<div class="text-center w-full mb-10">
+<p class="text-[#4a5568] dark:text-gray-400 text-base font-normal leading-relaxed px-4">
+                En Gaudeix estamos trabajando para ofrecerte la mejor experiencia cultural. Volveremos a estar operativos en unos minutos. ¡Gracias por tu paciencia!
+            </p>
+</div>
+<!-- Button Group Component -->
+<div class="flex flex-col gap-3 w-full max-w-[320px]">
+<button class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-14 px-5 bg-primary text-white text-base font-bold leading-normal tracking-[0.015em] w-full shadow-lg shadow-primary/25 active:scale-95 transition-transform">
+<span class="truncate">Volver al inicio</span>
+</button>
+<button class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-14 px-5 bg-primary/10 dark:bg-primary/20 text-primary text-base font-bold leading-normal tracking-[0.015em] w-full active:scale-95 transition-transform">
+<span class="truncate">Contactar con soporte</span>
+</button>
+</div>
+</main>
+<!-- Footer Status Area -->
+<footer class="p-8 text-center">
+<div class="inline-flex items-center gap-2 px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded-full">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+</span>
+<span class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-widest">Sistemas en monitorización</span>
+</div>
+<!-- iOS Home Indicator Spacing -->
+<div class="h-6"></div>
+</footer>
+</body></html>

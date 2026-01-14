@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html class="light" lang="ca"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#F18721",
+                        "secondary": "#29ABE2",
+                        "accent": "#8CC63F",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        @layer utilities {
+            .logo-gradient-text {
+                background: linear-gradient(135deg, #F18721 0%, #8CC63F 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+            .loading-shimmer {
+                background: linear-gradient(90deg, #F18721 0%, #8CC63F 100%);
+                width: 40%;
+                height: 100%;
+                border-radius: 999px;
+            }
+        }
+    </style>
+<style>
+        body {
+            min-height: 100dvh;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-white font-display antialiased overflow-hidden">
+<div class="relative flex h-screen w-full flex-col items-center justify-between max-w-[430px] mx-auto bg-white">
+<div class="h-14 w-full"></div>
+<div class="flex flex-col items-center justify-center flex-grow -mt-20">
+<div class="mb-10 flex items-center justify-center size-40 relative">
+<div class="absolute inset-0 bg-white border-[6px] border-[#F18721] rounded-[2.5rem] rotate-6 opacity-10"></div>
+<div class="absolute inset-0 bg-white border-[6px] border-[#8CC63F] rounded-[2.5rem] -rotate-3 opacity-10"></div>
+<span class="material-symbols-outlined text-[100px] logo-gradient-text" style="font-variation-settings: 'FILL' 1, 'wght' 300;">
+                    festival
+                </span>
+</div>
+<h1 class="text-gray-900 text-6xl font-extrabold tracking-tight mb-2">
+                Gaudeix
+            </h1>
+</div>
+<div class="w-full px-12 pb-20 flex flex-col items-center">
+<div class="w-48 h-[3px] bg-gray-100 rounded-full overflow-hidden mb-12">
+<div class="loading-shimmer"></div>
+</div>
+<p class="text-gray-900 text-lg font-semibold tracking-wide text-center">
+                Viu el poble, suma moments
+            </p>
+<p class="mt-4 text-gray-400 text-[10px] uppercase tracking-[0.2em] font-bold">
+                Cultura i Turisme
+            </p>
+</div>
+<div class="absolute bottom-2 w-32 h-1 bg-gray-200 rounded-full left-1/2 -translate-x-1/2"></div>
+</div>
+
+</body></html>

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Gaudeix - Calendario de Eventos</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3E9124", // Green from logo (nature/leaves)
+                        "secondary": "#E97B1C", // Orange from logo (main curve)
+                        "accent": "#F6B324", // Yellow from logo (castle/sun)
+                        "info": "#7AC1E9", // Light blue from logo (water)
+                        "background-light": "#FAFAF9",
+                        "background-dark": "#121417",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        @layer base {
+            body {
+                font-family: 'Plus Jakarta Sans', sans-serif;
+                -webkit-tap-highlight-color: transparent;
+            }
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-[#1a1c1e] dark:text-gray-100 min-h-screen">
+<div class="max-w-[430px] mx-auto min-h-screen flex flex-col relative overflow-hidden bg-background-light dark:bg-background-dark">
+<header class="sticky top-0 z-20 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md">
+<div class="flex items-center justify-between px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="bg-primary/15 p-2 rounded-xl">
+<span class="material-symbols-outlined text-primary text-2xl font-bold">event</span>
+</div>
+<h1 class="text-xl font-bold tracking-tight text-[#0c1a1d] dark:text-white">Gaudeix</h1>
+</div>
+<div class="flex gap-2">
+<button class="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700">
+<span class="material-symbols-outlined text-gray-600 dark:text-gray-300">notifications</span>
+</button>
+</div>
+</div>
+<div class="px-6 pb-4">
+<div class="flex h-11 items-center justify-center rounded-xl bg-gray-200/60 dark:bg-gray-800/80 p-1">
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 transition-all has-[:checked]:bg-white dark:has-[:checked]:bg-gray-700 has-[:checked]:shadow-sm text-gray-500 dark:text-gray-400 has-[:checked]:text-secondary font-bold text-sm">
+<span class="truncate">Calendario</span>
+<input checked="" class="hidden" name="view_mode" type="radio" value="calendar"/>
+</label>
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 transition-all has-[:checked]:bg-white dark:has-[:checked]:bg-gray-700 has-[:checked]:shadow-sm text-gray-500 dark:text-gray-400 has-[:checked]:text-secondary font-bold text-sm">
+<span class="truncate">Lista</span>
+<input class="hidden" name="view_mode" type="radio" value="list"/>
+</label>
+</div>
+</div>
+</header>
+<main class="flex-1 overflow-y-auto hide-scrollbar pb-32">
+<section class="px-4 py-2">
+<div class="bg-white dark:bg-gray-900 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800 p-5">
+<div class="flex items-center justify-between mb-8 px-2">
+<button class="w-9 h-9 flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-800 rounded-full transition-colors border border-gray-50 dark:border-gray-800">
+<span class="material-symbols-outlined text-gray-400">chevron_left</span>
+</button>
+<h2 class="text-lg font-bold text-gray-800 dark:text-white">Octubre 2023</h2>
+<button class="w-9 h-9 flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-800 rounded-full transition-colors border border-gray-50 dark:border-gray-800">
+<span class="material-symbols-outlined text-gray-400">chevron_right</span>
+</button>
+</div>
+<div class="calendar-grid text-center mb-4">
+<span class="text-[11px] font-bold text-gray-400 uppercase">Lu</span>
+<span class="text-[11px] font-bold text-gray-400 uppercase">Ma</span>
+<span class="text-[11px] font-bold text-gray-400 uppercase">Mi</span>
+<span class="text-[11px] font-bold text-gray-400 uppercase">Ju</span>
+<span class="text-[11px] font-bold text-gray-400 uppercase">Vi</span>
+<span class="text-[11px] font-bold text-gray-400 uppercase text-primary/70">Sa</span>
+<span class="text-[11px] font-bold text-gray-400 uppercase text-primary/70">Do</span>
+</div>
+<div class="calendar-grid gap-y-2">
+<div class="h-10"></div><div class="h-10"></div><div class="h-10"></div>
+<button class="group relative flex flex-col items-center justify-center h-10">
+<span class="text-sm font-medium z-10">1</span>
+</button>
+<button class="group relative flex flex-col items-center justify-center h-10">
+<span class="text-sm font-medium z-10">2</span>
+</button>
+<button class="group relative flex flex-col items-center justify-center h-10">
+<span class="text-sm font-medium z-10">3</span>
+<div class="size-1 rounded-full bg-primary mt-0.5"></div>
+</button>
+<button class="group relative flex flex-col items-center justify-center h-10">
+<span class="text-sm font-medium z-10">4</span>
+</button>
+<button class="group relative flex flex-col items-center justify-center h-10">
+<div class="absolute inset-0 bg-secondary rounded-xl shadow-lg shadow-secondary/25"></div>
+<span class="text-sm font-bold text-white z-10">5</span>
+<div class="size-1 rounded-full bg-white mt-0.5 z-10"></div>
+</button>
+<button class="group relative flex flex-col items-center justify-center h-10">
+<span class="text-sm font-medium z-10">6</span>
+<div class="size-1 rounded-full bg-primary mt-0.5"></div>
+</button>
+<button class="group relative flex flex-col items-center justify-center h-10">
+<span class="text-sm font-medium z-10">7</span>
+</button>
+<button class="group relative flex flex-col items-center justify-center h-10">
+<span class="text-sm font-medium z-10">8</span>
+</button>
+<button class="group relative flex flex-col items-center justify-center h-10">
+<span class="text-sm font-medium z-10">9</span>
+</button>
+<button class="group relative flex flex-col items-center justify-center h-10">
+<span class="text-sm font-medium z-10">10</span>
+<div class="size-1 rounded-full bg-primary mt-0.5"></div>
+</button>
+<button class="group relative flex flex-col items-center justify-center h-10">
+<span class="text-sm font-medium z-10">11</span>
+</button>
+<button class="group relative flex flex-col items-center justify-center h-10">
+<span class="text-sm font-medium z-10">12</span>
+</button>
+<button class="group relative flex flex-col items-center justify-center h-10">
+<span class="text-sm font-medium z-10">13</span>
+<div class="size-1 rounded-full bg-primary mt-0.5"></div>
+</button>
+<button class="group relative flex flex-col items-center justify-center h-10">
+<span class="text-sm font-medium z-10">14</span>
+</button>
+<button class="group relative flex flex-col items-center justify-center h-10">
+<span class="text-sm font-medium z-10">15</span>
+</button>
+<button class="group relative flex flex-col items-center justify-center h-10">
+<span class="text-sm font-medium z-10">16</span>
+</button>
+<button class="group relative flex flex-col items-center justify-center h-10">
+<span class="text-sm font-medium z-10">17</span>
+</button>
+<button class="group relative flex flex-col items-center justify-center h-10">
+<span class="text-sm font-medium z-10">18</span>
+<div class="size-1 rounded-full bg-primary mt-0.5"></div>
+</button>
+<button class="group relative flex flex-col items-center justify-center h-10">
+<span class="text-sm font-medium z-10 text-gray-300 dark:text-gray-600">19</span>
+</button>
+<button class="group relative flex flex-col items-center justify-center h-10">
+<span class="text-sm font-medium z-10 text-gray-300 dark:text-gray-600">20</span>
+</button>
+<button class="group relative flex flex-col items-center justify-center h-10">
+<span class="text-sm font-medium z-10 text-gray-300 dark:text-gray-600">21</span>
+</button>
+</div>
+</div>
+</section>
+<section class="mt-4 px-6">
+<div class="flex items-center justify-between mb-5">
+<div>
+<p class="text-[11px] font-bold text-secondary uppercase tracking-[0.1em] mb-0.5">Agenda</p>
+<h3 class="text-xl font-extrabold text-gray-900 dark:text-white">Hoy, 5 Octubre</h3>
+</div>
+<span class="text-[11px] font-bold text-white bg-primary px-3 py-1.5 rounded-full uppercase tracking-wider shadow-sm shadow-primary/20">
+                        3 Actividades
+                    </span>
+</div>
+<div class="space-y-4">
+<div class="flex items-stretch gap-4 bg-white dark:bg-gray-900 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
+<div class="flex flex-col items-center justify-center w-14 shrink-0 border-r border-gray-100 dark:border-gray-800 pr-4">
+<span class="text-base font-bold text-gray-900 dark:text-white">10:00</span>
+<span class="text-[10px] text-primary font-bold uppercase tracking-tight">AM</span>
+</div>
+<div class="flex-1">
+<div class="flex items-start justify-between">
+<h4 class="font-bold text-gray-800 dark:text-white leading-tight">Visita Guiada Casco Antiguo</h4>
+<div class="bg-accent/15 text-orange-700 dark:text-accent px-2 py-1 rounded-lg text-[10px] font-extrabold flex items-center gap-1 border border-accent/20">
+<span class="material-symbols-outlined text-[13px] fill-current">stars</span>
+                                    +50 pts
+                                </div>
+</div>
+<div class="flex items-center gap-2 mt-3">
+<div class="w-6 h-6 flex items-center justify-center rounded-md bg-info/10 text-info">
+<span class="material-symbols-outlined text-base">location_on</span>
+</div>
+<p class="text-xs font-medium text-gray-500 dark:text-gray-400">Plaza Mayor</p>
+</div>
+</div>
+</div>
+<div class="flex items-stretch gap-4 bg-white dark:bg-gray-900 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
+<div class="flex flex-col items-center justify-center w-14 shrink-0 border-r border-gray-100 dark:border-gray-800 pr-4">
+<span class="text-base font-bold text-gray-900 dark:text-white">18:30</span>
+<span class="text-[10px] text-primary font-bold uppercase tracking-tight">PM</span>
+</div>
+<div class="flex-1">
+<div class="flex items-start justify-between">
+<h4 class="font-bold text-gray-800 dark:text-white leading-tight">Taller de Artesanía Local</h4>
+<div class="bg-accent/15 text-orange-700 dark:text-accent px-2 py-1 rounded-lg text-[10px] font-extrabold flex items-center gap-1 border border-accent/20">
+<span class="material-symbols-outlined text-[13px] fill-current">stars</span>
+                                    +30 pts
+                                </div>
+</div>
+<div class="flex items-center gap-2 mt-3">
+<div class="w-6 h-6 flex items-center justify-center rounded-md bg-info/10 text-info">
+<span class="material-symbols-outlined text-base">palette</span>
+</div>
+<p class="text-xs font-medium text-gray-500 dark:text-gray-400">Centro Cultural El Raval</p>
+</div>
+</div>
+</div>
+<div class="flex items-stretch gap-4 bg-white dark:bg-gray-900 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
+<div class="flex flex-col items-center justify-center w-14 shrink-0 border-r border-gray-100 dark:border-gray-800 pr-4">
+<span class="text-base font-bold text-gray-900 dark:text-white">21:00</span>
+<span class="text-[10px] text-primary font-bold uppercase tracking-tight">PM</span>
+</div>
+<div class="flex-1">
+<div class="flex items-start justify-between">
+<h4 class="font-bold text-gray-800 dark:text-white leading-tight">Jazz en la Plaza</h4>
+<div class="bg-accent/15 text-orange-700 dark:text-accent px-2 py-1 rounded-lg text-[10px] font-extrabold flex items-center gap-1 border border-accent/20">
+<span class="material-symbols-outlined text-[13px] fill-current">stars</span>
+                                    +20 pts
+                                </div>
+</div>
+<div class="flex items-center gap-2 mt-3">
+<div class="w-6 h-6 flex items-center justify-center rounded-md bg-info/10 text-info">
+<span class="material-symbols-outlined text-base">music_note</span>
+</div>
+<p class="text-xs font-medium text-gray-500 dark:text-gray-400">Plaza de la Libertad</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<button class="fixed bottom-28 right-6 w-14 h-14 bg-secondary text-white rounded-2xl shadow-xl shadow-secondary/40 flex items-center justify-center z-40 transform active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-3xl font-bold">add</span>
+</button>
+<nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border-t border-gray-100 dark:border-gray-800 px-6 pt-3 pb-8 flex justify-between items-center z-30">
+<button class="flex flex-col items-center gap-1.5 text-gray-400">
+<span class="material-symbols-outlined text-[24px]">explore</span>
+<span class="text-[10px] font-bold">Explorar</span>
+</button>
+<button class="flex flex-col items-center gap-1.5 text-secondary">
+<span class="material-symbols-outlined text-[24px] fill-current">calendar_month</span>
+<span class="text-[10px] font-extrabold">Eventos</span>
+</button>
+<button class="flex flex-col items-center gap-1.5 text-gray-400">
+<span class="material-symbols-outlined text-[24px]">token</span>
+<span class="text-[10px] font-bold">Puntos</span>
+</button>
+<button class="flex flex-col items-center gap-1.5 text-gray-400">
+<span class="material-symbols-outlined text-[24px]">person</span>
+<span class="text-[10px] font-bold">Perfil</span>
+</button>
+</nav>
+</div>
+
+</body></html>

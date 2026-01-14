@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#E87C17", // Gaudeix Orange
+                        "secondary": "#2D6A4F", // Gaudeix Green
+                        "accent-yellow": "#F4B223", // Gaudeix Yellow
+                        "accent-blue": "#84C1E9", // Gaudeix Blue
+                        "background-light": "#FDFCFB",
+                        "background-dark": "#121212",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "1rem",
+                        "lg": "1.25rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<title>Gaudeix - Perfil</title>
+<style type="text/tailwindcss">
+        :root {
+            --primary-color: #E87C17;
+            --secondary-color: #2D6A4F;
+            --accent-yellow: #F4B223;
+            --accent-blue: #84C1E9;
+        }
+        body {
+            min-height: max(884px, 100dvh);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .fill-1 {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-[#1A1C1E] dark:text-white transition-colors duration-300">
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden max-w-[480px] mx-auto shadow-2xl bg-background-light dark:bg-background-dark">
+<div class="flex items-center p-4 pb-2 justify-between sticky top-0 z-10 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md">
+<div class="text-[#1A1C1E] dark:text-white flex size-12 shrink-0 items-center justify-start cursor-pointer">
+<span class="material-symbols-outlined text-[24px]">settings</span>
+</div>
+<h2 class="text-[#1A1C1E] dark:text-white text-lg font-extrabold leading-tight tracking-[-0.015em] flex-1 text-center">Mi Perfil</h2>
+<div class="text-[#1A1C1E] dark:text-white flex size-12 shrink-0 items-center justify-end cursor-pointer">
+<span class="material-symbols-outlined text-[24px]">notifications</span>
+</div>
+</div>
+<div class="flex flex-col gap-6 px-4 py-4">
+<div class="flex w-full flex-col gap-4 items-center animate-fade-in">
+<div class="flex gap-4 flex-col items-center">
+<div class="relative">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full min-h-32 w-32 border-4 border-white dark:border-gray-800 shadow-xl" data-alt="Portrait of a smiling young traveler" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAeEOA3So6f7esUtmelQinVhDVHizlsuXeNhACNJ6vkNFFu7pxmyTHFo38Twibj6NdtzR00TAk6FL6d0dLEy2q8lFvoEMuoXczGEMH-rfF00Bc-5_zkMtD9Pl07JMKsnnI9O-bMnz2qIFSQlGlVEiFdtn899ZhWPnLUdTgQTZJIYt0hejbMoHPFhKxaMB3wxjstl3V-d917CvUvk6xN4-LprBVJxJwvbHY0xhZSdTzDzeqlgtDWU-M72sWbS0hgTbevQi3edO6E8Uk");'>
+</div>
+<div class="absolute bottom-1 right-1 bg-secondary text-white rounded-full p-1.5 border-4 border-background-light dark:border-background-dark shadow-md flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px] fill-1">verified</span>
+</div>
+</div>
+<div class="flex flex-col items-center justify-center">
+<p class="text-[#1A1C1E] dark:text-white text-[28px] font-extrabold leading-tight tracking-tight text-center">Carlos Gaudeix</p>
+<div class="flex items-center gap-2 mt-1">
+<div class="bg-secondary/10 px-3 py-1 rounded-full flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary text-[18px] fill-1">workspace_premium</span>
+<p class="text-secondary text-sm font-bold leading-normal">Explorador Nivel 5</p>
+</div>
+</div>
+<p class="text-gray-500 dark:text-gray-400 text-sm font-medium mt-2">Miembro desde Junio 2023</p>
+</div>
+</div>
+<div class="flex w-full gap-3">
+<button class="flex-1 cursor-pointer items-center justify-center rounded-full h-12 px-4 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 text-sm font-bold transition-all active:scale-95">
+<span>Editar Perfil</span>
+</button>
+<button class="flex-1 cursor-pointer items-center justify-center rounded-full h-12 px-4 bg-primary text-white text-sm font-bold shadow-lg shadow-primary/20 transition-all active:scale-95">
+<span>Compartir Logros</span>
+</button>
+</div>
+</div>
+<div class="flex flex-wrap gap-4">
+<div class="flex min-w-[150px] flex-1 flex-col gap-1 rounded-2xl p-5 bg-accent-yellow/10 border border-accent-yellow/20">
+<div class="flex items-center justify-between mb-1">
+<p class="text-accent-yellow font-extrabold text-[10px] uppercase tracking-widest">Total Puntos</p>
+<div class="p-1.5 bg-accent-yellow rounded-lg text-white">
+<span class="material-symbols-outlined text-[20px] fill-1">stars</span>
+</div>
+</div>
+<p class="text-[#1A1C1E] dark:text-white tracking-tight text-3xl font-black leading-tight">2,450</p>
+<div class="flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-secondary text-[16px] font-bold">trending_up</span>
+<p class="text-secondary text-xs font-bold">+150 este mes</p>
+</div>
+</div>
+<div class="flex min-w-[150px] flex-1 flex-col gap-1 rounded-2xl p-5 bg-accent-blue/10 border border-accent-blue/20">
+<div class="flex items-center justify-between mb-1">
+<p class="text-accent-blue font-extrabold text-[10px] uppercase tracking-widest">Ranking Global</p>
+<div class="p-1.5 bg-accent-blue rounded-lg text-white">
+<span class="material-symbols-outlined text-[20px] fill-1">leaderboard</span>
+</div>
+</div>
+<p class="text-[#1A1C1E] dark:text-white tracking-tight text-3xl font-black leading-tight">#12</p>
+<div class="flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-primary text-[16px]">keyboard_double_arrow_up</span>
+<p class="text-primary text-xs font-bold">Top 5%</p>
+</div>
+</div>
+</div>
+<div class="p-0">
+<div class="flex flex-col items-start justify-between gap-4 rounded-3xl border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-accent-yellow/5 p-6 relative overflow-hidden">
+<div class="absolute -right-12 -bottom-12 w-48 h-48 bg-primary/10 rounded-full blur-3xl"></div>
+<div class="absolute -left-6 -top-6 w-32 h-32 bg-accent-blue/10 rounded-full blur-2xl"></div>
+<div class="flex flex-col gap-3 relative z-10">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary fill-1">stars</span>
+<p class="text-primary text-[10px] font-black uppercase tracking-widest">Únete a la Comunidad</p>
+</div>
+<p class="text-[#1A1C1E] dark:text-white text-xl font-black leading-tight">¿Quieres aparecer en el ranking?</p>
+<p class="text-gray-600 dark:text-gray-300 text-sm font-medium leading-relaxed">Sumar puntos explorando la cultura local y desbloquea beneficios exclusivos.</p>
+</div>
+<div class="flex w-full gap-3 relative z-10 pt-4">
+<button class="flex-1 cursor-pointer items-center justify-center rounded-full h-12 px-4 bg-primary text-white text-sm font-extrabold transition-all active:scale-95 shadow-lg shadow-primary/25">
+                            Iniciar sesión
+                        </button>
+<button class="flex-1 cursor-pointer items-center justify-center rounded-full h-12 px-4 border-2 border-primary text-primary text-sm font-extrabold transition-all active:scale-95 bg-white dark:bg-transparent">
+                            Crear cuenta
+                        </button>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-4">
+<div class="flex items-center justify-between px-1">
+<h3 class="text-[#1A1C1E] dark:text-white text-xl font-extrabold tracking-tight">Mis Eventos Favoritos</h3>
+<button class="text-secondary text-sm font-bold">Ver todos</button>
+</div>
+<div class="flex flex-col gap-3">
+<div class="flex items-center gap-4 bg-white dark:bg-gray-900 p-3 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm transition-all active:scale-[0.98] cursor-pointer">
+<div class="w-20 h-20 rounded-xl bg-cover bg-center shrink-0 shadow-sm" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDThQm6kWNowYwC1TIEbzOiugsldcWtNy-gL9d-IYx1EyrOYhrgO9kkqTX8KZsr7UkwzGrxso70ZYjB_CpLuqz6H-aeDZr3OAujqPsl9gJoGBTuJ_Hos1Ks4bh3yW8OnOBzmpFM1gH21C4ae2Hp-nhHuWf9a3SNYiCcD0TS6Ji5n9j8IyY3ylytlC3uBBkfEEja2XS6y4kXd6suCbrzLX8Z_LYgBtOG7gEJWFzxKfb3gYTPaWs-yJZxWv6-NmQZzwKjqXEjGlCJ3XE');"></div>
+<div class="flex flex-col flex-1 gap-1">
+<p class="text-[#1A1C1E] dark:text-white font-bold text-[15px] leading-tight line-clamp-1">Festival Folk de Verano</p>
+<div class="flex items-center gap-1.5 text-gray-500 dark:text-gray-400">
+<span class="material-symbols-outlined text-[16px]">calendar_today</span>
+<span class="text-xs font-medium">15 Ago, 2024</span>
+</div>
+<div class="flex items-center gap-1.5 text-gray-500 dark:text-gray-400">
+<span class="material-symbols-outlined text-[16px]">location_on</span>
+<span class="text-xs font-medium">Plaça Major</span>
+</div>
+</div>
+<div class="bg-primary/10 p-2 rounded-full">
+<span class="material-symbols-outlined text-primary fill-1 text-[20px]">favorite</span>
+</div>
+</div>
+<div class="flex items-center gap-4 bg-white dark:bg-gray-900 p-3 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm transition-all active:scale-[0.98] cursor-pointer">
+<div class="w-20 h-20 rounded-xl bg-cover bg-center shrink-0 shadow-sm" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDTdmZWMKg38QZPHZ2lKAeLpck_SZcLUcFa5Vx8gyUdMb4DBrb-kfnBJqj12gLyHdGAngLHG_Z3BVmFoX0XDyStt6U_6XllfAhRrs06ejFjS5qM24VX7zMkISp63m3oR_ur2OSRfH0WtwjLN-gmahDLn-0c5IYrBvg1fLeWh981woCXzeYNmFLz9qEfZOwMO_elv4SdzzVszX3O1iwOxFGDxfStMPmT3R7-mepZvprR9QUHPEggm_oWfskPxBGwYENqQudLgkJqtZ4');"></div>
+<div class="flex flex-col flex-1 gap-1">
+<p class="text-[#1A1C1E] dark:text-white font-bold text-[15px] leading-tight line-clamp-1">Exposición "Luz Local"</p>
+<div class="flex items-center gap-1.5 text-gray-500 dark:text-gray-400">
+<span class="material-symbols-outlined text-[16px]">calendar_today</span>
+<span class="text-xs font-medium">22 Sep, 2024</span>
+</div>
+<div class="flex items-center gap-1.5 text-gray-500 dark:text-gray-400">
+<span class="material-symbols-outlined text-[16px]">location_on</span>
+<span class="text-xs font-medium">Museu d'Art</span>
+</div>
+</div>
+<div class="bg-primary/10 p-2 rounded-full">
+<span class="material-symbols-outlined text-primary fill-1 text-[20px]">favorite</span>
+</div>
+</div>
+</div>
+</div>
+<div class="h-24"></div>
+</div>
+<div class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] bg-white/90 dark:bg-background-dark/90 backdrop-blur-xl border-t border-gray-100 dark:border-gray-800 flex justify-around items-center py-3 px-6 z-20">
+<div class="flex flex-col items-center gap-1 text-gray-400 cursor-pointer">
+<span class="material-symbols-outlined text-[24px]">map</span>
+<span class="text-[10px] font-bold">Mapa</span>
+</div>
+<div class="flex flex-col items-center gap-1 text-gray-400 cursor-pointer">
+<span class="material-symbols-outlined text-[24px]">confirmation_number</span>
+<span class="text-[10px] font-bold">Eventos</span>
+</div>
+<div class="relative -top-6 flex items-center justify-center size-14 bg-primary text-white rounded-full shadow-2xl border-4 border-white dark:border-background-dark cursor-pointer transition-transform active:scale-90">
+<span class="material-symbols-outlined text-[32px] font-bold">qr_code_scanner</span>
+</div>
+<div class="flex flex-col items-center gap-1 text-gray-400 cursor-pointer">
+<span class="material-symbols-outlined text-[24px]">workspace_premium</span>
+<span class="text-[10px] font-bold">Premios</span>
+</div>
+<div class="flex flex-col items-center gap-1 text-primary cursor-pointer">
+<span class="material-symbols-outlined text-[24px] fill-1">person</span>
+<span class="text-[10px] font-bold">Perfil</span>
+</div>
+</div>
+</div>
+
+</body></html>

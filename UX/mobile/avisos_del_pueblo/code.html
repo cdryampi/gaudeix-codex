@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Avisos Gaudeix - Centro Unificado</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "gaudeix-orange": "#f97316",
+                        "gaudeix-blue": "#0ea5e9",
+                        "gaudeix-green": "#22c55e",
+                        "gaudeix-bg": "#f8fafc",
+                        "primary": "#0ea5e9",
+                        "background-light": "#f8fafc",
+                        "background-dark": "#0f172a",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "0.75rem",
+                        "xl": "1.25rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        body {
+            font-family: 'Manrope', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .ios-blur {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
+<nav class="sticky top-0 z-50 bg-background-light/90 dark:bg-background-dark/90 ios-blur border-b border-slate-200/60 dark:border-slate-800/60">
+<div class="flex items-center justify-between px-6 py-3 h-16">
+<div class="flex items-center">
+<div class="p-2 -ml-2 rounded-full active:bg-slate-200/50 dark:active:bg-slate-800/50 cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-2xl font-bold">arrow_back_ios_new</span>
+</div>
+</div>
+<h1 class="text-lg font-extrabold tracking-tight">Avisos Gaudeix</h1>
+<div class="flex items-center">
+<div class="p-2 -mr-2 rounded-full active:bg-slate-200/50 dark:active:bg-slate-800/50 cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-2xl">tune</span>
+</div>
+</div>
+</div>
+</nav>
+<main class="max-w-md mx-auto pb-32">
+<div class="px-6 pt-6 pb-2">
+<p class="text-slate-500 dark:text-slate-400 text-sm font-semibold uppercase tracking-widest mb-1">Centro de Notificaciones</p>
+<h2 class="text-3xl font-extrabold text-slate-900 dark:text-white leading-tight">Tu actividad al día</h2>
+</div>
+<div class="px-6 py-4">
+<div class="flex items-center justify-between rounded-2xl bg-white dark:bg-slate-900 p-5 shadow-sm border border-slate-100 dark:border-slate-800">
+<div class="flex items-center gap-4">
+<div class="flex items-center justify-center size-10 rounded-full bg-gaudeix-blue/10 text-gaudeix-blue">
+<span class="material-symbols-outlined">notifications_active</span>
+</div>
+<div>
+<p class="text-slate-900 dark:text-white text-base font-bold leading-tight">Notificaciones en tiempo real</p>
+<p class="text-slate-500 dark:text-slate-400 text-xs font-medium">Alertas de eventos y avisos municipales</p>
+</div>
+</div>
+<label class="relative flex h-7 w-12 cursor-pointer items-center rounded-full bg-slate-200 dark:bg-slate-700 p-1 has-[:checked]:bg-gaudeix-blue transition-colors duration-300">
+<div class="h-5 w-5 rounded-full bg-white shadow-sm transform transition-transform duration-300 peer-checked:translate-x-5"></div>
+<input checked="" class="hidden peer" type="checkbox"/>
+</label>
+</div>
+</div>
+<div class="flex gap-3 overflow-x-auto px-6 py-4 no-scrollbar">
+<button class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-5 py-2 rounded-full text-sm font-bold shrink-0">Todos</button>
+<button class="bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-100 dark:border-slate-700 px-5 py-2 rounded-full text-sm font-bold shrink-0">Urgentes</button>
+<button class="bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-100 dark:border-slate-700 px-5 py-2 rounded-full text-sm font-bold shrink-0">Cultura</button>
+<button class="bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-100 dark:border-slate-700 px-5 py-2 rounded-full text-sm font-bold shrink-0">Puntos</button>
+</div>
+<div class="px-6 space-y-4 pt-2">
+<div class="relative bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 transition-all active:scale-[0.98]">
+<div class="flex gap-4">
+<div class="shrink-0">
+<div class="flex items-center justify-center size-12 rounded-xl bg-gaudeix-orange/15 text-gaudeix-orange">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1">warning</span>
+</div>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<h3 class="text-slate-900 dark:text-white text-[17px] font-extrabold leading-snug">Cambio de ubicación por lluvia</h3>
+<span class="text-slate-400 text-[11px] font-bold uppercase mt-1">5 min</span>
+</div>
+<p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                        El concierto de <span class="font-bold text-slate-800 dark:text-slate-100">'Jazz a la Fresca'</span> se traslada al Teatre Municipal por previsión meteorológica.
+                    </p>
+</div>
+</div>
+</div>
+<div class="relative bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 transition-all active:scale-[0.98]">
+<div class="flex gap-4">
+<div class="shrink-0">
+<div class="flex items-center justify-center size-12 rounded-xl bg-gaudeix-blue/15 text-gaudeix-blue">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1">info</span>
+</div>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<h3 class="text-slate-900 dark:text-white text-[17px] font-extrabold leading-snug">Inscripciones abiertas</h3>
+<span class="text-slate-400 text-[11px] font-bold uppercase mt-1">2 h</span>
+</div>
+<p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                        Ya puedes apuntarte al <span class="font-bold">Taller de Cerámica Local</span> que se celebrará el próximo sábado en el centro cultural.
+                    </p>
+</div>
+</div>
+</div>
+<div class="relative bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 transition-all active:scale-[0.98]">
+<div class="flex gap-4">
+<div class="shrink-0">
+<div class="flex items-center justify-center size-12 rounded-xl bg-gaudeix-green/15 text-gaudeix-green">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1">workspace_premium</span>
+</div>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<h3 class="text-slate-900 dark:text-white text-[17px] font-extrabold leading-snug">¡Nuevos puntos Gaudeix!</h3>
+<span class="text-slate-400 text-[11px] font-bold uppercase mt-1">Ayer</span>
+</div>
+<p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                        ¡Enhorabuena! Has ganado <span class="text-gaudeix-green font-extrabold">50 puntos</span> por completar la ruta del 'Patrimoni Ocult'.
+                    </p>
+</div>
+</div>
+</div>
+<div class="relative bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 transition-all active:scale-[0.98]">
+<div class="flex gap-4">
+<div class="shrink-0">
+<div class="flex items-center justify-center size-12 rounded-xl bg-gaudeix-blue/15 text-gaudeix-blue">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1">event</span>
+</div>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<h3 class="text-slate-900 dark:text-white text-[17px] font-extrabold leading-snug">Mercado Medieval</h3>
+<span class="text-slate-400 text-[11px] font-bold uppercase mt-1">Ayer</span>
+</div>
+<p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                        No te pierdas la apertura del mercado mañana a las <span class="font-bold">10:00h</span> en la Plaza Mayor. Habrá música en vivo.
+                    </p>
+</div>
+</div>
+</div>
+</div>
+<div class="px-6 mt-10">
+<button class="w-full bg-slate-200/50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 py-4 rounded-2xl text-[15px] font-extrabold active:scale-[0.97] transition-all">
+            Ver historial completo
+        </button>
+</div>
+</main>
+<div class="fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-slate-900/95 ios-blur border-t border-slate-200 dark:border-slate-800 px-6 pt-3 pb-10 flex justify-between items-center max-w-md mx-auto">
+<div class="flex flex-col items-center gap-1 text-slate-400">
+<span class="material-symbols-outlined text-2xl">home</span>
+<span class="text-[10px] font-bold">Inicio</span>
+</div>
+<div class="flex flex-col items-center gap-1 text-slate-400">
+<span class="material-symbols-outlined text-2xl">explore</span>
+<span class="text-[10px] font-bold">Mapa</span>
+</div>
+<div class="flex flex-col items-center gap-1 text-gaudeix-blue">
+<div class="relative">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1">notifications</span>
+<span class="absolute -top-1 -right-1 flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-gaudeix-orange opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-gaudeix-orange"></span>
+</span>
+</div>
+<span class="text-[10px] font-bold">Avisos</span>
+</div>
+<div class="flex flex-col items-center gap-1 text-slate-400">
+<span class="material-symbols-outlined text-2xl">wallet</span>
+<span class="text-[10px] font-bold">Puntos</span>
+</div>
+<div class="flex flex-col items-center gap-1 text-slate-400">
+<span class="material-symbols-outlined text-2xl">person</span>
+<span class="text-[10px] font-bold">Perfil</span>
+</div>
+</div>
+
+</body></html>

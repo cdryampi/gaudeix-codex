@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#1abc9c",
+              "background-light": "#fafaf9",
+              "background-dark": "#22262a",
+            },
+            fontFamily: {
+              "display": ["Plus Jakarta Sans", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-nav-item {
+            background-color: rgba(26, 188, 156, 0.1);
+            color: #1abc9c;
+        }
+        .active-nav-item .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-800 dark:text-slate-100 antialiased">
+<!-- Mobile Screen Wrapper -->
+<div class="relative mx-auto h-screen max-w-[430px] overflow-hidden bg-white shadow-2xl dark:bg-background-dark">
+<!-- Main Content Background (Mocking the home screen behind the menu) -->
+<div class="absolute inset-0 z-0 opacity-40 blur-sm">
+<div class="flex flex-col gap-4 p-4">
+<div class="h-48 w-full rounded-xl bg-slate-200 dark:bg-slate-700"></div>
+<div class="h-10 w-3/4 rounded-lg bg-slate-200 dark:bg-slate-700"></div>
+<div class="grid grid-cols-2 gap-4">
+<div class="h-32 rounded-xl bg-slate-200 dark:bg-slate-700"></div>
+<div class="h-32 rounded-xl bg-slate-200 dark:bg-slate-700"></div>
+</div>
+</div>
+</div>
+<!-- Backdrop Overlay -->
+<div class="absolute inset-0 z-40 bg-black/30 backdrop-blur-[2px]"></div>
+<!-- Side Navigation Drawer -->
+<aside class="absolute left-0 top-0 z-50 flex h-full w-[85%] flex-col border-r border-slate-100 bg-white px-6 py-8 shadow-2xl dark:border-slate-800 dark:bg-background-dark">
+<!-- Header Section -->
+<div class="mb-10 flex items-center justify-between pt-4">
+<div class="flex items-center gap-3">
+<div class="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-white shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined !text-2xl">local_activity</span>
+</div>
+<div>
+<h1 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Gaudeix</h1>
+<p class="text-[10px] font-semibold uppercase tracking-widest text-primary">Cultura &amp; Puntos</p>
+</div>
+</div>
+<button class="flex h-8 w-8 items-center justify-center rounded-full bg-slate-50 text-slate-400 dark:bg-slate-800 dark:text-slate-500">
+<span class="material-symbols-outlined !text-xl">chevron_left</span>
+</button>
+</div>
+<!-- Primary Navigation -->
+<nav class="flex-1 space-y-1">
+<p class="mb-4 px-2 text-[11px] font-bold uppercase tracking-wider text-slate-400">Descubrir</p>
+<a class="active-nav-item flex items-center gap-4 rounded-xl px-4 py-3.5 transition-all" href="#">
+<span class="material-symbols-outlined">help_outline</span>
+<span class="text-[15px] font-medium leading-none">¿Cómo funciona Gaudeix?</span>
+</a>
+<a class="flex items-center gap-4 rounded-xl px-4 py-3.5 text-slate-600 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800/50" href="#">
+<span class="material-symbols-outlined">map</span>
+<span class="text-[15px] font-medium leading-none">Sobre el Pueblo</span>
+</a>
+<a class="flex items-center gap-4 rounded-xl px-4 py-3.5 text-slate-600 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800/50" href="#">
+<span class="material-symbols-outlined">campaign</span>
+<span class="text-[15px] font-medium leading-none">Avisos Municipales</span>
+</a>
+<div class="my-6 border-t border-slate-100 dark:border-slate-800"></div>
+<p class="mb-4 px-2 text-[11px] font-bold uppercase tracking-wider text-slate-400">Soporte y Cuenta</p>
+<a class="flex items-center gap-4 rounded-xl px-4 py-3.5 text-slate-600 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800/50" href="#">
+<span class="material-symbols-outlined">support_agent</span>
+<span class="text-[15px] font-medium leading-none">Asistencia y Soporte</span>
+</a>
+<a class="flex items-center gap-4 rounded-xl px-4 py-3.5 text-slate-600 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800/50" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-[15px] font-medium leading-none">Configuración</span>
+</a>
+</nav>
+<!-- Bottom Section / User Profile -->
+<div class="mt-auto pt-6">
+<div class="mb-6 rounded-2xl bg-slate-50 p-4 dark:bg-slate-800/50">
+<div class="flex items-center gap-3">
+<div class="h-10 w-10 overflow-hidden rounded-full ring-2 ring-primary/20">
+<img alt="User" class="h-full w-full object-cover" data-alt="Modern minimalist male profile avatar portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_oJxS1hC0Hmh7mE2497gr-UbUWzoa_cR8RPE8HZlCrewl8RmusHhePjsx8JKvWdy3clTYpIbawfRIv4JwZosq2DXdWOYHqi65Z3kzWkSxsPEDmZuc41HcQo24a6uuNzBpfi17I8Ifq79cw00wXpbi7W0NJ1LpNw9l4jxc4yRGvzd1TaTM9-O2PXX0XE7xuqPBSljpuZKMfsLYLa5gNxyLH7K0uLYj0QKkCxsUDZgkJr-Yo50lr8L76IfLYU3lFxkGOKrPMB2sv-g"/>
+</div>
+<div class="flex flex-col">
+<span class="text-sm font-bold text-slate-900 dark:text-white">Joan Martí</span>
+<span class="flex items-center gap-1 text-xs font-semibold text-primary">
+<span class="material-symbols-outlined !text-xs">stars</span>
+                                1,240 puntos
+                            </span>
+</div>
+</div>
+</div>
+<button class="group flex w-full items-center gap-4 rounded-xl px-4 py-3 text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10">
+<span class="material-symbols-outlined">logout</span>
+<span class="text-[15px] font-semibold">Cerrar sesión</span>
+</button>
+</div>
+</aside>
+<!-- Bottom Tab Bar (Visible underneath for context) -->
+<div class="absolute bottom-0 z-30 flex w-full justify-around border-t border-slate-100 bg-white/80 pb-6 pt-3 backdrop-blur-md dark:border-slate-800 dark:bg-background-dark/80">
+<div class="flex flex-col items-center gap-1 text-primary">
+<span class="material-symbols-outlined">explore</span>
+<span class="text-[10px] font-medium">Explorar</span>
+</div>
+<div class="flex flex-col items-center gap-1 text-slate-400">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="text-[10px] font-medium">Eventos</span>
+</div>
+<div class="flex flex-col items-center gap-1 text-slate-400">
+<span class="material-symbols-outlined">military_tech</span>
+<span class="text-[10px] font-medium">Puntos</span>
+</div>
+<div class="flex flex-col items-center gap-1 text-slate-400">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] font-medium">Perfil</span>
+</div>
+</div>
+</div>
+</body></html>
