@@ -194,6 +194,7 @@ REST_AUTH = {
     "USE_JWT": True,
     "JWT_AUTH_COOKIE": "gaudeix-auth",
     "JWT_AUTH_REFRESH_COOKIE": "gaudeix-refresh-token",
+    "LOGIN_METHODS": {"email", "username"},
 }
 
 AUTH_USER_MODEL = "users.User"
@@ -209,6 +210,8 @@ CORS_ALLOWED_ORIGINS = env.list(
     default=[
         "http://localhost:4173",
         "http://localhost:4174",
+        "http://localhost:5173",
+        "http://localhost:5174",
     ],
 )
 CORS_ALLOW_CREDENTIALS = True
@@ -217,6 +220,8 @@ CSRF_TRUSTED_ORIGINS = env.list(
     default=[
         "http://localhost:4173",
         "http://localhost:4174",
+        "http://localhost:5173",
+        "http://localhost:5174",
     ],
 )
 

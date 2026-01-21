@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import {
@@ -6,39 +6,57 @@ import {
   Users,
   Calendar,
   Image as ImageIcon,
+  FileText,
+  FolderOpen,
   Settings,
-  Menu,
   X,
   MapPin,
-  Bell,
+  Tag,
+  Bot,
   LogOut,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/app/providers/AuthProvider";
+import { ROUTES } from "@/lib/config/constants";
 
 interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
+  isDesktop?: boolean;
 }
 
 const MENU_ITEMS = [
-  { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
-  { icon: Users, label: "Usuarios", path: "/dashboard/users" },
-  { icon: Calendar, label: "Eventos", path: "/dashboard/events" },
-  { icon: MapPin, label: "Lugares", path: "/dashboard/places" },
-  { icon: Bell, label: "Avisos", path: "/dashboard/notifications" },
-  { icon: ImageIcon, label: "Media", path: "/dashboard/media" },
-  { icon: Settings, label: "Configuración", path: "/dashboard/settings" },
+  { icon: LayoutDashboard, label: "Resumen", path: ROUTES.DASHBOARD_HOME },
+  { icon: Users, label: "Usuarios", path: ROUTES.USERS },
+  { icon: Calendar, label: "Eventos", path: ROUTES.EVENTS },
+  { icon: MapPin, label: "Lugares", path: ROUTES.PLACES },
+  { icon: ImageIcon, label: "Media", path: ROUTES.MEDIA },
+  { icon: FolderOpen, label: "Categorías", path: ROUTES.CATEGORIES },
+  { icon: FileText, label: "Páginas", path: ROUTES.STATIC_PAGES },
+  { icon: Settings, label: "Ajustes del sitio", path: ROUTES.SITE_SETTINGS },
+  { icon: Tag, label: "Redes sociales", path: ROUTES.SOCIAL },
+  { icon: Bot, label: "LLM", path: ROUTES.LLM_SETTINGS },
 ];
 
-export function Sidebar({ isOpen, onClose }: SidebarProps) {
+export function Sidebar({ isOpen, onClose, isDesktop = false }: SidebarProps) {
   const location = useLocation();
   const { logout } = useAuth();
+
+  useEffect(() => {
+    if (isDesktop || !isOpen) return;
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, [isDesktop, isOpen]);
+
+  const isVisible = isDesktop || isOpen;
 
   return (
     <>
       {/* Mobile Overlay */}
-      {isOpen && (
+      {!isDesktop && isOpen && (
         <div
           className="fixed inset-0 z-40 bg-black/50 lg:hidden"
           onClick={onClose}
@@ -48,8 +66,9 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       {/* Sidebar Container */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-64 transform bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 transition-transform duration-200 ease-in-out lg:translate-x-0 lg:static lg:inset-auto",
-          isOpen ? "translate-x-0" : "-translate-x-full"
+          "z-50 w-64 shrink-0 transform bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 transition-transform duration-200 ease-in-out",
+          isDesktop ? "sticky top-0 h-screen" : "fixed inset-y-0 left-0",
+          isVisible ? "translate-x-0" : "-translate-x-full"
         )}
       >
         <div className="flex h-full flex-col">
@@ -63,20 +82,25 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                 Gaudeix
               </span>
             </Link>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="lg:hidden"
-              onClick={onClose}
-            >
-              <X className="h-5 w-5" />
-            </Button>
+            {!isDesktop && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="lg:hidden"
+                onClick={onClose}
+              >
+                <X className="h-5 w-5" />
+              </Button>
+            )}
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
+          <nav className="flex-1 min-h-0 overflow-y-auto px-3 py-4 space-y-1">
             {MENU_ITEMS.map((item) => {
-              const isActive = location.pathname === item.path;
+              const isActive =
+                item.path === ROUTES.DASHBOARD_HOME
+                  ? location.pathname === item.path
+                  : location.pathname.startsWith(item.path);
               return (
                 <Link
                   key={item.path}
@@ -87,7 +111,11 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                       ? "bg-primary/10 text-primary dark:bg-primary/20"
                       : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
                   )}
-                  onClick={() => window.innerWidth < 1024 && onClose()}
+                  onClick={() => {
+                    if (!isDesktop) {
+                      onClose();
+                    }
+                  }}
                 >
                   <item.icon className="h-5 w-5" />
                   {item.label}

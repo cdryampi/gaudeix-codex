@@ -6,7 +6,7 @@ describe("DashboardLayout", () => {
   it("renders sidebar with navigation", () => {
     render(<DashboardLayout />);
 
-    expect(screen.getByText("Dashboard")).toBeInTheDocument();
+    expect(screen.getByText("Resumen")).toBeInTheDocument();
     expect(screen.getByText("Usuarios")).toBeInTheDocument();
     expect(screen.getByText("Media")).toBeInTheDocument();
     expect(screen.getByText("Eventos")).toBeInTheDocument();

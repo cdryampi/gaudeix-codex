@@ -127,11 +127,19 @@ class Place(ContentBase, TranslatableModel):
     def clean(self) -> None:
         super().clean()
         if self.latitude is not None and (self.latitude < -90 or self.latitude > 90):
-            raise ValidationError({"latitude": _("Latitude must be between -90 and 90.")})
-        if self.longitude is not None and (self.longitude < -180 or self.longitude > 180):
-            raise ValidationError({"longitude": _("Longitude must be between -180 and 180.")})
+            raise ValidationError(
+                {"latitude": _("Latitude must be between -90 and 90.")}
+            )
+        if self.longitude is not None and (
+            self.longitude < -180 or self.longitude > 180
+        ):
+            raise ValidationError(
+                {"longitude": _("Longitude must be between -180 and 180.")}
+            )
         if (self.latitude is None) != (self.longitude is None):
-            raise ValidationError(_("Both latitude and longitude must be set together."))
+            raise ValidationError(
+                _("Both latitude and longitude must be set together.")
+            )
 
     def save(self, *args, **kwargs):
         # Auto-assign default category if not set
@@ -154,7 +162,9 @@ class Place(ContentBase, TranslatableModel):
         from django.utils.text import slugify
 
         if self.pk:
-            base_title = self.safe_translation_getter("title", any_language=True) or "place"
+            base_title = (
+                self.safe_translation_getter("title", any_language=True) or "place"
+            )
         else:
             base_title = getattr(self, "title", None) or "place"
         base_slug = slugify(base_title) or "place"
@@ -166,3 +176,92 @@ class Place(ContentBase, TranslatableModel):
             counter += 1
 
         return slug_candidate
+
+
+class Restaurant(Place):
+    """
+    Specialized Place model for Restaurants/Bars.
+    Inherits all Place fields and adds specific dining attributes.
+    """
+
+    CUISINE_TYPES = [
+        ("mediterranean", _("Mediterranean")),
+        ("italian", _("Italian")),
+        ("asian", _("Asian")),
+        ("fast_food", _("Fast Food")),
+        ("traditional", _("Traditional")),
+        ("tapas", _("Tapas")),
+        ("vegan", _("Vegan/Vegetarian")),
+        ("other", _("Other")),
+    ]
+
+    cuisine_type = models.CharField(
+        _("Cuisine Type"),
+        max_length=50,
+        choices=CUISINE_TYPES,
+        default="other",
+    )
+
+    amenities = models.JSONField(
+        _("Amenities"),
+        default=dict,
+        blank=True,
+        help_text=_(
+            "JSON object with boolean flags: wifi, terrace, pet_friendly, etc."
+        ),
+    )
+
+    capacity = models.PositiveIntegerField(
+        _("Capacity"),
+        null=True,
+        blank=True,
+        help_text=_("Total seating capacity"),
+    )
+
+    class Meta:
+        verbose_name = _("Restaurant")
+        verbose_name_plural = _("Restaurants")
+
+
+class Accommodation(Place):
+    """
+    Specialized Place model for Hotels, Hostels, etc.
+    Inherits all Place fields and adds lodging attributes.
+    """
+
+    ACCOMMODATION_TYPES = [
+        ("hotel", _("Hotel")),
+        ("hostel", _("Hostel")),
+        ("apartment", _("Apartment")),
+        ("campsite", _("Campsite")),
+        ("rural", _("Rural House")),
+        ("other", _("Other")),
+    ]
+
+    type = models.CharField(
+        _("Accommodation Type"),
+        max_length=50,
+        choices=ACCOMMODATION_TYPES,
+        default="hotel",
+    )
+
+    stars = models.PositiveSmallIntegerField(
+        _("Stars"),
+        null=True,
+        blank=True,
+        help_text=_("Star rating (1-5)"),
+    )
+
+    amenities = models.JSONField(
+        _("Amenities"),
+        default=dict,
+        blank=True,
+        help_text=_("JSON object with boolean flags: wifi, pool, parking, ac, etc."),
+    )
+
+    check_in_time = models.TimeField(_("Check-in Time"), null=True, blank=True)
+    check_out_time = models.TimeField(_("Check-out Time"), null=True, blank=True)
+
+    class Meta:
+        verbose_name = _("Accommodation")
+        verbose_name_plural = _("Accommodations")

@@ -7,7 +7,7 @@ from parler_rest.serializers import TranslatableModelSerializer, TranslatedField
 from core.models import Category
 from media_files.models import DocumentFile, ImageFile
 from media_files.serializers import DocumentFileSerializer, ImageFileSerializer
-from .models import Place
+from .models import Place, Restaurant, Accommodation
 
 
 class PlaceTranslationSerializer(serializers.Serializer):
@@ -94,7 +94,10 @@ class PlaceSerializer(TranslatableModelSerializer):
             base_values["description"] = self.initial_data.get("description")
         if base_values:
             translations = translated_data.get("translations") or {}
-            translations[base_language] = {**translations.get(base_language, {}), **base_values}
+            translations[base_language] = {
+                **translations.get(base_language, {}),
+                **base_values,
+            }
             translated_data["translations"] = translations
 
         instance = serializers.ModelSerializer.save(self, **kwargs)
@@ -107,16 +110,23 @@ class PlaceSerializer(TranslatableModelSerializer):
         category = validated_data.pop("category_id", None)
         base_language = settings.LANGUAGE_CODE
         title = validated_data.pop("title", None) or self.initial_data.get("title")
-        description = validated_data.pop("description", None) or self.initial_data.get("description")
+        description = validated_data.pop("description", None) or self.initial_data.get(
+            "description"
+        )
         featured_media = validated_data.pop("featured_media_id", None)
 
         # Backward compatibility: allow featured_media / attachments keys as in tests
         if featured_media is None and self.initial_data.get("featured_media"):
-            featured_media = ImageFile.objects.filter(pk=self.initial_data.get("featured_media")).first()
+            featured_media = ImageFile.objects.filter(
+                pk=self.initial_data.get("featured_media")
+            ).first()
         if not attachments and self.initial_data.get("attachments"):
-            attachments = list(DocumentFile.objects.filter(pk__in=self.initial_data.get("attachments")))
+            attachments = list(
+                DocumentFile.objects.filter(pk__in=self.initial_data.get("attachments"))
+            )
 
-        instance = Place()
+        ModelClass = self.Meta.model
+        instance = ModelClass()
         instance.set_current_language(base_language)
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
@@ -133,7 +143,9 @@ class PlaceSerializer(TranslatableModelSerializer):
             instance.save()
 
         if translations_data:
-            self._apply_translations(instance, translations_data, skip_language=base_language)
+            self._apply_translations(
+                instance, translations_data, skip_language=base_language
+            )
             instance.set_current_language(base_language)
         if title is not None or description is not None:
             if title is not None:
@@ -151,13 +163,19 @@ class PlaceSerializer(TranslatableModelSerializer):
         category = validated_data.pop("category_id", None)
         base_language = settings.LANGUAGE_CODE
         title = validated_data.pop("title", None) or self.initial_data.get("title")
-        description = validated_data.pop("description", None) or self.initial_data.get("description")
+        description = validated_data.pop("description", None) or self.initial_data.get(
+            "description"
+        )
         featured_media = validated_data.pop("featured_media_id", None)
 
         if featured_media is None and self.initial_data.get("featured_media"):
-            featured_media = ImageFile.objects.filter(pk=self.initial_data.get("featured_media")).first()
+            featured_media = ImageFile.objects.filter(
+                pk=self.initial_data.get("featured_media")
+            ).first()
         if attachments is None and self.initial_data.get("attachments"):
-            attachments = list(DocumentFile.objects.filter(pk__in=self.initial_data.get("attachments")))
+            attachments = list(
+                DocumentFile.objects.filter(pk__in=self.initial_data.get("attachments"))
+            )
         instance.set_current_language(base_language)
 
         for attr, value in validated_data.items():
@@ -174,7 +192,9 @@ class PlaceSerializer(TranslatableModelSerializer):
             instance.featured_media = featured_media
             instance.save()
         if translations_data:
-            self._apply_translations(instance, translations_data, skip_language=base_language)
+            self._apply_translations(
+                instance, translations_data, skip_language=base_language
+            )
             instance.set_current_language(base_language)
         if title is not None or description is not None:
             if title is not None:
@@ -186,7 +206,9 @@ class PlaceSerializer(TranslatableModelSerializer):
             instance.attachments.set(attachments)
         return instance
 
-    def _apply_translations(self, instance: Place, translations: dict, skip_language: str | None = None) -> None:
+    def _apply_translations(
+        self, instance: Place, translations: dict, skip_language: str | None = None
+    ) -> None:
         for language_code, values in translations.items():
             if skip_language and language_code == skip_language:
                 continue
@@ -202,3 +224,37 @@ class PlaceDetailSerializer(PlaceSerializer):
 
     class Meta(PlaceSerializer.Meta):
         fields = PlaceSerializer.Meta.fields
+
+
+class RestaurantSerializer(PlaceSerializer):
+    """
+    Serializer for Restaurant model.
+    Adds cuisine_type, amenities, and capacity fields.
+    """
+
+    class Meta(PlaceSerializer.Meta):
+        model = Restaurant
+
+        fields = PlaceSerializer.Meta.fields + [
+            "cuisine_type",
+            "amenities",
+            "capacity",
+        ]
+
+
+class AccommodationSerializer(PlaceSerializer):
+    """
+    Serializer for Accommodation model.
+    Adds type, stars, amenities, and check-in/out times.
+    """
+
+    class Meta(PlaceSerializer.Meta):
+        model = Accommodation
+
+        fields = PlaceSerializer.Meta.fields + [
+            "type",
+            "stars",
+            "amenities",
+            "check_in_time",
+            "check_out_time",
+        ]

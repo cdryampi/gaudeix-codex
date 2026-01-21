@@ -1,5 +1,6 @@
 interface HeaderProps {
     onMenuClick: () => void;
+    showMenuButton?: boolean;
 }
-export declare function Header({ onMenuClick }: HeaderProps): import("react/jsx-runtime").JSX.Element;
+export declare function Header({ onMenuClick, showMenuButton }: HeaderProps): import("react/jsx-runtime").JSX.Element;
 export {};

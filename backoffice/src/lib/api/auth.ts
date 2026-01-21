@@ -3,7 +3,7 @@
  * Handles login, logout, and token management
  */
 
-import { envConfig } from "@/lib/config/env";
+import client from "@/lib/api/client";
 import type { User, DjangoUser } from "@/types";
 
 interface LoginCredentials {
@@ -30,64 +30,34 @@ export const authService = {
    * Login with username and password
    */
   async login(credentials: LoginCredentials): Promise<LoginResponse> {
-    const response = await fetch(`${envConfig.apiBaseUrl}/auth/login/`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(credentials),
-    });
-
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({ detail: "Login failed" }));
-      throw new Error(error.detail || "Login failed");
-    }
-
-    return response.json();
+    const { data } = await client.post<LoginResponse>("/auth/login/", credentials);
+    return data;
   },
 
   /**
-   * Logout (client-side only, invalidate tokens)
+   * Logout (invalidate tokens)
    */
-  logout(): void {
-    // In a real app, you might want to call a backend endpoint to invalidate the token
-    // For now, we just clear the client-side state
+  async logout(): Promise<void> {
+    await client.post("/auth/logout/");
   },
 
   /**
    * Refresh access token
    */
   async refreshToken(refreshToken: string): Promise<RefreshResponse> {
-    const response = await fetch(`${envConfig.apiBaseUrl}/auth/token/refresh/`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ refresh: refreshToken }),
+    const { data } = await client.post<RefreshResponse>("/auth/token/refresh/", {
+      refresh: refreshToken,
     });
-
-    if (!response.ok) {
-      throw new Error("Failed to refresh token");
-    }
-
-    return response.json();
+    return data;
   },
 
   /**
    * Get current user info
    */
-  async getCurrentUser(token: string): Promise<User> {
-    const response = await fetch(`${envConfig.apiBaseUrl}/auth/me/`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch user");
-    }
-
-    return response.json();
+  async getCurrentUser(token?: string): Promise<User> {
+    // Token is optional now as it might be handled by cookies/interceptor
+    const { data } = await client.get<User>("/auth/user/");
+    return data;
   },
 
   /**
@@ -99,37 +69,15 @@ export const authService = {
     password: string;
     name?: string;
   }): Promise<LoginResponse> {
-    const response = await fetch(`${envConfig.apiBaseUrl}/auth/register/`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({ detail: "Registration failed" }));
-      throw new Error(error.detail || "Registration failed");
-    }
-
-    return response.json();
+    const { data: responseData } = await client.post<LoginResponse>("/auth/register/", data);
+    return responseData;
   },
 
   /**
    * Request password reset
    */
   async requestPasswordReset(email: string): Promise<void> {
-    const response = await fetch(`${envConfig.apiBaseUrl}/auth/password/reset/`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email }),
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to request password reset");
-    }
+    await client.post("/auth/password/reset/", { email });
   },
 
   /**
@@ -140,16 +88,7 @@ export const authService = {
     uid: string;
     new_password: string;
   }): Promise<void> {
-    const response = await fetch(`${envConfig.apiBaseUrl}/auth/password/reset/confirm/`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to reset password");
-    }
+    await client.post("/auth/password/reset/confirm/", data);
   },
 };
+

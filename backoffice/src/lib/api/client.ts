@@ -8,6 +8,9 @@ const client = axios.create({
     'Content-Type': 'application/json',
   },
   timeout: 15000, // 15s timeout
+  withCredentials: true, // IMPORTANT: Send cookies with requests
+  xsrfCookieName: 'csrftoken', // Django default
+  xsrfHeaderName: 'X-CSRFToken', // Django default
 });
 
 // Request Interceptor: Attach Token
@@ -34,20 +37,25 @@ client.interceptors.response.use(
 
       try {
         const refreshToken = authStorage.getRefreshToken();
-        if (!refreshToken) {
-          throw new Error('No refresh token available');
-        }
+        const refreshPayload = refreshToken ? { refresh: refreshToken } : {};
 
         // Call refresh endpoint
-        const { data } = await axios.post(`${envConfig.apiBaseUrl}/auth/token/refresh/`, {
-          refresh: refreshToken,
-        });
+        const { data } = await axios.post(
+          `${envConfig.apiBaseUrl}/auth/token/refresh/`,
+          refreshPayload,
+          { withCredentials: true }
+        );
 
         // Store new access token
-        authStorage.setAccessToken(data.access);
+        if (data?.access) {
+          authStorage.setAccessToken(data.access);
+        }
+        if (data?.refresh) {
+          authStorage.setRefreshToken(data.refresh);
+        }
 
         // Update authorization header and retry request
-        if (originalRequest.headers) {
+        if (data?.access && originalRequest.headers) {
           originalRequest.headers.Authorization = `Bearer ${data.access}`;
         }
         return client(originalRequest);

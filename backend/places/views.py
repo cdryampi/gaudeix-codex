@@ -10,8 +10,13 @@ from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
-from .models import Place
-from .serializers import PlaceDetailSerializer, PlaceSerializer
+from .models import Place, Restaurant, Accommodation
+from .serializers import (
+    PlaceDetailSerializer,
+    PlaceSerializer,
+    RestaurantSerializer,
+    AccommodationSerializer,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -35,7 +40,12 @@ class PlaceViewSet(viewsets.ModelViewSet):
         return super().get_serializer_class()
 
     def get_queryset(self):
-        queryset = Place.objects.all()
+        # Use the queryset attribute if defined (for subclasses), otherwise Place.objects.all()
+        if self.queryset is not None:
+            queryset = self.queryset
+        else:
+            queryset = Place.objects.all()
+
         params = self.request.query_params
 
         is_published = params.get("is_published")
@@ -109,7 +119,10 @@ class PlaceViewSet(viewsets.ModelViewSet):
         phi2 = math.radians(lat2)
         d_phi = math.radians(lat2 - lat1)
         d_lambda = math.radians(lng2 - lng1)
-        a = math.sin(d_phi / 2) ** 2 + math.cos(phi1) * math.cos(phi2) * math.sin(d_lambda / 2) ** 2
+        a = (
+            math.sin(d_phi / 2) ** 2
+            + math.cos(phi1) * math.cos(phi2) * math.sin(d_lambda / 2) ** 2
+        )
         c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
         return r * c
 
@@ -127,7 +140,10 @@ class PlaceViewSet(viewsets.ModelViewSet):
 
         if source_lang not in place.get_available_languages():
             return Response(
-                {"success": False, "error": f"Place has no content in {source_lang} to translate from"},
+                {
+                    "success": False,
+                    "error": f"Place has no content in {source_lang} to translate from",
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -137,7 +153,10 @@ class PlaceViewSet(viewsets.ModelViewSet):
 
         if not source_title:
             return Response(
-                {"success": False, "error": f"Place has no content in {source_lang} to translate from"},
+                {
+                    "success": False,
+                    "error": f"Place has no content in {source_lang} to translate from",
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -180,16 +199,22 @@ class PlaceViewSet(viewsets.ModelViewSet):
                     "description": translated_description,
                 }
 
-                logger.info(f"Translated place {place.id} to {target_lang}: '{translated_title}'")
+                logger.info(
+                    f"Translated place {place.id} to {target_lang}: '{translated_title}'"
+                )
 
             except TranslationError as e:
                 error_msg = str(e)
                 errors[target_lang] = error_msg
-                logger.error(f"Failed to translate place {place.id} to {target_lang}: {error_msg}")
+                logger.error(
+                    f"Failed to translate place {place.id} to {target_lang}: {error_msg}"
+                )
             except Exception as e:
                 error_msg = f"Unexpected error: {str(e)}"
                 errors[target_lang] = error_msg
-                logger.exception(f"Unexpected error translating place {place.id} to {target_lang}")
+                logger.exception(
+                    f"Unexpected error translating place {place.id} to {target_lang}"
+                )
 
         return Response(
             {
@@ -198,5 +223,33 @@ class PlaceViewSet(viewsets.ModelViewSet):
                 "translations": translations,
                 "errors": errors,
             },
-            status=status.HTTP_200_OK if len(errors) == 0 else status.HTTP_207_MULTI_STATUS,
+            status=status.HTTP_200_OK
+            if len(errors) == 0
+            else status.HTTP_207_MULTI_STATUS,
         )
+
+
+class RestaurantViewSet(PlaceViewSet):
+    """
+    API endpoints for restaurants.
+    """
+
+    queryset = Restaurant.objects.all()
+    serializer_class = RestaurantSerializer
+
+    def get_serializer_class(self):
+        # We don't have a specific detail serializer yet, but we could add one
+        # For now, reuse the list serializer which has all fields
+        return RestaurantSerializer
+
+
+class AccommodationViewSet(PlaceViewSet):
+    """
+    API endpoints for accommodations.
+    """
+
+    queryset = Accommodation.objects.all()
+    serializer_class = AccommodationSerializer
+
+    def get_serializer_class(self):
+        return AccommodationSerializer

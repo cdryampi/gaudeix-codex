@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { Users, Calendar, MapPin, Bell } from "lucide-react";
+import { Users, Calendar, MapPin, Bell, FileText } from "lucide-react";
 import { StatCard } from "../components/StatCard";
 import { dashboardApi, DashboardStats } from "../api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { ROUTES } from "@/lib/config/constants";
 
 export function DashboardHome() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
@@ -28,6 +29,8 @@ export function DashboardHome() {
   if (loading) {
     return <div className="p-8 text-center">Cargando dashboard...</div>;
   }
+
+  const recentActivity = stats?.recentActivity ?? [];
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
@@ -81,20 +84,26 @@ export function DashboardHome() {
             <CardTitle>Actividad Reciente</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-8">
-              {stats?.recentActivity.map((activity) => (
-                <div key={activity.id} className="flex items-center">
-                  <div className="space-y-1">
-                    <p className="text-sm font-medium leading-none">
-                      {activity.message}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {new Date(activity.timestamp).toLocaleString()}
-                    </p>
+            {recentActivity.length === 0 ? (
+              <p className="text-sm text-muted-foreground">
+                Sin actividad reciente.
+              </p>
+            ) : (
+              <div className="space-y-8">
+                {recentActivity.map((activity) => (
+                  <div key={activity.id} className="flex items-center">
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium leading-none">
+                        {activity.message}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {new Date(activity.timestamp).toLocaleString()}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -104,19 +113,19 @@ export function DashboardHome() {
             <CardTitle>Accesos Rápidos</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Link to="/dashboard/events/new" className="block">
+            <Link to={ROUTES.EVENTS} className="block">
               <Button variant="outline" className="w-full justify-start mb-2">
                 <Calendar className="mr-2 h-4 w-4" />
-                Crear Nuevo Evento
+                Gestionar Eventos
               </Button>
             </Link>
-            <Link to="/dashboard/notifications/new" className="block">
+            <Link to={ROUTES.STATIC_PAGES} className="block">
               <Button variant="outline" className="w-full justify-start mb-2">
-                <Bell className="mr-2 h-4 w-4" />
-                Enviar Aviso
+                <FileText className="mr-2 h-4 w-4" />
+                Editar Páginas
               </Button>
             </Link>
-            <Link to="/dashboard/users" className="block">
+            <Link to={ROUTES.USERS} className="block">
               <Button variant="outline" className="w-full justify-start">
                 <Users className="mr-2 h-4 w-4" />
                 Gestionar Usuarios

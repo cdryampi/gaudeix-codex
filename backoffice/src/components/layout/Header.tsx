@@ -1,4 +1,5 @@
 import { Menu, Bell, Search, User as UserIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -14,9 +15,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface HeaderProps {
   onMenuClick: () => void;
+  showMenuButton?: boolean;
 }
 
-export function Header({ onMenuClick }: HeaderProps) {
+export function Header({ onMenuClick, showMenuButton = true }: HeaderProps) {
   const { user, logout } = useAuth();
 
   const getInitials = (name: string) => {
@@ -30,14 +32,16 @@ export function Header({ onMenuClick }: HeaderProps) {
 
   return (
     <header className="sticky top-0 z-30 flex h-16 w-full items-center gap-4 border-b border-gray-200 bg-white px-6 dark:bg-gray-900 dark:border-gray-800">
-      <Button
-        variant="ghost"
-        size="icon"
-        className="lg:hidden -ml-2"
-        onClick={onMenuClick}
-      >
-        <Menu className="h-5 w-5" />
-      </Button>
+      {showMenuButton && (
+        <Button
+          variant="ghost"
+          size="icon"
+          className={cn("lg:hidden -ml-2", !showMenuButton && "hidden")}
+          onClick={onMenuClick}
+        >
+          <Menu className="h-5 w-5" />
+        </Button>
+      )}
 
       <div className="flex-1 flex items-center gap-4 md:gap-8">
         <div className="relative flex-1 max-w-md hidden md:block">

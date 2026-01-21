@@ -6,11 +6,10 @@ export const authApi = {
   login: async (credentials: LoginCredentials): Promise<LoginResponse> => {
     const { data } = await client.post<LoginResponse>('/auth/login/', credentials);
     // Automatically store tokens on success
-    if (data.access && data.refresh) {
-      // Use saveSession to store tokens, though user data will be updated later
-      // We pass a dummy user initially or update authStorage methods to be more granular if needed
-      // But authStorage has separate setters, so we can use those.
+    if (data.access) {
       authStorage.setAccessToken(data.access);
+    }
+    if (data.refresh) {
       authStorage.setRefreshToken(data.refresh);
     }
     return data;
