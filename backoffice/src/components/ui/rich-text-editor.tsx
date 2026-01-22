@@ -22,6 +22,9 @@ import {
   AlignLeft,
   AlignCenter,
   AlignRight,
+  Heading1,
+  Heading2,
+  Heading3,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -164,6 +167,48 @@ export function RichTextEditor({
           disabled={disabled}
         >
           <Code className="h-4 w-4" />
+        </Button>
+
+        <div className="w-px h-8 bg-border mx-1" />
+
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+          className={cn(
+            "h-8 w-8 p-0",
+            editor.isActive("heading", { level: 1 }) && "bg-accent"
+          )}
+          disabled={disabled}
+        >
+          <Heading1 className="h-4 w-4" />
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+          className={cn(
+            "h-8 w-8 p-0",
+            editor.isActive("heading", { level: 2 }) && "bg-accent"
+          )}
+          disabled={disabled}
+        >
+          <Heading2 className="h-4 w-4" />
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+          className={cn(
+            "h-8 w-8 p-0",
+            editor.isActive("heading", { level: 3 }) && "bg-accent"
+          )}
+          disabled={disabled}
+        >
+          <Heading3 className="h-4 w-4" />
         </Button>
 
         <div className="w-px h-8 bg-border mx-1" />

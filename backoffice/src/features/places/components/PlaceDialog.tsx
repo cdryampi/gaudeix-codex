@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
@@ -342,10 +343,9 @@ export function PlaceDialog({ open, onOpenChange, onSubmit, place }: Props) {
                   />
                   <div className="space-y-2">
                     <Label htmlFor={`description-${lang.code}`}>Descripción {isBase ? "" : `(${lang.name})`}</Label>
-                    <Textarea
-                      id={`description-${lang.code}`}
+                    <RichTextEditor
                       value={content.description || ""}
-                      onChange={(e) => updateField(lang.code, "description", e.target.value)}
+                      onChange={(value) => updateField(lang.code, "description", value)}
                       placeholder={isBase ? "Descripción del lugar" : "Traducción automática o manual"}
                     />
                   </div>
