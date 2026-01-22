@@ -32,7 +32,7 @@ export function FeaturedCategoryCard({ category }: { category: FeaturedCategory 
         <div className="absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-black/65 via-black/30 to-transparent p-4">
           <div className="flex items-center gap-2">
             <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/15 ring-1 ring-white/20 backdrop-blur">
-              <Icon className="h-4 w-4 text-puerto-rico-300" aria-hidden="true" />
+              <Icon className="h-4 w-4 text-accent" aria-hidden="true" />
             </span>
             <span className="text-sm font-semibold text-white drop-shadow">{category.title}</span>
           </div>

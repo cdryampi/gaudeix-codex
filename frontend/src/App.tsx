@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 
-import { Button } from "flowbite-react";
 import { Facebook, Instagram, X, Youtube } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { InteractiveMap } from "@/components/site/InteractiveMap";
 import { HeroVideoFrame } from "@/features/hero/components/HeroVideo";
@@ -103,52 +103,50 @@ export default function App() {
 
   function HomePage() {
     return (
-      <div className="min-h-screen bg-puerto-rico-50 text-slate-900">
+      <div className="min-h-screen bg-background-light text-text-primary">
         <SiteHeader siteName={settings?.site_name} />
 
         <main>
           <section id="inicio">
-              <HeroVideoFrame />
+            <HeroVideoFrame />
 
-              <div className="hidden relative h-[520px] overflow-hidden rounded-3xl bg-gray-200 shadow-sm ring-1 ring-gray-200">
-                <img
-                  src="https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=2400&q=80"
-                  alt="Costa de Cabrera de Mar"
-                  className="absolute inset-0 h-full w-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/35 to-black/20" />
+            <div className="hidden relative h-[520px] overflow-hidden rounded-3xl bg-gray-200 shadow-sm ring-1 ring-gray-200">
+              <img
+                src="https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=2400&q=80"
+                alt="Costa de Cabrera de Mar"
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/35 to-black/20" />
 
-                <div className="relative flex h-full items-center justify-center px-6">
-                  <div className="max-w-3xl text-center text-white">
-                    <h1 className="text-balance text-4xl font-extrabold leading-tight tracking-tight drop-shadow md:text-5xl">
-                      Descubre la magia de Cabrera de Mar
-                    </h1>
-                    <p className="mx-auto mt-4 max-w-2xl text-pretty text-sm/6 text-white/90 md:text-base">
-                      Explora la belleza de Cabrera de Mar, un destino que combina historia, cultura y naturaleza en un
-                      entorno mediterráneo único.
-                    </p>
-                    <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
-                      <Button
-                        color="success"
-                        size="lg"
-                        href="#categorias"
-                        className="!bg-puerto-rico-500 hover:!bg-puerto-rico-600"
-                      >
-                        Explorar
-                      </Button>
-                      <Button
-                        color="light"
-                        size="lg"
-                        outline
-                        href="#eventos"
-                        className="border-white/40 bg-white/10 text-white hover:bg-white/20 hover:text-white"
-                      >
-                        Ver agenda
-                      </Button>
-                    </div>
+              <div className="relative flex h-full items-center justify-center px-6">
+                <div className="max-w-3xl text-center text-white">
+                  <h1 className="text-balance text-4xl font-extrabold leading-tight tracking-tight drop-shadow md:text-5xl">
+                    Descubre la magia de Cabrera de Mar
+                  </h1>
+                  <p className="mx-auto mt-4 max-w-2xl text-pretty text-sm/6 text-white/90 md:text-base">
+                    Explora la belleza de Cabrera de Mar, un destino que combina historia, cultura y naturaleza en un
+                    entorno mediterráneo único.
+                  </p>
+                  <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
+                    <Button
+                      variant="success"
+                      size="lg"
+                      asChild
+                    >
+                      <a href="#categorias">Explorar</a>
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      asChild
+                      className="border-white/40 bg-white/10 text-white hover:bg-white/20 hover:text-white"
+                    >
+                      <a href="#eventos">Ver agenda</a>
+                    </Button>
                   </div>
                 </div>
               </div>
+            </div>
           </section>
 
           <section id="categorias" className="py-16">
@@ -179,14 +177,14 @@ export default function App() {
             <div className="container">
               <div className="mb-10 flex items-end justify-between px-4">
                 <div className="space-y-1">
-                  <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">Últimas noticias</h2>
-                  <p className="text-sm text-gray-500">Mantente informado sobre todo lo que sucede en el municipio.</p>
+                  <h2 className="text-3xl font-extrabold tracking-tight text-text-primary sm:text-4xl">Últimas noticias</h2>
+                  <p className="text-sm text-text-secondary">Mantente informado sobre todo lo que sucede en el municipio.</p>
                 </div>
-                <a href="/noticias" className="hidden text-sm font-bold text-puerto-rico-600 hover:text-puerto-rico-700 sm:block">
+                <a href="/noticias" className="hidden text-sm font-bold text-primary hover:text-primary/80 sm:block">
                   Ver todas las noticias →
                 </a>
               </div>
-              
+
               <AnimatedCardGrid className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
                 {latestNews.slice(0, 3).map((news) => (
                   <NewsCard key={news.id} news={news} />
@@ -194,8 +192,8 @@ export default function App() {
               </AnimatedCardGrid>
 
               <div className="mt-10 flex justify-center sm:hidden">
-                <Button color="light" className="w-full" href="/noticias">
-                  Ver todas las noticias
+                <Button variant="outline" className="w-full" asChild>
+                  <a href="/noticias">Ver todas las noticias</a>
                 </Button>
               </div>
             </div>
@@ -213,17 +211,17 @@ export default function App() {
           <section id="newsletter" className="bg-gray-50 py-16">
             <div className="container">
               <h2 className="text-center text-2xl font-semibold tracking-tight">Suscríbete a nuestra newsletter</h2>
-              <p className="mx-auto mt-3 max-w-2xl text-center text-sm text-gray-600">
+              <p className="mx-auto mt-3 max-w-2xl text-center text-sm text-text-secondary">
                 Recibe las últimas noticias, eventos y ofertas exclusivas directamente en tu bandeja de entrada.
               </p>
-              <form className="mx-auto mt-8 flex max-w-xl overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
+              <form className="mx-auto mt-8 flex max-w-xl overflow-hidden rounded-lg border border-border-light bg-white shadow-sm">
                 <input
-                  className="h-11 flex-1 bg-transparent px-4 text-sm outline-none placeholder:text-gray-500"
+                  className="h-11 flex-1 bg-transparent px-4 text-sm outline-none placeholder:text-text-tertiary"
                   placeholder="Tu correo electrónico"
                   type="email"
                 />
                 <button
-                  className="h-11 bg-puerto-rico-500 px-6 text-sm font-medium text-white hover:bg-puerto-rico-600"
+                  className="h-11 bg-primary px-6 text-sm font-medium text-white hover:bg-primary/90"
                   type="button"
                 >
                   Suscribirse
@@ -237,10 +235,10 @@ export default function App() {
               <h2 className="text-center text-2xl font-semibold tracking-tight">Cómo llegar</h2>
               <div className="mx-auto mt-8 max-w-xl space-y-3">
                 <input
-                  className="h-11 w-full rounded-lg border border-gray-200 bg-white px-4 text-sm outline-none placeholder:text-gray-500 focus:border-puerto-rico-500 focus:ring-2 focus:ring-puerto-rico-500/20"
+                  className="h-11 w-full rounded-lg border border-border-light bg-white px-4 text-sm outline-none placeholder:text-text-tertiary focus:border-primary focus:ring-2 focus:ring-primary/20"
                   placeholder="Tu ubicación (opcional)"
                 />
-                <Button color="success" size="xl" className="w-full !bg-puerto-rico-500 hover:!bg-puerto-rico-600">
+                <Button variant="success" size="xl" className="w-full">
                   Obtener indicaciones
                 </Button>
               </div>
@@ -248,24 +246,24 @@ export default function App() {
           </section>
         </main>
 
-        <footer className="border-t border-gray-200 bg-white py-10">
+        <footer className="border-t border-border-light bg-white py-10">
           <div className="container grid gap-8 md:grid-cols-3">
             <div className="space-y-3">
-              <p className="text-sm font-semibold text-gray-900">{settings?.site_name || "Gaudeix Cabrera de Mar"}</p>
-              <p className="text-sm text-gray-600">{settings?.tagline || "Turisme i cultura a Cabrera de Mar"}</p>
-              <p className="mt-3 text-xs text-gray-500">© {new Date().getFullYear()} Ajuntament de Cabrera de Mar</p>
+              <p className="text-sm font-semibold text-text-primary">{settings?.site_name || "Gaudeix Cabrera de Mar"}</p>
+              <p className="text-sm text-text-secondary">{settings?.tagline || "Turisme i cultura a Cabrera de Mar"}</p>
+              <p className="mt-3 text-xs text-text-tertiary">© {new Date().getFullYear()} Ajuntament de Cabrera de Mar</p>
             </div>
-            <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm text-gray-600 md:justify-end">
-              <a className="no-underline hover:text-gray-900" href="#page-privacy">
+            <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm text-text-secondary md:justify-end">
+              <a className="no-underline hover:text-text-primary" href="#page-privacy">
                 Política de privacidad
               </a>
-              <a className="no-underline hover:text-gray-900" href="#page-cookies">
+              <a className="no-underline hover:text-text-primary" href="#page-cookies">
                 Cookies
               </a>
-              <a className="no-underline hover:text-gray-900" href="#page-legal_notice">
+              <a className="no-underline hover:text-text-primary" href="#page-legal_notice">
                 Aviso legal
               </a>
-              <a className="no-underline hover:text-gray-900" href="#page-contact">
+              <a className="no-underline hover:text-text-primary" href="#page-contact">
                 Contacto
               </a>
             </div>
@@ -274,7 +272,7 @@ export default function App() {
                 href="https://facebook.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-gray-600 transition hover:bg-gray-200 hover:text-gray-900"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-text-secondary transition hover:bg-gray-200 hover:text-text-primary"
                 aria-label="Facebook"
               >
                 <Facebook className="h-5 w-5" />
@@ -283,7 +281,7 @@ export default function App() {
                 href="https://instagram.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-gray-600 transition hover:bg-gray-200 hover:text-gray-900"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-text-secondary transition hover:bg-gray-200 hover:text-text-primary"
                 aria-label="Instagram"
               >
                 <Instagram className="h-5 w-5" />
@@ -292,7 +290,7 @@ export default function App() {
                 href="https://twitter.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-gray-600 transition hover:bg-gray-200 hover:text-gray-900"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-text-secondary transition hover:bg-gray-200 hover:text-text-primary"
                 aria-label="Twitter / X"
               >
                 <Twitter className="h-5 w-5" />
@@ -301,7 +299,7 @@ export default function App() {
                 href="https://youtube.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-gray-600 transition hover:bg-gray-200 hover:text-gray-900"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-text-secondary transition hover:bg-gray-200 hover:text-text-primary"
                 aria-label="YouTube"
               >
                 <Youtube className="h-5 w-5" />

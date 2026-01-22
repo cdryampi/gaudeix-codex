@@ -1,0 +1,47 @@
+{
+  "name": "gaudeix-codex",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Gaudeix Codex - Mobile-first property management platform",
+  "scripts": {
+    "dev": "concurrently \"pnpm --filter mobile start\" \"pnpm --filter frontend dev\" \"pnpm --filter backoffice dev\"",
+    "dev:mobile": "pnpm --filter mobile start",
+    "dev:frontend": "pnpm --filter frontend dev",
+    "dev:backoffice": "pnpm --filter backoffice dev",
+    "build": "pnpm --filter mobile build && pnpm --filter frontend build && pnpm --filter backoffice build",
+    "build:mobile": "pnpm --filter mobile build",
+    "build:frontend": "pnpm --filter frontend build",
+    "build:backoffice": "pnpm --filter backoffice build",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:run": "vitest run",
+    "test:mobile": "pnpm --filter mobile test",
+    "test:frontend": "pnpm --filter frontend test",
+    "test:backoffice": "pnpm --filter backoffice test",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "lint": "pnpm --filter mobile lint && pnpm --filter frontend lint && pnpm --filter backoffice lint",
+    "type-check": "pnpm --filter mobile type-check && pnpm --filter frontend type-check && pnpm --filter backoffice type-check",
+    "clean": "pnpm --filter mobile clean && pnpm --filter frontend clean && pnpm --filter backoffice clean && rimraf node_modules",
+    "install:all": "pnpm install",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.57.0",
+    "@types/node": "^25.0.10",
+    "@vitest/coverage-v8": "^1.6.1",
+    "@vitest/ui": "^1.6.1",
+    "concurrently": "^9.1.2",
+    "husky": "^9.1.7",
+    "jsdom": "^27.4.0",
+    "lint-staged": "^16.2.7",
+    "rimraf": "^6.1.2",
+    "typescript": "5.9.2",
+    "vitest": "^1.6.1"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "packageManager": "pnpm@9.15.6"
+}

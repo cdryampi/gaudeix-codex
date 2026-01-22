@@ -6,9 +6,16 @@
     "latitude": 40.785091,
     "longitude": -73.968285,
     "category_slug": "poi",
+    "image_filename": "central_park.png",
     "translations": {
-      "es": { "title": "Parque Central", "description": "Gran parque urbano con senderos y lagos." },
-      "ca": { "title": "Parc Central", "description": "Gran parc urbà amb camins i llacs." }
+      "es": {
+        "title": "Parque Central",
+        "description": "Gran parque urbano con senderos y lagos."
+      },
+      "ca": {
+        "title": "Parc Central",
+        "description": "Gran parc urbà amb camins i llacs."
+      }
     }
   },
   {
@@ -18,9 +25,16 @@
     "latitude": 36.7783,
     "longitude": -119.4179,
     "category_slug": "beach",
+    "image_filename": "sunset_beach.png",
     "translations": {
-      "es": { "title": "Playa Sunset", "description": "Amplia playa de arena ideal para atardeceres." },
-      "ca": { "title": "Platja Sunset", "description": "Àmplia platja de sorra ideal per a capvespres." }
+      "es": {
+        "title": "Playa Sunset",
+        "description": "Amplia playa de arena ideal para atardeceres."
+      },
+      "ca": {
+        "title": "Platja Sunset",
+        "description": "Àmplia platja de sorra ideal per a capvespres."
+      }
     }
   },
   {
@@ -30,9 +44,16 @@
     "latitude": 42.0,
     "longitude": 2.0,
     "category_slug": "viewpoint",
+    "image_filename": "mountain_viewpoint.png",
     "translations": {
-      "es": { "title": "Mirador de la Montaña", "description": "Vistas panorámicas del valle." },
-      "ca": { "title": "Mirador de la Muntanya", "description": "Vistes panoràmiques de la vall." }
+      "es": {
+        "title": "Mirador de la Montaña",
+        "description": "Vistas panorámicas del valle."
+      },
+      "ca": {
+        "title": "Mirador de la Muntanya",
+        "description": "Vistes panoràmiques de la vall."
+      }
     }
   },
   {
@@ -42,9 +63,16 @@
     "latitude": 41.3874,
     "longitude": 2.1686,
     "category_slug": "museum",
+    "image_filename": "museum_modern_art.png",
     "translations": {
-      "es": { "title": "Museo de Arte Moderno", "description": "Exposiciones contemporáneas y visitas guiadas." },
-      "ca": { "title": "Museu d'Art Modern", "description": "Exposicions contemporànies i visites guiades." }
+      "es": {
+        "title": "Museo de Arte Moderno",
+        "description": "Exposiciones contemporáneas y visitas guiadas."
+      },
+      "ca": {
+        "title": "Museu d'Art Modern",
+        "description": "Exposicions contemporànies i visites guiades."
+      }
     }
   },
   {
@@ -54,9 +82,16 @@
     "latitude": 41.0,
     "longitude": 1.0,
     "category_slug": "hotel",
+    "image_filename": "seaside_hotel.png",
     "translations": {
-      "es": { "title": "Hotel Marítimo", "description": "Hotel de 4 estrellas con vistas al mar y spa." },
-      "ca": { "title": "Hotel Marítim", "description": "Hotel de 4 estrelles amb vistes al mar i spa." }
+      "es": {
+        "title": "Hotel Marítimo",
+        "description": "Hotel de 4 estrellas con vistas al mar y spa."
+      },
+      "ca": {
+        "title": "Hotel Marítim",
+        "description": "Hotel de 4 estrelles amb vistes al mar i spa."
+      }
     }
   },
   {
@@ -66,9 +101,16 @@
     "latitude": 41.4,
     "longitude": 2.17,
     "category_slug": "restaurant",
+    "image_filename": "local_bistro.png",
     "translations": {
-      "es": { "title": "Bistró Local", "description": "Cocina de temporada con ingredientes locales." },
-      "ca": { "title": "Bistró Local", "description": "Cuina de temporada amb ingredients locals." }
+      "es": {
+        "title": "Bistró Local",
+        "description": "Cocina de temporada con ingredientes locales."
+      },
+      "ca": {
+        "title": "Bistró Local",
+        "description": "Cuina de temporada amb ingredients locals."
+      }
     }
   },
   {
@@ -78,9 +120,16 @@
     "latitude": 40.4168,
     "longitude": -3.7038,
     "category_slug": "apartment",
+    "image_filename": "boutique_apartments.png",
     "translations": {
-      "es": { "title": "Apartamentos Boutique", "description": "Apartamentos con servicios en el centro." },
-      "ca": { "title": "Apartaments Boutique", "description": "Apartaments amb serveis al centre." }
+      "es": {
+        "title": "Apartamentos Boutique",
+        "description": "Apartamentos con servicios en el centro."
+      },
+      "ca": {
+        "title": "Apartaments Boutique",
+        "description": "Apartaments amb serveis al centre."
+      }
     }
   },
   {
@@ -90,10 +139,16 @@
     "latitude": 41.38,
     "longitude": 2.15,
     "category_slug": "bar",
+    "image_filename": "craft_beer_bar.png",
     "translations": {
-      "es": { "title": "Bar de Cerveza Artesanal", "description": "Taproom con cervezas locales rotativas." },
-      "ca": { "title": "Bar de Cervesa Artesanal", "description": "Taproom amb cerveses locals rotatives." }
+      "es": {
+        "title": "Bar de Cerveza Artesanal",
+        "description": "Taproom con cervezas locales rotativas."
+      },
+      "ca": {
+        "title": "Bar de Cervesa Artesanal",
+        "description": "Taproom amb cerveses locals rotatives."
+      }
     }
   }
 ]
-

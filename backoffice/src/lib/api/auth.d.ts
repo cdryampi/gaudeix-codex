@@ -25,9 +25,9 @@ export declare const authService: {
      */
     login(credentials: LoginCredentials): Promise<LoginResponse>;
     /**
-     * Logout (client-side only, invalidate tokens)
+     * Logout (invalidate tokens)
      */
-    logout(): void;
+    logout(): Promise<void>;
     /**
      * Refresh access token
      */
@@ -35,7 +35,7 @@ export declare const authService: {
     /**
      * Get current user info
      */
-    getCurrentUser(token: string): Promise<User>;
+    getCurrentUser(token?: string): Promise<User>;
     /**
      * Register new user
      */

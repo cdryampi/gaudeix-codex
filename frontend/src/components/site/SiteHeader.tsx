@@ -24,13 +24,13 @@ function MegaMenuContent({ items }: { items: HeaderNavItem[] }) {
       <div className="grid gap-6 sm:grid-cols-2">
         {groups.map((group, groupIndex) => (
           <div key={`${group.label}-${groupIndex}`} className="space-y-2">
-            <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">{group.label}</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-text-tertiary">{group.label}</p>
             <ul className="space-y-1">
               {group.children!.map((child, childIndex) => (
                 <li key={`${group.label}-${child.label}-${child.href ?? "group"}-${childIndex}`}>
                   <a
                     href={child.href || "#"}
-                    className="block rounded-md px-2 py-1.5 text-sm text-gray-700 no-underline hover:bg-gray-100 hover:text-gray-900"
+                    className="block rounded-md px-2 py-1.5 text-sm text-text-secondary no-underline hover:bg-surface-hover hover:text-text-primary"
                   >
                     {child.label}
                   </a>
@@ -46,7 +46,7 @@ function MegaMenuContent({ items }: { items: HeaderNavItem[] }) {
               <a
                 key={`${link.label}-${link.href ?? "#"}-${linkIndex}`}
                 href={link.href || "#"}
-                className="block rounded-md px-2 py-1.5 text-sm text-gray-700 no-underline hover:bg-gray-100 hover:text-gray-900"
+                className="block rounded-md px-2 py-1.5 text-sm text-text-secondary no-underline hover:bg-surface-hover hover:text-text-primary"
               >
                 {link.label}
               </a>
@@ -86,10 +86,10 @@ export function SiteHeader({ siteName = "Gaudeix Cabrera de Mar" }: { siteName?:
   );
 
   return (
-    <header className="sticky top-0 z-50 border-b border-gray-200 bg-white/95 backdrop-blur">
+    <header className="sticky top-0 z-50 border-b border-border-light bg-white/95 backdrop-blur">
       <div className="container flex h-16 items-center gap-6">
-        <a href="#inicio" className="flex items-center gap-2 text-gray-900 no-underline hover:text-gray-900">
-          <Sparkles className="h-5 w-5 text-puerto-rico-500" />
+        <a href="#inicio" className="flex items-center gap-2 text-text-primary no-underline hover:text-text-primary">
+          <Sparkles className="h-5 w-5 text-primary" />
           <span className="text-sm font-semibold tracking-tight">{siteName}</span>
         </a>
 
@@ -106,7 +106,7 @@ export function SiteHeader({ siteName = "Gaudeix Cabrera de Mar" }: { siteName?:
                   renderTrigger={() => (
                     <button
                       type="button"
-                      className="inline-flex items-center gap-1 rounded-md px-2 py-1.5 text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                      className="inline-flex items-center gap-1 rounded-md px-2 py-1.5 text-text-secondary hover:bg-surface-hover hover:text-text-primary"
                       aria-label={item.label}
                     >
                       {item.label}
@@ -124,7 +124,7 @@ export function SiteHeader({ siteName = "Gaudeix Cabrera de Mar" }: { siteName?:
               <a
                 key={key}
                 href={item.href}
-                className="rounded-md px-2 py-1.5 text-gray-600 no-underline hover:bg-gray-100 hover:text-gray-900"
+                className="rounded-md px-2 py-1.5 text-text-secondary no-underline hover:bg-surface-hover hover:text-text-primary"
               >
                 {item.label}
               </a>
@@ -135,7 +135,7 @@ export function SiteHeader({ siteName = "Gaudeix Cabrera de Mar" }: { siteName?:
         <div className="ml-auto flex items-center gap-2">
           <button
             type="button"
-            className="hidden h-10 w-10 items-center justify-center rounded-xl bg-gray-50 text-gray-500 transition-all hover:bg-puerto-rico-50 hover:text-puerto-rico-600 md:inline-flex"
+            className="hidden h-10 w-10 items-center justify-center rounded-xl bg-gray-50 text-text-tertiary transition-all hover:bg-background-light hover:text-primary md:inline-flex"
             aria-label="Buscar"
           >
             <Search className="h-5 w-5" />
@@ -148,7 +148,7 @@ export function SiteHeader({ siteName = "Gaudeix Cabrera de Mar" }: { siteName?:
             renderTrigger={() => (
               <button
                 type="button"
-                className="flex h-10 w-10 items-center justify-center rounded-xl bg-gray-50 text-gray-500 transition-all hover:bg-puerto-rico-50 hover:text-puerto-rico-600"
+                className="flex h-10 w-10 items-center justify-center rounded-xl bg-gray-50 text-text-tertiary transition-all hover:bg-background-light hover:text-primary"
                 aria-label={`Idioma: ${languageLabel}`}
               >
                 <Globe className="h-5 w-5" />
@@ -162,13 +162,13 @@ export function SiteHeader({ siteName = "Gaudeix Cabrera de Mar" }: { siteName?:
               }}>
                 <div className="flex w-full items-center justify-between gap-3 px-1">
                   <span className="text-sm font-medium">{l.label}</span>
-                  {language === l.code ? <Check className="h-4 w-4 text-puerto-rico-600" /> : null}
+                  {language === l.code ? <Check className="h-4 w-4 text-primary" /> : null}
                 </div>
               </DropdownItem>
             ))}
           </Dropdown>
 
-          <div className="mx-1 h-6 w-px bg-gray-200" />
+          <div className="mx-1 h-6 w-px bg-border-light" />
 
           {/* User Menu or Login Button */}
           {isAuthenticated ? (
@@ -179,30 +179,30 @@ export function SiteHeader({ siteName = "Gaudeix Cabrera de Mar" }: { siteName?:
               renderTrigger={() => (
                 <button
                   type="button"
-                  className="group flex h-10 items-center gap-2.5 rounded-xl border border-transparent bg-gray-50 p-1 pr-3 transition-all hover:border-puerto-rico-100 hover:bg-puerto-rico-50/50"
+                  className="group flex h-10 items-center gap-2.5 rounded-xl border border-transparent bg-gray-50 p-1 pr-3 transition-all hover:border-border-light hover:bg-background-light/50"
                   aria-label="Menú de usuario"
                 >
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-puerto-rico-500 font-bold text-white shadow-sm ring-2 ring-white transition-transform group-hover:scale-95">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary font-bold text-white shadow-sm ring-2 ring-white transition-transform group-hover:scale-95">
                     {user?.name?.charAt(0).toUpperCase() || user?.username?.charAt(0).toUpperCase() || "U"}
                   </div>
                   <div className="flex flex-col items-start text-left">
-                    <span className="hidden max-w-[100px] truncate text-xs font-bold leading-tight text-gray-900 md:block">
+                    <span className="hidden max-w-[100px] truncate text-xs font-bold leading-tight text-text-primary md:block">
                       {user?.name || user?.username}
                     </span>
-                    <span className="hidden text-[10px] font-medium leading-tight text-puerto-rico-600 md:block">Mi cuenta</span>
+                    <span className="hidden text-[10px] font-medium leading-tight text-primary md:block">Mi cuenta</span>
                   </div>
-                  <ChevronDown className="hidden h-3.5 w-3.5 text-gray-400 transition-transform group-hover:translate-y-0.5 md:block" />
+                  <ChevronDown className="hidden h-3.5 w-3.5 text-text-tertiary transition-transform group-hover:translate-y-0.5 md:block" />
                 </button>
               )}
             >
-              <div className="px-4 py-3 text-sm text-gray-900 border-b border-gray-100">
+              <div className="px-4 py-3 text-sm text-text-primary border-b border-border-light">
                 <div className="font-bold">{user?.name || user?.username}</div>
-                <div className="truncate text-xs text-gray-500">{user?.email}</div>
+                <div className="truncate text-xs text-text-tertiary">{user?.email}</div>
               </div>
               <div className="p-1">
                 <DropdownItem onClick={() => console.log("Navigate to profile")}>
                   <div className="flex items-center gap-2 py-1">
-                    <UserIcon className="h-4 w-4 text-gray-500" />
+                    <UserIcon className="h-4 w-4 text-text-secondary" />
                     <span className="font-medium">Mi perfil</span>
                   </div>
                 </DropdownItem>
@@ -210,7 +210,7 @@ export function SiteHeader({ siteName = "Gaudeix Cabrera de Mar" }: { siteName?:
                   logout();
                   toast.success("Has cerrado sesión");
                 }}>
-                  <div className="flex items-center gap-2 py-1 text-red-600">
+                  <div className="flex items-center gap-2 py-1 text-error">
                     <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4 4m4-4H3m2 4h6a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v11a2 2 0 002 2z" />
                     </svg>
@@ -222,7 +222,7 @@ export function SiteHeader({ siteName = "Gaudeix Cabrera de Mar" }: { siteName?:
           ) : (
             <Link
               to="/login"
-              className="flex h-10 w-10 items-center justify-center rounded-xl bg-puerto-rico-500 text-white shadow-md shadow-puerto-rico-200 transition-all hover:bg-puerto-rico-600 hover:shadow-lg active:scale-95"
+              className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-white shadow-md shadow-primary/20 transition-all hover:bg-primary/90 hover:shadow-lg active:scale-95"
               aria-label="Iniciar sesión"
             >
               <LogIn className="h-5 w-5" />

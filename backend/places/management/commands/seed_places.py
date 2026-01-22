@@ -54,6 +54,15 @@ class Command(BaseCommand):
                 Category.objects.filter(slug=data.get("category_slug")).first()
                 or root_category
             )
+            image_filename = data.get("image_filename")
+            featured_media = None
+            if image_filename:
+                # Find the image object by its original_name (handled in _create_image_file)
+                featured_media = next((img for img in images if img.original_name == image_filename), None)
+            
+            if not featured_media:
+                featured_media = self._pick_media(images, index)
+
             place = Place.objects.create(
                 title=data["title"],
                 description=data.get("description", ""),
@@ -61,7 +70,7 @@ class Command(BaseCommand):
                 latitude=data.get("latitude"),
                 longitude=data.get("longitude"),
                 category=category,
-                featured_media=self._pick_media(images, index),
+                featured_media=featured_media,
             )
 
             if documents:

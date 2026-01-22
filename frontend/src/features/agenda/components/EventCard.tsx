@@ -40,8 +40,8 @@ export function EventCard({ event }: { event: EventItem }) {
       href={`/agenda/${event.slug}`}
       onClick={onNavigate}
       className={[
-        "group block overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-gray-200",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-puerto-rico-300 focus-visible:ring-offset-2",
+        "group block overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-border-light",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2",
       ].join(" ")}
     >
       <div className="flex flex-col sm:flex-row">
@@ -95,7 +95,7 @@ export function EventCard({ event }: { event: EventItem }) {
 
             <p className="text-sm text-gray-600" style={clampLinesStyle(1)}>
               <span className="inline-flex items-center gap-2">
-                <MapPin className="h-4 w-4 text-puerto-rico-500" aria-hidden="true" />
+                <MapPin className="h-4 w-4 text-primary" aria-hidden="true" />
                 {event.venueName} · {event.locationText}
               </span>
             </p>
@@ -119,7 +119,7 @@ export function EventCard({ event }: { event: EventItem }) {
                   {whenLabel}
                 </span>
               ) : event.isFree ? (
-                <span className="inline-flex items-center gap-1 rounded-full bg-puerto-rico-100/70 px-3 py-1 text-xs font-semibold text-puerto-rico-800">
+                <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
                   <Ticket className="h-3.5 w-3.5" aria-hidden="true" />
                   Gratis
                 </span>

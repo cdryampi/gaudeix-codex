@@ -185,16 +185,17 @@ REST_FRAMEWORK = {
 
 from datetime import timedelta
 
-SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
-}
-
 REST_AUTH = {
     "USE_JWT": True,
     "JWT_AUTH_COOKIE": "gaudeix-auth",
     "JWT_AUTH_REFRESH_COOKIE": "gaudeix-refresh-token",
     "LOGIN_METHODS": {"email", "username"},
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "AUTH_HEADER_TYPES": ("Bearer",),
 }
 
 AUTH_USER_MODEL = "users.User"
@@ -225,11 +226,17 @@ CSRF_TRUSTED_ORIGINS = env.list(
     ],
 )
 
-# LLM Translation Settings
+# ==============================================================================
+# LLM TRANSLATION SETTINGS
+# ==============================================================================
 LLM_OPENAI_API_KEY = env("LLM_OPENAI_API_KEY")
 LLM_GEMINI_API_KEY = env("LLM_GEMINI_API_KEY")
 LLM_ANTHROPIC_API_KEY = env("LLM_ANTHROPIC_API_KEY")
 LLM_MISTRAL_API_KEY = env("LLM_MISTRAL_API_KEY")
 LLM_GROQ_API_KEY = env("LLM_GROQ_API_KEY")
 LLM_LOCAL_API_URL = env("LLM_LOCAL_API_URL")
+
+# ==============================================================================
+# EXTERNAL SERVICES
+# ==============================================================================
 FCM_CREDENTIALS_FILE = env("FCM_CREDENTIALS_FILE")

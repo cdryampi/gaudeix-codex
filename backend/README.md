@@ -5,12 +5,15 @@ Configuración base de Django para el proyecto **gaudeix_backend**.
 ## Entorno rápido (CLI Codex / Windows)
 
 ```bash
-# Activar (opcional):
-source backend/.venv_win/Scripts/activate
+# Activar desde la raíz del proyecto:
+cd ..
+.\.venv\Scripts\activate  # Windows
+source .venv/bin/activate  # Linux/Mac
+cd backend
 
-# Usar sin activar:
-backend/.venv_win/Scripts/python.exe manage.py migrate
-backend/.venv_win/Scripts/python.exe -m pytest
+# O usar directamente sin activar (desde raíz):
+.venv\Scripts\python.exe backend/manage.py migrate
+.venv\Scripts\python.exe -m pytest backend/
 ```
 
 ## Variables de entorno
@@ -34,7 +37,7 @@ DJANGO_ALLOWED_CORS_ORIGINS=http://localhost:5173,http://localhost:5174,http://l
 
 ```bash
 # Windows
-.\.venv_win\Scripts\python.exe manage.py migrate
+python manage.py migrate
 # Linux/Mac
 python manage.py migrate
 ```
@@ -45,10 +48,10 @@ Ejecuta estos comandos tras migrar para evitar errores en admin/API:
 
 ```bash
 # Windows
-.\.venv_win\Scripts\python.exe manage.py seed_users
-.\.venv_win\Scripts\python.exe manage.py seed_events_category
-.\.venv_win\Scripts\python.exe manage.py seed_places_category
-.\.venv_win\Scripts\python.exe manage.py seed_places
+python manage.py seed_users
+python manage.py seed_events_category
+python manage.py seed_places_category
+python manage.py seed_places
 
 # Linux/Mac
 python manage.py seed_users
@@ -61,10 +64,10 @@ Seed general (secuencial):
 
 ```bash
 # Seeds en orden (usuarios, media, pages, settings, social, places, events...)
-.\.venv_win\Scripts\python.exe manage.py seed_all
+python manage.py seed_all
 
 # Hard reset (PELIGROSO): flush + migrate + seed_all
-.\.venv_win\Scripts\python.exe manage.py seed_all --hard-reset --noinput
+python manage.py seed_all --hard-reset --noinput
 ```
 
 `seed_places` usa las imágenes incluidas en `places/management/commands/images/` y crea datos de ejemplo con media y traducciones.
@@ -82,5 +85,5 @@ ENVIRONMENT=test backend/.venv_win/Scripts/python.exe -m pytest
 
 ## Notas
 
-- Usa siempre `backend/.venv_win` como intérprete en el IDE para evitar conflictos.
+- Usa siempre `.venv` de la raíz del proyecto como intérprete en el IDE.
 - Para desarrollo rápido con SQLite: `ENVIRONMENT=local python manage.py migrate`.

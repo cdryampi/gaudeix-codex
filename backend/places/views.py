@@ -132,101 +132,33 @@ class PlaceViewSet(viewsets.ModelViewSet):
         Auto-translate place to all configured languages using LLM.
         """
         place = self.get_object()
+        source_lang = request.data.get("source_lang")
+        target_langs = request.data.get("target_langs")
 
-        source_lang = request.data.get("source_lang", settings.LANGUAGE_CODE)
-        configured_langs = [lang[0] for lang in settings.LANGUAGES]
-        default_targets = [lang for lang in configured_langs if lang != source_lang]
-        target_langs = request.data.get("target_langs", default_targets)
-
-        if source_lang not in place.get_available_languages():
-            return Response(
-                {
-                    "success": False,
-                    "error": f"Place has no content in {source_lang} to translate from",
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        place.set_current_language(source_lang)
-        source_title = place.title
-        source_description = place.description or ""
-
-        if not source_title:
-            return Response(
-                {
-                    "success": False,
-                    "error": f"Place has no content in {source_lang} to translate from",
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        from .services import auto_translate_place
+        from llm_translations.utils import TranslationError
 
         try:
-            from llm_translations.utils import TranslationError, translate_text
-        except ImportError:
-            return Response(
-                {"success": False, "error": "LLM translation module not available"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            result = auto_translate_place(
+                place=place,
+                source_lang=source_lang,
+                target_langs=target_langs
             )
-
-        translations = {}
-        errors = {}
-
-        for target_lang in target_langs:
-            try:
-                translated_title = translate_text(
-                    text=source_title,
-                    source_lang=source_lang,
-                    target_lang=target_lang,
-                    log_translation=True,
-                )
-
-                translated_description = ""
-                if source_description:
-                    translated_description = translate_text(
-                        text=source_description,
-                        source_lang=source_lang,
-                        target_lang=target_lang,
-                        log_translation=True,
-                    )
-
-                place.set_current_language(target_lang, initialize=True)
-                place.title = translated_title
-                place.description = translated_description
-                place.save_translations()
-
-                translations[target_lang] = {
-                    "title": translated_title,
-                    "description": translated_description,
-                }
-
-                logger.info(
-                    f"Translated place {place.id} to {target_lang}: '{translated_title}'"
-                )
-
-            except TranslationError as e:
-                error_msg = str(e)
-                errors[target_lang] = error_msg
-                logger.error(
-                    f"Failed to translate place {place.id} to {target_lang}: {error_msg}"
-                )
-            except Exception as e:
-                error_msg = f"Unexpected error: {str(e)}"
-                errors[target_lang] = error_msg
-                logger.exception(
-                    f"Unexpected error translating place {place.id} to {target_lang}"
-                )
-
-        return Response(
-            {
-                "success": len(errors) == 0,
-                "source_lang": source_lang,
-                "translations": translations,
-                "errors": errors,
-            },
-            status=status.HTTP_200_OK
-            if len(errors) == 0
-            else status.HTTP_207_MULTI_STATUS,
-        )
+            
+            return Response(
+                result,
+                status=status.HTTP_200_OK if result["success"] else status.HTTP_207_MULTI_STATUS
+            )
+        except TranslationError as e:
+            return Response(
+                {"success": False, "error": str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        except Exception as e:
+            return Response(
+                {"success": False, "error": "Internal server error during translation"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class RestaurantViewSet(PlaceViewSet):
