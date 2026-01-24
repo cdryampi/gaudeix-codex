@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
@@ -45,6 +45,8 @@ export function StaticPageDialog({ open, onOpenChange, onSubmit, page }: Props) 
   const [loadingTranslate, setLoadingTranslate] = useState(false);
   const [images, setImages] = useState<MediaItem[]>([]);
   const [documents, setDocuments] = useState<MediaItem[]>([]);
+  const imageInputRef = useRef<HTMLInputElement>(null);
+  const docInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (page) {
@@ -140,6 +142,49 @@ export function StaticPageDialog({ open, onOpenChange, onSubmit, page }: Props) 
       setLoadingTranslate(false);
     }
   };
+
+  const handleUploadImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const uploaded = await mediaApi.upload(file);
+      if (uploaded.type === "image") {
+        setImages((prev) => [uploaded, ...prev]);
+        setForm((prev) => ({ ...prev, featured_media_id: uploaded.id }));
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("No se pudo subir la imagen");
+    } finally {
+      if (imageInputRef.current) imageInputRef.current.value = "";
+    }
+  };
+
+  const handleUploadDoc = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const uploaded = await mediaApi.upload(file);
+      if (uploaded.type === "document") {
+        setDocuments((prev) => [uploaded, ...prev]);
+        setForm((prev) => ({ ...prev, attachment_id: uploaded.id }));
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("No se pudo subir el documento");
+    } finally {
+      if (docInputRef.current) docInputRef.current.value = "";
+    }
+  };
+
+  const selectedImage = useMemo(
+    () => images.find((img) => img.id === form.featured_media_id),
+    [images, form.featured_media_id]
+  );
+  const selectedDocument = useMemo(
+    () => documents.find((doc) => doc.id === form.attachment_id),
+    [documents, form.attachment_id]
+  );
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -248,6 +293,18 @@ export function StaticPageDialog({ open, onOpenChange, onSubmit, page }: Props) 
                 <p className="text-sm font-semibold text-foreground">Imagen destacada</p>
                 <p className="text-xs text-muted-foreground">Se usará como hero o banner</p>
               </div>
+              <div className="flex gap-2">
+                <input
+                  type="file"
+                  accept="image/*"
+                  ref={imageInputRef}
+                  onChange={handleUploadImage}
+                  className="hidden"
+                />
+                <Button type="button" variant="outline" size="sm" onClick={() => imageInputRef.current?.click()}>
+                  Subir
+                </Button>
+              </div>
             </div>
             <select
               value={form.featured_media_id ?? ""}
@@ -266,6 +323,25 @@ export function StaticPageDialog({ open, onOpenChange, onSubmit, page }: Props) 
                 </option>
               ))}
             </select>
+            {selectedImage && (
+              <div className="flex items-center gap-3 rounded-md bg-background/60 p-2">
+                <img
+                  src={selectedImage.thumbnail_url || selectedImage.variant_thumbnail || selectedImage.file}
+                  alt="Miniatura"
+                  className="h-14 w-14 rounded object-cover ring-1 ring-border"
+                />
+                <p className="text-sm text-foreground">{selectedImage.original_name}</p>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="ml-auto text-rose-600"
+                  onClick={() => setForm((prev) => ({ ...prev, featured_media_id: null }))}
+                >
+                  Quitar
+                </Button>
+              </div>
+            )}
           </div>
 
           <div className="space-y-3 rounded-lg border border-border/60 bg-muted/20 p-3">
@@ -273,6 +349,18 @@ export function StaticPageDialog({ open, onOpenChange, onSubmit, page }: Props) 
               <div>
                 <p className="text-sm font-semibold text-foreground">Documento adjunto</p>
                 <p className="text-xs text-muted-foreground">PDF informativo o legal</p>
+              </div>
+              <div className="flex gap-2">
+                <input
+                  type="file"
+                  accept=".pdf,.ics,.txt,.docx,.xlsx"
+                  ref={docInputRef}
+                  onChange={handleUploadDoc}
+                  className="hidden"
+                />
+                <Button type="button" variant="outline" size="sm" onClick={() => docInputRef.current?.click()}>
+                  Subir
+                </Button>
               </div>
             </div>
             <select
@@ -292,6 +380,20 @@ export function StaticPageDialog({ open, onOpenChange, onSubmit, page }: Props) 
                 </option>
               ))}
             </select>
+            {selectedDocument && (
+              <div className="flex items-center justify-between rounded-md bg-background/60 px-2 py-1 text-sm">
+                <span>{selectedDocument.original_name}</span>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  className="text-rose-600"
+                  onClick={() => setForm((prev) => ({ ...prev, attachment_id: null }))}
+                >
+                  Quitar
+                </Button>
+              </div>
+            )}
           </div>
 
           <div className="flex justify-end gap-2">

@@ -3,7 +3,8 @@ import { PageContainer, PageHeader } from "@/components/common";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Plus, RefreshCw } from "lucide-react";
+import { Pagination } from "@/components/ui/pagination";
+import { Plus } from "lucide-react";
 import { toast } from "sonner";
 
 import { staticPagesApi } from "../api/staticPages";
@@ -14,6 +15,7 @@ import { TEMPLATE_OPTIONS } from "../constants/templates";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { TriangleAlert } from "lucide-react";
+import { envConfig } from "@/lib/config/env";
 
 export function StaticPagesPage() {
   const [pages, setPages] = useState<StaticPage[]>([]);
@@ -24,6 +26,8 @@ export function StaticPagesPage() {
   const [error, setError] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<StaticPage | undefined>();
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(envConfig.events.pageSizeDefault);
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
@@ -42,6 +46,12 @@ export function StaticPagesPage() {
     });
   }, [pages, search, templateFilter, publishedFilter]);
 
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const paginated = useMemo(() => {
+    const start = (page - 1) * pageSize;
+    return filtered.slice(start, start + pageSize);
+  }, [filtered, page, pageSize]);
+
   const fetchPages = async () => {
     try {
       setLoading(true);
@@ -59,6 +69,16 @@ export function StaticPagesPage() {
   useEffect(() => {
     fetchPages();
   }, []);
+
+  useEffect(() => {
+    setPage(1);
+  }, [search, templateFilter, publishedFilter, pageSize]);
+
+  useEffect(() => {
+    if (page > totalPages) {
+      setPage(totalPages);
+    }
+  }, [page, totalPages]);
 
   const handleSubmit = async (payload: StaticPagePayload) => {
     try {
@@ -97,10 +117,6 @@ export function StaticPagesPage() {
         description="Gestiona plantillas predefinidas (info point, privacidad, legal, cookies, contacto, inclusió)."
         actions={
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={fetchPages}>
-              <RefreshCw className="mr-2 h-4 w-4" />
-              Recargar
-            </Button>
             <Button size="sm" onClick={() => setDialogOpen(true)}>
               <Plus className="mr-2 h-4 w-4" />
               Nueva página
@@ -109,36 +125,51 @@ export function StaticPagesPage() {
         }
       />
 
-      <div className="mb-4 flex flex-wrap items-center gap-3">
-        <Input
-          placeholder="Buscar por slug, título o cuerpo"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="max-w-sm"
-        />
-        <select
-          value={templateFilter}
-          onChange={(e) => setTemplateFilter(e.target.value)}
-          className="h-10 rounded-md border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
-        >
-          <option value="">Todas las plantillas</option>
-          {TEMPLATE_OPTIONS.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
-        <select
-          value={publishedFilter}
-          onChange={(e) => setPublishedFilter(e.target.value)}
-          className="h-10 rounded-md border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
-        >
-          <option value="">Publicación (todas)</option>
-          <option value="true">Publicadas</option>
-          <option value="false">Borradores</option>
-        </select>
-        <Badge variant="outline" className="font-normal">
-          Total: {filtered.length}
+      <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-1 flex-col gap-3 md:flex-row md:items-center">
+          <Input
+            placeholder="Buscar por slug, título o cuerpo"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="md:max-w-sm"
+          />
+          <div className="flex flex-wrap gap-2">
+            <select
+              value={templateFilter}
+              onChange={(e) => setTemplateFilter(e.target.value)}
+              className="h-10 rounded-md border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+            >
+              <option value="">Todas las plantillas</option>
+              {TEMPLATE_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+            <select
+              value={publishedFilter}
+              onChange={(e) => setPublishedFilter(e.target.value)}
+              className="h-10 rounded-md border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+            >
+              <option value="">Publicación (todas)</option>
+              <option value="true">Publicadas</option>
+              <option value="false">Borradores</option>
+            </select>
+            <select
+              value={pageSize}
+              onChange={(e) => setPageSize(Number(e.target.value))}
+              className="h-10 rounded-md border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+            >
+              {[5, 10, 20, 50].map((size) => (
+                <option key={size} value={size}>
+                  {size} / pág
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <Badge variant="secondary" className="w-fit px-3 py-1 text-xs">
+          {filtered.length} páginas
         </Badge>
       </div>
 
@@ -158,10 +189,26 @@ export function StaticPagesPage() {
           ) : error ? (
             <div className="flex h-40 items-center justify-center text-destructive">{error}</div>
           ) : (
-            <StaticPagesTable pages={filtered} onEdit={(p) => { setEditing(p); setDialogOpen(true); }} onDelete={handleDelete} />
+            <StaticPagesTable
+              pages={paginated}
+              onEdit={(p) => {
+                setEditing(p);
+                setDialogOpen(true);
+              }}
+              onDelete={handleDelete}
+            />
           )}
         </CardContent>
       </Card>
+
+      <div className="mt-4 flex flex-col gap-2 text-sm text-muted-foreground md:flex-row md:items-center md:justify-between">
+        <span>
+          Página {page} de {totalPages} • {filtered.length} resultados
+        </span>
+        <div className="w-full md:w-auto">
+          <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+        </div>
+      </div>
 
       <StaticPageDialog
         open={dialogOpen}

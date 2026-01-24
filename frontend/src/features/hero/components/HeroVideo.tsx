@@ -20,8 +20,8 @@ export function HeroVideoFrame() {
     if (!containerRef.current || !textContainerRef.current) return;
 
     const ctx = gsap.context(() => {
-      // STARTING STATE: Text hidden at bottom
-      gsap.set(textContainerRef.current, { opacity: 0, y: 150 });
+      // STARTING STATE: Handled by CSS to avoid FOUC
+      // gsap.set(textContainerRef.current, { opacity: 0, y: 150 });
 
       // ANIMATION ON SCROLL
       gsap.to(textContainerRef.current, {
@@ -51,16 +51,14 @@ export function HeroVideoFrame() {
     });
 
     return () => ctx.revert();
-  }, [ready]);
+  }, []);
 
   return (
     <div ref={containerRef} className="hero relative h-[100vh] w-full overflow-hidden bg-black">
 
-      {!ready && (
-        <div className="absolute inset-0 z-0">
-          <SkeletonBlock className="h-full w-full" rounded="none" />
-        </div>
-      )}
+      <div className={`absolute inset-0 z-10 transition-opacity duration-1000 ${ready ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+        <SkeletonBlock className="h-full w-full bg-slate-900" rounded="none" />
+      </div>
 
       <video
         ref={videoRef}
@@ -69,7 +67,7 @@ export function HeroVideoFrame() {
         loop
         playsInline
         preload="auto"
-        className={`absolute inset-0 z-0 h-full w-full object-cover transition-opacity duration-1000 ${ready ? 'opacity-100' : 'opacity-0'}`}
+        className="absolute inset-0 z-0 h-full w-full object-cover"
         src={HERO_VIDEO.src}
         onLoadedData={() => setReady(true)}
       />
@@ -79,11 +77,11 @@ export function HeroVideoFrame() {
       {/* TEXT BOX - APPEARS ON SCROLL */}
       <div className="absolute inset-0 z-20 flex flex-col justify-end pb-32">
         <div className="container mx-auto px-6">
-          <div ref={textContainerRef} className="space-y-6">
+          <div ref={textContainerRef} className="space-y-6 opacity-0 translate-y-[150px]">
             <span className="inline-block py-2 px-6 bg-primary text-white text-xs font-black uppercase tracking-[0.4em] rounded-full shadow-2xl">
               Cabrera de Mar
             </span>
-            <h1 className="text-[clamp(4rem,12vw,12rem)] font-black text-white uppercase leading-[0.8] tracking-tighter">
+            <h1 className="text-[clamp(3rem,8vw,8rem)] font-black text-white uppercase leading-[0.8] tracking-tighter">
               BIENVENIDOS <br />
               <span className="text-primary italic">A LA VILA</span>
             </h1>

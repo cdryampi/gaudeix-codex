@@ -88,3 +88,14 @@ export async function apiPost<T>(path: string, data: unknown, init?: RequestInit
     return resp.data;
   }
 }
+
+export const api = {
+  get: async <T>(path: string, init?: RequestInit) => {
+    const data = await apiGet<T>(path, init);
+    return { data };
+  },
+  post: async <T>(path: string, data: unknown, init?: RequestInit) => {
+    const responseData = await apiPost<T>(path, data, init);
+    return { data: responseData };
+  },
+};

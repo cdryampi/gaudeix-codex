@@ -132,32 +132,50 @@ class PlaceViewSet(viewsets.ModelViewSet):
         Auto-translate place to all configured languages using LLM.
         """
         place = self.get_object()
-        source_lang = request.data.get("source_lang")
+        source_lang = request.data.get("source_lang") or settings.LANGUAGE_CODE
         target_langs = request.data.get("target_langs")
+
+        if source_lang not in place.get_available_languages():
+            return Response(
+                {
+                    "success": False,
+                    "error": f"Place has no content in {source_lang} to translate from",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        place.set_current_language(source_lang)
+        if not place.title:
+            return Response(
+                {
+                    "success": False,
+                    "error": f"Place has no content in {source_lang} to translate from",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         from .services import auto_translate_place
         from llm_translations.utils import TranslationError
 
         try:
             result = auto_translate_place(
-                place=place,
-                source_lang=source_lang,
-                target_langs=target_langs
+                place=place, source_lang=source_lang, target_langs=target_langs
             )
-            
+
             return Response(
                 result,
-                status=status.HTTP_200_OK if result["success"] else status.HTTP_207_MULTI_STATUS
+                status=status.HTTP_200_OK
+                if result["success"]
+                else status.HTTP_207_MULTI_STATUS,
             )
         except TranslationError as e:
             return Response(
-                {"success": False, "error": str(e)},
-                status=status.HTTP_400_BAD_REQUEST
+                {"success": False, "error": str(e)}, status=status.HTTP_400_BAD_REQUEST
             )
         except Exception as e:
             return Response(
                 {"success": False, "error": "Internal server error during translation"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
 

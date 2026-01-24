@@ -20,9 +20,13 @@ class StaticPageSerializer(TranslatableModelSerializer):
         required=False,
     )
     featured_media = ImageFileSerializer(read_only=True)
-    featured_media_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
+    featured_media_id = serializers.IntegerField(
+        write_only=True, required=False, allow_null=True
+    )
     attachment = DocumentFileSerializer(read_only=True)
-    attachment_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
+    attachment_id = serializers.IntegerField(
+        write_only=True, required=False, allow_null=True
+    )
     created_at = serializers.DateTimeField(source="fecha_creacion", read_only=True)
     updated_at = serializers.DateTimeField(source="fecha_modificacion", read_only=True)
 
@@ -43,14 +47,22 @@ class StaticPageSerializer(TranslatableModelSerializer):
             "created_at",
             "updated_at",
         ]
-        read_only_fields = ["id", "created_at", "updated_at", "featured_media", "attachment"]
+        read_only_fields = [
+            "id",
+            "created_at",
+            "updated_at",
+            "featured_media",
+            "attachment",
+        ]
 
     def validate(self, attrs):
         # Ensure template uniqueness by serializer (DB also enforces unique=True)
         template = attrs.get("template") or getattr(self.instance, "template", None)
         if template and not self.instance:
             if StaticPage.objects.filter(template=template).exists():
-                raise serializers.ValidationError({"template": "Ya existe una página con esta plantilla."})
+                raise serializers.ValidationError(
+                    {"template": "Ya existe una página con esta plantilla."}
+                )
         return attrs
 
     def save(self, **kwargs):
@@ -63,7 +75,10 @@ class StaticPageSerializer(TranslatableModelSerializer):
             base_values["cuerpo"] = self.initial_data.get("cuerpo")
         if base_values:
             translations = translated_data.get("translations") or {}
-            translations[base_language] = {**translations.get(base_language, {}), **base_values}
+            translations[base_language] = {
+                **translations.get(base_language, {}),
+                **base_values,
+            }
             translated_data["translations"] = translations
 
         instance = serializers.ModelSerializer.save(self, **kwargs)
@@ -86,14 +101,16 @@ class StaticPageSerializer(TranslatableModelSerializer):
             instance.titulo = titulo
         if cuerpo is not None:
             instance.cuerpo = cuerpo
-        if featured_media_id:
+        if featured_media_id is not None:
             instance.featured_media_id = featured_media_id
-        if attachment_id:
+        if attachment_id is not None:
             instance.attachment_id = attachment_id
         instance.save()
 
         if translations_data:
-            self._apply_translations(instance, translations_data, skip_language=base_language)
+            self._apply_translations(
+                instance, translations_data, skip_language=base_language
+            )
             instance.set_current_language(base_language)
         if titulo is not None or cuerpo is not None:
             if titulo is not None:
@@ -105,8 +122,9 @@ class StaticPageSerializer(TranslatableModelSerializer):
 
     def update(self, instance, validated_data):
         translations_data = validated_data.pop("translations", None)
-        featured_media_id = validated_data.pop("featured_media_id", None)
-        attachment_id = validated_data.pop("attachment_id", None)
+        missing = object()
+        featured_media_id = validated_data.pop("featured_media_id", missing)
+        attachment_id = validated_data.pop("attachment_id", missing)
         base_language = settings.LANGUAGE_CODE
         titulo = validated_data.pop("titulo", None) or self.initial_data.get("titulo")
         cuerpo = validated_data.pop("cuerpo", None) or self.initial_data.get("cuerpo")
@@ -118,14 +136,16 @@ class StaticPageSerializer(TranslatableModelSerializer):
             instance.titulo = titulo
         if cuerpo is not None:
             instance.cuerpo = cuerpo
-        if featured_media_id is not None:
+        if featured_media_id is not missing:
             instance.featured_media_id = featured_media_id
-        if attachment_id is not None:
+        if attachment_id is not missing:
             instance.attachment_id = attachment_id
 
         instance.save()
         if translations_data:
-            self._apply_translations(instance, translations_data, skip_language=base_language)
+            self._apply_translations(
+                instance, translations_data, skip_language=base_language
+            )
             instance.set_current_language(base_language)
         if titulo is not None or cuerpo is not None:
             if titulo is not None:
@@ -135,7 +155,9 @@ class StaticPageSerializer(TranslatableModelSerializer):
             instance.save()
         return instance
 
-    def _apply_translations(self, instance: StaticPage, translations: dict, skip_language: str | None = None) -> None:
+    def _apply_translations(
+        self, instance: StaticPage, translations: dict, skip_language: str | None = None
+    ) -> None:
         for language_code, values in translations.items():
             if skip_language and language_code == skip_language:
                 continue

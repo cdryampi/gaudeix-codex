@@ -123,12 +123,12 @@ function Thumb({ item }: { item: MediaItem }) {
       <img
         src={src}
         alt={item.original_name}
-        className="h-12 w-12 rounded-md object-cover ring-1 ring-slate-200 dark:ring-slate-700"
+        className="h-10 w-10 min-h-10 min-w-10 shrink-0 rounded-md object-cover ring-1 ring-slate-200 dark:ring-slate-700"
       />
     );
   }
   return (
-    <div className="flex h-12 w-12 items-center justify-center rounded-md bg-slate-100 text-slate-600 ring-1 ring-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:ring-slate-700">
+    <div className="flex h-10 w-10 min-h-10 min-w-10 shrink-0 items-center justify-center rounded-md bg-slate-100 text-slate-600 ring-1 ring-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:ring-slate-700">
       <FileText className="h-5 w-5" />
     </div>
   );

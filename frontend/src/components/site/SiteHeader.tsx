@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 
 import { HEADER_NAV, type HeaderNavItem } from "@/data/headerNav";
 import { useAuthStore } from "@/features/auth/store";
+import { SocialMediaBar } from "@/features/social/components/SocialMediaBar";
+import { TicketCTA } from "@/features/tickets/components/TicketCTA";
 import logoCabrera from "@/assets/logo/logo-cabrera-white.png";
 
 const LANGUAGES = [
@@ -52,13 +54,18 @@ export function SiteHeader({ siteName = "Cabrera de Mar" }: { siteName?: string 
 
         {/* ACTIONS */}
         <div className="flex items-center gap-4">
+
+          <SocialMediaBar scrolled={scrolled} />
+
+          <TicketCTA scrolled={scrolled} className="hidden md:flex" />
+
           {/* Simple Language Switcher */}
           <div className="flex border border-white/10 p-1 rounded-xl backdrop-blur-md">
             {LANGUAGES.map(lang => (
               <button
                 key={lang.code}
                 className={`px-3 py-1.5 text-[10px] font-black rounded-lg transition-all ${scrolled ? (lang.code === 'es' ? 'bg-primary text-white' : 'text-slate-500 hover:bg-slate-100/50')
-                    : (lang.code === 'es' ? 'bg-white/20 text-white' : 'text-white/50 hover:bg-white/10')
+                  : (lang.code === 'es' ? 'bg-white/20 text-white' : 'text-white/50 hover:bg-white/10')
                   }`}
               >
                 {lang.label}

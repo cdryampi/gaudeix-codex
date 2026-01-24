@@ -49,3 +49,13 @@
     pointer-events: none;
   }
 }
+
+@keyframes shine {
+  100% {
+    left: 125%;
+  }
+}
+
+.animate-shine {
+  animation: shine 1.5s;
+}

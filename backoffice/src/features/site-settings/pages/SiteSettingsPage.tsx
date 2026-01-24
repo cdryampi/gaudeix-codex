@@ -6,7 +6,16 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { TriangleAlert } from "lucide-react";
+import {
+  LayoutPanelTop,
+  Palette,
+  Phone,
+  Plug,
+  Search,
+  Share2,
+  TriangleAlert,
+  Video,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { siteSettingsApi } from "../api/siteSettings";
 import { StaticPage } from "@/features/static-pages/types";
@@ -140,7 +149,12 @@ export function SiteSettingsPage() {
             <div className="text-destructive">{error}</div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-6">
-              <section className="grid gap-4 md:grid-cols-2">
+              <section className="space-y-3 rounded-lg border border-border/60 bg-muted/20 p-4">
+                <div className="flex items-center gap-2">
+                  <Palette className="h-4 w-4 text-muted-foreground" />
+                  <h3 className="text-sm font-semibold text-foreground">Branding</h3>
+                </div>
+                <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label>Nombre del sitio</Label>
                   <Input value={form.site_name} onChange={(e) => handleChange("site_name", e.target.value)} />
@@ -176,10 +190,14 @@ export function SiteSettingsPage() {
                     placeholder="ID de imagen"
                   />
                 </div>
+                </div>
               </section>
 
               <section className="space-y-3 rounded-lg border border-border/60 bg-muted/20 p-4">
-                <h3 className="text-sm font-semibold text-foreground">Contacto</h3>
+                <div className="flex items-center gap-2">
+                  <Phone className="h-4 w-4 text-muted-foreground" />
+                  <h3 className="text-sm font-semibold text-foreground">Contacto</h3>
+                </div>
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-2">
                     <Label>Teléfono</Label>
@@ -205,7 +223,10 @@ export function SiteSettingsPage() {
               </section>
 
               <section className="space-y-3 rounded-lg border border-border/60 bg-muted/20 p-4">
-                <h3 className="text-sm font-semibold text-foreground">Redes sociales</h3>
+                <div className="flex items-center gap-2">
+                  <Share2 className="h-4 w-4 text-muted-foreground" />
+                  <h3 className="text-sm font-semibold text-foreground">Redes sociales</h3>
+                </div>
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-2">
                     <Label>Facebook</Label>
@@ -227,7 +248,10 @@ export function SiteSettingsPage() {
               </section>
 
               <section className="space-y-3 rounded-lg border border-border/60 bg-muted/20 p-4">
-                <h3 className="text-sm font-semibold text-foreground">Integraciones públicas</h3>
+                <div className="flex items-center gap-2">
+                  <Plug className="h-4 w-4 text-muted-foreground" />
+                  <h3 className="text-sm font-semibold text-foreground">Integraciones públicas</h3>
+                </div>
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-2">
                     <Label>Maps base URL</Label>
@@ -245,7 +269,10 @@ export function SiteSettingsPage() {
               </section>
 
               <section className="space-y-3 rounded-lg border border-border/60 bg-muted/20 p-4">
-                <h3 className="text-sm font-semibold text-foreground">Vídeo hero</h3>
+                <div className="flex items-center gap-2">
+                  <Video className="h-4 w-4 text-muted-foreground" />
+                  <h3 className="text-sm font-semibold text-foreground">Vídeo hero</h3>
+                </div>
                 <p className="text-xs text-muted-foreground">
                   Usa un vídeo propio (ID) o un enlace de YouTube. El vídeo interno se reproduce sin sonido como fondo.
                 </p>
@@ -294,6 +321,7 @@ export function SiteSettingsPage() {
 
               <section className="space-y-3 rounded-lg border border-border/60 bg-muted/20 p-4">
                 <div className="flex items-center gap-2">
+                  <LayoutPanelTop className="h-4 w-4 text-muted-foreground" />
                   <h3 className="text-sm font-semibold text-foreground">Header/Footer (BETA)</h3>
                   <Badge>Beta</Badge>
                 </div>
@@ -344,7 +372,10 @@ export function SiteSettingsPage() {
               </section>
 
               <section className="space-y-3 rounded-lg border border-border/60 bg-muted/20 p-4">
-                <h3 className="text-sm font-semibold text-foreground">SEO por defecto</h3>
+                <div className="flex items-center gap-2">
+                  <Search className="h-4 w-4 text-muted-foreground" />
+                  <h3 className="text-sm font-semibold text-foreground">SEO por defecto</h3>
+                </div>
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-2">
                     <Label>Metatítulo</Label>

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
@@ -65,6 +65,12 @@ export function PlaceDialog({ open, onOpenChange, onSubmit, place }: Props) {
   const markerRef = useRef<google.maps.Marker | null>(null);
   const geocoderRef = useRef<google.maps.Geocoder | null>(null);
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
+
+  const selectedImage = useMemo(
+    () => images.find((img) => img.id === form.featured_media_id),
+    [images, form.featured_media_id]
+  );
+  const attachmentIds = form.attachments_ids || [];
 
   const getLatLng = (payload: PlacePayload) => {
     if (payload.latitude == null || payload.longitude == null) {
@@ -535,6 +541,25 @@ export function PlaceDialog({ open, onOpenChange, onSubmit, place }: Props) {
                 </select>
               </div>
             </div>
+            {selectedImage && (
+              <div className="flex items-center gap-3 rounded-md bg-background/60 p-2">
+                <img
+                  src={selectedImage.thumbnail_url || selectedImage.variant_thumbnail || selectedImage.file}
+                  alt="Miniatura"
+                  className="h-14 w-14 rounded object-cover ring-1 ring-border"
+                />
+                <p className="text-sm text-foreground">{selectedImage.original_name}</p>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="ml-auto text-rose-600"
+                  onClick={() => setForm((prev) => ({ ...prev, featured_media_id: null }))}
+                >
+                  Quitar
+                </Button>
+              </div>
+            )}
           </div>
 
           <div className="space-y-3 rounded-lg border border-border/60 bg-muted/30 p-3">
@@ -571,6 +596,35 @@ export function PlaceDialog({ open, onOpenChange, onSubmit, place }: Props) {
                 </select>
               </div>
             </div>
+            {attachmentIds.length > 0 && (
+              <div className="space-y-1 text-sm">
+                {attachmentIds.map((id) => {
+                  const doc = documents.find((d) => d.id === id);
+                  return (
+                    <div
+                      key={id}
+                      className="flex items-center justify-between rounded-md bg-background/60 px-2 py-1"
+                    >
+                      <span>{doc?.original_name || `Documento ${id}`}</span>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="ghost"
+                        className="text-rose-600"
+                        onClick={() =>
+                          setForm((prev) => ({
+                            ...prev,
+                            attachments_ids: (prev.attachments_ids || []).filter((docId) => docId !== id),
+                          }))
+                        }
+                      >
+                        Quitar
+                      </Button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           <div className="flex justify-end gap-2">
