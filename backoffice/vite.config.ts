@@ -15,16 +15,11 @@ export default defineConfig({
     port: 5174,
     strictPort: true,
   },
-  optimizeDeps: {
-    exclude: ["@radix-ui/react-scroll-area"],
-  },
-  ssr: {
-    noExternal: ["@radix-ui/react-scroll-area"],
-  },
-  test: {
-    globals: true,
-    environment: "jsdom",
-    setupFiles: "./src/setupTests.ts",
-    css: true,
-  },
+  // Test configuration moved to vitest.config.ts if needed
+  // test: {
+  //   globals: true,
+  //   environment: "jsdom",
+  //   setupFiles: "./src/setupTests.ts",
+  //   css: true,
+  // },
 });

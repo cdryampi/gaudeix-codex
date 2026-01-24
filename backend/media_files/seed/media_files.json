@@ -1,5 +1,30 @@
 {
-  "images": [{ "path": "images/test_imagen.png" }],
-  "documents": [{ "path": "documents/test_fichero.pdf" }]
+  "images": [
+    {
+      "path": "images/castell_burriac.png"
+    },
+    {
+      "path": "images/ilturo.png"
+    },
+    {
+      "path": "images/platja_cabrera.png"
+    },
+    {
+      "path": "images/cal_tete.png"
+    },
+    {
+      "path": "images/can_martinet.png"
+    },
+    {
+      "path": "images/noticia_ple.png"
+    },
+    {
+      "path": "images/noticia_fira.png"
+    }
+  ],
+  "documents": [
+    {
+      "path": "documents/test_fichero.pdf"
+    }
+  ]
 }
-

@@ -20,6 +20,7 @@ import {
   Zap,
   ChevronRight
 } from "lucide-react";
+import { Header } from "@/components/Header";
 import { useHealthCheck } from "@/hooks/useHealthCheck";
 
 /**
@@ -30,35 +31,18 @@ export function LandingPage() {
   const { backendStatus, dbStatus } = useHealthCheck();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
-      {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-16 items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 p-2">
-              <img
-                src="/assets/img/logo-cabrera-white.png"
-                alt="Gaudeix"
-                className="h-6 w-auto invert dark:invert-0"
-              />
-            </div>
-            <div>
-              <h1 className="text-base font-bold tracking-tight">Gaudeix</h1>
-              <p className="text-xs text-muted-foreground">Backoffice</p>
-            </div>
-          </div>
-          <ThemeToggle />
-        </div>
-      </header>
+    <div className="flex min-h-screen flex-col bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+      <Header />
 
-      {/* Main content */}
-      <main className="container px-6 py-16 md:py-20 lg:py-24">
-        <div className="mx-auto max-w-5xl space-y-16">
+      {/* Main content - Vertically Centered */}
+      <main className="flex flex-1 items-center justify-center px-6 py-12">
+        <div className="container mx-auto flex flex-col items-center justify-center space-y-12 max-w-5xl">
           {/* Hero section */}
-          <div className="text-center space-y-8">
-            <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm">
+          <div className="text-center space-y-6 max-w-3xl mx-auto">
+            {/* Badge with better padding */}
+            <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-5 py-2 text-sm font-medium shadow-sm mx-auto">
               <Sparkles className="h-4 w-4 text-primary" />
-              <span className="font-medium">Sistema de Gestión Municipal</span>
+              <span>Sistema de Gestión Municipal</span>
             </div>
 
             <div className="space-y-4">
@@ -71,8 +55,8 @@ export function LandingPage() {
             </div>
           </div>
 
-          {/* Status cards */}
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {/* Status cards - Grid Centered */}
+          <div className="grid w-full gap-6 sm:grid-cols-2 lg:grid-cols-3 max-w-4xl mx-auto">
             {/* Frontend Card */}
             <Card className="group relative overflow-hidden border-border/50 bg-card/50 backdrop-blur transition-all hover:border-green-500/30 hover:shadow-lg hover:shadow-green-500/10 p-6">
               <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
@@ -232,8 +216,8 @@ export function LandingPage() {
             </Card>
           </div>
 
-          {/* Actions */}
-          <div className="flex flex-col items-center gap-6 sm:flex-row sm:justify-center pt-4">
+          {/* Actions - Centered */}
+          <div className="flex flex-col items-center justify-center gap-6 sm:flex-row w-full pt-4">
             <Button
               asChild
               size="lg"
@@ -258,26 +242,6 @@ export function LandingPage() {
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </a>
             </Button>
-          </div>
-
-          {/* Quick Stats */}
-          <div className="mx-auto max-w-3xl pt-8">
-            <div className="rounded-lg border border-border/50 bg-card/30 backdrop-blur p-8">
-              <div className="grid gap-8 sm:grid-cols-3 text-center">
-                <div className="space-y-1">
-                  <div className="text-2xl font-bold text-primary">React</div>
-                  <div className="text-sm text-muted-foreground">Admin Panel</div>
-                </div>
-                <div className="space-y-1">
-                  <div className="text-2xl font-bold text-primary">Django</div>
-                  <div className="text-sm text-muted-foreground">REST API</div>
-                </div>
-                <div className="space-y-1">
-                  <div className="text-2xl font-bold text-primary">PostgreSQL</div>
-                  <div className="text-sm text-muted-foreground">Database</div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </main>

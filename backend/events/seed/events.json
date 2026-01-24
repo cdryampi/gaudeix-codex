@@ -3,338 +3,206 @@
   "media_base_dir": "management/commands/media",
   "events": [
     {
-      "slug": "reforc-escolar-2025-12-02-1715",
-      "category_slug": "joves",
-      "start_at": "2025-12-02T17:15:00+01:00",
-      "end_at": "2025-12-02T18:15:00+01:00",
-      "is_published": true,
-      "is_featured": false,
-      "is_free": true,
-      "price_text": "",
-      "venue_name": "Can Martinet",
-      "location_text": "Can Martinet",
-      "featured_image_filename": "reforc_escolar.jpg",
-      "tags": ["joves", "educacio", "reforc", "cabrera-de-mar"],
-      "translations": {
-        "ca": {
-          "title": "Reforç escolar (ESO i Batxillerat)",
-          "summary": "Servei gratuït de suport escolar per a joves empadronats o que estudien al municipi.",
-          "description": "Sessions setmanals de reforç escolar adreçades a alumnes d’ESO i Batxillerat. Espai per fer deures, preparar exàmens i consolidar hàbits d’estudi amb suport. Activitat gratuïta. Inscripcions obertes i formalització presencial a Can Martinet."
-        }
-      }
-    },
-    {
-      "slug": "reforc-escolar-2025-12-04-1730",
-      "category_slug": "joves",
-      "start_at": "2025-12-04T17:30:00+01:00",
-      "end_at": "2025-12-04T18:30:00+01:00",
-      "is_published": true,
-      "is_featured": false,
-      "is_free": true,
-      "price_text": "",
-      "venue_name": "Centre Cívic Pla de l'Avellà",
-      "location_text": "Centre Cívic Pla de l'Avellà",
-      "featured_image_filename": "reforc_escolar.jpg",
-      "tags": ["joves", "educacio", "reforc", "cabrera-de-mar"],
-      "translations": {
-        "ca": {
-          "title": "Reforç escolar (Centre Cívic)",
-          "summary": "Reforç setmanal gratuït per a ESO i Batxillerat al Centre Cívic del municipi.",
-          "description": "Servei de reforç escolar per a joves d’ESO i Batxillerat. Sessions pensades per millorar el rendiment, l’organització i la confiança amb l’estudi. Activitat gratuïta. Inscripcions i informació presencial."
-        }
-      }
-    },
-    {
-      "slug": "reforc-escolar-2025-12-09-1715",
-      "category_slug": "joves",
-      "start_at": "2025-12-09T17:15:00+01:00",
-      "end_at": "2025-12-09T18:15:00+01:00",
-      "is_published": true,
-      "is_featured": false,
-      "is_free": true,
-      "price_text": "",
-      "venue_name": "Can Martinet",
-      "location_text": "Can Martinet",
-      "featured_image_filename": "reforc_escolar.jpg",
-      "tags": ["joves", "educacio", "reforc"],
-      "translations": {
-        "ca": {
-          "title": "Reforç escolar (setmanal)",
-          "summary": "Acompanyament gratuït per reforçar estudis i hàbits d’aprenentatge.",
-          "description": "Sessió setmanal de reforç escolar per a joves. Espai de suport per resoldre dubtes, reforçar continguts i preparar exàmens amb una rutina d’estudi estable."
-        }
-      }
-    },
-    {
-      "slug": "reforc-escolar-2025-12-11-1730",
-      "category_slug": "joves",
-      "start_at": "2025-12-11T17:30:00+01:00",
-      "end_at": "2025-12-11T18:30:00+01:00",
-      "is_published": true,
-      "is_featured": false,
-      "is_free": true,
-      "price_text": "",
-      "venue_name": "Centre Cívic Pla de l'Avellà",
-      "location_text": "Centre Cívic Pla de l'Avellà",
-      "featured_image_filename": "reforc_escolar.jpg",
-      "tags": ["joves", "educacio", "reforc"],
-      "translations": {
-        "ca": {
-          "title": "Reforç escolar (Centre Cívic, setmanal)",
-          "summary": "Sessió gratuïta de reforç per a alumnes d’ESO i Batxillerat.",
-          "description": "Trobada setmanal per reforçar matèries, millorar mètodes d’estudi i guanyar autonomia. Activitat gratuïta adreçada a joves del municipi."
-        }
-      }
-    },
-    {
-      "slug": "reforc-escolar-2025-12-16-1715",
-      "category_slug": "joves",
-      "start_at": "2025-12-16T17:15:00+01:00",
-      "end_at": "2025-12-16T18:15:00+01:00",
-      "is_published": true,
-      "is_featured": false,
-      "is_free": true,
-      "price_text": "",
-      "venue_name": "Can Martinet",
-      "location_text": "Can Martinet",
-      "featured_image_filename": "reforc_escolar.jpg",
-      "tags": ["joves", "educacio", "reforc"],
-      "translations": {
-        "ca": {
-          "title": "Reforç escolar (Can Martinet)",
-          "summary": "Suport setmanal per estudiar i consolidar continguts d’ESO i Batxillerat.",
-          "description": "Sessió de reforç escolar amb acompanyament per fer deures, entendre continguts i preparar exàmens. Activitat gratuïta amb inscripció presencial."
-        }
-      }
-    },
-    {
-      "slug": "reforc-escolar-2025-12-18-1730",
-      "category_slug": "joves",
-      "start_at": "2025-12-18T17:30:00+01:00",
-      "end_at": "2025-12-18T18:30:00+01:00",
-      "is_published": true,
-      "is_featured": false,
-      "is_free": true,
-      "price_text": "",
-      "venue_name": "Centre Cívic Pla de l'Avellà",
-      "location_text": "Centre Cívic Pla de l'Avellà",
-      "featured_image_filename": "reforc_escolar.jpg",
-      "tags": ["joves", "educacio", "reforc"],
-      "translations": {
-        "ca": {
-          "title": "Reforç escolar (Centre Cívic Pla de l’Avellà)",
-          "summary": "Espai de reforç i estudi amb suport. Activitat gratuïta setmanal.",
-          "description": "Sessió de reforç escolar per a ESO i Batxillerat. Pensada per avançar feina, resoldre dubtes i reforçar hàbits d’estudi en un entorn tranquil."
-        }
-      }
-    },
-    {
-      "slug": "contacontes-tivoli-2025-12-09-1730",
-      "category_slug": "joves",
-      "start_at": "2025-12-09T17:30:00+01:00",
-      "end_at": null,
-      "is_published": true,
-      "is_featured": false,
-      "is_free": true,
-      "price_text": "Entrada lliure",
-      "venue_name": "Biblioteca Ilturo",
-      "location_text": "Biblioteca Ilturo",
-      "featured_image_filename": "PARC_DE_NADAL.jpg",
-      "tags": ["biblioteca", "infantil", "nadal", "contacontes"],
-      "translations": {
-        "ca": {
-          "title": "Contacontes infantil: Tívoli",
-          "summary": "Sessió de contes i màgia nadalenca per a públic infantil i familiar (+3).",
-          "description": "Tarda de contacontes a la Biblioteca Ilturo amb una proposta pensada per gaudir en família. Històries amb ambient de Nadal, participació i un to càlid. Recomanat a partir de 3 anys. Entrada lliure fins a completar aforament."
-        }
-      }
-    },
-    {
-      "slug": "el-meu-primer-tio-2025-12-12-1700",
-      "category_slug": "festes",
-      "start_at": "2025-12-12T17:00:00+01:00",
-      "end_at": null,
+      "slug": "cicle-orgue-avui",
+      "category_slug": "musica",
+      "start_offset": {
+        "days": 0,
+        "hours": 19
+      },
+      "end_offset": {
+        "days": 0,
+        "hours": 21
+      },
       "is_published": true,
       "is_featured": true,
-      "is_free": true,
-      "price_text": "",
-      "venue_name": "Sala Nova",
-      "location_text": "Sala Nova",
-      "featured_image_filename": "caga_tio.jpg",
-      "tags": ["nadal", "familia", "nadons", "festes"],
+      "venue_name": "Església Parroquial de Sant Feliu",
+      "location_text": "Església Sant Feliu",
+      "featured_image_filename": "XXXVI cicle de concerts de orgue.jpeg",
       "translations": {
         "ca": {
-          "title": "El meu primer Tió",
-          "summary": "Acte per a famílies amb nadons nascuts el 2025 per viure el primer Nadal plegats.",
-          "description": "Trobada de benvinguda i celebració del primer Tió per a les famílies amb nadons nascuts durant el 2025. Un moment simbòlic per compartir en comunitat. L’organització contactarà prèviament amb les famílies participants per concretar detalls."
+          "title": "Cicle de Concerts d'Orgue: Avui",
+          "summary": "Gran concert d'obertura del cicle d'orgue.",
+          "description": "Gaudeix de la sonoritat única de l'orgue de Sant Feliu avui mateix."
+        },
+        "es": {
+          "title": "Ciclo de Conciertos de Órgano: Hoy",
+          "summary": "Gran concierto de apertura del ciclo de órgano.",
+          "description": "Disfruta de la sonoridad única del órgano de Sant Feliu hoy mismo."
         }
       }
     },
     {
-      "slug": "fira-santa-llucia-2025-12-13-1615",
+      "slug": "mercat-setmanal-dema",
       "category_slug": "festes",
-      "start_at": "2025-12-13T16:15:00+01:00",
-      "end_at": "2025-12-13T20:00:00+01:00",
+      "start_offset": {
+        "days": 1,
+        "hours": 9
+      },
+      "end_offset": {
+        "days": 1,
+        "hours": 14
+      },
       "is_published": true,
-      "is_featured": true,
-      "is_free": true,
-      "price_text": "",
       "venue_name": "Plaça del Poble",
-      "location_text": "Plaça del Poble",
+      "location_text": "Cabrera de Mar",
       "featured_image_filename": "fira_nadal.jpg",
-      "tags": ["nadal", "fira", "pessebre-vivent", "cultura"],
       "translations": {
         "ca": {
-          "title": "Fira de Santa Llúcia i Pessebre Vivent",
-          "summary": "Tarda nadalenca amb artesania, ambient festiu i el tradicional pessebre vivent.",
-          "description": "La plaça s’omple d’esperit de Nadal amb parades, música i una ambientació especial. Destaquen la participació de la comunitat educativa i el pessebre vivent, una cita emblemàtica del municipi. Ideal per passejar i fer les primeres compres nadalenques."
+          "title": "Mercat Setmanal de Proximitat",
+          "summary": "Productes frescos i artesania local.",
+          "description": "Vine demà al matí a la plaça per trobar els millors productes del Maresme."
+        },
+        "es": {
+          "title": "Mercado Semanal de Proximidad",
+          "summary": "Productos frescos y artesanía local.",
+          "description": "Ven mañana por la mañana a la plaza para encontrar los mejores productos del Maresme."
         }
       }
     },
     {
-      "slug": "fira-de-nadal-2025-12-20-1100",
+      "slug": "taller-ceramica-ilturo",
+      "category_slug": "joves",
+      "start_offset": {
+        "days": 5,
+        "hours": 10
+      },
+      "end_offset": {
+        "days": 5,
+        "hours": 12
+      },
+      "is_published": true,
+      "venue_name": "Yacimiento Ilturo",
+      "location_text": "Cabrera de Mar",
+      "featured_image_filename": "reforc_escolar.jpg",
+      "tags": [
+        "historia",
+        "taller",
+        "familiar"
+      ],
+      "translations": {
+        "ca": {
+          "title": "Taller de Ceràmica Romana",
+          "summary": "Crea la teva pròpia peça històrica a Ilturo.",
+          "description": "Activitat familiar per aprendre tècniques de terrissa romana."
+        },
+        "es": {
+          "title": "Taller de Cerámica Romana",
+          "summary": "Crea tu propia pieza histórica en Ilturo.",
+          "description": "Actividad familiar para aprender técnicas de alfarería romana."
+        }
+      }
+    },
+    {
+      "slug": "excursio-burriac-nocturna",
       "category_slug": "festes",
-      "start_at": "2025-12-20T11:00:00+01:00",
-      "end_at": "2025-12-20T22:00:00+01:00",
+      "start_offset": {
+        "days": 10,
+        "hours": 20
+      },
+      "end_offset": {
+        "days": 10,
+        "hours": 23
+      },
       "is_published": true,
       "is_featured": true,
-      "is_free": true,
-      "price_text": "",
-      "venue_name": "Parc de la Nova Cançó Catalana",
-      "location_text": "Parc de la Nova Cançó Catalana",
+      "venue_name": "Castell de Burriac",
+      "location_text": "Inici: Font de la Truita",
       "featured_image_filename": "fira_nadal.jpg",
-      "tags": ["nadal", "fira", "familia", "foodtrucks", "artesania"],
       "translations": {
         "ca": {
-          "title": "Fira de Nadal (dia 1)",
-          "summary": "Mercat nadalenc amb artesania, foodtrucks, tallers infantils i música.",
-          "description": "Primera jornada de la Fira de Nadal del Pla. Parades d’artesania i productes nadalencs, zona gastronòmica amb foodtrucks i activitats per a tota la família. Un espai ideal per fer compres, passejar i gaudir d’un ambient festiu."
+          "title": "Pujada Nocturna al Castell de Burriac",
+          "summary": "Excursió sota la llum de la lluna plena.",
+          "description": "Gaudeix de les millors vistes de la costa il·luminades des del cim de Burriac."
+        },
+        "es": {
+          "title": "Subida Nocturna al Castillo de Burriac",
+          "summary": "Excursión bajo la luz de la luna llena.",
+          "description": "Disfruta de las mejores vistas de la costa iluminadas desde la cima de Burriac."
         }
       }
     },
     {
-      "slug": "fira-de-nadal-2025-12-21-1100",
-      "category_slug": "festes",
-      "start_at": "2025-12-21T11:00:00+01:00",
-      "end_at": "2025-12-21T22:00:00+01:00",
-      "is_published": true,
-      "is_featured": true,
-      "is_free": true,
-      "price_text": "",
-      "venue_name": "Parc de la Nova Cançó Catalana",
-      "location_text": "Parc de la Nova Cançó Catalana",
-      "featured_image_filename": "fira_nadal.jpg",
-      "tags": ["nadal", "fira", "familia", "foodtrucks", "artesania"],
-      "translations": {
-        "ca": {
-          "title": "Fira de Nadal (dia 2)",
-          "summary": "Segona jornada de la fira amb activitats familiars i ambient nadalenc continuat.",
-          "description": "Segon dia de la Fira de Nadal: continuen les parades, la zona gastronòmica i els tallers. Vine amb calma per completar compres i aprofitar l’ambient, amb propostes per a petits i grans durant tot el dia."
-        }
-      }
-    },
-    {
-      "slug": "missatger-reial-2025-12-21-1100",
-      "category_slug": "festes",
-      "start_at": "2025-12-21T11:00:00+01:00",
-      "end_at": null,
-      "is_published": true,
-      "is_featured": true,
-      "is_free": true,
-      "price_text": "",
-      "venue_name": "Parc de la Nova Cançó Catalana",
-      "location_text": "Parc de la Nova Cançó Catalana",
-      "featured_image_filename": "missatger_reis.jpg",
-      "tags": ["reis", "nadal", "infantil", "familia"],
-      "translations": {
-        "ca": {
-          "title": "Missatger Reial",
-          "summary": "Els infants poden lliurar la carta als Reis d’Orient en una trobada familiar dins la fira.",
-          "description": "Visita del Missatger Reial perquè els infants entreguin la seva carta i visquin un moment especial. Activitat pensada per a famílies i vinculada a l’ambient de la Fira de Nadal. Recomanable venir amb temps per evitar cues."
-        }
-      }
-    },
-    {
-      "slug": "la-casa-a-trenc-dalba-2025-12-20-1800",
+      "slug": "conferencia-historia",
       "category_slug": "teatre",
-      "start_at": "2025-12-20T18:00:00+01:00",
-      "end_at": null,
+      "start_offset": {
+        "days": 15,
+        "hours": 18
+      },
+      "end_offset": {
+        "days": 15,
+        "hours": 20
+      },
+      "is_published": true,
+      "venue_name": "Can Martinet",
+      "location_text": "Sala d'Actes",
+      "featured_image_filename": "casa_trenc_alba.jpeg",
+      "translations": {
+        "ca": {
+          "title": "Conferència: Els Secrets d'Ilturo",
+          "summary": "Xerrada sobre els últims descobriments arqueològics.",
+          "description": "Escolta als experts sobre el passat de la nostra vila."
+        },
+        "es": {
+          "title": "Conferencia: Los Secretos de Ilturo",
+          "summary": "Charla sobre los últimos descubrimientos arqueológicos.",
+          "description": "Escucha a los expertos sobre el pasado de nuestra villa."
+        }
+      }
+    },
+    {
+      "slug": "concert-jazz-platja",
+      "category_slug": "musica",
+      "start_offset": {
+        "days": 25,
+        "hours": 21
+      },
+      "end_offset": {
+        "days": 25,
+        "hours": 23
+      },
       "is_published": true,
       "is_featured": true,
-      "is_free": false,
-      "price_text": "Entrades disponibles",
-      "venue_name": "Envelat Municipal",
-      "location_text": "Envelat Municipal",
-      "featured_image_filename": "casa_trenc_alba.jpeg",
-      "tags": ["teatre", "cultura", "nadal"],
-      "translations": {
-        "ca": {
-          "title": "La casa a trenc d’alba (sessió 1)",
-          "summary": "Teatre de la Claca: un viatge emocional sobre fugir, tornar i recomençar.",
-          "description": "Proposta escènica amb una posada en escena simbòlica i atmosfèrica. L’obra parla de fugir, però sobretot de tornar: a una mateixa, a una vida que encara no s’ha viscut. Una cita destacada del cicle cultural de Nadal."
-        }
-      }
-    },
-    {
-      "slug": "la-casa-a-trenc-dalba-2025-12-21-1800",
-      "category_slug": "teatre",
-      "start_at": "2025-12-21T18:00:00+01:00",
-      "end_at": null,
-      "is_published": true,
-      "is_featured": true,
-      "is_free": false,
-      "price_text": "Entrades disponibles",
-      "venue_name": "Envelat Municipal",
-      "location_text": "Envelat Municipal",
-      "featured_image_filename": "casa_trenc_alba.jpeg",
-      "tags": ["teatre", "cultura", "nadal"],
-      "translations": {
-        "ca": {
-          "title": "La casa a trenc d’alba (sessió 2)",
-          "summary": "Segona funció de l’obra de la Claca, intensa i carregada de simbolisme.",
-          "description": "Segona representació de l’obra amb llums, ombres i una narrativa emocional que atrapa. Ideal per a qui busca una experiència teatral íntima i amb identitat local. Entrades disponibles fins a exhaurir."
-        }
-      }
-    },
-    {
-      "slug": "cicle-orgue-2025-12-21-1800",
-      "category_slug": "musica",
-      "start_at": "2025-12-21T18:00:00+01:00",
-      "end_at": null,
-      "is_published": true,
-      "is_featured": false,
-      "is_free": true,
-      "price_text": "",
-      "venue_name": "Església Parroquial de Sant Feliu",
-      "location_text": "Església Sant Feliu",
+      "venue_name": "Platja de Cabrera",
+      "location_text": "Zona Chiringuito",
       "featured_image_filename": "XXXVI cicle de concerts de orgue.jpeg",
-      "tags": ["musica", "orgue", "cultura"],
       "translations": {
         "ca": {
-          "title": "XXXVI Cicle de Concerts d’Orgue (18 h)",
-          "summary": "Concert del cicle d’orgue en un entorn patrimonial emblemàtic del municipi.",
-          "description": "Cita del XXXVI Cicle de Concerts d’Orgue a l’Església de Sant Feliu. Una proposta per gaudir de la sonoritat de l’orgue i d’una experiència musical singular en un espai patrimonial."
+          "title": "Jazz a la Platja",
+          "summary": "Música en directe al costat del mar.",
+          "description": "Una vetllada inoblidable amb jazz en directe i la brisa marina."
+        },
+        "es": {
+          "title": "Jazz en la Playa",
+          "summary": "Música en directo junto al mar.",
+          "description": "Una velada inolvidable con jazz en directo y la brisa marina."
         }
       }
     },
     {
-      "slug": "cicle-orgue-2025-12-24-2000",
-      "category_slug": "musica",
-      "start_at": "2025-12-24T20:00:00+01:00",
-      "end_at": null,
+      "slug": "fira-artesania-mes-1",
+      "category_slug": "festes",
+      "start_offset": {
+        "days": 40,
+        "hours": 10
+      },
+      "end_offset": {
+        "days": 40,
+        "hours": 20
+      },
       "is_published": true,
-      "is_featured": false,
-      "is_free": true,
-      "price_text": "",
-      "venue_name": "Església Parroquial de Sant Feliu",
-      "location_text": "Església Sant Feliu",
-      "featured_image_filename": "XXXVI cicle de concerts de orgue.jpeg",
-      "tags": ["musica", "orgue", "nadal", "cultura"],
+      "venue_name": "Nucli Antic",
+      "location_text": "Cabrera de Mar",
+      "featured_image_filename": "fira_nadal.jpg",
       "translations": {
         "ca": {
-          "title": "XXXVI Cicle de Concerts d’Orgue (Vigília, 20 h)",
-          "summary": "Sessió especial de vigília dins el cicle, amb ambient recollit i repertori adient.",
-          "description": "Concert programat per a la vigília de Nadal dins del cicle d’orgue. Una experiència sonora i patrimonial per tancar el calendari amb una proposta musical de qualitat en un entorn únic."
+          "title": "Fira d'Artesania d'Hivern",
+          "summary": "Grans expositors d'artesania i gastronomia local.",
+          "description": "El centre de la vila s'omple d'artesania d'aquí a un mes i escaig."
+        },
+        "es": {
+          "title": "Feria de Artesanía de Invierno",
+          "summary": "Grandes expositores de artesanía y gastronomía local.",
+          "description": "El centro de la villa se llena de artesanía dentro de un mes y pico."
         }
       }
     }

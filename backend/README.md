@@ -2,6 +2,36 @@
 
 Configuración base de Django para el proyecto **gaudeix_backend**.
 
+## Instalación de Dependencias
+
+### Producción
+```bash
+# Desde la raíz del proyecto
+.venv\Scripts\python.exe -m pip install -r backend/requirements.txt
+
+# O desde backend/ con entorno activado
+cd backend
+..\\.venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+### Desarrollo (incluye testing y linting)
+```bash
+# Instalar dependencias de desarrollo adicionales
+pip install -r requirements-dev.txt
+```
+
+### Notas Importantes
+- **Pillow**: Requiere instalación correcta para procesamiento de imágenes
+- **Cryptography**: Necesaria para JWT/autenticación. En Windows, asegúrate de que `cffi` esté instalado
+- **PostgreSQL**: Requiere `psycopg` y `psycopg-binary` para la conexión a la base de datos
+
+Si tienes problemas con `cryptography` en Windows:
+```bash
+pip install --force-reinstall cffi
+pip install --force-reinstall cryptography==46.0.3
+```
+
 ## Entorno rápido (CLI Codex / Windows)
 
 ```bash

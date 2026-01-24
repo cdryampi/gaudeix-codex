@@ -14,6 +14,7 @@ export type Event = {
   location_text?: string;
   is_featured?: boolean;
   is_free?: boolean;
+  price?: string | number | null;
   price_text?: string;
   category?: number | null;
   category_slug?: string;
@@ -44,6 +45,7 @@ export type CreateEventDTO = {
   location_text?: string;
   is_featured?: boolean;
   is_free?: boolean;
+  price?: string | number | null;
   price_text?: string;
   category_id?: number | null;
   tag_ids?: number[];

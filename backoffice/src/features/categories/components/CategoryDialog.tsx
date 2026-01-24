@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -130,54 +137,74 @@ export function CategoryDialog({ open, onOpenChange, onSubmit, category, categor
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[560px] px-6">
+      <DialogContent className="max-w-[760px] px-6">
         <DialogHeader>
           <DialogTitle>{category ? "Editar categoría" : "Nueva categoría"}</DialogTitle>
+          <DialogDescription>
+            Completa la ficha principal y revisa las traducciones antes de guardar la categoría.
+          </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="slug">Slug</Label>
-              <Input
-                id="slug"
-                name="slug"
-                value={form.slug}
-                onChange={(e) => setForm((prev) => ({ ...prev, slug: e.target.value }))}
-                required
-                disabled={!!category}
-              />
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <section className="space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <p className="text-sm font-semibold text-foreground">Detalles básicos</p>
+                <p className="text-xs text-muted-foreground">Slug, taxonomía y jerarquía de la categoría.</p>
+              </div>
+              {category && (
+                <span className="rounded-full bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
+                  Editando {category.slug}
+                </span>
+              )}
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="taxonomy">Taxonomía</Label>
-              <Input
-                id="taxonomy"
-                name="taxonomy"
-                value={form.taxonomy || ""}
-                onChange={(e) => setForm((prev) => ({ ...prev, taxonomy: e.target.value }))}
-                placeholder="template, theme, etc."
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="parent">Categoría padre (opcional)</Label>
-              <select
-                id="parent"
-                value={form.parent ?? ""}
-                onChange={(e) => setForm((prev) => ({ ...prev, parent: e.target.value ? Number(e.target.value) : null }))}
-                className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
-              >
-                <option value="">Sin padre</option>
-                {parentOptions.map((opt) => (
-                  <option key={opt.id} value={opt.id}>
-                    {opt.nombre} ({opt.slug})
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
 
-          <div className="space-y-3 rounded-lg border border-border/60 bg-muted/20 p-3">
-            <div className="flex items-center justify-between">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="slug">Slug</Label>
+                <Input
+                  id="slug"
+                  name="slug"
+                  value={form.slug}
+                  onChange={(e) => setForm((prev) => ({ ...prev, slug: e.target.value }))}
+                  required
+                  disabled={!!category}
+                />
+                <p className="text-xs text-muted-foreground">Se usa en URLs y plantillas públicas.</p>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="taxonomy">Taxonomía</Label>
+                <Input
+                  id="taxonomy"
+                  name="taxonomy"
+                  value={form.taxonomy || ""}
+                  onChange={(e) => setForm((prev) => ({ ...prev, taxonomy: e.target.value }))}
+                  placeholder="template, theme, etc."
+                />
+                <p className="text-xs text-muted-foreground">Opcional, útil para categorizar plantillas.</p>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="parent">Categoría padre (opcional)</Label>
+                <select
+                  id="parent"
+                  value={form.parent ?? ""}
+                  onChange={(e) => setForm((prev) => ({ ...prev, parent: e.target.value ? Number(e.target.value) : null }))}
+                  className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+                >
+                  <option value="">Sin padre</option>
+                  {parentOptions.map((opt) => (
+                    <option key={opt.id} value={opt.id}>
+                      {opt.nombre} ({opt.slug})
+                    </option>
+                  ))}
+                </select>
+                <p className="text-xs text-muted-foreground">Define la jerarquía visible en el sitio.</p>
+              </div>
+            </div>
+          </section>
+
+          <section className="space-y-3 rounded-xl border border-border/60 bg-muted/20 p-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="space-y-1">
                 <p className="text-sm font-semibold text-foreground">Icono</p>
                 <p className="text-xs text-muted-foreground">
@@ -253,63 +280,70 @@ export function CategoryDialog({ open, onOpenChange, onSubmit, category, categor
             <p className="text-xs text-muted-foreground">
               Usa el nombre del icono en kebab-case (ej. castle, party-popper). Puedes escribirlo o elegir uno sugerido.
             </p>
-          </div>
+          </section>
 
-          <Tabs value={activeLang} onValueChange={setActiveLang} defaultValue="ca">
-            <TabsList className="grid w-full grid-cols-4">
-              {LANGUAGES.map((lang) => (
-                <TabsTrigger key={lang.code} value={lang.code}>
-                  {lang.name}
-                </TabsTrigger>
-              ))}
-            </TabsList>
+          <section className="space-y-3">
+            <div>
+              <p className="text-sm font-semibold text-foreground">Traducciones</p>
+              <p className="text-xs text-muted-foreground">Gestiona nombre y descripción por idioma.</p>
+            </div>
 
-            {LANGUAGES.map((lang) => {
-              const content = getContent(lang.code);
-              const isBase = lang.code === "ca";
-              return (
-                <TabsContent key={lang.code} value={lang.code} className="space-y-3 pt-4">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor={`nombre-${lang.code}`}>Nombre {isBase ? "" : `(${lang.name})`}</Label>
-                    {!isBase && category && (
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant="outline"
-                        onClick={() => handleAutoTranslate(lang.code)}
-                        disabled={loadingTranslate || !form.nombre}
-                      >
-                        {loadingTranslate ? "Traduciendo..." : "Traducir IA"}
-                      </Button>
-                    )}
-                  </div>
-                  <Input
-                    id={`nombre-${lang.code}`}
-                    value={content.nombre || ""}
-                    onChange={(e) => updateField(lang.code, "nombre", e.target.value)}
-                    required={isBase}
-                    placeholder={isBase ? "" : "Traducción automática o manual"}
-                  />
-                  <div className="space-y-2">
-                    <Label htmlFor={`descripcion-${lang.code}`}>Descripción {isBase ? "" : `(${lang.name})`}</Label>
-                    <Textarea
-                      id={`descripcion-${lang.code}`}
-                      value={content.descripcion || ""}
-                      onChange={(e) => updateField(lang.code, "descripcion", e.target.value)}
-                      placeholder={isBase ? "Descripción" : "Traducción automática o manual"}
+            <Tabs value={activeLang} onValueChange={setActiveLang} defaultValue="ca">
+              <TabsList className="grid w-full grid-cols-4">
+                {LANGUAGES.map((lang) => (
+                  <TabsTrigger key={lang.code} value={lang.code}>
+                    {lang.name}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+
+              {LANGUAGES.map((lang) => {
+                const content = getContent(lang.code);
+                const isBase = lang.code === "ca";
+                return (
+                  <TabsContent key={lang.code} value={lang.code} className="space-y-3 pt-4">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <Label htmlFor={`nombre-${lang.code}`}>Nombre {isBase ? "" : `(${lang.name})`}</Label>
+                      {!isBase && category && (
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleAutoTranslate(lang.code)}
+                          disabled={loadingTranslate || !form.nombre}
+                        >
+                          {loadingTranslate ? "Traduciendo..." : "Traducir IA"}
+                        </Button>
+                      )}
+                    </div>
+                    <Input
+                      id={`nombre-${lang.code}`}
+                      value={content.nombre || ""}
+                      onChange={(e) => updateField(lang.code, "nombre", e.target.value)}
+                      required={isBase}
+                      placeholder={isBase ? "" : "Traducción automática o manual"}
                     />
-                  </div>
-                </TabsContent>
-              );
-            })}
-          </Tabs>
+                    <div className="space-y-2">
+                      <Label htmlFor={`descripcion-${lang.code}`}>Descripción {isBase ? "" : `(${lang.name})`}</Label>
+                      <Textarea
+                        id={`descripcion-${lang.code}`}
+                        value={content.descripcion || ""}
+                        onChange={(e) => updateField(lang.code, "descripcion", e.target.value)}
+                        placeholder={isBase ? "Descripción" : "Traducción automática o manual"}
+                      />
+                    </div>
+                  </TabsContent>
+                );
+              })}
+            </Tabs>
+          </section>
 
-          <div className="flex justify-end gap-2">
+          <DialogFooter className="border-t border-border/60 pt-4">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancelar
             </Button>
             <Button type="submit">{category ? "Guardar" : "Crear"}</Button>
-          </div>
+          </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>

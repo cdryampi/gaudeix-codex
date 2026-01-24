@@ -1,11 +1,7 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+/**
+ * Auth card component using Flowbite React
+ */
+import { Card } from "flowbite-react";
 
 interface AuthCardProps {
   title: string;
@@ -21,25 +17,23 @@ export const AuthCard = ({
   children,
 }: AuthCardProps) => {
   return (
-    <Card className="w-full max-w-[640px] mx-auto rounded-xl border border-border bg-card text-foreground shadow-xl backdrop-blur-md transition-all duration-300 hover:shadow-2xl p-0">
-      <div className="px-4 py-6 sm:px-6 sm:py-8 md:px-8 md:py-10 xl:px-12 xl:py-12 space-y-5">
-        <CardHeader className="space-y-2 text-center p-0">
-          <CardTitle className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">
+    <Card className="w-full shadow-xl">
+      <div className="space-y-5">
+        <div className="space-y-2 text-center">
+          <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">
             {title}
-          </CardTitle>
+          </h2>
           {subtitle && (
-            <CardDescription className="text-sm sm:text-base text-muted-foreground font-normal">
+            <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400">
               {subtitle}
-            </CardDescription>
+            </p>
           )}
-        </CardHeader>
-        <CardContent className="p-0 space-y-4 sm:space-y-5">
-          {children}
-        </CardContent>
+        </div>
+        <div className="space-y-4 sm:space-y-5">{children}</div>
         {footer && (
-          <CardFooter className="p-0 pt-5 text-sm text-muted-foreground text-center border-t border-border">
+          <div className="pt-5 text-sm text-gray-500 dark:text-gray-400 text-center border-t border-gray-200 dark:border-gray-700">
             {footer}
-          </CardFooter>
+          </div>
         )}
       </div>
     </Card>

@@ -1,43 +1,36 @@
 import { useState } from "react";
-
 import type { FeaturedCategory } from "@/features/categories/categoriesData";
-import { SkeletonBlock } from "@/components/skeletons/SkeletonBlock";
-import { AnimatedCard } from "@/components/animated/AnimatedCard";
 
 export function FeaturedCategoryCard({ category }: { category: FeaturedCategory }) {
   const [loaded, setLoaded] = useState(false);
   const Icon = category.Icon;
 
   return (
-    <AnimatedCard
-      as="a"
+    <a
       href={category.href}
-      className="group block overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-gray-200"
+      className="group relative flex flex-col overflow-hidden rounded-[4rem] bg-slate-50 transition-all hover:-translate-y-4 hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.2)] h-[540px]"
     >
-      <div className="relative aspect-[4/5] overflow-hidden bg-gray-100">
-        {!loaded ? (
-          <div className="absolute inset-0">
-            <SkeletonBlock className="h-full w-full" rounded="2xl" />
-          </div>
-        ) : null}
-
+      <div className="absolute inset-0 z-0">
         <img
           src={category.image_src}
           alt={category.title}
           loading="lazy"
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+          className={`h-full w-full object-cover transition-all duration-1000 group-hover:scale-110 ${loaded ? 'opacity-100' : 'opacity-0 scale-105'}`}
           onLoad={() => setLoaded(true)}
         />
+      </div>
 
-        <div className="absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-black/65 via-black/30 to-transparent p-4">
-          <div className="flex items-center gap-2">
-            <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/15 ring-1 ring-white/20 backdrop-blur">
-              <Icon className="h-4 w-4 text-accent" aria-hidden="true" />
-            </span>
-            <span className="text-sm font-semibold text-white drop-shadow">{category.title}</span>
-          </div>
+      <div className="absolute inset-0 z-10 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent p-12 flex flex-col justify-end gap-6">
+        <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-primary text-white shadow-2xl transition-transform group-hover:rotate-12 group-hover:scale-110">
+          <Icon className="h-8 w-8" />
+        </div>
+        <div className="space-y-3">
+          <span className="text-[10px] font-black uppercase tracking-[0.4em] text-accent opacity-80">Descubrir</span>
+          <h3 className="text-4xl md:text-5xl font-black text-white leading-[0.85] tracking-tighter uppercase">
+            {category.title}
+          </h3>
         </div>
       </div>
-    </AnimatedCard>
+    </a>
   );
 }

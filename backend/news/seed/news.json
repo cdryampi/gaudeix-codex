@@ -1,0 +1,30 @@
+[
+    {
+        "title": "Aprovació del pressupost municipal 2026",
+        "summary": "El Ple de l'Ajuntament ha aprovat les noves partides destinades a inversions culturals i esportives.",
+        "body": "En la sessió d'ahir es van aprovar els pressupostos amb un fort enfocament en la millora dels equipaments públics. S'inclou la restauració d'una nova fase del Castell de Burriac i la digitalització del museu Ilturo.",
+        "is_published": true,
+        "image_filename": "noticia_ple.png",
+        "translations": {
+            "es": {
+                "title": "Aprobación del presupuesto municipal 2026",
+                "summary": "El Pleno del Ayuntamiento ha aprobado las nuevas partidas destinadas a inversiones culturales y deportivas.",
+                "body": "En la sesión de ayer se aprobaron los presupuestos con un fuerte enfoque en la mejora de los equipamientos públicos. Se incluye la restauración de una nueva fase del Castillo de Burriac y la digitalización del museo Ilturo."
+            }
+        }
+    },
+    {
+        "title": "Torna la Fira d'Artesania del Maresme",
+        "summary": "Més de 50 paradistes ompliran la plaça del Poble amb productes de proximitat i km 0.",
+        "body": "Aquest cap de setmana Cabrera de Mar es converteix en l'epicentre de l'artesania. Tallers, parades de menjar i música en directe acompanyaran la mostra.",
+        "is_published": true,
+        "image_filename": "noticia_fira.png",
+        "translations": {
+            "es": {
+                "title": "Vuelve la Feria de Artesanía del Maresme",
+                "summary": "Más de 50 paradistas llenarán la plaza del Pueblo con productos de proximidad y km 0.",
+                "body": "Este fin de semana Cabrera de Mar se convierte en el epicentro de la artesanía. Talleres, puestos de comida y música en directo acompañarán la muestra."
+            }
+        }
+    }
+]

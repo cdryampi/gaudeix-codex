@@ -1,5 +1,4 @@
 import { LucideIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 interface StatCardProps {
   icon: LucideIcon;
@@ -17,46 +16,35 @@ export function StatCard({
   className,
 }: StatCardProps) {
   const toneStyles = {
-    neutral: "bg-muted/50 text-muted-foreground",
-    primary: "bg-cyan-500/10 text-cyan-500",
-    success: "bg-green-500/10 text-green-500",
-    warning: "bg-amber-500/10 text-amber-500",
-    info: "bg-blue-500/10 text-blue-500",
+    neutral: "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300",
+    primary: "bg-primary-50 text-primary-600 dark:bg-primary-500/10 dark:text-primary-400",
+    success: "bg-green-50 text-green-600 dark:bg-green-500/10 dark:text-green-400",
+    warning: "bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400",
+    info: "bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400",
   };
 
   return (
     <div
-      className={cn(
-        "group relative overflow-hidden rounded-lg border border-border/50 bg-card p-5 shadow-sm transition-all hover:shadow-md hover:border-border",
-        className
-      )}
+      className={`group relative overflow-hidden rounded-xl border border-gray-100 bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md dark:border-gray-800 dark:bg-gray-900 ${className || ""}`}
     >
       <div className="flex items-start justify-between">
-        <div className="space-y-2">
-          <p className="text-sm font-medium text-muted-foreground">{label}</p>
-          <p className="text-3xl font-bold tracking-tight text-foreground">
-            {value}
-          </p>
+        <div className="space-y-1">
+          <p className="text-sm font-medium text-gray-500 dark:text-gray-400">{label}</p>
+          <div className="flex items-baseline gap-2">
+            <h3 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+              {value}
+            </h3>
+          </div>
         </div>
         <div
-          className={cn(
-            "flex h-12 w-12 items-center justify-center rounded-lg transition-transform group-hover:scale-110",
-            toneStyles[tone]
-          )}
+          className={`flex h-12 w-12 items-center justify-center rounded-xl ring-1 ring-inset ring-black/5 transition-transform group-hover:scale-110 dark:ring-white/5 ${toneStyles[tone]}`}
         >
-          <Icon className="h-6 w-6" />
+          <Icon className="h-6 w-6" strokeWidth={2.5} />
         </div>
       </div>
-      <div
-        className={cn(
-          "absolute inset-x-0 bottom-0 h-1 transition-all group-hover:h-1.5",
-          tone === "primary" && "bg-cyan-500",
-          tone === "success" && "bg-green-500",
-          tone === "warning" && "bg-amber-500",
-          tone === "info" && "bg-blue-500",
-          tone === "neutral" && "bg-muted"
-        )}
-      />
+      
+      {/* Decorative background shape - adjusted for dark mode visibility */}
+      <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-gray-50 opacity-0 transition-opacity group-hover:opacity-100 dark:bg-gray-800/30 pointer-events-none" />
     </div>
   );
 }

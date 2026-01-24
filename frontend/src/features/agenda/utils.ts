@@ -1,6 +1,6 @@
 import type { EventItem, EventCategory } from "@/data/mockEvents";
 
-export type DateRangeFilter = "today" | "week" | "month" | "all";
+export type DateRangeFilter = "today" | "week" | "month" | "all" | string;
 
 function startOfDay(date: Date) {
   const d = new Date(date);
@@ -43,6 +43,16 @@ export function isTomorrow(date: Date, now = new Date()) {
 
 export function withinRange(startAt: string, range: DateRangeFilter, now = new Date()) {
   if (range === "all") return true;
+
+  // Specific ISO Date (YYYY-MM-DD)
+  if (/^\d{4}-\d{2}-\d{2}$/.test(range)) {
+    const d = new Date(startAt);
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(
+      2,
+      "0"
+    )}`;
+    return key === range;
+  }
 
   const start = startOfDay(now);
   const end =

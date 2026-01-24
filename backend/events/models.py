@@ -88,6 +88,14 @@ class Event(ContentBase, TranslatableModel):
 
     is_featured = models.BooleanField(_("Is featured"), default=False)
     is_free = models.BooleanField(_("Is free"), default=True)
+    price = models.DecimalField(
+        _("Price"),
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        help_text=_("Optional price for the event (indicative)."),
+    )
     price_text = models.CharField(
         _("Price text"),
         max_length=120,

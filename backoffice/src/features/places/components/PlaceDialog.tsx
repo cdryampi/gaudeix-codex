@@ -6,8 +6,9 @@ import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { LANGUAGES } from "@/lib/config/constants";
+import { envConfig } from "@/lib/config/env";
+import { loadGoogleMaps } from "@/lib/maps/googleMaps";
 import { Place, PlacePayload } from "../types";
 import { mediaApi } from "@/features/media/api/media";
 import { categoriesApi } from "@/features/categories/api/categories";
@@ -44,6 +45,8 @@ const emptyForm: PlacePayload = {
   translations: {},
 };
 
+const DEFAULT_CENTER = { lat: 41.3874, lng: 2.1686 };
+
 export function PlaceDialog({ open, onOpenChange, onSubmit, place }: Props) {
   const [form, setForm] = useState<PlacePayload>(emptyForm);
   const [activeLang, setActiveLang] = useState("ca");
@@ -52,8 +55,23 @@ export function PlaceDialog({ open, onOpenChange, onSubmit, place }: Props) {
   const [documents, setDocuments] = useState<MediaItem[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loadingTranslate, setLoadingTranslate] = useState(false);
+  const [mapsReady, setMapsReady] = useState(false);
+  const [mapsError, setMapsError] = useState<string | null>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const docInputRef = useRef<HTMLInputElement>(null);
+  const locationInputRef = useRef<HTMLInputElement>(null);
+  const mapContainerRef = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<google.maps.Map | null>(null);
+  const markerRef = useRef<google.maps.Marker | null>(null);
+  const geocoderRef = useRef<google.maps.Geocoder | null>(null);
+  const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
+
+  const getLatLng = (payload: PlacePayload) => {
+    if (payload.latitude == null || payload.longitude == null) {
+      return null;
+    }
+    return { lat: payload.latitude, lng: payload.longitude };
+  };
 
   useEffect(() => {
     if (place) {
@@ -96,6 +114,88 @@ export function PlaceDialog({ open, onOpenChange, onSubmit, place }: Props) {
     };
     if (open) loadOptions();
   }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    if (!envConfig.googleMapsApiKey) {
+      setMapsError("Configura VITE_GOOGLE_MAPS_API_KEY para usar Google Maps.");
+      setMapsReady(false);
+      return;
+    }
+
+    let isActive = true;
+    setMapsError(null);
+
+    loadGoogleMaps()
+      .then((googleMaps) => {
+        if (!isActive || !googleMaps || !mapContainerRef.current) return;
+        setMapsReady(true);
+
+        const initial = getLatLng(form) || DEFAULT_CENTER;
+        mapRef.current = new google.maps.Map(mapContainerRef.current, {
+          center: initial,
+          zoom: getLatLng(form) ? 15 : 12,
+          mapTypeControl: false,
+          streetViewControl: false,
+          fullscreenControl: false,
+        });
+
+        markerRef.current = new google.maps.Marker({
+          map: mapRef.current,
+          position: initial,
+          draggable: true,
+        });
+        markerRef.current.addListener("dragend", () => {
+          const position = markerRef.current?.getPosition();
+          if (!position) return;
+          updateCoordinates(position.lat(), position.lng());
+          reverseGeocode({ lat: position.lat(), lng: position.lng() });
+        });
+
+        if (mapRef.current) {
+          window.setTimeout(() => {
+            google.maps.event.trigger(mapRef.current!, "resize");
+            mapRef.current?.setCenter(initial);
+          }, 0);
+        }
+
+        if (!autocompleteRef.current && locationInputRef.current) {
+          const autocomplete = new google.maps.places.Autocomplete(locationInputRef.current, {
+            fields: ["formatted_address", "geometry", "name"],
+          });
+          autocompleteRef.current = autocomplete;
+          autocomplete.addListener("place_changed", () => {
+            const placeResult = autocomplete.getPlace();
+            if (!placeResult.geometry?.location) return;
+            const position = placeResult.geometry.location;
+            const address = placeResult.formatted_address || placeResult.name || "";
+            updateCoordinates(position.lat(), position.lng(), address);
+            mapRef.current?.panTo(position);
+            mapRef.current?.setZoom(15);
+            markerRef.current?.setPosition(position);
+          });
+        }
+      })
+      .catch((error) => {
+        console.error("Error cargando Google Maps", error);
+        if (isActive) {
+          setMapsError("No se pudo cargar Google Maps. Revisa la API key.");
+          setMapsReady(false);
+        }
+      });
+
+    return () => {
+      isActive = false;
+    };
+  }, [open]);
+
+  useEffect(() => {
+    if (!mapRef.current || !markerRef.current) return;
+    const position = getLatLng(form);
+    if (!position) return;
+    markerRef.current.setPosition(position);
+    mapRef.current.setCenter(position);
+  }, [form.latitude, form.longitude]);
 
   const getContent = (lang: string) => {
     if (lang === "ca") {
@@ -193,6 +293,29 @@ export function PlaceDialog({ open, onOpenChange, onSubmit, place }: Props) {
     }
   };
 
+  const updateCoordinates = (lat: number, lng: number, address?: string) => {
+    setForm((prev) => ({
+      ...prev,
+      latitude: lat,
+      longitude: lng,
+      location_text: address ?? prev.location_text,
+    }));
+  };
+
+  const reverseGeocode = (location: { lat: number; lng: number }) => {
+    if (!geocoderRef.current) {
+      geocoderRef.current = new google.maps.Geocoder();
+    }
+    geocoderRef.current.geocode({ location }, (results, status) => {
+      if (status === "OK" && results && results[0]) {
+        setForm((prev) => ({
+          ...prev,
+          location_text: results[0].formatted_address || prev.location_text,
+        }));
+      }
+    });
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[720px] px-6">
@@ -201,16 +324,38 @@ export function PlaceDialog({ open, onOpenChange, onSubmit, place }: Props) {
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="location_text">Ubicación</Label>
               <Input
                 id="location_text"
+                ref={locationInputRef}
                 value={form.location_text || ""}
                 onChange={(e) => setForm((prev) => ({ ...prev, location_text: e.target.value }))}
-                placeholder="Dirección o referencia"
+                placeholder="Busca una dirección en Google Maps"
               />
+              <p className="text-xs text-muted-foreground">
+                Escribe para ver sugerencias y seleccionar la dirección exacta.
+              </p>
             </div>
+
+            <div className="overflow-hidden rounded-lg border border-border/60 bg-muted/20">
+              {mapsError ? (
+                <div className="flex h-48 items-center justify-center px-4 text-sm text-muted-foreground">
+                  {mapsError}
+                </div>
+              ) : (
+                <div className="relative">
+                  {!mapsReady && (
+                    <div className="absolute inset-0 flex items-center justify-center text-sm text-muted-foreground">
+                      Cargando mapa...
+                    </div>
+                  )}
+                  <div ref={mapContainerRef} className="h-56 w-full" />
+                </div>
+              )}
+            </div>
+
             <div className="grid grid-cols-2 gap-2">
               <div className="space-y-2">
                 <Label htmlFor="latitude">Latitud</Label>

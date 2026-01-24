@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { CalendarClock, Edit, MapPin, Trash2 } from "lucide-react";
+import { MediaThumbnail } from "@/components/common/MediaThumbnail";
 
 type Props = {
   events: Event[];
@@ -14,7 +15,7 @@ export function EventsTable({ events, onEdit, onDelete }: Props) {
   return (
     <div className="w-full overflow-hidden rounded-xl border border-border bg-card shadow-sm">
       <ScrollArea className="w-full">
-        <table className="w-full min-w-[720px] table-auto caption-bottom text-sm">
+        <table className="w-full min-w-[820px] table-auto caption-bottom text-sm">
           <thead className="bg-muted/50 text-xs uppercase tracking-wide text-muted-foreground">
             <tr className="[&_th]:px-5 [&_th]:py-3 [&_th]:text-left [&_th]:font-semibold">
               <th>Titulo</th>
@@ -35,39 +36,42 @@ export function EventsTable({ events, onEdit, onDelete }: Props) {
               events.map((event) => (
                 <tr key={event.id} className="transition-colors hover:bg-muted/30">
                   <td className="px-5 py-4 align-middle">
-                    <div className="space-y-1">
-                      <p className="font-semibold text-foreground">{event.title}</p>
-                      <p className="text-xs text-muted-foreground">{event.slug}</p>
+                    <div className="flex items-start gap-3">
+                      <EventThumbnail event={event} />
+                      <div className="space-y-1">
+                        <p className="font-semibold text-foreground">{event.title}</p>
+                        <p className="text-xs text-muted-foreground">{event.slug}</p>
 
-                      <div className="flex flex-wrap gap-1 pt-1">
-                        {(event.category_name || event.category_slug) && (
-                          <Badge variant="outline">{event.category_name || event.category_slug}</Badge>
-                        )}
+                        <div className="flex flex-wrap gap-1 pt-1">
+                          {(event.category_name || event.category_slug) && (
+                            <Badge variant="outline">{event.category_name || event.category_slug}</Badge>
+                          )}
 
-                        {event.is_featured && <Badge variant="secondary">Destacado</Badge>}
+                          {event.is_featured && <Badge variant="secondary">Destacado</Badge>}
 
-                        {event.is_free ? (
-                          <Badge variant="secondary">Gratis</Badge>
-                        ) : event.price_text ? (
-                          <Badge variant="outline">{event.price_text}</Badge>
-                        ) : (
-                          <Badge variant="outline">De pago</Badge>
-                        )}
+                          {event.is_free ? (
+                            <Badge variant="secondary">Gratis</Badge>
+                          ) : event.price_text ? (
+                            <Badge variant="outline">{event.price_text}</Badge>
+                          ) : (
+                            <Badge variant="outline">De pago</Badge>
+                          )}
 
-                        {(event.tags || []).slice(0, 2).map((tag) => (
-                          <Badge
-                            key={tag.id}
-                            variant="outline"
-                            className="border-primary/20 bg-primary/10 text-primary"
-                          >
-                            {tag.nombre}
-                          </Badge>
-                        ))}
-                        {(event.tags || []).length > 2 && (
-                          <Badge variant="outline" className="border-primary/20 bg-primary/10 text-primary">
-                            +{(event.tags || []).length - 2}
-                          </Badge>
-                        )}
+                          {(event.tags || []).slice(0, 2).map((tag) => (
+                            <Badge
+                              key={tag.id}
+                              variant="outline"
+                              className="border-primary/20 bg-primary/10 text-primary"
+                            >
+                              {tag.nombre}
+                            </Badge>
+                          ))}
+                          {(event.tags || []).length > 2 && (
+                            <Badge variant="outline" className="border-primary/20 bg-primary/10 text-primary">
+                              +{(event.tags || []).length - 2}
+                            </Badge>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </td>
@@ -136,6 +140,20 @@ export function EventsTable({ events, onEdit, onDelete }: Props) {
         </table>
       </ScrollArea>
     </div>
+  );
+}
+
+function EventThumbnail({ event }: { event: Event }) {
+  return <MediaThumbnail src={getEventImage(event)} alt={event.title} />;
+}
+
+function getEventImage(event: Event) {
+  return (
+    event.featured_media?.thumbnail_url ||
+    event.featured_media?.variant_thumbnail ||
+    event.featured_media?.file ||
+    event.image_url ||
+    ""
   );
 }
 

@@ -79,6 +79,7 @@ class EventSerializer(TranslatableModelSerializer):
             "location_text",
             "is_featured",
             "is_free",
+            "price",
             "price_text",
             "tags",
             "tag_ids",

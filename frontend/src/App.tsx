@@ -1,9 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
+import { Facebook, Instagram, X, Youtube, ArrowRight, Calendar, Newspaper, LayoutGrid, MapPin, ChevronRight, Filter } from "lucide-react";
 
-import { Facebook, Instagram, X, Youtube } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { InteractiveMap } from "@/components/site/InteractiveMap";
 import { HeroVideoFrame } from "@/features/hero/components/HeroVideo";
@@ -11,28 +9,32 @@ import { apiGet } from "@/lib/api";
 import { listEventItems } from "@/features/events/api";
 import { FEATURED_CATEGORIES } from "@/features/categories/categoriesData";
 import { FeaturedCategoryCard } from "@/features/categories/components/FeaturedCategoryCard";
-import { AnimatedCardGrid } from "@/components/animated/AnimatedCardGrid";
 import { EventCard } from "@/features/agenda/components/EventCard";
 import { NewsCard } from "@/features/news/components/NewsCard";
+import { EventDayGroup } from "@/features/agenda/components/EventDayGroup";
+import { groupEventsByDay, filterEvents, DateRangeFilter } from "@/features/agenda/utils";
+import { DateSelector } from "@/features/agenda/components/DateSelector";
 import LoginPage from "@/pages/LoginPage";
 import RegisterPage from "@/pages/RegisterPage";
 import PasswordResetPage from "@/pages/PasswordResetPage";
+import NewsDetailPage from "@/pages/NewsDetailPage";
+
 import { events as mockEvents, type EventItem } from "@/data/mockEvents";
-import { news as mockNews, type NewsItem } from "@/data/mockNews";
+import { news as mockNews } from "@/data/mockNews";
+import { listNewsItems } from "@/features/news/api";
+import type { NewsItem } from "@/features/news/types";
 
-// Re-export X as Twitter for clarity
-const Twitter = X;
-
-type SiteSettings = {
-  site_name: string;
-  tagline: string;
-};
+import logoCabrera from "@/assets/logo/logo-cabrera-white.png";
 
 export default function App() {
-  const [settings, setSettings] = useState<SiteSettings | null>(null);
-  const [featuredEvents, setFeaturedEvents] = useState<EventItem[]>(() =>
-    mockEvents.filter((e) => e.featured).slice(0, 6)
-  );
+  const [settings, setSettings] = useState<{ site_name: string; tagline: string } | null>(null);
+  const [allEvents, setAllEvents] = useState<EventItem[]>(() => mockEvents);
+
+  const [eventFilter, setEventFilter] = useState<DateRangeFilter>(() => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  });
+
   const [latestNews, setLatestNews] = useState<NewsItem[]>(() =>
     mockNews.slice(0, 3)
   );
@@ -40,10 +42,10 @@ export default function App() {
   useEffect(() => {
     const load = async () => {
       try {
-        const site = await apiGet<SiteSettings>("/site-settings/");
+        const site = await apiGet<{ site_name: string; tagline: string }>("/site-settings/");
         setSettings(site);
       } catch (err) {
-        console.warn("Landing running in mock mode (API not available).", err);
+        console.warn("API not available, using mock mode.", err);
       }
     };
     load();
@@ -52,261 +54,191 @@ export default function App() {
   useEffect(() => {
     const load = async () => {
       try {
-        const items = await listEventItems({ upcoming: true, featured: true, limit: 6, isPublished: true });
-        setFeaturedEvents(items);
+        const items = await listEventItems({ upcoming: true, isPublished: true });
+        if (items && items.length > 0) {
+          setAllEvents(items);
+        }
       } catch (err) {
-        console.warn("Featured events running in mock mode (API not available).", err);
+        console.warn("Using mock events.", err);
       }
     };
-
     load();
   }, []);
 
-  const featuredCategories = useMemo(
-    () => [
-      {
-        title: "Rutas y senderismo",
-        img: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=900&q=80",
-      },
-      {
-        title: "Playas y calas",
-        img: "https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=900&q=80",
-      },
-      {
-        title: "Patrimonio histórico",
-        img: "https://images.unsplash.com/photo-1526481280695-3c687fd5432c?auto=format&fit=crop&w=900&q=80",
-      },
-      {
-        title: "Gastronomía local",
-        img: "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&w=900&q=80",
-      },
-      {
-        title: "Eventos culturales",
-        img: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=900&q=80",
-      },
-      {
-        title: "Deportes acuáticos",
-        img: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80",
-      },
-      {
-        title: "Alojamientos con encanto",
-        img: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=900&q=80",
-      },
-      {
-        title: "Artesanía y tradiciones",
-        img: "https://images.unsplash.com/photo-1520975676386-2f6fddcfa3c0?auto=format&fit=crop&w=900&q=80",
-      },
-    ],
-    []
-  );
-  const featuredCategoriesFromData = FEATURED_CATEGORIES;
+  useEffect(() => {
+    const loadNews = async () => {
+      try {
+        const items = await listNewsItems();
+        if (items && items.length > 0) {
+          setLatestNews(items.slice(0, 3));
+        }
+      } catch (err) {
+        console.warn("Using mock news.", err);
+      }
+    };
+    loadNews();
+  }, []);
+
+  const visibleEvents = useMemo(() => {
+    return filterEvents(allEvents, { category: "all", range: eventFilter, query: "" });
+  }, [allEvents, eventFilter]);
+
+  const groupedEvents = useMemo(() => {
+    return groupEventsByDay(visibleEvents);
+  }, [visibleEvents]);
 
   function HomePage() {
     return (
-      <div className="min-h-screen bg-background-light text-text-primary">
+      <div className="min-h-screen bg-white text-slate-900 selection:bg-accent selection:text-slate-950">
         <SiteHeader siteName={settings?.site_name} />
 
-        <main>
-          <section id="inicio">
+        <main className="relative">
+          {/* SECTION 1: VIDEO HERO */}
+          <section id="inicio" className="h-screen">
             <HeroVideoFrame />
-
-            <div className="hidden relative h-[520px] overflow-hidden rounded-3xl bg-gray-200 shadow-sm ring-1 ring-gray-200">
-              <img
-                src="https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=2400&q=80"
-                alt="Costa de Cabrera de Mar"
-                className="absolute inset-0 h-full w-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/35 to-black/20" />
-
-              <div className="relative flex h-full items-center justify-center px-6">
-                <div className="max-w-3xl text-center text-white">
-                  <h1 className="text-balance text-4xl font-extrabold leading-tight tracking-tight drop-shadow md:text-5xl">
-                    Descubre la magia de Cabrera de Mar
-                  </h1>
-                  <p className="mx-auto mt-4 max-w-2xl text-pretty text-sm/6 text-white/90 md:text-base">
-                    Explora la belleza de Cabrera de Mar, un destino que combina historia, cultura y naturaleza en un
-                    entorno mediterráneo único.
-                  </p>
-                  <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
-                    <Button
-                      variant="success"
-                      size="lg"
-                      asChild
-                    >
-                      <a href="#categorias">Explorar</a>
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="lg"
-                      asChild
-                      className="border-white/40 bg-white/10 text-white hover:bg-white/20 hover:text-white"
-                    >
-                      <a href="#eventos">Ver agenda</a>
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div>
           </section>
 
-          <section id="categorias" className="py-16">
-            <div className="container">
-              <h2 className="text-center text-2xl font-semibold tracking-tight">Categorías destacadas</h2>
-              <AnimatedCardGrid className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                {featuredCategoriesFromData.map((c) => (
+          {/* SECTION 2: CATEGORIES */}
+          <section id="categorias">
+            <div className="min-h-screen flex flex-col justify-center px-6 md:px-20 py-24 bg-white">
+              <span className="text-sm font-black uppercase tracking-[0.5em] text-primary mb-8">Municipio</span>
+              <h2 className="text-[clamp(4rem,15vw,18rem)] font-black uppercase tracking-tighter leading-[0.75] text-slate-900">
+                Explora <br />
+                <span className="text-primary">el Pueblo</span>
+              </h2>
+              <p className="text-3xl md:text-5xl font-bold leading-tight text-slate-400 mt-16 max-w-4xl tracking-tight text-balance">
+                Descubre la esencia de Cabrera de Mar, donde la historia se funde con el Mediterráneo.
+              </p>
+            </div>
+
+            <div className="container mx-auto px-6 pb-48">
+              <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-4">
+                {FEATURED_CATEGORIES.map((c) => (
                   <FeaturedCategoryCard key={c.id} category={c} />
                 ))}
-              </AnimatedCardGrid>
+              </div>
             </div>
           </section>
 
-          <section id="eventos" className="bg-gray-50 py-16">
-            <div className="container">
-              <h2 className="text-center text-2xl font-semibold tracking-tight">Eventos destacados</h2>
-              <AnimatedCardGrid className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-                {featuredEvents.slice(0, 6).map((evt) => (
-                  <EventCard key={evt.id} event={evt} />
+          {/* SECTION 3: AGENDA */}
+          <section id="eventos" className="bg-slate-950 text-white">
+            <div className="min-h-screen flex flex-col justify-center px-6 md:px-20 py-24 bg-slate-950 uppercase">
+              <span className="text-base font-black uppercase tracking-[0.5em] text-accent mb-8">Agenda Cultural</span>
+              <h2 className="text-[clamp(4rem,15vw,18rem)] font-black leading-[0.75] tracking-tighter text-white">
+                AGENDA <br />
+                <span className="italic text-accent">VIVA</span>
+              </h2>
+
+              <div className="mt-20 flex flex-wrap gap-4 items-center mb-12">
+                {[
+                  { id: "all", label: "Todo" },
+                  { id: "week", label: "Semana" },
+                  { id: "month", label: "Mes" }
+                ].map((f) => (
+                  <button
+                    key={f.id}
+                    onClick={() => setEventFilter(f.id as any)}
+                    className={`h-12 px-8 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${eventFilter === f.id ? 'bg-accent text-slate-900 shadow-lg' : 'bg-white/5 text-white/60 hover:bg-white/10'
+                      }`}
+                  >
+                    {f.label}
+                  </button>
                 ))}
-              </AnimatedCardGrid>
-
-
-            </div>
-          </section>
-
-          <section id="noticias" className="py-16">
-            <div className="container">
-              <div className="mb-10 flex items-end justify-between px-4">
-                <div className="space-y-1">
-                  <h2 className="text-3xl font-extrabold tracking-tight text-text-primary sm:text-4xl">Últimas noticias</h2>
-                  <p className="text-sm text-text-secondary">Mantente informado sobre todo lo que sucede en el municipio.</p>
-                </div>
-                <a href="/noticias" className="hidden text-sm font-bold text-primary hover:text-primary/80 sm:block">
-                  Ver todas las noticias →
-                </a>
               </div>
 
-              <AnimatedCardGrid className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-                {latestNews.slice(0, 3).map((news) => (
+              <DateSelector selected={eventFilter} onSelect={setEventFilter} />
+            </div>
+
+            <div className="container mx-auto px-6 pb-48 space-y-32">
+              {groupedEvents.length > 0 ? (
+                groupedEvents.map((group) => (
+                  <EventDayGroup key={group.dayLabel} dayLabel={group.dayLabel} items={group.items} />
+                ))
+              ) : (
+                <div className="py-24 text-center border-4 border-dashed border-white/10 rounded-[4rem]">
+                  <span className="text-4xl md:text-6xl font-black uppercase tracking-tighter text-white/20">
+                    No hay actividades para esta fecha
+                  </span>
+                </div>
+              )}
+            </div>
+          </section>
+
+          {/* SECTION 4: NOTICIAS */}
+          <section id="noticias">
+            <div className="min-h-screen flex flex-col justify-center px-6 md:px-20 py-24 bg-white">
+              <span className="text-sm font-black uppercase tracking-[0.5em] text-primary mb-8">Información</span>
+              <h2 className="text-[clamp(4rem,15vw,18rem)] font-black text-slate-900 leading-[0.75] tracking-tighter uppercase">
+                Actual <br />
+                <span className="text-primary italic">idad</span>
+              </h2>
+              <p className="text-3xl md:text-5xl font-bold leading-tight text-slate-400 mt-16 max-w-4xl tracking-tight text-balance">
+                Las últimas noticias y crónicas oficiales de nuestra villa.
+              </p>
+            </div>
+
+            <div className="container mx-auto px-6 pb-48">
+              <div className="grid grid-cols-1 gap-16 md:grid-cols-2 lg:grid-cols-3">
+                {latestNews.map((news) => (
                   <NewsCard key={news.id} news={news} />
                 ))}
-              </AnimatedCardGrid>
-
-              <div className="mt-10 flex justify-center sm:hidden">
-                <Button variant="outline" className="w-full" asChild>
-                  <a href="/noticias">Ver todas las noticias</a>
-                </Button>
               </div>
             </div>
           </section>
 
-          <section id="mapa" className="py-16">
-            <div className="container">
-              <h2 className="text-center text-2xl font-semibold tracking-tight">Mapa interactivo</h2>
-              <div className="mx-auto mt-10 max-w-5xl">
+          {/* SECTION 5: MAPA */}
+          <section id="mapa" className="bg-slate-50">
+            <div className="min-h-screen flex flex-col justify-center px-6 md:px-20 py-24 bg-slate-50 items-center text-center">
+              <span className="text-base font-black uppercase tracking-[0.5em] text-slate-400 mb-8">Equipamientos</span>
+              <h2 className="text-[clamp(4rem,15vw,18rem)] font-black text-slate-900 tracking-tighter leading-[0.75] uppercase">EL MAPA</h2>
+              <div className="mt-12 h-2 w-48 bg-accent mx-auto" />
+            </div>
+
+            <div className="container mx-auto px-6 pb-48">
+              <div className="mx-auto max-w-[1400px] overflow-hidden rounded-[80px] border-[16px] border-white shadow-2xl">
                 <InteractiveMap />
               </div>
             </div>
           </section>
 
-          <section id="newsletter" className="bg-gray-50 py-16">
-            <div className="container">
-              <h2 className="text-center text-2xl font-semibold tracking-tight">Suscríbete a nuestra newsletter</h2>
-              <p className="mx-auto mt-3 max-w-2xl text-center text-sm text-text-secondary">
-                Recibe las últimas noticias, eventos y ofertas exclusivas directamente en tu bandeja de entrada.
-              </p>
-              <form className="mx-auto mt-8 flex max-w-xl overflow-hidden rounded-lg border border-border-light bg-white shadow-sm">
-                <input
-                  className="h-11 flex-1 bg-transparent px-4 text-sm outline-none placeholder:text-text-tertiary"
-                  placeholder="Tu correo electrónico"
-                  type="email"
-                />
-                <button
-                  className="h-11 bg-primary px-6 text-sm font-medium text-white hover:bg-primary/90"
-                  type="button"
-                >
-                  Suscribirse
-                </button>
-              </form>
-            </div>
-          </section>
-
-          <section id="como-llegar" className="py-16">
-            <div className="container">
-              <h2 className="text-center text-2xl font-semibold tracking-tight">Cómo llegar</h2>
-              <div className="mx-auto mt-8 max-w-xl space-y-3">
-                <input
-                  className="h-11 w-full rounded-lg border border-border-light bg-white px-4 text-sm outline-none placeholder:text-text-tertiary focus:border-primary focus:ring-2 focus:ring-primary/20"
-                  placeholder="Tu ubicación (opcional)"
-                />
-                <Button variant="success" size="xl" className="w-full">
-                  Obtener indicaciones
-                </Button>
+          {/* FOOTER */}
+          <footer className="bg-[#0A0C10] py-48 text-white">
+            <div className="container mx-auto px-6 lg:px-20 text-center lg:text-left">
+              <div className="grid gap-32 lg:grid-cols-2">
+                <div className="space-y-16">
+                  <div className="flex flex-col items-center lg:items-start">
+                    <img src={logoCabrera} alt="Logo Cabrera" className="h-32 w-auto mb-8" />
+                    <div>
+                      <h3 className="text-4xl font-black tracking-tighter uppercase">{settings?.site_name || "AYUNTAMIENTO DE CABRERA DE MAR"}</h3>
+                      <p className="text-xl font-bold uppercase tracking-[0.6em] text-accent mt-2">LA ESENCIA DEL MARESME</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-10 justify-center lg:justify-start">
+                    {[Facebook, Instagram, X, Youtube].map((Icon, idx) => (
+                      <a key={idx} href="#" className="flex h-20 w-20 items-center justify-center rounded-3xl bg-white/5 border border-white/10 text-white transition hover:bg-white hover:text-slate-950">
+                        <Icon className="h-8 w-8" />
+                      </a>
+                    ))}
+                  </div>
+                </div>
+                <div className="grid gap-20 sm:grid-cols-2">
+                  <div className="space-y-10">
+                    <h4 className="text-xs font-black uppercase tracking-[0.6em] text-white/30">INFORMACIÓN</h4>
+                    <nav className="flex flex-col gap-6 text-2xl font-bold">
+                      <a href="#" className="hover:text-accent">Privacidad</a>
+                      <a href="#" className="hover:text-accent">Cookies</a>
+                      <a href="#" className="hover:text-accent">Aviso Legal</a>
+                    </nav>
+                  </div>
+                  <div className="space-y-10">
+                    <h4 className="text-xs font-black uppercase tracking-[0.6em] text-white/30">CONTACTO</h4>
+                    <p className="text-2xl font-bold leading-relaxed">Plaça de la Vila, 1 <br /> 08349 Cabrera de Mar <br /> 93 759 00 91</p>
+                  </div>
+                </div>
               </div>
             </div>
-          </section>
+          </footer>
         </main>
-
-        <footer className="border-t border-border-light bg-white py-10">
-          <div className="container grid gap-8 md:grid-cols-3">
-            <div className="space-y-3">
-              <p className="text-sm font-semibold text-text-primary">{settings?.site_name || "Gaudeix Cabrera de Mar"}</p>
-              <p className="text-sm text-text-secondary">{settings?.tagline || "Turisme i cultura a Cabrera de Mar"}</p>
-              <p className="mt-3 text-xs text-text-tertiary">© {new Date().getFullYear()} Ajuntament de Cabrera de Mar</p>
-            </div>
-            <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm text-text-secondary md:justify-end">
-              <a className="no-underline hover:text-text-primary" href="#page-privacy">
-                Política de privacidad
-              </a>
-              <a className="no-underline hover:text-text-primary" href="#page-cookies">
-                Cookies
-              </a>
-              <a className="no-underline hover:text-text-primary" href="#page-legal_notice">
-                Aviso legal
-              </a>
-              <a className="no-underline hover:text-text-primary" href="#page-contact">
-                Contacto
-              </a>
-            </div>
-            <div className="flex items-center gap-4 md:justify-end">
-              <a
-                href="https://facebook.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-text-secondary transition hover:bg-gray-200 hover:text-text-primary"
-                aria-label="Facebook"
-              >
-                <Facebook className="h-5 w-5" />
-              </a>
-              <a
-                href="https://instagram.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-text-secondary transition hover:bg-gray-200 hover:text-text-primary"
-                aria-label="Instagram"
-              >
-                <Instagram className="h-5 w-5" />
-              </a>
-              <a
-                href="https://twitter.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-text-secondary transition hover:bg-gray-200 hover:text-text-primary"
-                aria-label="Twitter / X"
-              >
-                <Twitter className="h-5 w-5" />
-              </a>
-              <a
-                href="https://youtube.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-text-secondary transition hover:bg-gray-200 hover:text-text-primary"
-                aria-label="YouTube"
-              >
-                <Youtube className="h-5 w-5" />
-              </a>
-            </div>
-          </div>
-        </footer>
       </div>
     );
   }
@@ -314,6 +246,7 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
+      <Route path="/noticias/:slug" element={<NewsDetailPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/password-reset" element={<PasswordResetPage />} />

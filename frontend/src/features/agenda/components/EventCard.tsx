@@ -1,145 +1,58 @@
 import { useMemo } from "react";
-import { MapPin, Tag, Ticket } from "lucide-react";
-
+import { MapPin, Clock, ArrowRight } from "lucide-react";
 import type { EventItem } from "@/data/mockEvents";
-import { AnimatedCard } from "@/components/animated/AnimatedCard";
-import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
-import { formatDay, formatMonthShort, formatTime, getWhenLabel } from "@/features/agenda/dateUtils";
-import { useImageModeCache } from "@/features/agenda/useImageModeCache";
-
-function clampLinesStyle(lines: number) {
-  return {
-    display: "-webkit-box",
-    WebkitLineClamp: lines,
-    WebkitBoxOrient: "vertical" as const,
-    overflow: "hidden",
-  };
-}
+import { formatDay, formatMonthShort, formatTime } from "@/features/agenda/dateUtils";
 
 export function EventCard({ event }: { event: EventItem }) {
-  const prefersReducedMotion = usePrefersReducedMotion();
   const startDate = useMemo(() => new Date(event.startAt), [event.startAt]);
-  const whenLabel = useMemo(() => getWhenLabel(startDate), [startDate]);
-  const dateLabel = useMemo(
-    () => `${formatDay(startDate)} ${formatMonthShort(startDate)} · ${formatTime(startDate)}`,
-    [startDate]
-  );
-  const description = event.descriptionShort?.trim();
-
-  const { mode, onImageLoad } = useImageModeCache(event.imageUrl);
-
-  const onNavigate = (e: React.MouseEvent) => {
-    e.preventDefault();
-    // TODO: integrar con router real (/agenda/:slug)
-    console.log("Navigate to", `/agenda/${event.slug}`);
-  };
 
   return (
-    <AnimatedCard
-      as="a"
-      href={`/agenda/${event.slug}`}
-      onClick={onNavigate}
-      className={[
-        "group block overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-border-light",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2",
-      ].join(" ")}
+    <div
+      className="group flex flex-col overflow-hidden rounded-[4rem] bg-white text-slate-900 transition-all hover:-translate-y-4 hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.15)] h-full"
     >
-      <div className="flex flex-col sm:flex-row">
-        <div className="relative h-[220px] w-full shrink-0 overflow-hidden bg-gray-100 sm:h-auto sm:w-52">
-          {mode === "poster" ? (
-            <>
-              <img
-                src={event.imageUrl}
-                alt=""
-                aria-hidden="true"
-                loading="lazy"
-                decoding="async"
-                className="absolute inset-0 h-full w-full scale-110 object-cover blur-2xl"
-              />
-              <div className="absolute inset-0 bg-black/20" />
-              <img
-                src={event.imageUrl}
-                alt={event.title}
-                loading="lazy"
-                decoding="async"
-                className="relative z-10 h-full w-full object-cover"
-                onLoad={(e) => onImageLoad(e.currentTarget)}
-              />
-            </>
-          ) : (
-            <img
-              src={event.imageUrl}
-              alt={event.title}
-              loading="lazy"
-              decoding="async"
-              className={[
-                "h-full w-full object-cover",
-                prefersReducedMotion ? "" : "transition-transform duration-500 group-hover:scale-[1.03]",
-              ].join(" ")}
-              onLoad={(e) => onImageLoad(e.currentTarget)}
-            />
-          )}
+      <div className="relative h-72 w-full overflow-hidden bg-slate-200">
+        <img
+          src={event.imageUrl}
+          alt={event.title}
+          className="h-full w-full object-cover transition-transform duration-1000 group-hover:scale-110"
+        />
+        <div className="absolute left-8 top-8 flex h-20 w-20 flex-col items-center justify-center rounded-[2rem] bg-white shadow-2xl">
+          <span className="text-3xl font-black leading-none text-primary">{formatDay(startDate)}</span>
+          <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-1">{formatMonthShort(startDate)}</span>
         </div>
-
-        <div className="flex min-w-0 flex-1 flex-col gap-3 p-5">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="inline-flex rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-700">
-              {dateLabel}
-            </span>
+        {event.isFree && (
+          <div className="absolute right-8 top-8 rounded-full bg-primary px-6 py-2 text-[10px] font-black uppercase tracking-widest text-white shadow-2xl">
+            Gratis
           </div>
-
-          <div className="min-w-0 space-y-2">
-            <p className="text-base font-semibold text-gray-900" style={clampLinesStyle(2)}>
-              {event.title}
-            </p>
-
-            <p className="text-sm text-gray-600" style={clampLinesStyle(1)}>
-              <span className="inline-flex items-center gap-2">
-                <MapPin className="h-4 w-4 text-primary" aria-hidden="true" />
-                {event.venueName} · {event.locationText}
-              </span>
-            </p>
-
-            {description ? (
-              <p className="text-sm text-gray-600" style={clampLinesStyle(2)}>
-                {description}
-              </p>
-            ) : null}
-          </div>
-
-          <footer className="mt-auto space-y-3 border-t border-gray-100 pt-4">
-            <div className="flex w-full flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-1 rounded-full bg-white px-3 py-1 text-xs font-semibold text-gray-700 ring-1 ring-gray-200/70">
-                <Tag className="h-3.5 w-3.5 text-gray-500" aria-hidden="true" />
-                {event.category}
-              </span>
-
-              {whenLabel ? (
-                <span className="inline-flex items-center rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-700">
-                  {whenLabel}
-                </span>
-              ) : event.isFree ? (
-                <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
-                  <Ticket className="h-3.5 w-3.5" aria-hidden="true" />
-                  Gratis
-                </span>
-              ) : null}
-            </div>
-
-            <div className="flex justify-end">
-              <span
-                className={[
-                  "inline-flex shrink-0 items-center rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-900",
-                  "transition hover:bg-gray-50",
-                  prefersReducedMotion ? "" : "group-hover:-translate-y-0.5",
-                ].join(" ")}
-              >
-                Ver más
-              </span>
-            </div>
-          </footer>
-        </div>
+        )}
       </div>
-    </AnimatedCard>
+
+      <div className="flex flex-1 flex-col p-10">
+        <span className="mb-3 text-[10px] font-black uppercase tracking-[0.3em] text-primary">
+          {event.category}
+        </span>
+        <h3 className="mb-8 text-3xl font-black leading-[1.1] tracking-tighter uppercase">
+          {event.title}
+        </h3>
+
+        <div className="mt-auto space-y-4 border-t border-slate-100 pt-8">
+          <div className="flex items-center gap-4 text-sm font-bold text-slate-500">
+            <MapPin className="h-6 w-6 text-primary" />
+            <span className="truncate">{event.venueName}</span>
+          </div>
+          <div className="flex items-center gap-4 text-sm font-bold text-slate-500">
+            <Clock className="h-6 w-6 text-primary" />
+            <span>{formatTime(startDate)} h</span>
+          </div>
+        </div>
+
+        <a
+          href={`/agenda/${event.slug}`}
+          className="mt-8 flex items-center gap-3 text-xs font-black uppercase tracking-[0.2em] text-primary group-hover:gap-5 transition-all"
+        >
+          Ver más <ArrowRight className="h-5 w-5" />
+        </a>
+      </div>
+    </div>
   );
 }

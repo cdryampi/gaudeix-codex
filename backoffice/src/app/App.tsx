@@ -1,6 +1,6 @@
 import { RouterProvider } from "react-router-dom";
 import { router } from "./routes";
-import { Toaster } from "@/components/ui/sonner";
+import { Toast } from "flowbite-react";
 
 /**
  * Main App component
@@ -10,7 +10,6 @@ function App() {
   return (
     <>
       <RouterProvider router={router} />
-      <Toaster />
     </>
   );
 }

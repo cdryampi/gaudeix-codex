@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "flowbite-react";
 import { LucideIcon } from "lucide-react";
 
 interface DataCardProps {
@@ -24,14 +24,14 @@ export function DataCard({
 }: DataCardProps) {
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
-        {Icon && <Icon className="h-4 w-4 text-muted-foreground" />}
-      </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
+      <div className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <h5 className="text-sm font-medium text-gray-900 dark:text-white">{title}</h5>
+        {Icon && <Icon className="h-4 w-4 text-gray-500 dark:text-gray-400" />}
+      </div>
+      <div>
+        <div className="text-2xl font-bold text-gray-900 dark:text-white">{value}</div>
         {description && (
-          <p className="text-xs text-muted-foreground">{description}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">{description}</p>
         )}
         {trend && (
           <p
@@ -43,7 +43,7 @@ export function DataCard({
             {trend.value}% desde el mes pasado
           </p>
         )}
-      </CardContent>
+      </div>
     </Card>
   );
 }

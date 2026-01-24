@@ -1,11 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-
 import { HERO_VIDEO } from "@/features/hero/heroData";
 import { SkeletonBlock } from "@/components/skeletons/SkeletonBlock";
 import { HeroScrollIndicator } from "@/features/hero/components/HeroScrollIndicator";
-import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import logoCabrera from "@/assets/logo/logo-cabrera-white.png";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -13,93 +12,88 @@ if (typeof window !== "undefined") {
 
 export function HeroVideoFrame() {
   const [ready, setReady] = useState(false);
-  const contentRef = useRef<HTMLDivElement | null>(null);
-  const prefersReducedMotion = usePrefersReducedMotion();
-
-  const videoAttributes = useMemo(
-    () => ({
-      autoPlay: true,
-      muted: true,
-      loop: true,
-      playsInline: true,
-      preload: "auto" as const,
-    }),
-    []
-  );
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const textContainerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    if (prefersReducedMotion) return;
-    if (!contentRef.current) return;
+    if (!containerRef.current || !textContainerRef.current) return;
 
     const ctx = gsap.context(() => {
-      gsap.fromTo(
-        contentRef.current,
-        { autoAlpha: 0, y: 14 },
-        { autoAlpha: 1, y: 0, duration: 0.8, ease: "power2.out" }
-      );
+      // STARTING STATE: Text hidden at bottom
+      gsap.set(textContainerRef.current, { opacity: 0, y: 150 });
 
-      gsap.to(contentRef.current, {
-        autoAlpha: 0.75,
-        ease: "none",
+      // ANIMATION ON SCROLL
+      gsap.to(textContainerRef.current, {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        ease: "power3.out",
         scrollTrigger: {
-          trigger: ".hero",
+          trigger: containerRef.current,
+          start: "15% top",
+          end: "60% top",
+          scrub: 1,
+        },
+      });
+
+      // Subtle video scale/blur
+      gsap.to(videoRef.current, {
+        scale: 1.1,
+        filter: "blur(8px) brightness(0.6)",
+        scrollTrigger: {
+          trigger: containerRef.current,
           start: "top top",
-          end: "top+=240 top",
+          end: "bottom top",
           scrub: true,
         },
       });
-    }, contentRef);
+    });
 
     return () => ctx.revert();
-  }, [prefersReducedMotion]);
+  }, [ready]);
 
   return (
-    <div className="hero relative h-[100svh] w-full overflow-hidden bg-black">
-      {!ready ? (
-        <div className="absolute inset-0">
+    <div ref={containerRef} className="hero relative h-[100vh] w-full overflow-hidden bg-black">
+
+      {!ready && (
+        <div className="absolute inset-0 z-0">
           <SkeletonBlock className="h-full w-full" rounded="none" />
         </div>
-      ) : null}
+      )}
 
       <video
-        {...videoAttributes}
-        className="absolute inset-0 z-0 h-full w-full object-cover"
+        ref={videoRef}
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
+        className={`absolute inset-0 z-0 h-full w-full object-cover transition-opacity duration-1000 ${ready ? 'opacity-100' : 'opacity-0'}`}
         src={HERO_VIDEO.src}
-        poster={HERO_VIDEO.poster}
         onLoadedData={() => setReady(true)}
-        onCanPlay={() => setReady(true)}
-        aria-label="Video principal"
       />
 
-      <div className="absolute inset-0 z-10 bg-black/30" />
+      <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
 
-      <div className="absolute inset-0 z-20">
-        <div className="mx-auto flex h-full max-w-6xl items-center px-6">
-          <div
-            ref={contentRef}
-            className="max-w-xl text-center text-white md:text-left"
-            style={prefersReducedMotion ? { opacity: 1, transform: "none" } : undefined}
-          >
-            <h1 className="text-balance text-4xl font-semibold tracking-tight drop-shadow md:text-5xl">
-              Descubre Cabrera de Mar
+      {/* TEXT BOX - APPEARS ON SCROLL */}
+      <div className="absolute inset-0 z-20 flex flex-col justify-end pb-32">
+        <div className="container mx-auto px-6">
+          <div ref={textContainerRef} className="space-y-6">
+            <span className="inline-block py-2 px-6 bg-primary text-white text-xs font-black uppercase tracking-[0.4em] rounded-full shadow-2xl">
+              Cabrera de Mar
+            </span>
+            <h1 className="text-[clamp(4rem,12vw,12rem)] font-black text-white uppercase leading-[0.8] tracking-tighter">
+              BIENVENIDOS <br />
+              <span className="text-primary italic">A LA VILA</span>
             </h1>
-            <p className="mt-4 text-pretty text-base/7 text-white/90">
-              Naturaleza, historia y mar en el Maresme
-            </p>
-            <div className="mt-7">
-              <a
-                href="#categorias"
-                className="inline-flex items-center justify-center rounded-full border border-white/60 bg-white/10 px-5 py-2.5 text-sm font-medium text-white shadow-sm backdrop-blur transition hover:bg-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-puerto-rico-300 focus-visible:ring-offset-2 focus-visible:ring-offset-black/40"
-              >
-                Explorar qué hacer
-              </a>
-            </div>
           </div>
         </div>
       </div>
 
-      <HeroScrollIndicator mode="overlay" />
+      <div className="absolute bottom-10 left-1/2 z-30 -translate-x-1/2 text-white/50 animate-bounce">
+        <HeroScrollIndicator mode="overlay" />
+      </div>
     </div>
   );
 }

@@ -93,6 +93,7 @@ INSTALLED_APPS = [
     "llm_translations",
     "static_pages.apps.StaticPagesConfig",
     "site_settings.apps.SiteSettingsConfig",
+    "news",
 ]
 
 SITE_ID = 1

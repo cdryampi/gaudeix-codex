@@ -39,6 +39,8 @@ class Command(BaseCommand):
             ("seed_places", "Seeding places..."),
             ("seed_events_category", "Seeding events category..."),
             ("seed_events", "Seeding events..."),
+            ("seed_news", "Seeding news..."),
+            ("seed_gamification", "Seeding gamification..."),
         ]
 
         for command_name, message in seed_commands:

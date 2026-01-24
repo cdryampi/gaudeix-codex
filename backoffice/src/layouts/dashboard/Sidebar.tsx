@@ -1,6 +1,7 @@
+/**
+ * Dashboard sidebar with Flowbite React
+ */
 import { Link, useLocation } from "react-router-dom";
-import { cn } from "@/lib/utils";
-import { LucideIcon } from "lucide-react";
 import {
   LayoutDashboard,
   FileText,
@@ -15,6 +16,8 @@ import {
   Video,
   Menu,
   Bot,
+  MapPin,
+  LucideIcon,
 } from "lucide-react";
 import { ROUTES } from "@/lib/config/constants";
 
@@ -24,7 +27,9 @@ interface NavItem {
   icon: LucideIcon;
 }
 
-const panelNavigation: NavItem[] = [{ name: "Resumen", href: ROUTES.DASHBOARD_HOME, icon: LayoutDashboard }];
+const panelNavigation: NavItem[] = [
+  { name: "Resumen", href: ROUTES.DASHBOARD_HOME, icon: LayoutDashboard },
+];
 
 const contentNavigation: NavItem[] = [
   { name: "Events", href: ROUTES.EVENTS, icon: FileText },
@@ -35,7 +40,7 @@ const contentNavigation: NavItem[] = [
 const mediaNavigation: NavItem[] = [
   { name: "Media", href: ROUTES.MEDIA, icon: Image },
   { name: "Eventos", href: "/eventos-calendario", icon: Calendar },
-  { name: "Places", href: ROUTES.PLACES, icon: Calendar },
+  { name: "Lugares", href: ROUTES.PLACES, icon: MapPin },
 ];
 
 const systemNavigation: NavItem[] = [
@@ -52,49 +57,69 @@ export function Sidebar() {
   const location = useLocation();
 
   const NavSection = ({ title, items }: { title?: string; items: NavItem[] }) => (
-    <div className="space-y-1">
+    <div className="mb-6">
       {title && (
-        <h3 className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground/60">
+        <h3 className="mb-2 px-4 text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
           {title}
         </h3>
       )}
-      {items.map((item) => {
-        const isActive = location.pathname === item.href;
-        return (
-          <Link
-            key={item.name}
-            to={item.href}
-            className={cn(
-              "group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-              isActive ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-accent hover:text-foreground"
-            )}
-          >
-            <item.icon className={cn("h-4 w-4 flex-shrink-0", isActive ? "text-primary" : "text-muted-foreground")} />
-            {item.name}
-          </Link>
-        );
-      })}
+      <div className="space-y-0.5 px-2">
+        {items.map((item) => {
+          const isActive = location.pathname === item.href;
+          const Icon = item.icon;
+          return (
+            <Link
+              key={item.name}
+              to={item.href}
+              className={`group flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-all duration-200 ${
+                isActive
+                  ? "bg-primary-50 text-primary-700 dark:bg-primary-500/10 dark:text-primary-300 shadow-sm ring-1 ring-primary-200 dark:ring-transparent"
+                  : "text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-50"
+              }`}
+            >
+              <Icon
+                className={`h-5 w-5 shrink-0 transition-colors ${
+                  isActive ? "text-primary-600 dark:text-primary-400" : "text-gray-400 group-hover:text-gray-600 dark:text-gray-500 dark:group-hover:text-gray-300"
+                }`}
+              />
+              {item.name}
+            </Link>
+          );
+        })}
+      </div>
     </div>
   );
 
   return (
-    <aside className="flex h-screen w-[220px] flex-col border-r border-border bg-sidebar">
-      <div className="flex h-16 items-center gap-3 border-b border-border px-6">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-          <span className="text-sm font-bold text-primary-foreground">YA</span>
-        </div>
-        <div className="flex flex-col">
-          <h1 className="text-sm font-bold leading-none text-sidebar-foreground">Backoffice</h1>
-          <p className="text-xs text-muted-foreground">Panel editorial</p>
+    <aside className="flex h-screen w-[260px] shrink-0 flex-col border-r border-gray-200 bg-white dark:bg-gray-900 dark:border-gray-800 transition-colors duration-300">
+      {/* Brand Header */}
+      <div className="flex h-24 items-center justify-center border-b border-gray-100 px-6 dark:border-gray-800">
+        <div className="flex h-[3.75rem] w-[7.5rem] items-center justify-center rounded-lg bg-primary/10 p-2">
+          <span className="text-xl font-bold text-primary-600 dark:text-primary-400">GAUDEIX</span>
         </div>
       </div>
 
-      <nav className="flex-1 space-y-6 overflow-y-auto px-3 py-6">
-        <NavSection title="Panel" items={panelNavigation} />
-        <NavSection title="Contenido" items={contentNavigation} />
-        <NavSection title="Media & Eventos" items={mediaNavigation} />
-        <NavSection title="Sistema" items={systemNavigation} />
+      {/* Navigation */}
+      <nav className="custom-scrollbar flex-1 overflow-y-auto py-6">
+        <NavSection title="Dashboard" items={panelNavigation} />
+        <NavSection title="Gestión de Contenido" items={contentNavigation} />
+        <NavSection title="Media & Lugares" items={mediaNavigation} />
+        <NavSection title="Configuración del Sistema" items={systemNavigation} />
       </nav>
+
+      {/* Footer Info */}
+      <div className="border-t border-gray-100 p-4 dark:border-gray-800">
+        <div className="rounded-lg bg-gray-50 p-3 text-xs text-gray-500 dark:bg-gray-800/50 dark:text-gray-400">
+          <p className="font-medium text-gray-900 dark:text-gray-200">Estado del Sistema</p>
+          <div className="mt-2 flex items-center gap-2">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75"></span>
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500"></span>
+            </span>
+            <span className="text-[10px]">Todos los servicios operativos</span>
+          </div>
+        </div>
+      </div>
     </aside>
   );
 }

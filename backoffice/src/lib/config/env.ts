@@ -26,6 +26,9 @@ export const envConfig = {
   events: {
     pageSizeDefault: Number(import.meta.env.VITE_EVENTS_PAGE_SIZE_DEFAULT) || 5,
   },
+
+  // Google Maps
+  googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "",
   
   // Environment info
   isDevelopment: import.meta.env.DEV,

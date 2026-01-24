@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Place } from "../types";
 import { Edit, Trash2 } from "lucide-react";
+import { MediaThumbnail } from "@/components/common/MediaThumbnail";
 
 type Props = {
   places: Place[];
@@ -25,7 +26,15 @@ export function PlacesTable({ places, onEdit, onDelete }: Props) {
         <tbody className="divide-y divide-border">
           {places.map((place) => (
             <tr key={place.id} className="hover:bg-muted/40">
-              <td className="px-4 py-2 font-medium text-foreground">{place.title}</td>
+              <td className="px-4 py-2">
+                <div className="flex items-start gap-3">
+                  <PlaceThumbnail place={place} />
+                  <div>
+                    <div className="font-medium text-foreground">{place.title}</div>
+                    <div className="text-xs text-muted-foreground">{place.slug}</div>
+                  </div>
+                </div>
+              </td>
               <td className="px-4 py-2 text-muted-foreground">
                 {place.template_key || place.category || "-"}
               </td>
@@ -72,4 +81,14 @@ export function PlacesTable({ places, onEdit, onDelete }: Props) {
       </table>
     </div>
   );
+}
+
+function PlaceThumbnail({ place }: { place: Place }) {
+  const src =
+    place.featured_media?.thumbnail_url ||
+    place.featured_media?.variant_thumbnail ||
+    place.featured_media?.file ||
+    "";
+
+  return <MediaThumbnail src={src} alt={place.title} />;
 }

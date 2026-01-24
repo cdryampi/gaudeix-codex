@@ -1,122 +1,57 @@
-/**
- * NewsCard component
- *
- * Displays a news article card with image, title, excerpt, date and category.
- * Consistent design with EventCard for the Home Page.
- */
-
 import { useMemo } from "react";
-import { ArrowRight, Clock, Tag } from "lucide-react";
-
-import type { NewsItem } from "@/data/mockNews";
-import { AnimatedCard } from "@/components/animated/AnimatedCard";
-import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { ArrowRight, Tag } from "lucide-react";
+import type { NewsItem } from "../types";
 import { formatDateTime } from "@/features/agenda/dateUtils";
 
-function clampLinesStyle(lines: number) {
-  return {
-    display: "-webkit-box",
-    WebkitLineClamp: lines,
-    WebkitBoxOrient: "vertical" as const,
-    overflow: "hidden",
-  };
-}
-
 export function NewsCard({ news }: { news: NewsItem }) {
-  const prefersReducedMotion = usePrefersReducedMotion();
   const dateLabel = useMemo(() => formatDateTime(news.publishedAt), [news.publishedAt]);
-  
-  // Simulated read time based on excerpt length
-  const readTime = useMemo(() => {
-    const words = news.excerpt.split(" ").length;
-    const minutes = Math.max(1, Math.ceil(words / 20)); // ~20 words per "segment"
-    return `${minutes} min de lectura`;
-  }, [news.excerpt]);
-
-  const onNavigate = (e: React.MouseEvent) => {
-    e.preventDefault();
-    console.log("Navigate to", `/noticias/${news.slug}`);
-  };
 
   return (
-    <AnimatedCard
-      as="a"
-      href={`/noticias/${news.slug}`}
-      onClick={onNavigate}
-      className={[
-        "group flex flex-col h-full overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-gray-200 transition-all",
-        "hover:shadow-xl hover:ring-puerto-rico-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-puerto-rico-300 focus-visible:ring-offset-2",
-      ].join(" ")}
+    <div
+      className="group flex flex-col overflow-hidden rounded-[4rem] bg-white text-slate-900 transition-all hover:-translate-y-4 hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.15)] h-full"
     >
-      <div className="relative aspect-[16/10] w-full overflow-hidden bg-gray-100">
+      <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-200">
         <img
           src={news.imageUrl}
           alt={news.title}
-          loading="lazy"
-          decoding="async"
-          className={[
-            "h-full w-full object-cover transition-transform duration-700",
-            prefersReducedMotion ? "" : "group-hover:scale-110",
-          ].join(" ")}
+          className="h-full w-full object-cover transition-transform duration-1000 group-hover:scale-110"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
-        
-        {news.featured && (
-          <div className="absolute left-4 top-4">
-            <span className="inline-flex items-center rounded-full bg-puerto-rico-500 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white shadow-lg">
-              Destacado
-            </span>
-          </div>
-        )}
-        
-        <div className="absolute bottom-4 left-4 right-4 translate-y-4 opacity-0 transition-all group-hover:translate-y-0 group-hover:opacity-100">
-          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-white">
-            <Clock className="h-3.5 w-3.5" />
-            {readTime}
-          </span>
-        </div>
+        <div className="absolute inset-0 bg-black/5" />
       </div>
 
-      <div className="flex flex-1 flex-col p-6">
-        <div className="mb-3 flex items-center justify-between">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-puerto-rico-50 px-2.5 py-1 text-xs font-semibold text-puerto-rico-700 ring-1 ring-inset ring-puerto-rico-600/10">
-            <Tag className="h-3 w-3" aria-hidden="true" />
+      <div className="flex flex-1 flex-col p-10">
+        <div className="mb-6 flex items-center justify-between">
+          <span className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary">
+            <Tag className="h-4 w-4" />
             {news.category}
           </span>
-          <span className="text-[11px] font-medium text-gray-400 uppercase tracking-tight">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
             {dateLabel}
           </span>
         </div>
 
-        <h3 className="mb-3 text-xl font-bold leading-tight text-gray-900 transition-colors group-hover:text-puerto-rico-600" style={clampLinesStyle(2)}>
+        <h3 className="mb-6 text-3xl font-black leading-[1.1] tracking-tighter uppercase">
           {news.title}
         </h3>
 
-        {news.excerpt ? (
-          <p className="mb-6 text-sm leading-relaxed text-gray-600" style={clampLinesStyle(3)}>
+        {news.excerpt && (
+          <p className="mb-8 line-clamp-3 text-xl text-slate-500 font-medium leading-relaxed">
             {news.excerpt}
           </p>
-        ) : null}
+        )}
 
-        <div className="mt-auto flex items-center justify-between border-t border-gray-100 pt-5">
-          <div className="flex items-center gap-2">
-            <div className="h-8 w-8 overflow-hidden rounded-full bg-gray-100 ring-2 ring-white">
-              <img src="https://ui-avatars.com/api/?name=Ajuntament&background=3E9124&color=fff" alt="Autor" />
-            </div>
-            <span className="text-xs font-semibold text-gray-700">Ajuntament</span>
-          </div>
-          
-          <span
-            className={[
-              "inline-flex items-center gap-1.5 text-sm font-bold text-puerto-rico-600 transition-all",
-              prefersReducedMotion ? "" : "group-hover:gap-2.5",
-            ].join(" ")}
+        <div className="mt-auto pt-8 border-t border-slate-100 flex items-center justify-between">
+          <a
+            href={`/noticias/${news.slug}`}
+            className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 group-hover:text-primary transition-colors"
           >
             Leer más
-            <ArrowRight className="h-4 w-4" />
-          </span>
+          </a>
+          <div className="h-14 w-14 flex items-center justify-center rounded-2xl bg-slate-50 text-slate-900 group-hover:bg-primary group-hover:text-white transition-all">
+            <ArrowRight className="h-7 w-7" />
+          </div>
         </div>
       </div>
-    </AnimatedCard>
+    </div>
   );
 }

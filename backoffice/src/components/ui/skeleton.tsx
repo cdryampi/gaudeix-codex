@@ -1,15 +1,15 @@
-import { cn } from "@/lib/utils"
+/**
+ * Skeleton stub - loading placeholder
+ */
+import { forwardRef, HTMLAttributes } from "react";
 
-function Skeleton({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
-  return (
+export const Skeleton = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
+  ({ className, ...props }, ref) => (
     <div
-      className={cn("animate-pulse rounded-md bg-primary/10", className)}
+      ref={ref}
+      className={`animate-pulse rounded-md bg-gray-200 dark:bg-gray-700 ${className || ""}`}
       {...props}
     />
   )
-}
-
-export { Skeleton }
+);
+Skeleton.displayName = "Skeleton";

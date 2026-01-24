@@ -1,19 +1,13 @@
-@config "../tailwind.config.js";
-
 @import "tailwindcss";
 
 @theme {
-  --color-puerto-rico-50: #f1fcf9;
-  --color-puerto-rico-100: #d1f6ed;
-  --color-puerto-rico-200: #a4ebdc;
-  --color-puerto-rico-300: #6edac6;
-  --color-puerto-rico-400: #3ebfab;
-  --color-puerto-rico-500: #27a593;
-  --color-puerto-rico-600: #1c8578;
-  --color-puerto-rico-700: #1b6a62;
-  --color-puerto-rico-800: #1a554f;
-  --color-puerto-rico-900: #1a4743;
-  --color-puerto-rico-950: #092a28;
+  --color-primary: #3E9124;
+  --color-secondary: #E97B1C;
+  --color-accent: #F6B324;
+  --color-background-light: #FAFAF9;
+  --color-background-dark: #121417;
+
+  --font-plus-jakarta: "Plus Jakarta Sans", sans-serif;
 }
 
 @layer base {
@@ -22,8 +16,36 @@
   }
 
   body {
-    font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji",
-      "Segoe UI Emoji";
-    @apply bg-puerto-rico-50 text-slate-900 antialiased;
+    font-family: var(--font-plus-jakarta);
+    @apply bg-white text-slate-900 antialiased overflow-x-hidden;
+  }
+
+  /* Robust Massive Typography */
+  h1 {
+    @apply text-5xl md:text-8xl lg:text-9xl font-black uppercase tracking-tighter leading-[0.9];
+  }
+
+  h2 {
+    @apply text-4xl md:text-7xl font-black uppercase tracking-tight leading-[1];
+  }
+
+  p {
+    @apply text-lg md:text-2xl leading-relaxed text-slate-600;
+  }
+}
+
+@layer utilities {
+  .section-fullscreen {
+    @apply min-h-[80vh] flex flex-col justify-center px-6 md:px-20 py-24;
+  }
+
+  .glass-header {
+    @apply bg-white/80 backdrop-blur-xl border-b border-slate-100;
+  }
+
+  .bg-grainy {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.02;
+    pointer-events: none;
   }
 }

@@ -14,7 +14,7 @@ describe("LandingPage", () => {
   });
 
   it("renders the landing page with title and description", () => {
-    vi.spyOn(global, "fetch").mockResolvedValueOnce({
+    vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({
       ok: true,
       json: async () => ({ status: "online", database: "ok" }),
     } as any);
@@ -28,7 +28,7 @@ describe("LandingPage", () => {
   });
 
   it("shows frontend status as online", () => {
-    vi.spyOn(global, "fetch").mockResolvedValueOnce({
+    vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({
       ok: true,
       json: async () => ({ status: "online", database: "ok" }),
     } as any);
@@ -41,7 +41,7 @@ describe("LandingPage", () => {
 
   it("calls health check on mount", async () => {
     const fetchSpy = vi
-      .spyOn(global, "fetch")
+      .spyOn(globalThis, "fetch")
       .mockResolvedValueOnce({
         ok: true,
         json: async () => ({ status: "online", database: "ok" }),
@@ -55,7 +55,7 @@ describe("LandingPage", () => {
   });
 
   it("shows backend as online when health check succeeds", async () => {
-    vi.spyOn(global, "fetch").mockResolvedValueOnce({
+    vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({
       ok: true,
       json: async () => ({ status: "online", database: "ok" }),
     } as any);
@@ -76,7 +76,7 @@ describe("LandingPage", () => {
   });
 
   it("shows backend as offline when health check fails", async () => {
-    vi.spyOn(global, "fetch").mockRejectedValueOnce(new Error("Network error"));
+    vi.spyOn(globalThis, "fetch").mockRejectedValueOnce(new Error("Network error"));
 
     renderWithRouter(<LandingPage />);
 
@@ -90,7 +90,7 @@ describe("LandingPage", () => {
   });
 
   it("shows database error when health check returns error status", async () => {
-    vi.spyOn(global, "fetch").mockResolvedValueOnce({
+    vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({
       ok: true,
       json: async () => ({ status: "online", database: "error" }),
     } as any);
@@ -103,7 +103,7 @@ describe("LandingPage", () => {
   });
 
   it("renders login button with correct link", () => {
-    vi.spyOn(global, "fetch").mockResolvedValueOnce({
+    vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({
       ok: true,
       json: async () => ({ status: "online", database: "ok" }),
     } as any);

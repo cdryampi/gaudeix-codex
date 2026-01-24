@@ -1,53 +1,39 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Outlet } from "react-router-dom";
-import { Sidebar } from "@/components/layout/Sidebar";
-import { Header } from "@/components/layout/Header";
+import { Sidebar } from "./Sidebar";
+import { Header } from "./Header";
+import { Menu } from "lucide-react";
 
 export default function DashboardLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isDesktop, setIsDesktop] = useState(false);
-
-  useEffect(() => {
-    if (typeof window === "undefined" || !window.matchMedia) return;
-    const mediaQuery = window.matchMedia("(min-width: 1024px)");
-    const handleChange = () => setIsDesktop(mediaQuery.matches);
-    handleChange();
-    if (mediaQuery.addEventListener) {
-      mediaQuery.addEventListener("change", handleChange);
-      return () => mediaQuery.removeEventListener("change", handleChange);
-    }
-    mediaQuery.addListener(handleChange);
-    return () => mediaQuery.removeListener(handleChange);
-  }, []);
-
-  useEffect(() => {
-    if (isDesktop) {
-      setIsSidebarOpen(false);
-    }
-  }, [isDesktop]);
 
   return (
-    <div className="flex min-h-screen overflow-x-hidden bg-gray-50 dark:bg-gray-950">
-      {/* Sidebar */}
-      <Sidebar
-        isOpen={isSidebarOpen}
-        isDesktop={isDesktop}
-        onClose={() => setIsSidebarOpen(false)}
-      />
-
-      {/* Main Content */}
-      <div className="flex min-w-0 flex-1 flex-col transition-all duration-200 ease-in-out">
-        <Header
-          onMenuClick={() => {
-            if (!isDesktop) {
-              setIsSidebarOpen(true);
-            }
-          }}
-          showMenuButton={!isDesktop}
+    <div className="flex h-screen w-full overflow-hidden bg-gray-50 dark:bg-gray-900">
+      {/* Mobile Sidebar Overlay */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 z-40 bg-gray-900/50 backdrop-blur-sm lg:hidden"
+          onClick={() => setIsSidebarOpen(false)}
         />
+      )}
+
+      {/* Sidebar Container */}
+      <div className={`
+        fixed inset-y-0 left-0 z-50 flex h-full transform transition-transform duration-300 ease-in-out lg:static lg:translate-x-0
+        ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
+      `}>
+        <Sidebar />
+      </div>
+
+      {/* Main Content Wrapper */}
+      <div className="flex flex-1 flex-col overflow-hidden min-w-0">
+        <Header onMenuClick={() => setIsSidebarOpen(true)} />
         
-        <main className="flex-1 min-w-0 overflow-x-auto p-4 md:p-6 lg:p-8">
-          <div className="mx-auto w-full max-w-7xl animate-in fade-in duration-500">
+        {/* Mobile Menu Button (Floating if needed, usually in Header but good to handle visibility state) */}
+        
+        <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-6 lg:p-8 custom-scrollbar flex flex-col items-center">
+          {/* Content Container - Centered and constrained */}
+          <div className="w-full max-w-7xl mx-auto animate-in fade-in duration-300">
             <Outlet />
           </div>
         </main>

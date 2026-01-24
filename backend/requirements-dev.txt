@@ -1,9 +1,17 @@
--r requirements.txt
+# Development Dependencies
+pytest==9.0.1
+pytest-django==4.11.1
+pytest-cov==6.0.0
+coverage==7.13.1
+
+# Linting & Type Checking
+ruff==0.9.1
+mypy==1.14.1
+mypy_extensions==1.1.0
+
+# Development Tools
 colorama==0.4.6
 iniconfig==2.3.0
 pluggy==1.6.0
-pytest==9.0.1
-pytest-django==4.11.1
-ruff==0.9.1
-mypy==1.14.1
-pytest-cov==6.0.0
+tomli==2.4.0
+Faker

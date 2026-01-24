@@ -1,13 +1,13 @@
 # Gaudeix Backoffice
 
-Dashboard administrativo construido con React, TypeScript, Tailwind CSS v4 y shadcn/ui.
+Dashboard administrativo construido con React, TypeScript, Tailwind CSS v4 y Flowbite React.
 
 ## Tecnologías
 
 - **React 18** + **TypeScript**
 - **Vite** - Build tool
 - **Tailwind CSS v4** - Styling
-- **shadcn/ui** - Component library
+- **Flowbite React** - Component library
 - **React Router** - Routing
 - **React Query** - Data fetching
 - **Axios** - HTTP client
@@ -68,7 +68,6 @@ src/
 │   ├── media/              # Gestión de media
 │   └── events/             # Gestión de eventos
 ├── components/
-│   ├── ui/                 # Componentes de shadcn/ui
 │   └── common/             # Componentes reutilizables
 ├── lib/                    # Utilidades y configuración
 │   ├── api/                # Cliente HTTP
@@ -133,20 +132,19 @@ Luego usa esas credenciales en el login del backoffice.
 - ✅ Página de prueba de formularios (`/test`)
 - ✅ Dashboard limpio y funcional
 - ✅ Diseño responsive con Tailwind CSS v4
-- ✅ Componentes shadcn/ui integrados
+- ✅ Componentes Flowbite React integrados
 
-## Añadir Componentes de shadcn/ui
+## Componentes Flowbite React
 
-```bash
-npx shadcn@latest add [component-name]
-```
+Flowbite React proporciona componentes ya construidos. Para ver la documentación completa:
 
-Ejemplo:
+- **Documentación**: https://flowbite-react.com/
+- **Componentes**: https://flowbite-react.com/docs/components/accordion
 
-```bash
-npx shadcn@latest add table
-npx shadcn@latest add dialog
-npx shadcn@latest add dropdown-menu
+Ejemplo de uso:
+
+```tsx
+import { Button, Table, Modal } from "flowbite-react";
 ```
 
 ## Configuración de API
@@ -215,7 +213,7 @@ La autenticación está configurada como placeholder. Para implementar autentica
 - [ ] Implementar lógica de autenticación real
 - [ ] Conectar con API backend
 - [ ] Implementar CRUD completo para cada feature
-- [ ] Añadir más componentes de shadcn/ui según necesidad
+- [ ] Añadir más componentes de Flowbite React según necesidad
 - [ ] Implementar manejo de errores global
 - [ ] Añadir loading states
 - [ ] Implementar paginación

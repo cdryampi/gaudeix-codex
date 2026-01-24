@@ -1,58 +1,59 @@
-import * as React from "react";
-import { Slot } from "@radix-ui/react-slot";
-import { cva, type VariantProps } from "class-variance-authority";
-
+/**
+ * Button component - Custom implementation with Tailwind CSS
+ * Direct Tailwind classes for better visibility and control
+ */
+import { forwardRef, ButtonHTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
 
-const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-  {
-    variants: {
-      variant: {
-        default:
-          "bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm",
-        destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-sm",
-        outline:
-          "border border-border bg-card hover:bg-accent hover:text-accent-foreground",
-        secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
-      },
-      size: {
-        default: "h-9 px-4 py-2",
-        sm: "h-8 rounded-md gap-1.5 px-3",
-        lg: "h-11 rounded-lg px-8",
-        icon: "h-9 w-9",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-      size: "default",
-    },
+export interface CustomButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
+  size?: "default" | "sm" | "lg" | "icon";
+  asChild?: boolean;
+}
+
+export const Button = forwardRef<HTMLButtonElement, CustomButtonProps>(
+  ({ variant = "default", size = "default", className, children, asChild, ...props }, ref) => {
+    // If asChild is true, render children directly (for Link wrappers)
+    if (asChild) {
+      return <>{children}</>;
+    }
+
+    // Variant styles using direct Tailwind classes
+    const variantStyles = {
+      default: "bg-primary-600 text-white hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800",
+      destructive: "bg-red-600 text-white hover:bg-red-700 focus:ring-4 focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900",
+      outline: "border border-gray-300 bg-white text-gray-900 hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700 dark:focus:ring-gray-700",
+      secondary: "bg-gray-200 text-gray-900 hover:bg-gray-300 focus:ring-4 focus:ring-gray-100 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-700",
+      ghost: "text-gray-900 hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 dark:text-white dark:hover:bg-gray-800 dark:focus:ring-gray-700",
+      link: "text-primary-600 hover:underline dark:text-primary-500",
+    } as const;
+
+    // Size styles
+    const sizeStyles = {
+      default: "px-5 py-2.5 text-sm",
+      sm: "px-3 py-2 text-xs",
+      lg: "px-5 py-3 text-base",
+      icon: "p-2.5",
+    } as const;
+
+    // Base styles
+    const baseStyles = "inline-flex items-center justify-center font-medium rounded-lg transition-colors focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed";
+
+    return (
+      <button
+        ref={ref}
+        className={cn(
+          baseStyles,
+          variantStyles[variant],
+          sizeStyles[size],
+          className
+        )}
+        {...props}
+      >
+        {children}
+      </button>
+    );
   }
 );
 
-function Button({
-  className,
-  variant,
-  size,
-  asChild = false,
-  ...props
-}: React.ComponentProps<"button"> &
-  VariantProps<typeof buttonVariants> & {
-    asChild?: boolean;
-  }) {
-  const Comp = asChild ? Slot : "button";
-
-  return (
-    <Comp
-      data-slot="button"
-      className={cn(buttonVariants({ variant, size, className }))}
-      {...props}
-    />
-  );
-}
-
-export { Button, buttonVariants };
+Button.displayName = "Button";

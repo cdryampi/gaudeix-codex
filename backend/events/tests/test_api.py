@@ -136,6 +136,7 @@ def test_create_event_authenticated(
         "location_text": "Plaça Major",
         "is_featured": True,
         "is_free": False,
+        "price": "10.00",
         "price_text": "10 EUR",
         "category_id": child_category.id,
         "tag_ids": [tag_music.id, tag_family.id],
@@ -161,6 +162,7 @@ def test_create_event_authenticated(
     assert Event.objects.count() == 1
     event = Event.objects.first()
     assert event.slug
+    assert event.price == 10.00
     assert event.safe_translation_getter("title", any_language=True) == "API Event"
     assert event.category == child_category
     assert event.tags.count() == 2

@@ -3,10 +3,9 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { AuthCard } from "../components/AuthCard";
 import { useAuthForm } from "../hooks/useAuthForm";
 import { API_CONFIG, API_ENDPOINTS } from "@/lib/config/constants";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Mail } from "lucide-react";
 
 const resetSchema = z.object({
   email: z.string().email("Email inválido"),
@@ -28,50 +27,60 @@ export const ResetPasswordPage = () => {
     });
 
   return (
-    <AuthCard
-      title="Recuperar Contraseña"
-      subtitle="Te enviaremos instrucciones a tu correo"
-      footer={
-        <Link
-          to="/login"
-          className="group flex items-center justify-center gap-2 text-neutral-700 dark:text-neutral-300 hover:text-primary dark:hover:text-primary transition-all duration-200 font-medium"
-        >
-          <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
-          <span className="underline decoration-2 underline-offset-4 decoration-neutral-300 dark:decoration-neutral-700 group-hover:decoration-primary">
-            Volver al inicio de sesión
-          </span>
-        </Link>
-      }
-    >
-      <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
+    <div className="w-full space-y-6 animate-in fade-in duration-500">
+      <div className="space-y-2 text-center">
+        <h2 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">
+          Recuperar Contraseña
+        </h2>
+        <p className="text-sm text-gray-500 dark:text-gray-400">
+          Te enviaremos instrucciones a tu correo
+        </p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-5" autoComplete="on">
         <div className="space-y-2">
           <Label
             htmlFor="email"
-            className="text-sm font-medium text-neutral-700 dark:text-neutral-300"
+            className="text-gray-700 dark:text-gray-300"
           >
             Correo electrónico
           </Label>
-          <Input
-            id="email"
-            name="email"
-            type="email"
-            placeholder="tu@email.com"
-            value={values.email}
-            onChange={handleChange}
-            className="h-10 sm:h-11 transition-all duration-200 focus:ring-2 focus:ring-primary/20 dark:focus:ring-primary/30"
-          />
+          <div className="relative">
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              placeholder="nombre@ejemplo.com"
+              value={values.email}
+              onChange={handleChange}
+              className="bg-white pl-10"
+            />
+            <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+          </div>
           {errors.email && (
-            <p className="text-sm text-destructive mt-1.5">{errors.email}</p>
+            <p className="text-sm text-red-500 mt-1">{errors.email}</p>
           )}
         </div>
+
         <Button
           type="submit"
-          className="w-full h-10 sm:h-11 text-base font-medium shadow-sm hover:shadow-md transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+          className="w-full"
+          size="lg"
           disabled={isSubmitting}
         >
-          {isSubmitting ? "Cargando..." : "Enviar instrucciones"}
+          {isSubmitting ? "Enviando..." : "Enviar instrucciones"}
         </Button>
       </form>
-    </AuthCard>
+
+      <div className="mt-8 text-center">
+        <Link
+          to="/login"
+          className="inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-primary-600 dark:text-gray-400 dark:hover:text-primary-400 transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Volver al inicio de sesión
+        </Link>
+      </div>
+    </div>
   );
 };

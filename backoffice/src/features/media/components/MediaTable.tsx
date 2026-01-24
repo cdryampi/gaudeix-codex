@@ -4,21 +4,28 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { MediaItem } from "../types";
 import { Trash2, Pencil, ImageIcon, FileText } from "lucide-react";
 
+export type MediaLink = {
+  label: string;
+  subtitle?: string;
+};
+
 type Props = {
   items: MediaItem[];
   onDelete: (item: MediaItem) => void;
   onRename: (item: MediaItem) => void;
+  linkedMap?: Record<string, MediaLink[]>;
 };
 
-export function MediaTable({ items, onDelete, onRename }: Props) {
+export function MediaTable({ items, onDelete, onRename, linkedMap = {} }: Props) {
   return (
     <div className="w-full overflow-hidden rounded-xl border border-border bg-card shadow-sm">
       <ScrollArea className="w-full">
-        <table className="w-full min-w-[720px] table-auto caption-bottom text-sm">
+        <table className="w-full min-w-[860px] table-auto caption-bottom text-sm">
           <thead className="bg-muted/50 text-xs uppercase tracking-wide text-muted-foreground">
             <tr className="[&_th]:px-5 [&_th]:py-3 [&_th]:text-left [&_th]:font-semibold">
               <th>Archivo</th>
               <th>Tipo</th>
+              <th>Vinculado</th>
               <th>Tamaño</th>
               <th>Creado</th>
               <th className="text-right">Acciones</th>
@@ -28,7 +35,7 @@ export function MediaTable({ items, onDelete, onRename }: Props) {
             {items.length === 0 ? (
               <tr>
                 <td
-                  colSpan={5}
+                  colSpan={6}
                   className="p-6 text-center text-muted-foreground"
                 >
                   No hay archivos.
@@ -67,6 +74,9 @@ export function MediaTable({ items, onDelete, onRename }: Props) {
                       )}
                       {item.type === "image" ? "Imagen" : "Documento"}
                     </Badge>
+                  </td>
+                  <td className="px-5 py-4 align-middle">
+                    <LinkedModelCell item={item} linkedMap={linkedMap} />
                   </td>
                   <td className="px-5 py-4 align-middle text-muted-foreground">
                     {formatSize(item.size_bytes)}
@@ -120,6 +130,36 @@ function Thumb({ item }: { item: MediaItem }) {
   return (
     <div className="flex h-12 w-12 items-center justify-center rounded-md bg-slate-100 text-slate-600 ring-1 ring-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:ring-slate-700">
       <FileText className="h-5 w-5" />
+    </div>
+  );
+}
+
+function LinkedModelCell({
+  item,
+  linkedMap,
+}: {
+  item: MediaItem;
+  linkedMap: Record<string, MediaLink[]>;
+}) {
+  const key = `${item.type}-${item.id}`;
+  const linked = linkedMap[key] || [];
+
+  if (linked.length === 0) {
+    return <span className="text-muted-foreground">Sin vínculo</span>;
+  }
+
+  return (
+    <div className="flex flex-col gap-1">
+      {linked.map((link, index) => (
+        <div key={`${key}-${index}`} className="flex flex-wrap items-center gap-2">
+          <Badge variant="secondary" className="text-[11px] font-semibold">
+            {link.label}
+          </Badge>
+          {link.subtitle && (
+            <span className="text-xs text-muted-foreground">{link.subtitle}</span>
+          )}
+        </div>
+      ))}
     </div>
   );
 }

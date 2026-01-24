@@ -4,6 +4,8 @@ import { PageContainer, PageHeader } from "@/components/common";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Pagination } from "@/components/ui/pagination";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,6 +30,11 @@ export function UsersPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | undefined>(undefined);
   const [deleteUserId, setDeleteUserId] = useState<number | null>(null);
+  const [search, setSearch] = useState("");
+  const [roleFilter, setRoleFilter] = useState<"all" | "admin" | "user">("all");
+  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
+  const [page, setPage] = useState(1);
+  const [pageSize] = useState(10);
 
   const stats = useMemo(() => {
     const total = users.length;
@@ -35,6 +42,42 @@ export function UsersPage() {
     const admins = users.filter((u) => u.is_staff).length;
     return { total, active, admins };
   }, [users]);
+
+  const filtered = useMemo(() => {
+    const query = search.trim().toLowerCase();
+    return users.filter((user) => {
+      const matchesQuery = query
+        ? `${user.username} ${user.name ?? ""} ${user.email ?? ""}`
+            .toLowerCase()
+            .includes(query)
+        : true;
+      const matchesRole =
+        roleFilter === "all"
+          ? true
+          : roleFilter === "admin"
+          ? user.is_staff
+          : !user.is_staff;
+      const matchesStatus =
+        statusFilter === "all"
+          ? true
+          : statusFilter === "active"
+          ? user.is_active
+          : !user.is_active;
+      return matchesQuery && matchesRole && matchesStatus;
+    });
+  }, [users, search, roleFilter, statusFilter]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const paginated = useMemo(() => {
+    const start = (page - 1) * pageSize;
+    return filtered.slice(start, start + pageSize);
+  }, [filtered, page, pageSize]);
+
+  useEffect(() => {
+    if (page > totalPages) {
+      setPage(totalPages);
+    }
+  }, [page, totalPages]);
 
   const fetchUsers = async () => {
     try {
@@ -53,6 +96,10 @@ export function UsersPage() {
   useEffect(() => {
     fetchUsers();
   }, []);
+
+  useEffect(() => {
+    setPage(1);
+  }, [search, roleFilter, statusFilter]);
 
   const handleCreate = () => {
     setEditingUser(undefined);
@@ -169,6 +216,40 @@ export function UsersPage() {
         </Card>
       </div>
 
+      <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-1 flex-col gap-3 md:flex-row">
+          <Input
+            placeholder="Buscar por usuario, nombre o email"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="md:max-w-sm"
+          />
+          <div className="grid grid-cols-2 gap-2 md:flex">
+            <select
+              value={roleFilter}
+              onChange={(e) => setRoleFilter(e.target.value as typeof roleFilter)}
+              className="h-10 rounded-md border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+            >
+              <option value="all">Todos los roles</option>
+              <option value="admin">Administradores</option>
+              <option value="user">Usuarios</option>
+            </select>
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value as typeof statusFilter)}
+              className="h-10 rounded-md border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+            >
+              <option value="all">Todos los estados</option>
+              <option value="active">Activos</option>
+              <option value="inactive">Inactivos</option>
+            </select>
+          </div>
+        </div>
+        <Badge variant="secondary" className="w-fit px-3 py-1 text-xs">
+          {filtered.length} usuarios
+        </Badge>
+      </div>
+
       <Card className="border-border bg-card">
         <CardContent className="p-0">
           {loading ? (
@@ -181,13 +262,22 @@ export function UsersPage() {
             </div>
           ) : (
             <UsersTable
-              users={users}
+              users={paginated}
               onEdit={handleEdit}
               onDelete={handleDelete}
             />
           )}
         </CardContent>
       </Card>
+
+      <div className="mt-4 flex flex-col gap-2 text-sm text-muted-foreground md:flex-row md:items-center md:justify-between">
+        <span>
+          Página {page} de {totalPages} • {filtered.length} resultados
+        </span>
+        <div className="w-full md:w-auto">
+          <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+        </div>
+      </div>
 
       <UserDialog
         open={isDialogOpen}

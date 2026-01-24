@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { PageContainer, PageHeader } from "@/components/common";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Pagination } from "@/components/ui/pagination";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,8 +27,77 @@ import { toast } from "sonner";
 import { Upload } from "lucide-react";
 import { mediaApi } from "../api/media";
 import { MediaItem, MediaType } from "../types";
-import { MediaTable } from "../components/MediaTable";
+import { MediaLink, MediaTable } from "../components/MediaTable";
 import { MediaFilters } from "../components/MediaFilters";
+import { eventsApi } from "@/features/events/api/events";
+import { placesApi } from "@/features/places/api/places";
+import { staticPagesApi } from "@/features/static-pages/api/staticPages";
+import { siteSettingsApi } from "@/features/site-settings/api/siteSettings";
+import { Event } from "@/features/events/types";
+import { Place } from "@/features/places/types";
+import { StaticPage } from "@/features/static-pages/types";
+import { SiteSettings } from "@/features/site-settings/types";
+
+type LinkCollector = (type: MediaType, id: number | null | undefined, link: MediaLink) => void;
+
+const fallbackLabel = (value: string | undefined | null, fallback: string) =>
+  value && value.trim().length > 0 ? value : fallback;
+
+function addEventLinks(events: Event[], addLink: LinkCollector) {
+  events.forEach((event) => {
+    const title = fallbackLabel(event.title, `Evento #${event.id}`);
+    if (event.featured_media?.id) {
+      addLink("image", event.featured_media.id, { label: "Evento", subtitle: title });
+    }
+    (event.attachments || []).forEach((attachment) => {
+      addLink("document", attachment.id, { label: "Evento", subtitle: title });
+    });
+  });
+}
+
+function addPlaceLinks(places: Place[], addLink: LinkCollector) {
+  places.forEach((place) => {
+    const title = fallbackLabel(place.title, `Lugar #${place.id}`);
+    if (place.featured_media?.id) {
+      addLink("image", place.featured_media.id, { label: "Lugar", subtitle: title });
+    }
+    (place.attachments || []).forEach((attachment) => {
+      addLink("document", attachment.id, { label: "Lugar", subtitle: title });
+    });
+  });
+}
+
+function addStaticPageLinks(pages: StaticPage[], addLink: LinkCollector) {
+  pages.forEach((page) => {
+    const title = fallbackLabel(page.titulo, `Página ${page.slug}`);
+    if (page.featured_media?.id) {
+      addLink("image", page.featured_media.id, {
+        label: "Página",
+        subtitle: title,
+      });
+    }
+    if (page.attachment?.id) {
+      addLink("document", page.attachment.id, {
+        label: "Página",
+        subtitle: title,
+      });
+    }
+  });
+}
+
+function addSiteSettingsLinks(settings: SiteSettings, addLink: LinkCollector) {
+  addLink("image", settings.logo?.id, { label: "Ajustes", subtitle: "Logo" });
+  addLink("image", settings.logo_dark?.id, { label: "Ajustes", subtitle: "Logo dark" });
+  addLink("image", settings.favicon?.id, { label: "Ajustes", subtitle: "Favicon" });
+  addLink("image", settings.default_og_image?.id, {
+    label: "Ajustes",
+    subtitle: "OG image",
+  });
+  addLink("video", settings.background_video?.id, {
+    label: "Ajustes",
+    subtitle: "Video fondo",
+  });
+}
 
 export function MediaPage() {
   const [items, setItems] = useState<MediaItem[]>([]);
@@ -40,6 +110,7 @@ export function MediaPage() {
   const [deleteItem, setDeleteItem] = useState<MediaItem | null>(null);
   const [renameItem, setRenameItem] = useState<MediaItem | null>(null);
   const [newName, setNewName] = useState("");
+  const [linkedMap, setLinkedMap] = useState<Record<string, MediaLink[]>>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const filtered = useMemo(() => {
@@ -66,7 +137,9 @@ export function MediaPage() {
         mediaApi.listImages(),
         mediaApi.listDocuments(),
       ]);
-      setItems([...images, ...documents]);
+      const merged = [...images, ...documents];
+      setItems(merged);
+      setLinkedMap(await loadLinkedMap());
       setError(null);
     } catch (err) {
       console.error("Error fetching media:", err);
@@ -74,6 +147,36 @@ export function MediaPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const loadLinkedMap = async (): Promise<Record<string, MediaLink[]>> => {
+    const [eventsResult, placesResult, pagesResult, settingsResult] =
+      await Promise.allSettled([
+        eventsApi.getAll(),
+        placesApi.getAll(),
+        staticPagesApi.list(),
+        siteSettingsApi.get(),
+      ]);
+
+    const linked: Record<string, MediaLink[]> = {};
+    const addLink = (type: MediaType, id: number | null | undefined, link: MediaLink) => {
+      if (!id) return;
+      const key = `${type}-${id}`;
+      if (!linked[key]) linked[key] = [];
+      linked[key].push(link);
+    };
+
+    const events = eventsResult.status === "fulfilled" ? eventsResult.value : [];
+    const places = placesResult.status === "fulfilled" ? placesResult.value : [];
+    const pages = pagesResult.status === "fulfilled" ? pagesResult.value : [];
+    const settings = settingsResult.status === "fulfilled" ? settingsResult.value : null;
+
+    addEventLinks(events, addLink);
+    addPlaceLinks(places, addLink);
+    addStaticPageLinks(pages, addLink);
+    if (settings) addSiteSettingsLinks(settings, addLink);
+
+    return linked;
   };
 
   useEffect(() => {
@@ -138,11 +241,6 @@ export function MediaPage() {
     }
   };
 
-  const handlePageChange = (nextPage: number) => {
-    const target = Math.min(Math.max(1, nextPage), totalPages);
-    setPage(target);
-  };
-
   useEffect(() => {
     setPage(1);
   }, [search, typeFilter, pageSize]);
@@ -192,32 +290,18 @@ export function MediaPage() {
               items={paginated}
               onDelete={handleDelete}
               onRename={handleRename}
+              linkedMap={linkedMap}
             />
           )}
         </CardContent>
       </Card>
 
-      <div className="mt-4 flex items-center justify-between text-sm text-muted-foreground">
+      <div className="mt-4 flex flex-col gap-2 text-sm text-muted-foreground md:flex-row md:items-center md:justify-between">
         <span>
           Página {page} de {totalPages} • {filtered.length} resultados
         </span>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => handlePageChange(page - 1)}
-            disabled={page === 1}
-          >
-            Anterior
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => handlePageChange(page + 1)}
-            disabled={page === totalPages}
-          >
-            Siguiente
-          </Button>
+        <div className="w-full md:w-auto">
+          <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
         </div>
       </div>
 

@@ -3,6 +3,7 @@ import { PageContainer, PageHeader } from "@/components/common";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Pagination } from "@/components/ui/pagination";
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
 
@@ -10,6 +11,7 @@ import { categoriesApi } from "../api/categories";
 import { Category, CategoryPayload } from "../types";
 import { CategoriesTable } from "../components/CategoriesTable";
 import { CategoryDialog } from "../components/CategoryDialog";
+import { envConfig } from "@/lib/config/env";
 
 export function CategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -18,6 +20,8 @@ export function CategoriesPage() {
   const [error, setError] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Category | undefined>();
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(envConfig.events.pageSizeDefault);
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
@@ -28,6 +32,18 @@ export function CategoriesPage() {
         .includes(q);
     });
   }, [categories, search]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const paginated = useMemo(() => {
+    const start = (page - 1) * pageSize;
+    return filtered.slice(start, start + pageSize);
+  }, [filtered, page, pageSize]);
+
+  useEffect(() => {
+    if (page > totalPages) {
+      setPage(totalPages);
+    }
+  }, [page, totalPages]);
 
   const fetchCategories = async () => {
     try {
@@ -93,7 +109,10 @@ export function CategoriesPage() {
         <Input
           placeholder="Buscar por slug o nombre"
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setPage(1);
+          }}
           className="max-w-sm"
         />
       </div>
@@ -105,10 +124,26 @@ export function CategoriesPage() {
           ) : error ? (
             <div className="flex h-40 items-center justify-center text-destructive">{error}</div>
           ) : (
-            <CategoriesTable categories={filtered} onEdit={(c) => { setEditing(c); setDialogOpen(true); }} onDelete={handleDelete} />
+            <CategoriesTable
+              categories={paginated}
+              onEdit={(c) => {
+                setEditing(c);
+                setDialogOpen(true);
+              }}
+              onDelete={handleDelete}
+            />
           )}
         </CardContent>
       </Card>
+
+      <div className="mt-4 flex flex-col gap-2 text-sm text-muted-foreground md:flex-row md:items-center md:justify-between">
+        <span>
+          Página {page} de {totalPages} • {filtered.length} resultados
+        </span>
+        <div className="w-full md:w-auto">
+          <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+        </div>
+      </div>
 
       <CategoryDialog
         open={dialogOpen}

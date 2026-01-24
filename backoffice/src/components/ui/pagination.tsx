@@ -1,50 +1,80 @@
-import { cn } from "@/lib/utils";
-import { Button } from "./button";
+/**
+ * Pagination stub - basic implementation
+ */
+import { Pagination as FlowbitePagination } from "flowbite-react";
+import { forwardRef, HTMLAttributes } from "react";
 
-type PaginationProps = {
-  page: number;
+interface PaginationProps extends HTMLAttributes<HTMLDivElement> {
+  page?: number;  // Compatibility
+  currentPage?: number;
   totalPages: number;
   onPageChange: (page: number) => void;
-  className?: string;
-};
-
-export function Pagination({
-  page,
-  totalPages,
-  onPageChange,
-  className,
-}: PaginationProps) {
-  const prevDisabled = page <= 1;
-  const nextDisabled = page >= totalPages;
-
-  return (
-    <div
-      className={cn(
-        "inline-flex items-center gap-2 rounded-full border border-border/60 bg-muted/40 px-2 py-1 shadow-sm backdrop-blur",
-        className
-      )}
-    >
-      <Button
-        variant="ghost"
-        size="sm"
-        className="h-8 rounded-full px-3 text-xs hover:bg-primary/10 dark:hover:bg-primary/20"
-        onClick={() => onPageChange(page - 1)}
-        disabled={prevDisabled}
-      >
-        Anterior
-      </Button>
-      <span className="text-xs text-muted-foreground">
-        {page} / {totalPages || 1}
-      </span>
-      <Button
-        variant="ghost"
-        size="sm"
-        className="h-8 rounded-full px-3 text-xs hover:bg-primary/10 dark:hover:bg-primary/20"
-        onClick={() => onPageChange(page + 1)}
-        disabled={nextDisabled}
-      >
-        Siguiente
-      </Button>
-    </div>
-  );
 }
+
+export const Pagination = forwardRef<HTMLDivElement, PaginationProps>(
+  ({ page, currentPage, totalPages, onPageChange, className, ...props }, ref) => {
+    const activePage = page || currentPage || 1;
+    return (
+      <div ref={ref} className={`flex justify-center ${className || ""}`} {...props}>
+        <FlowbitePagination
+          currentPage={activePage}
+          totalPages={totalPages}
+          onPageChange={onPageChange}
+          showIcons
+        />
+      </div>
+    );
+  }
+);
+Pagination.displayName = "Pagination";
+
+export const PaginationContent = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
+  ({ className, ...props }, ref) => (
+    <div ref={ref} className={`flex items-center gap-1 ${className || ""}`} {...props} />
+  )
+);
+PaginationContent.displayName = "PaginationContent";
+
+export const PaginationItem = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
+  ({ className, ...props }, ref) => (
+    <div ref={ref} className={className} {...props} />
+  )
+);
+PaginationItem.displayName = "PaginationItem";
+
+export const PaginationLink = forwardRef<HTMLButtonElement, HTMLAttributes<HTMLButtonElement> & { isActive?: boolean }>(
+  ({ isActive, className, ...props }, ref) => (
+    <button
+      ref={ref}
+      className={`px-3 py-1 rounded ${isActive ? "bg-primary-600 text-white" : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200"} ${className || ""}`}
+      {...props}
+    />
+  )
+);
+PaginationLink.displayName = "PaginationLink";
+
+export const PaginationPrevious = forwardRef<HTMLButtonElement, HTMLAttributes<HTMLButtonElement>>(
+  ({ className, children, ...props }, ref) => (
+    <button
+      ref={ref}
+      className={`px-3 py-1 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 ${className || ""}`}
+      {...props}
+    >
+      {children || "Anterior"}
+    </button>
+  )
+);
+PaginationPrevious.displayName = "PaginationPrevious";
+
+export const PaginationNext = forwardRef<HTMLButtonElement, HTMLAttributes<HTMLButtonElement>>(
+  ({ className, children, ...props }, ref) => (
+    <button
+      ref={ref}
+      className={`px-3 py-1 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 ${className || ""}`}
+      {...props}
+    >
+      {children || "Siguiente"}
+    </button>
+  )
+);
+PaginationNext.displayName = "PaginationNext";

@@ -1,48 +1,64 @@
-import * as React from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import Link from "@tiptap/extension-link";
-import Image from "@tiptap/extension-image";
 import Underline from "@tiptap/extension-underline";
+import Link from "@tiptap/extension-link";
 import TextAlign from "@tiptap/extension-text-align";
-import { Button } from "./button";
-import {
-  Bold,
-  Italic,
-  Strikethrough,
-  UnderlineIcon,
-  Code,
-  List,
-  ListOrdered,
-  Quote,
+import Placeholder from "@tiptap/extension-placeholder";
+import CharacterCount from "@tiptap/extension-character-count";
+import { 
+  Bold, 
+  Italic, 
+  Underline as UnderlineIcon, 
+  List, 
+  ListOrdered, 
+  AlignLeft, 
+  AlignCenter, 
+  AlignRight, 
+  Link as LinkIcon,
+  Unlink,
   Undo,
   Redo,
-  Link2,
-  Image as ImageIcon,
-  AlignLeft,
-  AlignCenter,
-  AlignRight,
   Heading1,
-  Heading2,
-  Heading3,
+  Heading2
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { useEffect } from "react";
 
 interface RichTextEditorProps {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
   className?: string;
-  disabled?: boolean;
 }
 
-export function RichTextEditor({
-  value,
-  onChange,
-  placeholder = "Escribe algo...",
-  className,
-  disabled = false,
-}: RichTextEditorProps) {
+const MenuButton = ({ 
+  onClick, 
+  isActive = false, 
+  disabled = false, 
+  children,
+  title 
+}: { 
+  onClick: () => void; 
+  isActive?: boolean; 
+  disabled?: boolean; 
+  children: React.ReactNode;
+  title?: string;
+}) => (
+  <button
+    type="button"
+    onClick={onClick}
+    disabled={disabled}
+    title={title}
+    className={`p-2 rounded-md transition-colors ${
+      isActive 
+        ? "bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300" 
+        : "text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
+    } disabled:opacity-50 disabled:cursor-not-allowed`}
+  >
+    {children}
+  </button>
+);
+
+export const RichTextEditor = ({ value, onChange, placeholder, className }: RichTextEditorProps) => {
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -50,300 +66,188 @@ export function RichTextEditor({
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {
-          class: "text-primary underline",
-        },
-      }),
-      Image.configure({
-        HTMLAttributes: {
-          class: "max-w-full h-auto rounded-md",
+          class: 'text-primary-600 underline cursor-pointer',
         },
       }),
       TextAlign.configure({
-        types: ["heading", "paragraph"],
+        types: ['heading', 'paragraph'],
       }),
+      Placeholder.configure({
+        placeholder: placeholder || 'Escribe aquí...',
+      }),
+      CharacterCount,
     ],
     content: value,
-    editable: !disabled,
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
     },
     editorProps: {
       attributes: {
-        class: cn(
-          "prose prose-sm dark:prose-invert max-w-none focus:outline-none min-h-[200px] px-3 py-2",
-          className
-        ),
+        class: `prose dark:prose-invert max-w-none min-h-[200px] p-4 focus:outline-none focus:ring-0 ${className || ""}`,
       },
     },
   });
 
-  // Sync external value when it changes after mount (e.g., editing existing content)
-  React.useEffect(() => {
-    if (!editor) return;
-    const current = editor.getHTML();
-    const next = value || "";
-    if (current !== next) {
-      editor.commands.setContent(next, { emitUpdate: false });
+  // Sync value if changed from outside
+  useEffect(() => {
+    if (editor && value !== editor.getHTML()) {
+      editor.commands.setContent(value);
     }
-  }, [editor, value]);
+  }, [value, editor]);
 
   if (!editor) {
     return null;
   }
 
-  const addLink = () => {
-    const url = window.prompt("URL:");
-    if (url) {
-      editor.chain().focus().setLink({ href: url }).run();
-    }
-  };
+  const setLink = () => {
+    const previousUrl = editor.getAttributes('link').href;
+    const url = window.prompt('URL:', previousUrl);
 
-  const addImage = () => {
-    const url = window.prompt("URL de la imagen:");
-    if (url) {
-      editor.chain().focus().setImage({ src: url }).run();
+    if (url === null) {
+      return;
     }
+
+    if (url === '') {
+      editor.chain().focus().extendMarkRange('link').unsetLink().run();
+      return;
+    }
+
+    editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
   };
 
   return (
-    <div className="border rounded-md overflow-hidden bg-background">
+    <div className="rounded-xl border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800 overflow-hidden ring-offset-white focus-within:ring-2 focus-within:ring-primary-500/20 transition-all">
       {/* Toolbar */}
-      <div className="border-b bg-muted/50 p-2 flex flex-wrap gap-1">
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => editor.chain().focus().toggleBold().run()}
-          className={cn("h-8 w-8 p-0", editor.isActive("bold") && "bg-accent")}
-          disabled={disabled}
-        >
-          <Bold className="h-4 w-4" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => editor.chain().focus().toggleItalic().run()}
-          className={cn(
-            "h-8 w-8 p-0",
-            editor.isActive("italic") && "bg-accent"
-          )}
-          disabled={disabled}
-        >
-          <Italic className="h-4 w-4" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => editor.chain().focus().toggleUnderline().run()}
-          className={cn(
-            "h-8 w-8 p-0",
-            editor.isActive("underline") && "bg-accent"
-          )}
-          disabled={disabled}
-        >
-          <UnderlineIcon className="h-4 w-4" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => editor.chain().focus().toggleStrike().run()}
-          className={cn(
-            "h-8 w-8 p-0",
-            editor.isActive("strike") && "bg-accent"
-          )}
-          disabled={disabled}
-        >
-          <Strikethrough className="h-4 w-4" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => editor.chain().focus().toggleCode().run()}
-          className={cn("h-8 w-8 p-0", editor.isActive("code") && "bg-accent")}
-          disabled={disabled}
-        >
-          <Code className="h-4 w-4" />
-        </Button>
+      <div className="flex flex-wrap items-center gap-1 border-b border-gray-100 bg-gray-50/50 p-1 dark:border-gray-700 dark:bg-gray-900/50">
+        <div className="flex items-center gap-1 border-r border-gray-200 px-1 dark:border-gray-700">
+          <MenuButton 
+            onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+            isActive={editor.isActive('heading', { level: 1 })}
+            title="Título 1"
+          >
+            <Heading1 className="h-4 w-4" />
+          </MenuButton>
+          <MenuButton 
+            onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+            isActive={editor.isActive('heading', { level: 2 })}
+            title="Título 2"
+          >
+            <Heading2 className="h-4 w-4" />
+          </MenuButton>
+        </div>
 
-        <div className="w-px h-8 bg-border mx-1" />
+        <div className="flex items-center gap-1 border-r border-gray-200 px-1 dark:border-gray-700">
+          <MenuButton 
+            onClick={() => editor.chain().focus().toggleBold().run()}
+            isActive={editor.isActive('bold')}
+            title="Negrita"
+          >
+            <Bold className="h-4 w-4" />
+          </MenuButton>
+          <MenuButton 
+            onClick={() => editor.chain().focus().toggleItalic().run()}
+            isActive={editor.isActive('italic')}
+            title="Cursiva"
+          >
+            <Italic className="h-4 w-4" />
+          </MenuButton>
+          <MenuButton 
+            onClick={() => editor.chain().focus().toggleUnderline().run()}
+            isActive={editor.isActive('underline')}
+            title="Subrayado"
+          >
+            <UnderlineIcon className="h-4 w-4" />
+          </MenuButton>
+        </div>
 
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-          className={cn(
-            "h-8 w-8 p-0",
-            editor.isActive("heading", { level: 1 }) && "bg-accent"
-          )}
-          disabled={disabled}
-        >
-          <Heading1 className="h-4 w-4" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-          className={cn(
-            "h-8 w-8 p-0",
-            editor.isActive("heading", { level: 2 }) && "bg-accent"
-          )}
-          disabled={disabled}
-        >
-          <Heading2 className="h-4 w-4" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-          className={cn(
-            "h-8 w-8 p-0",
-            editor.isActive("heading", { level: 3 }) && "bg-accent"
-          )}
-          disabled={disabled}
-        >
-          <Heading3 className="h-4 w-4" />
-        </Button>
+        <div className="flex items-center gap-1 border-r border-gray-200 px-1 dark:border-gray-700">
+          <MenuButton 
+            onClick={() => editor.chain().focus().setTextAlign('left').run()}
+            isActive={editor.isActive({ textAlign: 'left' })}
+            title="Alinear izquierda"
+          >
+            <AlignLeft className="h-4 w-4" />
+          </MenuButton>
+          <MenuButton 
+            onClick={() => editor.chain().focus().setTextAlign('center').run()}
+            isActive={editor.isActive({ textAlign: 'center' })}
+            title="Centrar"
+          >
+            <AlignCenter className="h-4 w-4" />
+          </MenuButton>
+          <MenuButton 
+            onClick={() => editor.chain().focus().setTextAlign('right').run()}
+            isActive={editor.isActive({ textAlign: 'right' })}
+            title="Alinear derecha"
+          >
+            <AlignRight className="h-4 w-4" />
+          </MenuButton>
+        </div>
 
-        <div className="w-px h-8 bg-border mx-1" />
+        <div className="flex items-center gap-1 border-r border-gray-200 px-1 dark:border-gray-700">
+          <MenuButton 
+            onClick={() => editor.chain().focus().toggleBulletList().run()}
+            isActive={editor.isActive('bulletList')}
+            title="Lista viñetas"
+          >
+            <List className="h-4 w-4" />
+          </MenuButton>
+          <MenuButton 
+            onClick={() => editor.chain().focus().toggleOrderedList().run()}
+            isActive={editor.isActive('orderedList')}
+            title="Lista numerada"
+          >
+            <ListOrdered className="h-4 w-4" />
+          </MenuButton>
+        </div>
 
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => editor.chain().focus().toggleBulletList().run()}
-          className={cn(
-            "h-8 w-8 p-0",
-            editor.isActive("bulletList") && "bg-accent"
-          )}
-          disabled={disabled}
-        >
-          <List className="h-4 w-4" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          className={cn(
-            "h-8 w-8 p-0",
-            editor.isActive("orderedList") && "bg-accent"
-          )}
-          disabled={disabled}
-        >
-          <ListOrdered className="h-4 w-4" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => editor.chain().focus().toggleBlockquote().run()}
-          className={cn(
-            "h-8 w-8 p-0",
-            editor.isActive("blockquote") && "bg-accent"
-          )}
-          disabled={disabled}
-        >
-          <Quote className="h-4 w-4" />
-        </Button>
+        <div className="flex items-center gap-1 border-r border-gray-200 px-1 dark:border-gray-700">
+          <MenuButton 
+            onClick={setLink}
+            isActive={editor.isActive('link')}
+            title="Insertar enlace"
+          >
+            <LinkIcon className="h-4 w-4" />
+          </MenuButton>
+          <MenuButton 
+            onClick={() => editor.chain().focus().unsetLink().run()}
+            disabled={!editor.isActive('link')}
+            title="Quitar enlace"
+          >
+            <Unlink className="h-4 w-4" />
+          </MenuButton>
+        </div>
 
-        <div className="w-px h-8 bg-border mx-1" />
-
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => editor.chain().focus().setTextAlign("left").run()}
-          className={cn(
-            "h-8 w-8 p-0",
-            editor.isActive({ textAlign: "left" }) && "bg-accent"
-          )}
-          disabled={disabled}
-        >
-          <AlignLeft className="h-4 w-4" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => editor.chain().focus().setTextAlign("center").run()}
-          className={cn(
-            "h-8 w-8 p-0",
-            editor.isActive({ textAlign: "center" }) && "bg-accent"
-          )}
-          disabled={disabled}
-        >
-          <AlignCenter className="h-4 w-4" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => editor.chain().focus().setTextAlign("right").run()}
-          className={cn(
-            "h-8 w-8 p-0",
-            editor.isActive({ textAlign: "right" }) && "bg-accent"
-          )}
-          disabled={disabled}
-        >
-          <AlignRight className="h-4 w-4" />
-        </Button>
-
-        <div className="w-px h-8 bg-border mx-1" />
-
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={addLink}
-          className={cn("h-8 w-8 p-0", editor.isActive("link") && "bg-accent")}
-          disabled={disabled}
-        >
-          <Link2 className="h-4 w-4" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={addImage}
-          className="h-8 w-8 p-0"
-          disabled={disabled}
-        >
-          <ImageIcon className="h-4 w-4" />
-        </Button>
-
-        <div className="w-px h-8 bg-border mx-1" />
-
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => editor.chain().focus().undo().run()}
-          className="h-8 w-8 p-0"
-          disabled={!editor.can().undo() || disabled}
-        >
-          <Undo className="h-4 w-4" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => editor.chain().focus().redo().run()}
-          className="h-8 w-8 p-0"
-          disabled={!editor.can().redo() || disabled}
-        >
-          <Redo className="h-4 w-4" />
-        </Button>
+        <div className="flex items-center gap-1 px-1 ml-auto">
+          <MenuButton 
+            onClick={() => editor.chain().focus().undo().run()}
+            disabled={!editor.can().undo()}
+            title="Deshacer"
+          >
+            <Undo className="h-4 w-4" />
+          </MenuButton>
+          <MenuButton 
+            onClick={() => editor.chain().focus().redo().run()}
+            disabled={!editor.can().redo()}
+            title="Rehacer"
+          >
+            <Redo className="h-4 w-4" />
+          </MenuButton>
+        </div>
       </div>
 
-      {/* Editor */}
-      <EditorContent editor={editor} />
+      {/* Editor Area */}
+      <EditorContent editor={editor} placeholder={placeholder} />
+      
+      {/* Footer Info */}
+      <div className="flex items-center justify-between border-t border-gray-100 bg-gray-50/30 px-4 py-1.5 dark:border-gray-700 dark:bg-gray-900/30">
+        <span className="text-[10px] font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider">
+          Editor Visual
+        </span>
+        <span className="text-[10px] font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider">
+          {editor.storage.characterCount?.characters?.() || 0} Caracteres
+        </span>
+      </div>
     </div>
   );
-}
+};

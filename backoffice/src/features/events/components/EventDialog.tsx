@@ -11,6 +11,13 @@ import { Languages, Loader2, X } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { MultiSelectHint } from "@/components/common/MultiSelectHint";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 import { CreateEventDTO, Event } from "../types";
 import { mediaApi } from "@/features/media/api/media";
@@ -38,6 +45,7 @@ const emptyForm: CreateEventDTO = {
   location_text: "",
   is_featured: false,
   is_free: true,
+  price: null,
   price_text: "",
   category_id: null,
   featured_media_id: null,
@@ -82,6 +90,7 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
         location_text: event.location_text || "",
         is_featured: !!event.is_featured,
         is_free: event.is_free ?? true,
+        price: event.price ?? null,
         price_text: event.price_text || "",
         category_id: event.category ?? null,
         featured_media_id: event.featured_media?.id ?? null,
@@ -94,8 +103,7 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
       setTranslations({});
       setActiveLang("ca");
     }
-
-  }, [event, open]);
+  }, [event?.id, open]);
 
   useEffect(() => {
     const loadOptions = async () => {
@@ -112,6 +120,9 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
         setTags(tagsList);
       } catch (err) {
         console.error("Error cargando opciones", err);
+        toast.error("No se pudieron cargar las opciones del formulario", {
+          description: "Por favor, revisa tu conexión o intenta iniciar sesión de nuevo.",
+        });
       }
     };
     if (open) loadOptions();
@@ -242,7 +253,16 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
     }
   };
 
-  const selectedImage = images.find((img) => img.id === form.featured_media_id);
+  const selectedImage = useMemo(() => 
+    images.find((img) => img.id === form.featured_media_id),
+    [images, form.featured_media_id]
+  );
+  
+  const selectedCategory = useMemo(() => 
+    categories.find((cat) => cat.id === form.category_id),
+    [categories, form.category_id]
+  );
+
   const attachmentIds = form.attachments_ids ?? [];
 
   return (
@@ -299,21 +319,24 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="category_id">Categoría</Label>
-              <select
-                id="category_id"
-                value={form.category_id ?? ""}
-                onChange={(e) =>
-                  setForm((prev) => ({ ...prev, category_id: e.target.value ? Number(e.target.value) : null }))
-                }
-                className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+              <Select 
+                value={form.category_id ? String(form.category_id) : ""} 
+                onValueChange={(val: string) => setForm(prev => ({ ...prev, category_id: val ? Number(val) : null }))}
               >
-                <option value="">Por defecto</option>
-                {categories.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.nombre} ({cat.slug})
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger id="category_id">
+                  <SelectValue placeholder="Selecciona una categoría">
+                    {selectedCategory?.nombre}
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">Por defecto</SelectItem>
+                  {categories.map((cat) => (
+                    <SelectItem key={cat.id} value={String(cat.id)}>
+                      {cat.nombre}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-2">
               <Label htmlFor="tag_ids">Etiquetas</Label>
@@ -360,57 +383,203 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
             </div>
           </div>
 
-          <div className="grid gap-3 md:grid-cols-3">
-            <div className="flex items-center justify-between rounded-lg border border-border/60 bg-muted/40 px-3 py-2 text-sm">
-              <Label htmlFor="event-is-published" className="cursor-pointer text-sm font-normal">
-                Publicado
-              </Label>
-              <Switch
-                id="event-is-published"
-                checked={!!form.is_published}
-                onCheckedChange={(checked) => setForm((prev) => ({ ...prev, is_published: checked }))}
-              />
+          <div className="grid gap-4 md:grid-cols-3">
+            {/* Toggle Card: Publicado */}
+            <div
+              role="button"
+              tabIndex={0}
+              onClick={() => setForm((prev) => ({ ...prev, is_published: !prev.is_published }))}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  setForm((prev) => ({ ...prev, is_published: !prev.is_published }));
+                }
+              }}
+              className={`flex flex-col gap-3 rounded-xl border p-4 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary-500/50 ${
+                form.is_published
+                  ? "border-primary-200 bg-primary-50/50 dark:border-primary-900/50 dark:bg-primary-900/20"
+                  : "border-gray-200 bg-white hover:bg-gray-50 dark:border-gray-800 dark:bg-gray-800/50"
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <span
+                  className={`text-sm font-bold uppercase tracking-wider ${
+                    form.is_published
+                      ? "text-primary-700 dark:text-primary-400"
+                      : "text-gray-500 dark:text-gray-400"
+                  }`}
+                >
+                  Publicado
+                </span>
+                <div onClick={(e) => e.stopPropagation()}>
+                  <Switch
+                    id="event-is-published"
+                    checked={form.is_published}
+                    onCheckedChange={(checked) =>
+                      setForm((prev) => ({ ...prev, is_published: checked }))
+                    }
+                  />
+                </div>
+              </div>
+              <p className="text-xs leading-relaxed text-gray-500 dark:text-gray-400">
+                {form.is_published
+                  ? "Visible para todos los usuarios en la web."
+                  : "Borrador: solo visible en el panel de control."}
+              </p>
             </div>
 
-            <div className="flex items-center justify-between rounded-lg border border-border/60 bg-muted/40 px-3 py-2 text-sm">
-              <Label htmlFor="event-is-featured" className="cursor-pointer text-sm font-normal">
-                Destacado
-              </Label>
-              <Switch
-                id="event-is-featured"
-                checked={!!form.is_featured}
-                onCheckedChange={(checked) => setForm((prev) => ({ ...prev, is_featured: checked }))}
-              />
+            {/* Toggle Card: Destacado */}
+            <div
+              role="button"
+              tabIndex={0}
+              onClick={() => setForm((prev) => ({ ...prev, is_featured: !prev.is_featured }))}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  setForm((prev) => ({ ...prev, is_featured: !prev.is_featured }));
+                }
+              }}
+              className={`flex flex-col gap-3 rounded-xl border p-4 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary-500/50 ${
+                form.is_featured
+                  ? "border-amber-200 bg-amber-50/50 dark:border-amber-900/50 dark:bg-amber-900/20"
+                  : "border-gray-200 bg-white hover:bg-gray-50 dark:border-gray-800 dark:bg-gray-800/50"
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <span
+                  className={`text-sm font-bold uppercase tracking-wider ${
+                    form.is_featured
+                      ? "text-amber-700 dark:text-amber-400"
+                      : "text-gray-500 dark:text-gray-400"
+                  }`}
+                >
+                  Destacado
+                </span>
+                <div onClick={(e) => e.stopPropagation()}>
+                  <Switch
+                    id="event-is-featured"
+                    checked={form.is_featured}
+                    onCheckedChange={(checked) =>
+                      setForm((prev) => ({ ...prev, is_featured: checked }))
+                    }
+                  />
+                </div>
+              </div>
+              <p className="text-xs leading-relaxed text-gray-500 dark:text-gray-400">
+                {form.is_featured
+                  ? "Aparecerá en posiciones prioritarias de la home."
+                  : "Posicionamiento estándar en los listados."}
+              </p>
             </div>
 
-            <div className="flex items-center justify-between rounded-lg border border-border/60 bg-muted/40 px-3 py-2 text-sm">
-              <Label htmlFor="event-is-free" className="cursor-pointer text-sm font-normal">
-                Gratuito
-              </Label>
-              <Switch
-                id="event-is-free"
-                checked={form.is_free ?? true}
-                onCheckedChange={(checked) =>
-                  setForm((prev) => ({
+            {/* Toggle Card: Gratuito */}
+            <div
+              role="button"
+              tabIndex={0}
+              onClick={() =>
+                setForm((prev) => {
+                  const checked = !prev.is_free;
+                  return {
                     ...prev,
                     is_free: checked,
+                    price: checked ? null : prev.price,
                     price_text: checked ? "" : prev.price_text,
-                  }))
+                  };
+                })
+              }
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  setForm((prev) => {
+                    const checked = !prev.is_free;
+                    return {
+                      ...prev,
+                      is_free: checked,
+                      price: checked ? null : prev.price,
+                      price_text: checked ? "" : prev.price_text,
+                    };
+                  });
                 }
-              />
+              }}
+              className={`flex flex-col gap-3 rounded-xl border p-4 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary-500/50 ${
+                form.is_free
+                  ? "border-emerald-200 bg-emerald-50/50 dark:border-emerald-900/50 dark:bg-emerald-900/20"
+                  : "border-gray-200 bg-white hover:bg-gray-50 dark:border-gray-800 dark:bg-gray-800/50"
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <span
+                  className={`text-sm font-bold uppercase tracking-wider ${
+                    form.is_free
+                      ? "text-emerald-700 dark:text-emerald-400"
+                      : "text-gray-500 dark:text-gray-400"
+                  }`}
+                >
+                  Gratuito
+                </span>
+                <div onClick={(e) => e.stopPropagation()}>
+                  <Switch
+                    id="event-is-free"
+                    checked={form.is_free ?? true}
+                    onCheckedChange={(checked) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        is_free: checked,
+                        price: checked ? null : prev.price,
+                        price_text: checked ? "" : prev.price_text,
+                      }))
+                    }
+                  />
+                </div>
+              </div>
+              <p className="text-xs leading-relaxed text-gray-500 dark:text-gray-400">
+                {form.is_free
+                  ? "Sin coste de entrada. Oculta campos de precio."
+                  : "Evento de pago. Requiere definir precio o texto."}
+              </p>
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="price_text">Precio</Label>
-            <Input
-              id="price_text"
-              value={form.is_free ? "" : form.price_text || ""}
-              onChange={(e) => setForm((prev) => ({ ...prev, price_text: e.target.value }))}
-              placeholder={form.is_free ? "Evento gratuito" : "Ej: 10 EUR"}
-              disabled={!!form.is_free}
-            />
-          </div>
+          {!form.is_free && (
+            <div className="grid animate-in fade-in slide-in-from-top-2 gap-4 duration-300 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="price" className="text-sm font-semibold">
+                  Precio (Decimal)
+                </Label>
+                <div className="relative">
+                  <Input
+                    id="price"
+                    type="number"
+                    step="0.01"
+                    value={form.price !== null ? form.price : ""}
+                    onChange={(e) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        price: e.target.value === "" ? null : Number(e.target.value),
+                      }))
+                    }
+                    placeholder="0.00"
+                    className="bg-white pr-8 dark:bg-gray-800"
+                  />
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                    <span className="text-sm font-medium text-gray-500">€</span>
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="price_text" className="text-sm font-semibold">
+                  Texto de Precio (Opcional)
+                </Label>
+                <Input
+                  id="price_text"
+                  value={form.price_text || ""}
+                  onChange={(e) => setForm((prev) => ({ ...prev, price_text: e.target.value }))}
+                  placeholder="Ej: A partir de 5€..."
+                  className="bg-white dark:bg-gray-800"
+                />
+              </div>
+            </div>
+          )}
 
           <Tabs value={activeLang} onValueChange={setActiveLang} defaultValue="ca">
             <TabsList className="grid w-full grid-cols-4">
@@ -496,20 +665,24 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
                 <Button type="button" variant="outline" size="sm" onClick={() => imageInputRef.current?.click()}>
                   Subir
                 </Button>
-                <select
-                  value={form.featured_media_id ?? ""}
-                  onChange={(e) =>
-                    setForm((prev) => ({ ...prev, featured_media_id: e.target.value ? Number(e.target.value) : null }))
-                  }
-                  className="h-10 rounded-md border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+                <Select 
+                  value={form.featured_media_id ? String(form.featured_media_id) : ""} 
+                  onValueChange={(val) => setForm(prev => ({ ...prev, featured_media_id: val ? Number(val) : null }))}
                 >
-                  <option value="">Sin imagen</option>
-                  {images.map((img) => (
-                    <option key={img.id} value={img.id}>
-                      {img.original_name}
-                    </option>
-                  ))}
-                </select>
+                  <SelectTrigger className="w-[200px]">
+                    <SelectValue placeholder="Seleccionar...">
+                      {selectedImage?.original_name}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">Sin imagen</SelectItem>
+                    {images.map((img) => (
+                      <SelectItem key={img.id} value={String(img.id)}>
+                        {img.original_name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
