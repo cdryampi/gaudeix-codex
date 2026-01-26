@@ -40,9 +40,9 @@ class PlaceViewSet(viewsets.ModelViewSet):
         return super().get_serializer_class()
 
     def get_queryset(self):
-        # Use the queryset attribute if defined (for subclasses), otherwise Place.objects.all()
+        # Always return a fresh QuerySet (avoid cached evaluation across requests).
         if self.queryset is not None:
-            queryset = self.queryset
+            queryset = self.queryset.all()
         else:
             queryset = Place.objects.all()
 

@@ -5,11 +5,6 @@ from __future__ import annotations
 from pathlib import Path
 
 import environ
-import warnings
-
-# Suppress specific deprecation warnings from dj-rest-auth
-warnings.filterwarnings("ignore", message=".*USERNAME_REQUIRED is deprecated.*")
-warnings.filterwarnings("ignore", message=".*EMAIL_REQUIRED is deprecated.*")
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -192,6 +187,9 @@ REST_AUTH = {
     "JWT_AUTH_REFRESH_COOKIE": "gaudeix-refresh-token",
     "LOGIN_METHODS": {"email", "username"},
 }
+
+# django-allauth signup fields (replaces deprecated *_REQUIRED settings).
+ACCOUNT_SIGNUP_FIELDS = ["username*", "email", "password1*", "password2*"]
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),

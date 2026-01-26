@@ -22,9 +22,7 @@ describe("LandingPage", () => {
     renderWithRouter(<LandingPage />);
 
     expect(screen.getByText("Gaudeix Codex")).toBeInTheDocument();
-    expect(
-      screen.getByText("Sistema de Gestión y Administración")
-    ).toBeInTheDocument();
+    expect(screen.getByText("Panel de Administración")).toBeInTheDocument();
   });
 
   it("shows frontend status as online", () => {
@@ -36,16 +34,14 @@ describe("LandingPage", () => {
     renderWithRouter(<LandingPage />);
 
     expect(screen.getByText("Frontend")).toBeInTheDocument();
-    expect(screen.getByText("Backoffice")).toBeInTheDocument();
+    expect(screen.getAllByText("Backoffice").length).toBeGreaterThan(0);
   });
 
   it("calls health check on mount", async () => {
-    const fetchSpy = vi
-      .spyOn(globalThis, "fetch")
-      .mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({ status: "online", database: "ok" }),
-      } as any);
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ status: "online", database: "ok" }),
+    } as any);
 
     renderWithRouter(<LandingPage />);
 
@@ -71,12 +67,16 @@ describe("LandingPage", () => {
       expect(badges.length).toBeGreaterThan(0);
     });
 
-    // Database should show "Connected"
-    expect(screen.getByText(/conectada/i)).toBeInTheDocument();
+    // Django API + PostgreSQL checks should be OK
+    await waitFor(() => {
+      expect(screen.getAllByText("✓").length).toBeGreaterThanOrEqual(2);
+    });
   });
 
   it("shows backend as offline when health check fails", async () => {
-    vi.spyOn(globalThis, "fetch").mockRejectedValueOnce(new Error("Network error"));
+    vi.spyOn(globalThis, "fetch").mockRejectedValueOnce(
+      new Error("Network error"),
+    );
 
     renderWithRouter(<LandingPage />);
 
@@ -98,7 +98,12 @@ describe("LandingPage", () => {
     renderWithRouter(<LandingPage />);
 
     await waitFor(() => {
-      expect(screen.getByText("Error")).toBeInTheDocument();
+      const badges = screen.getAllByText("Online");
+      expect(badges.length).toBeGreaterThan(0);
+    });
+
+    await waitFor(() => {
+      expect(screen.getAllByText("✗").length).toBeGreaterThan(0);
     });
   });
 

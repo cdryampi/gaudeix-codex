@@ -62,12 +62,11 @@ describe("UsersPage CRUD", () => {
   it("renders the users page and fetches users", async () => {
     render(<UsersPage />);
 
-    expect(screen.getByText("Usuarios")).toBeInTheDocument();
-    expect(screen.getByText(/cargando/i)).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Usuarios", level: 1 }),
+    ).toBeInTheDocument();
 
-    await waitFor(() => {
-      expect(screen.getByText("Admin User")).toBeInTheDocument();
-    });
+    await screen.findByText("Admin User");
 
     expect(usersApi.getAll).toHaveBeenCalled();
     expect(screen.getByText("admin@gaudeix.com")).toBeInTheDocument();

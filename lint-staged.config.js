@@ -1,8 +1,8 @@
 module.exports = {
-    "*.{ts,tsx}": [
-        "eslint --fix",
-        "pnpm exec vitest related --run --passWithNoTests",
-    ],
-    "*.{js,jsx}": ["eslint --fix"],
-    "*.{json,md,css}": ["prettier --write"],
+  "*.{ts,tsx}": [
+    "prettier --write",
+    "pnpm exec vitest related --run --passWithNoTests",
+  ],
+  "*.{js,jsx}": ["prettier --write"],
+  "*.{json,md,css}": ["prettier --write"],
 };

@@ -15,11 +15,10 @@ export default defineConfig({
     port: 5174,
     strictPort: true,
   },
-  // Test configuration moved to vitest.config.ts if needed
-  // test: {
-  //   globals: true,
-  //   environment: "jsdom",
-  //   setupFiles: "./src/setupTests.ts",
-  //   css: true,
-  // },
+  test: {
+    globals: true,
+    environment: "jsdom",
+    setupFiles: "./src/setupTests.ts",
+    css: true,
+  },
 });

@@ -1,0 +1,154 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Edit, ExternalLink, Trash2 } from "lucide-react";
+import { cn } from "@/lib/utils";
+export function SocialLinksTable({ links, onEdit, onDelete }) {
+  return _jsx("div", {
+    className:
+      "w-full overflow-hidden rounded-xl border border-border bg-card shadow-sm",
+    children: _jsx("div", {
+      className: "w-full overflow-x-auto",
+      children: _jsxs("table", {
+        className: "w-full table-auto caption-bottom text-sm",
+        children: [
+          _jsx("thead", {
+            className:
+              "bg-muted/50 text-xs uppercase tracking-wide text-muted-foreground",
+            children: _jsxs("tr", {
+              className:
+                "[&_th]:px-5 [&_th]:py-3 [&_th]:text-left [&_th]:font-semibold",
+              children: [
+                _jsx("th", { children: "Nombre" }),
+                _jsx("th", { children: "URL" }),
+                _jsx("th", { children: "Icono" }),
+                _jsx("th", { children: "Color" }),
+                _jsx("th", { children: "Estado" }),
+                _jsx("th", { children: "Orden" }),
+                _jsx("th", { className: "text-right", children: "Acciones" }),
+              ],
+            }),
+          }),
+          _jsx("tbody", {
+            className: "divide-y divide-border",
+            children:
+              links.length === 0
+                ? _jsx("tr", {
+                    children: _jsx("td", {
+                      colSpan: 7,
+                      className: "p-6 text-center text-muted-foreground",
+                      children: "No hay enlaces sociales registrados.",
+                    }),
+                  })
+                : links.map((link) =>
+                    _jsxs(
+                      "tr",
+                      {
+                        className: "transition-colors hover:bg-muted/30",
+                        children: [
+                          _jsx("td", {
+                            className:
+                              "px-5 py-4 align-middle font-semibold text-foreground",
+                            children: link.name,
+                          }),
+                          _jsx("td", {
+                            className: "px-5 py-4 align-middle",
+                            children: _jsxs("a", {
+                              href: link.url,
+                              target: "_blank",
+                              rel: "noreferrer",
+                              className:
+                                "inline-flex items-center gap-1 text-primary hover:underline",
+                              children: [
+                                _jsx(ExternalLink, { className: "h-4 w-4" }),
+                                _jsx("span", {
+                                  className: "truncate max-w-[220px]",
+                                  children: link.url,
+                                }),
+                              ],
+                            }),
+                          }),
+                          _jsx("td", {
+                            className:
+                              "px-5 py-4 align-middle text-xs text-muted-foreground",
+                            children: link.icon_class || "-",
+                          }),
+                          _jsx("td", {
+                            className: "px-5 py-4 align-middle",
+                            children: _jsxs("span", {
+                              className: cn(
+                                "inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs",
+                                "border-border bg-muted",
+                              ),
+                              children: [
+                                _jsx("span", {
+                                  className:
+                                    "h-3.5 w-3.5 rounded-full border border-slate-200",
+                                  style: {
+                                    backgroundColor: link.color || "#000000",
+                                  },
+                                }),
+                                link.color,
+                              ],
+                            }),
+                          }),
+                          _jsx("td", {
+                            className: "px-5 py-4 align-middle",
+                            children: link.is_active
+                              ? _jsx(Badge, {
+                                  className:
+                                    "bg-primary/10 text-primary hover:bg-primary/10 border-primary/20",
+                                  children: "Activo",
+                                })
+                              : _jsx(Badge, {
+                                  className:
+                                    "bg-muted text-muted-foreground hover:bg-muted border-border",
+                                  children: "Inactivo",
+                                }),
+                          }),
+                          _jsx("td", {
+                            className:
+                              "px-5 py-4 align-middle text-sm text-muted-foreground",
+                            children: link.order,
+                          }),
+                          _jsx("td", {
+                            className: "px-5 py-4 align-middle text-right",
+                            children: _jsxs("div", {
+                              className: "flex justify-end gap-1",
+                              children: [
+                                _jsx(Button, {
+                                  variant: "ghost",
+                                  size: "icon",
+                                  className:
+                                    "h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-muted",
+                                  onClick: () => onEdit(link),
+                                  "aria-label": `Editar ${link.name}`,
+                                  children: _jsx(Edit, {
+                                    className: "h-4 w-4",
+                                  }),
+                                }),
+                                _jsx(Button, {
+                                  variant: "ghost",
+                                  size: "icon",
+                                  className:
+                                    "h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10",
+                                  onClick: () => onDelete(link.id),
+                                  "aria-label": `Eliminar ${link.name}`,
+                                  children: _jsx(Trash2, {
+                                    className: "h-4 w-4",
+                                  }),
+                                }),
+                              ],
+                            }),
+                          }),
+                        ],
+                      },
+                      link.id,
+                    ),
+                  ),
+          }),
+        ],
+      }),
+    }),
+  });
+}

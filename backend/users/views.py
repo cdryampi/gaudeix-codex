@@ -181,7 +181,7 @@ class UserViewSet(viewsets.ModelViewSet):
                     )
                 )
             )
-            .order_by("-favorited_by__created_at")
+            .order_by("-favorited_by__created_at", "-favorited_by__id")
         )
         serializer = EventSerializer(favorites, many=True, context={"request": request})
 

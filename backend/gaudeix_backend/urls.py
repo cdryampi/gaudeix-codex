@@ -49,7 +49,7 @@ urlpatterns = [
     path("api/health/", health_check, name="health_check"),
     # API v1 - Authentication
     path("api/v1/auth/", include("dj_rest_auth.urls")),
-    path("api/v1/auth/registration/", include("dj_rest_auth.registration.urls")),
+    path("api/v1/auth/registration/", include("users.registration_urls")),
     # API v1 - Users (includes password reset URLs)
     path("api/v1/", include("users.urls")),
     # API v1 - Router (users, media, social viewsets)

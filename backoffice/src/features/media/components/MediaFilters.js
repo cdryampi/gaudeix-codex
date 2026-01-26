@@ -1,0 +1,82 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Search } from "lucide-react";
+export function MediaFilters({
+  search,
+  onSearch,
+  typeFilter,
+  onTypeFilter,
+  pageSize,
+  onPageSize,
+}) {
+  return _jsxs("div", {
+    className:
+      "mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between",
+    children: [
+      _jsxs("div", {
+        className: "relative flex-1 sm:max-w-xs",
+        children: [
+          _jsx(Search, {
+            className:
+              "absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground",
+          }),
+          _jsx(Input, {
+            id: "search",
+            placeholder: "Buscar archivos...",
+            value: search,
+            onChange: (e) => onSearch(e.target.value),
+            className: "pl-9",
+          }),
+        ],
+      }),
+      _jsxs("div", {
+        className: "flex gap-2",
+        children: [
+          _jsxs("div", {
+            className: "flex items-center gap-2",
+            children: [
+              _jsx(Label, {
+                htmlFor: "type",
+                className: "text-xs text-muted-foreground",
+                children: "Tipo:",
+              }),
+              _jsxs("select", {
+                id: "type",
+                value: typeFilter,
+                onChange: (e) => onTypeFilter(e.target.value),
+                className:
+                  "h-9 rounded-lg border border-border bg-card px-3 text-sm transition-colors focus-visible:outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20",
+                children: [
+                  _jsx("option", { value: "all", children: "Todos" }),
+                  _jsx("option", { value: "image", children: "Im\u00E1genes" }),
+                  _jsx("option", { value: "document", children: "Documentos" }),
+                ],
+              }),
+            ],
+          }),
+          _jsxs("div", {
+            className: "flex items-center gap-2",
+            children: [
+              _jsx(Label, {
+                htmlFor: "pageSize",
+                className: "text-xs text-muted-foreground",
+                children: "Mostrar:",
+              }),
+              _jsx("select", {
+                id: "pageSize",
+                value: pageSize,
+                onChange: (e) => onPageSize(Number(e.target.value)),
+                className:
+                  "h-9 rounded-lg border border-border bg-card px-3 text-sm transition-colors focus-visible:outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20",
+                children: [10, 20, 50].map((size) =>
+                  _jsx("option", { value: size, children: size }, size),
+                ),
+              }),
+            ],
+          }),
+        ],
+      }),
+    ],
+  });
+}
