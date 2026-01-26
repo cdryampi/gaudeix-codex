@@ -1,5 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -7,7 +12,14 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
-import { Languages, Loader2, X } from "lucide-react";
+import {
+  Languages,
+  Loader2,
+  X,
+  Plus,
+  Calendar as CalendarIcon,
+  Trash2,
+} from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { MultiSelectHint } from "@/components/common/MultiSelectHint";
@@ -18,8 +30,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
-import { CreateEventDTO, Event } from "../types";
+import { CreateEventDTO, Event, EventDate } from "../types";
 import { mediaApi } from "@/features/media/api/media";
 import { categoriesApi } from "@/features/categories/api/categories";
 import { tagsApi } from "@/features/tags/api/tags";
@@ -38,8 +58,6 @@ const emptyForm: CreateEventDTO = {
   title: "",
   summary: "",
   description: "",
-  start_at: "",
-  end_at: "",
   is_published: true,
   venue_name: "",
   location_text: "",
@@ -52,6 +70,7 @@ const emptyForm: CreateEventDTO = {
   attachments_ids: [],
   tag_ids: [],
   translations: {},
+  dates: [],
 };
 
 type Props = {
@@ -64,6 +83,7 @@ type Props = {
 export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
   const [form, setForm] = useState<CreateEventDTO>(emptyForm);
   const [activeLang, setActiveLang] = useState("ca");
+  const [activeTab, setActiveTab] = useState("content");
   const [translations, setTranslations] = useState<LocalTranslations>({});
   const [translating, setTranslating] = useState(false);
 
@@ -71,6 +91,10 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
   const [documents, setDocuments] = useState<MediaItem[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
+
+  const [dates, setDates] = useState<EventDate[]>([]);
+  const [newDateStart, setNewDateStart] = useState("");
+  const [newDateEnd, setNewDateEnd] = useState("");
 
   const [translationDialogOpen, setTranslationDialogOpen] = useState(false);
 
@@ -83,8 +107,6 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
         title: event.title,
         summary: event.summary || "",
         description: event.description || "",
-        start_at: toDatetimeLocal(event.start_at),
-        end_at: event.end_at ? toDatetimeLocal(event.end_at) : "",
         is_published: event.is_published,
         venue_name: event.venue_name || "",
         location_text: event.location_text || "",
@@ -98,9 +120,11 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
         tag_ids: (event.tags || []).map((t) => t.id),
       });
       setTranslations(event.translations || {});
+      setDates(event.dates || []);
     } else {
       setForm(emptyForm);
       setTranslations({});
+      setDates([]);
       setActiveLang("ca");
     }
   }, [event?.id, open]);
@@ -120,9 +144,7 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
         setTags(tagsList);
       } catch (err) {
         console.error("Error cargando opciones", err);
-        toast.error("No se pudieron cargar las opciones del formulario", {
-          description: "Por favor, revisa tu conexión o intenta iniciar sesión de nuevo.",
-        });
+        toast.error("No se pudieron cargar las opciones del formulario");
       }
     };
     if (open) loadOptions();
@@ -136,7 +158,9 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
 
   const sortedTags = useMemo(() => {
     return [...tags].sort((a, b) =>
-      (a.nombre || a.slug).localeCompare(b.nombre || b.slug, undefined, { sensitivity: "base" })
+      (a.nombre || a.slug).localeCompare(b.nombre || b.slug, undefined, {
+        sensitivity: "base",
+      }),
     );
   }, [tags]);
 
@@ -154,7 +178,7 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
   const updateTranslatedField = (
     lang: string,
     field: "title" | "summary" | "description",
-    value: string
+    value: string,
   ) => {
     if (lang === "ca") {
       setForm((prev) => ({ ...prev, [field]: value }));
@@ -201,20 +225,91 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
     }
   };
 
+  const handleAddDate = () => {
+    if (!newDateStart) {
+      toast.error("La fecha de inicio es obligatoria");
+      return;
+    }
+
+    const start = new Date(newDateStart);
+    const end = newDateEnd ? new Date(newDateEnd) : null;
+
+    if (end && end < start) {
+      toast.error("La fecha de fin no puede ser anterior al inicio");
+      return;
+    }
+
+    const newDate: EventDate = {
+      start_at: start.toISOString(),
+      end_at: end ? end.toISOString() : null,
+    };
+
+    setDates((prev) =>
+      [...prev, newDate].sort(
+        (a, b) =>
+          new Date(a.start_at).getTime() - new Date(b.start_at).getTime(),
+      ),
+    );
+
+    // UX: Suggest next day same time
+    const nextDay = new Date(start.getTime() + 86400000);
+    const offset = nextDay.getTimezoneOffset();
+    const adjustedStart = new Date(nextDay.getTime() - offset * 60 * 1000);
+    setNewDateStart(adjustedStart.toISOString().slice(0, 16));
+
+    if (end) {
+      const nextEnd = new Date(end.getTime() + 86400000);
+      const adjustedEnd = new Date(nextEnd.getTime() - offset * 60 * 1000);
+      setNewDateEnd(adjustedEnd.toISOString().slice(0, 16));
+    }
+
+    toast.success("Sesión añadida", { duration: 1500 });
+  };
+
+  const handleClearDates = () => {
+    if (confirm("¿Estás seguro de que quieres borrar TODAS las fechas?")) {
+      setDates([]);
+    }
+  };
+
+  const handleNewDateStartChange = (val: string) => {
+    setNewDateStart(val);
+    if (val && !newDateEnd) {
+      // Suggest end date +1 hour
+      const start = new Date(val);
+      const end = new Date(start.getTime() + 3600000);
+      // Format back to datetime-local string
+      const offset = end.getTimezoneOffset();
+      const adjusted = new Date(end.getTime() - offset * 60 * 1000);
+      setNewDateEnd(adjusted.toISOString().slice(0, 16));
+    }
+  };
+
+  const handleRemoveDate = (index: number) => {
+    setDates((prev) => prev.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (dates.length === 0) {
+      toast.error("Debes añadir al menos una fecha al evento");
+      setActiveTab("recurrence");
+      return;
+    }
 
     const translationsPayload: LocalTranslations = { ...translations };
     delete translationsPayload["ca"];
 
     onSubmit({
       ...form,
-      start_at: toIso(form.start_at),
-      end_at: form.end_at ? toIso(form.end_at) : null,
       price_text: form.is_free ? "" : form.price_text,
       attachments_ids: form.attachments_ids ?? [],
       tag_ids: form.tag_ids ?? [],
-      translations: Object.keys(translationsPayload).length ? translationsPayload : undefined,
+      translations: Object.keys(translationsPayload).length
+        ? translationsPayload
+        : undefined,
+      dates: dates,
     });
   };
 
@@ -243,7 +338,9 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
       setDocuments((prev) => [uploaded, ...prev]);
       setForm((prev) => ({
         ...prev,
-        attachments_ids: Array.from(new Set([...(prev.attachments_ids ?? []), uploaded.id])),
+        attachments_ids: Array.from(
+          new Set([...(prev.attachments_ids ?? []), uploaded.id]),
+        ),
       }));
     } catch (err) {
       console.error(err);
@@ -253,17 +350,15 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
     }
   };
 
-  const selectedImage = useMemo(() => 
-    images.find((img) => img.id === form.featured_media_id),
-    [images, form.featured_media_id]
-  );
-  
-  const selectedCategory = useMemo(() => 
-    categories.find((cat) => cat.id === form.category_id),
-    [categories, form.category_id]
+  const selectedImage = useMemo(
+    () => images.find((img) => img.id === form.featured_media_id),
+    [images, form.featured_media_id],
   );
 
-  const attachmentIds = form.attachments_ids ?? [];
+  const selectedCategory = useMemo(
+    () => categories.find((cat) => cat.id === form.category_id),
+    [categories, form.category_id],
+  );
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -273,518 +368,510 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="venue_name">Lugar / Organizador</Label>
-              <Input
-                id="venue_name"
-                value={form.venue_name || ""}
-                onChange={(e) => setForm((prev) => ({ ...prev, venue_name: e.target.value }))}
-                placeholder="Nombre del lugar o entidad"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="location_text">Ubicación</Label>
-              <Input
-                id="location_text"
-                value={form.location_text || ""}
-                onChange={(e) => setForm((prev) => ({ ...prev, location_text: e.target.value }))}
-                placeholder="Descripción o dirección"
-              />
-            </div>
-          </div>
+          <Tabs
+            value={activeTab}
+            onValueChange={setActiveTab}
+            defaultValue="content"
+          >
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="content">Contenido</TabsTrigger>
+              <TabsTrigger value="recurrence">
+                Fechas y Horarios {dates.length > 0 && `(${dates.length})`}
+              </TabsTrigger>
+            </TabsList>
 
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="start_at">Inicio</Label>
-              <Input
-                id="start_at"
-                type="datetime-local"
-                value={form.start_at}
-                onChange={(e) => setForm((prev) => ({ ...prev, start_at: e.target.value }))}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="end_at">Fin (opcional)</Label>
-              <Input
-                id="end_at"
-                type="datetime-local"
-                value={form.end_at || ""}
-                onChange={(e) => setForm((prev) => ({ ...prev, end_at: e.target.value }))}
-              />
-            </div>
-          </div>
-
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="category_id">Categoría</Label>
-              <Select 
-                value={form.category_id ? String(form.category_id) : ""} 
-                onValueChange={(val: string) => setForm(prev => ({ ...prev, category_id: val ? Number(val) : null }))}
-              >
-                <SelectTrigger id="category_id">
-                  <SelectValue placeholder="Selecciona una categoría">
-                    {selectedCategory?.nombre}
-                  </SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="">Por defecto</SelectItem>
-                  {categories.map((cat) => (
-                    <SelectItem key={cat.id} value={String(cat.id)}>
-                      {cat.nombre}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="tag_ids">Etiquetas</Label>
-              <MultiSelectHint />
-              <select
-                id="tag_ids"
-                multiple
-                value={(form.tag_ids ?? []).map(String)}
-                onChange={(e) => {
-                  const values = Array.from(e.target.selectedOptions).map((opt) => Number(opt.value));
-                  setForm((prev) => ({ ...prev, tag_ids: values }));
-                }}
-                className="h-24 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
-              >
-                {sortedTags.map((tag) => (
-                  <option key={tag.id} value={tag.id}>
-                    {tag.nombre} ({tag.slug})
-                  </option>
-                ))}
-              </select>
-
-              {selectedTags.length > 0 && (
-                <div className="flex flex-wrap gap-1 pt-1">
-                  {selectedTags.map((tag) => (
-                    <Badge key={tag.id} variant="outline" className="border-primary/20 bg-primary/10 text-primary">
-                      <span>{tag.nombre}</span>
-                      <button
-                        type="button"
-                        className="ml-1 inline-flex h-4 w-4 items-center justify-center rounded-sm hover:bg-primary/15"
-                        aria-label={`Quitar etiqueta ${tag.nombre}`}
-                        onClick={() =>
-                          setForm((prev) => ({
-                            ...prev,
-                            tag_ids: (prev.tag_ids ?? []).filter((id) => id !== tag.id),
-                          }))
-                        }
-                      >
-                        <X className="h-3 w-3" />
-                      </button>
-                    </Badge>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className="grid gap-4 md:grid-cols-3">
-            {/* Toggle Card: Publicado */}
-            <div
-              role="button"
-              tabIndex={0}
-              onClick={() => setForm((prev) => ({ ...prev, is_published: !prev.is_published }))}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  setForm((prev) => ({ ...prev, is_published: !prev.is_published }));
-                }
-              }}
-              className={`flex flex-col gap-3 rounded-xl border p-4 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary-500/50 ${
-                form.is_published
-                  ? "border-primary-200 bg-primary-50/50 dark:border-primary-900/50 dark:bg-primary-900/20"
-                  : "border-gray-200 bg-white hover:bg-gray-50 dark:border-gray-800 dark:bg-gray-800/50"
-              }`}
-            >
-              <div className="flex items-center justify-between">
-                <span
-                  className={`text-sm font-bold uppercase tracking-wider ${
-                    form.is_published
-                      ? "text-primary-700 dark:text-primary-400"
-                      : "text-gray-500 dark:text-gray-400"
-                  }`}
-                >
-                  Publicado
-                </span>
-                <div onClick={(e) => e.stopPropagation()}>
-                  <Switch
-                    id="event-is-published"
-                    checked={form.is_published}
-                    onCheckedChange={(checked) =>
-                      setForm((prev) => ({ ...prev, is_published: checked }))
-                    }
-                  />
-                </div>
-              </div>
-              <p className="text-xs leading-relaxed text-gray-500 dark:text-gray-400">
-                {form.is_published
-                  ? "Visible para todos los usuarios en la web."
-                  : "Borrador: solo visible en el panel de control."}
-              </p>
-            </div>
-
-            {/* Toggle Card: Destacado */}
-            <div
-              role="button"
-              tabIndex={0}
-              onClick={() => setForm((prev) => ({ ...prev, is_featured: !prev.is_featured }))}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  setForm((prev) => ({ ...prev, is_featured: !prev.is_featured }));
-                }
-              }}
-              className={`flex flex-col gap-3 rounded-xl border p-4 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary-500/50 ${
-                form.is_featured
-                  ? "border-amber-200 bg-amber-50/50 dark:border-amber-900/50 dark:bg-amber-900/20"
-                  : "border-gray-200 bg-white hover:bg-gray-50 dark:border-gray-800 dark:bg-gray-800/50"
-              }`}
-            >
-              <div className="flex items-center justify-between">
-                <span
-                  className={`text-sm font-bold uppercase tracking-wider ${
-                    form.is_featured
-                      ? "text-amber-700 dark:text-amber-400"
-                      : "text-gray-500 dark:text-gray-400"
-                  }`}
-                >
-                  Destacado
-                </span>
-                <div onClick={(e) => e.stopPropagation()}>
-                  <Switch
-                    id="event-is-featured"
-                    checked={form.is_featured}
-                    onCheckedChange={(checked) =>
-                      setForm((prev) => ({ ...prev, is_featured: checked }))
-                    }
-                  />
-                </div>
-              </div>
-              <p className="text-xs leading-relaxed text-gray-500 dark:text-gray-400">
-                {form.is_featured
-                  ? "Aparecerá en posiciones prioritarias de la home."
-                  : "Posicionamiento estándar en los listados."}
-              </p>
-            </div>
-
-            {/* Toggle Card: Gratuito */}
-            <div
-              role="button"
-              tabIndex={0}
-              onClick={() =>
-                setForm((prev) => {
-                  const checked = !prev.is_free;
-                  return {
-                    ...prev,
-                    is_free: checked,
-                    price: checked ? null : prev.price,
-                    price_text: checked ? "" : prev.price_text,
-                  };
-                })
-              }
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  setForm((prev) => {
-                    const checked = !prev.is_free;
-                    return {
-                      ...prev,
-                      is_free: checked,
-                      price: checked ? null : prev.price,
-                      price_text: checked ? "" : prev.price_text,
-                    };
-                  });
-                }
-              }}
-              className={`flex flex-col gap-3 rounded-xl border p-4 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary-500/50 ${
-                form.is_free
-                  ? "border-emerald-200 bg-emerald-50/50 dark:border-emerald-900/50 dark:bg-emerald-900/20"
-                  : "border-gray-200 bg-white hover:bg-gray-50 dark:border-gray-800 dark:bg-gray-800/50"
-              }`}
-            >
-              <div className="flex items-center justify-between">
-                <span
-                  className={`text-sm font-bold uppercase tracking-wider ${
-                    form.is_free
-                      ? "text-emerald-700 dark:text-emerald-400"
-                      : "text-gray-500 dark:text-gray-400"
-                  }`}
-                >
-                  Gratuito
-                </span>
-                <div onClick={(e) => e.stopPropagation()}>
-                  <Switch
-                    id="event-is-free"
-                    checked={form.is_free ?? true}
-                    onCheckedChange={(checked) =>
-                      setForm((prev) => ({
-                        ...prev,
-                        is_free: checked,
-                        price: checked ? null : prev.price,
-                        price_text: checked ? "" : prev.price_text,
-                      }))
-                    }
-                  />
-                </div>
-              </div>
-              <p className="text-xs leading-relaxed text-gray-500 dark:text-gray-400">
-                {form.is_free
-                  ? "Sin coste de entrada. Oculta campos de precio."
-                  : "Evento de pago. Requiere definir precio o texto."}
-              </p>
-            </div>
-          </div>
-
-          {!form.is_free && (
-            <div className="grid animate-in fade-in slide-in-from-top-2 gap-4 duration-300 md:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="price" className="text-sm font-semibold">
-                  Precio (Decimal)
-                </Label>
-                <div className="relative">
+            <TabsContent value="content" className="space-y-4 pt-4">
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="venue_name">Lugar / Organizador</Label>
                   <Input
-                    id="price"
-                    type="number"
-                    step="0.01"
-                    value={form.price !== null ? form.price : ""}
+                    id="venue_name"
+                    value={form.venue_name || ""}
                     onChange={(e) =>
                       setForm((prev) => ({
                         ...prev,
-                        price: e.target.value === "" ? null : Number(e.target.value),
+                        venue_name: e.target.value,
                       }))
                     }
-                    placeholder="0.00"
-                    className="bg-white pr-8 dark:bg-gray-800"
+                    placeholder="Nombre del lugar o entidad"
                   />
-                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                    <span className="text-sm font-medium text-gray-500">€</span>
-                  </div>
                 </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="price_text" className="text-sm font-semibold">
-                  Texto de Precio (Opcional)
-                </Label>
-                <Input
-                  id="price_text"
-                  value={form.price_text || ""}
-                  onChange={(e) => setForm((prev) => ({ ...prev, price_text: e.target.value }))}
-                  placeholder="Ej: A partir de 5€..."
-                  className="bg-white dark:bg-gray-800"
-                />
-              </div>
-            </div>
-          )}
-
-          <Tabs value={activeLang} onValueChange={setActiveLang} defaultValue="ca">
-            <TabsList className="grid w-full grid-cols-4">
-              {LANGUAGES.map((lang) => (
-                <TabsTrigger key={lang.code} value={lang.code}>
-                  {lang.name}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-
-            {LANGUAGES.map((lang) => {
-              const content = getContent(lang.code);
-              const isBase = lang.code === "ca";
-              return (
-                <TabsContent key={lang.code} value={lang.code} className="space-y-3 pt-4">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor={`title-${lang.code}`}>Título {isBase ? "" : `(${lang.name})`}</Label>
-                    {!isBase && event && (
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant="outline"
-                        onClick={() => handleAutoTranslate(lang.code)}
-                        disabled={translating || !form.title}
-                      >
-                        {translating ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Traduciendo...
-                          </>
-                        ) : (
-                          "Traducir IA"
-                        )}
-                      </Button>
-                    )}
-                  </div>
+                <div className="space-y-2">
+                  <Label htmlFor="location_text">Ubicación</Label>
                   <Input
-                    id={`title-${lang.code}`}
-                    value={content.title || ""}
-                    onChange={(e) => updateTranslatedField(lang.code, "title", e.target.value)}
-                    required={isBase}
-                    placeholder={isBase ? "" : "Traducción automática o manual"}
+                    id="location_text"
+                    value={form.location_text || ""}
+                    onChange={(e) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        location_text: e.target.value,
+                      }))
+                    }
+                    placeholder="Descripción o dirección"
                   />
+                </div>
+              </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor={`summary-${lang.code}`}>Resumen {isBase ? "" : `(${lang.name})`}</Label>
-                    <Textarea
-                      id={`summary-${lang.code}`}
-                      value={content.summary || ""}
-                      onChange={(e) => updateTranslatedField(lang.code, "summary", e.target.value)}
-                      placeholder={isBase ? "Resumen breve del evento" : "Traducción automática o manual"}
-                      className="min-h-[72px]"
-                    />
+              {dates.length > 0 ? (
+                <div className="flex flex-wrap gap-2 p-3 text-xs border border-primary/10 bg-primary/5 rounded-lg">
+                  <div className="flex items-center gap-1 font-bold text-primary-700 dark:text-primary-400 w-full mb-1">
+                    <CalendarIcon className="h-3 w-3" />
+                    <span>Próximas sesiones ({dates.length}):</span>
                   </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor={`description-${lang.code}`}>Descripción {isBase ? "" : `(${lang.name})`}</Label>
-                    <RichTextEditor
-                      value={content.description || ""}
-                      onChange={(value) => updateTranslatedField(lang.code, "description", value)}
-                      placeholder={isBase ? "Describe el evento en detalle..." : "Traducción automática o manual"}
-                    />
-                  </div>
-                </TabsContent>
-              );
-            })}
-          </Tabs>
-
-          <div className="space-y-3 rounded-lg border border-border/60 bg-muted/30 p-3">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-semibold text-foreground">Imagen destacada</p>
-                <p className="text-xs text-muted-foreground">Miniatura visible en listados</p>
-              </div>
-              <div className="flex gap-2">
-                <input
-                  type="file"
-                  accept="image/*"
-                  ref={imageInputRef}
-                  onChange={handleUploadImage}
-                  className="hidden"
-                />
-                <Button type="button" variant="outline" size="sm" onClick={() => imageInputRef.current?.click()}>
-                  Subir
-                </Button>
-                <Select 
-                  value={form.featured_media_id ? String(form.featured_media_id) : ""} 
-                  onValueChange={(val) => setForm(prev => ({ ...prev, featured_media_id: val ? Number(val) : null }))}
-                >
-                  <SelectTrigger className="w-[200px]">
-                    <SelectValue placeholder="Seleccionar...">
-                      {selectedImage?.original_name}
-                    </SelectValue>
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="">Sin imagen</SelectItem>
-                    {images.map((img) => (
-                      <SelectItem key={img.id} value={String(img.id)}>
-                        {img.original_name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            {selectedImage && (
-              <div className="flex items-center gap-3 rounded-md bg-background/60 p-2">
-                <img
-                  src={selectedImage.thumbnail_url || selectedImage.variant_thumbnail || selectedImage.file}
-                  alt="Miniatura"
-                  className="h-14 w-14 rounded object-cover ring-1 ring-border"
-                />
-                <p className="text-sm text-foreground">{selectedImage.original_name}</p>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="ml-auto text-rose-600"
-                  onClick={() => setForm((prev) => ({ ...prev, featured_media_id: null }))}
-                >
-                  Quitar
-                </Button>
-              </div>
-            )}
-          </div>
-
-          <div className="space-y-3 rounded-lg border border-border/60 bg-muted/30 p-3">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-semibold text-foreground">Adjuntos</p>
-                <p className="text-xs text-muted-foreground">Documentos vinculados al evento</p>
-              </div>
-              <div className="flex gap-2">
-                <input
-                  type="file"
-                  accept=".pdf,.ics,.txt,.docx,.xlsx"
-                  ref={docInputRef}
-                  onChange={handleUploadDoc}
-                  className="hidden"
-                />
-                <div className="flex flex-col items-end gap-1">
-                  <div className="flex gap-2">
-                    <Button type="button" variant="outline" size="sm" onClick={() => docInputRef.current?.click()}>
-                      Subir
-                    </Button>
-                    <select
-                      multiple
-                      value={attachmentIds.map(String)}
-                      onChange={(e) => {
-                        const values = Array.from(e.target.selectedOptions).map((opt) => Number(opt.value));
-                        setForm((prev) => ({ ...prev, attachments_ids: values }));
-                      }}
-                      className="h-24 rounded-md border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+                  {dates.slice(0, 3).map((d, i) => (
+                    <Badge
+                      key={i}
+                      variant="outline"
+                      className="bg-white/50 dark:bg-black/20"
                     >
-                      {documents.map((doc) => (
-                        <option key={doc.id} value={doc.id}>
-                          {doc.original_name}
-                        </option>
+                      {formatDateTime(d.start_at)}
+                    </Badge>
+                  ))}
+                  {dates.length > 3 && (
+                    <span className="text-muted-foreground self-center">
+                      ... y {dates.length - 3} más
+                    </span>
+                  )}
+                  <Button
+                    type="button"
+                    variant="link"
+                    size="sm"
+                    className="h-auto p-0 ml-auto text-xs"
+                    onClick={() => setActiveTab("recurrence")}
+                  >
+                    Gestionar fechas
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 p-3 text-sm border border-amber-200 bg-amber-50 text-amber-800 rounded-lg dark:bg-amber-900/20 dark:border-amber-900/50 dark:text-amber-400">
+                  <CalendarIcon className="h-4 w-4" />
+                  <span>
+                    Este evento no tiene fechas asignadas. Ve a la pestaña{" "}
+                    <b>Fechas y Horarios</b> para añadir sesiones.
+                  </span>
+                </div>
+              )}
+
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="category_id">Categoría</Label>
+                  <Select
+                    value={form.category_id ? String(form.category_id) : ""}
+                    onValueChange={(val: string) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        category_id: val ? Number(val) : null,
+                      }))
+                    }
+                  >
+                    <SelectTrigger id="category_id">
+                      <SelectValue placeholder="Selecciona una categoría">
+                        {selectedCategory?.nombre}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="">Por defecto</SelectItem>
+                      {categories.map((cat) => (
+                        <SelectItem key={cat.id} value={String(cat.id)}>
+                          {cat.nombre}
+                        </SelectItem>
                       ))}
-                    </select>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="tag_ids">Etiquetas</Label>
+                  <MultiSelectHint />
+                  <select
+                    id="tag_ids"
+                    multiple
+                    value={(form.tag_ids ?? []).map(String)}
+                    onChange={(e) => {
+                      const values = Array.from(e.target.selectedOptions).map(
+                        (opt) => Number(opt.value),
+                      );
+                      setForm((prev) => ({ ...prev, tag_ids: values }));
+                    }}
+                    className="h-24 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+                  >
+                    {sortedTags.map((tag) => (
+                      <option key={tag.id} value={tag.id}>
+                        {tag.nombre} ({tag.slug})
+                      </option>
+                    ))}
+                  </select>
+
+                  {selectedTags.length > 0 && (
+                    <div className="flex flex-wrap gap-1 pt-1">
+                      {selectedTags.map((tag) => (
+                        <Badge
+                          key={tag.id}
+                          variant="outline"
+                          className="border-primary/20 bg-primary/10 text-primary"
+                        >
+                          <span>{tag.nombre}</span>
+                          <button
+                            type="button"
+                            className="ml-1 inline-flex h-4 w-4 items-center justify-center rounded-sm hover:bg-primary/15"
+                            onClick={() =>
+                              setForm((prev) => ({
+                                ...prev,
+                                tag_ids: (prev.tag_ids ?? []).filter(
+                                  (id) => id !== tag.id,
+                                ),
+                              }))
+                            }
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-3">
+                <div className="flex flex-col gap-3 rounded-xl border p-4 shadow-sm">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-bold uppercase tracking-wider text-gray-500">
+                      Publicado
+                    </span>
+                    <Switch
+                      checked={form.is_published}
+                      onCheckedChange={(checked) =>
+                        setForm((prev) => ({ ...prev, is_published: checked }))
+                      }
+                    />
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-3 rounded-xl border p-4 shadow-sm">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-bold uppercase tracking-wider text-gray-500">
+                      Destacado
+                    </span>
+                    <Switch
+                      checked={form.is_featured}
+                      onCheckedChange={(checked) =>
+                        setForm((prev) => ({ ...prev, is_featured: checked }))
+                      }
+                    />
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-3 rounded-xl border p-4 shadow-sm">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-bold uppercase tracking-wider text-gray-500">
+                      Gratuito
+                    </span>
+                    <Switch
+                      checked={form.is_free}
+                      onCheckedChange={(checked) =>
+                        setForm((prev) => ({ ...prev, is_free: checked }))
+                      }
+                    />
                   </div>
                 </div>
               </div>
-            </div>
 
-            {attachmentIds.length > 0 && (
-              <div className="space-y-1 text-sm">
-                {attachmentIds.map((id) => {
-                  const doc = documents.find((d) => d.id === id);
+              {!form.is_free && (
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="price">Precio (€)</Label>
+                    <Input
+                      id="price"
+                      type="number"
+                      step="0.01"
+                      value={form.price !== null ? form.price : ""}
+                      onChange={(e) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          price:
+                            e.target.value === ""
+                              ? null
+                              : Number(e.target.value),
+                        }))
+                      }
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="price_text">Texto de Precio</Label>
+                    <Input
+                      id="price_text"
+                      value={form.price_text || ""}
+                      onChange={(e) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          price_text: e.target.value,
+                        }))
+                      }
+                      placeholder="Ej: Taquilla inversa"
+                    />
+                  </div>
+                </div>
+              )}
+
+              <Tabs value={activeLang} onValueChange={setActiveLang}>
+                <TabsList className="grid w-full grid-cols-4">
+                  {LANGUAGES.map((lang) => (
+                    <TabsTrigger key={lang.code} value={lang.code}>
+                      {lang.name}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+
+                {LANGUAGES.map((lang) => {
+                  const content = getContent(lang.code);
+                  const isBase = lang.code === "ca";
                   return (
-                    <div
-                      key={id}
-                      className="flex items-center justify-between rounded-md bg-background/60 px-2 py-1"
+                    <TabsContent
+                      key={lang.code}
+                      value={lang.code}
+                      className="space-y-3 pt-4"
                     >
-                      <span>{doc?.original_name || `Documento ${id}`}</span>
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant="ghost"
-                        className="text-rose-600"
-                        onClick={() =>
-                          setForm((prev) => ({
-                            ...prev,
-                            attachments_ids: (prev.attachments_ids ?? []).filter((docId) => docId !== id),
-                          }))
+                      <div className="flex items-center justify-between">
+                        <Label>Título {isBase ? "" : `(${lang.name})`}</Label>
+                        {!isBase && event && (
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleAutoTranslate(lang.code)}
+                            disabled={translating || !form.title}
+                          >
+                            {translating ? (
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            ) : (
+                              "Traducir IA"
+                            )}
+                          </Button>
+                        )}
+                      </div>
+                      <Input
+                        value={content.title || ""}
+                        onChange={(e) =>
+                          updateTranslatedField(
+                            lang.code,
+                            "title",
+                            e.target.value,
+                          )
                         }
-                      >
-                        Quitar
-                      </Button>
-                    </div>
+                        required={isBase}
+                      />
+
+                      <div className="space-y-2">
+                        <Label>Resumen breve</Label>
+                        <Textarea
+                          value={content.summary || ""}
+                          onChange={(e) =>
+                            updateTranslatedField(
+                              lang.code,
+                              "summary",
+                              e.target.value,
+                            )
+                          }
+                          className="min-h-[72px]"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label>Descripción detallada</Label>
+                        <RichTextEditor
+                          value={content.description || ""}
+                          onChange={(value) =>
+                            updateTranslatedField(
+                              lang.code,
+                              "description",
+                              value,
+                            )
+                          }
+                        />
+                      </div>
+                    </TabsContent>
                   );
                 })}
-              </div>
-            )}
-          </div>
+              </Tabs>
 
-          <div className="flex justify-end gap-2">
+              <div className="space-y-3 rounded-lg border bg-muted/30 p-3">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-semibold">Imagen destacada</p>
+                  <div className="flex gap-2">
+                    <input
+                      type="file"
+                      ref={imageInputRef}
+                      onChange={handleUploadImage}
+                      className="hidden"
+                      accept="image/*"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => imageInputRef.current?.click()}
+                    >
+                      Subir
+                    </Button>
+                  </div>
+                </div>
+                {selectedImage && (
+                  <div className="flex items-center gap-3 bg-background p-2 rounded-md">
+                    <img
+                      src={selectedImage.thumbnail_url || selectedImage.file}
+                      className="h-12 w-12 rounded object-cover"
+                    />
+                    <span className="text-xs truncate">
+                      {selectedImage.original_name}
+                    </span>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() =>
+                        setForm((p) => ({ ...p, featured_media_id: null }))
+                      }
+                      className="ml-auto text-rose-600"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </TabsContent>
+
+            <TabsContent value="recurrence" className="space-y-6 pt-4">
+              <div className="rounded-xl border border-primary/10 bg-primary/5 p-4 space-y-4 shadow-sm">
+                <h4 className="text-sm font-bold uppercase tracking-wider text-primary-700 dark:text-primary-400">
+                  Añadir nueva sesión
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-xs font-semibold">Inicio</Label>
+                    <Input
+                      type="datetime-local"
+                      value={newDateStart}
+                      onChange={(e) => handleNewDateStartChange(e.target.value)}
+                      onKeyDown={(e) =>
+                        e.key === "Enter" &&
+                        (e.preventDefault(), handleAddDate())
+                      }
+                      className="bg-white dark:bg-gray-800"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-xs font-semibold">
+                      Fin (Opcional)
+                    </Label>
+                    <Input
+                      type="datetime-local"
+                      value={newDateEnd}
+                      onChange={(e) => setNewDateEnd(e.target.value)}
+                      onKeyDown={(e) =>
+                        e.key === "Enter" &&
+                        (e.preventDefault(), handleAddDate())
+                      }
+                      className="bg-white dark:bg-gray-800"
+                    />
+                  </div>
+                </div>
+                <Button
+                  type="button"
+                  onClick={handleAddDate}
+                  className="w-full bg-primary-600 hover:bg-primary-700 text-white"
+                >
+                  <Plus className="mr-2 h-4 w-4" /> Registrar fecha
+                </Button>
+              </div>
+
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-sm font-bold uppercase tracking-wider text-gray-500">
+                    Sesiones programadas ({dates.length})
+                  </h4>
+                  {dates.length > 1 && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleClearDates}
+                      className="text-xs text-rose-600 hover:bg-rose-50"
+                    >
+                      <Trash2 className="mr-1 h-3 w-3" /> Limpiar todo
+                    </Button>
+                  )}
+                </div>
+
+                <div className="rounded-lg border bg-card shadow-sm overflow-hidden">
+                  <Table>
+                    <TableHeader className="bg-gray-50 dark:bg-gray-900/50">
+                      <TableRow>
+                        <TableHead className="font-bold">
+                          Fecha y Hora de Inicio
+                        </TableHead>
+                        <TableHead className="font-bold">Hora de Fin</TableHead>
+                        <TableHead className="w-[80px] text-right">
+                          Borrar
+                        </TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {dates.map((d, i) => (
+                        <TableRow key={i} className="hover:bg-muted/30">
+                          <TableCell className="font-medium">
+                            <div className="flex items-center gap-2">
+                              <CalendarIcon className="h-4 w-4 text-primary-500" />
+                              {formatDateTime(d.start_at)}
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-muted-foreground">
+                            {d.end_at ? formatDateTime(d.end_at, true) : "-"}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleRemoveDate(i)}
+                              className="h-8 w-8 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/20"
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                      {dates.length === 0 && (
+                        <TableRow>
+                          <TableCell colSpan={3} className="text-center py-12">
+                            <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                              <CalendarIcon className="h-8 w-8 opacity-20" />
+                              <p>No hay fechas programadas para este evento.</p>
+                              <p className="text-xs">
+                                Usa el formulario superior para añadir sesiones.
+                              </p>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+            </TabsContent>
+          </Tabs>
+
+          <div className="flex justify-end gap-2 pt-4 border-t">
             {event && (
-              <Button type="button" variant="outline" onClick={() => setTranslationDialogOpen(true)}>
-                <Languages className="mr-2 h-4 w-4" />
-                Traducir con IA
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setTranslationDialogOpen(true)}
+              >
+                <Languages className="mr-2 h-4 w-4" /> IA Global
               </Button>
             )}
-            <Button type="submit">{event ? "Guardar cambios" : "Crear"}</Button>
+            <Button type="submit">
+              {event ? "Guardar cambios" : "Crear evento"}
+            </Button>
           </div>
         </form>
 
@@ -794,12 +881,16 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
             onOpenChange={setTranslationDialogOpen}
             eventId={String(event.id)}
             currentTitle={form.title}
+            currentSummary={form.summary || ""}
             currentDescription={form.description || ""}
             onApplyTranslations={(t) => {
               setTranslations((prev) => ({
                 ...prev,
                 ...Object.fromEntries(
-                  Object.entries(t).map(([lang, values]) => [lang, { ...(prev[lang] || {}), ...values }])
+                  Object.entries(t).map(([lang, values]) => [
+                    lang,
+                    { ...(prev[lang] || {}), ...values },
+                  ]),
                 ),
               }));
             }}
@@ -810,14 +901,33 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
   );
 }
 
-function toDatetimeLocal(value: string) {
-  if (!value) return "";
-  const date = new Date(value);
-  return date.toISOString().slice(0, 16);
+function formatDateTime(iso: string, timeOnly = false) {
+  if (!iso) return "-";
+  const date = new Date(iso);
+  if (timeOnly) {
+    return date.toLocaleTimeString(undefined, {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
+  return date.toLocaleString(undefined, {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
 function toIso(value: string) {
   if (!value) return value;
-  const date = new Date(value);
-  return date.toISOString();
+  return new Date(value).toISOString();
+}
+
+function toDatetimeLocal(iso: string) {
+  if (!iso) return "";
+  const date = new Date(iso);
+  const offset = date.getTimezoneOffset();
+  const adjusted = new Date(date.getTime() - offset * 60 * 1000);
+  return adjusted.toISOString().slice(0, 16);
 }

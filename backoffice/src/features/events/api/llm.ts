@@ -30,6 +30,7 @@ export interface AutoTranslateEventResponse {
   translations: {
     [lang: string]: {
       title: string;
+      summary: string;
       description: string;
     };
   };
@@ -48,7 +49,7 @@ export const llmApi = {
   async translate(data: TranslateRequest): Promise<TranslateResponse> {
     const response = await apiClient.post<TranslateResponse>(
       API_ENDPOINTS.LLM.TRANSLATE,
-      data
+      data,
     );
     return response.data;
   },
@@ -58,7 +59,7 @@ export const llmApi = {
    */
   async autoTranslateEvent(id: string): Promise<AutoTranslateEventResponse> {
     const response = await apiClient.post<AutoTranslateEventResponse>(
-      API_ENDPOINTS.LLM.AUTO_TRANSLATE_EVENT(id)
+      API_ENDPOINTS.LLM.AUTO_TRANSLATE_EVENT(id),
     );
     return response.data;
   },

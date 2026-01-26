@@ -42,6 +42,16 @@
         "days": 1,
         "hours": 14
       },
+      "extra_dates": [
+        {
+          "start_offset": { "days": 8, "hours": 9 },
+          "end_offset": { "days": 8, "hours": 14 }
+        },
+        {
+          "start_offset": { "days": 15, "hours": 9 },
+          "end_offset": { "days": 15, "hours": 14 }
+        }
+      ],
       "is_published": true,
       "venue_name": "Plaça del Poble",
       "location_text": "Cabrera de Mar",
@@ -50,12 +60,12 @@
         "ca": {
           "title": "Mercat Setmanal de Proximitat",
           "summary": "Productes frescos i artesania local.",
-          "description": "Vine demà al matí a la plaça per trobar els millors productes del Maresme."
+          "description": "Vine cada setmana a la plaça per trobar els millors productes del Maresme."
         },
         "es": {
           "title": "Mercado Semanal de Proximidad",
           "summary": "Productos frescos y artesanía local.",
-          "description": "Ven mañana por la mañana a la plaza para encontrar los mejores productos del Maresme."
+          "description": "Ven cada semana a la plaza para encontrar los mejores productos del Maresme."
         }
       }
     },
@@ -74,11 +84,7 @@
       "venue_name": "Yacimiento Ilturo",
       "location_text": "Cabrera de Mar",
       "featured_image_filename": "reforc_escolar.jpg",
-      "tags": [
-        "historia",
-        "taller",
-        "familiar"
-      ],
+      "tags": ["historia", "taller", "familiar"],
       "translations": {
         "ca": {
           "title": "Taller de Ceràmica Romana",
@@ -160,6 +166,12 @@
         "days": 25,
         "hours": 23
       },
+      "extra_dates": [
+        {
+          "start_offset": { "days": 26, "hours": 21 },
+          "end_offset": { "days": 26, "hours": 23 }
+        }
+      ],
       "is_published": true,
       "is_featured": true,
       "venue_name": "Platja de Cabrera",

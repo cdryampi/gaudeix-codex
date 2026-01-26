@@ -28,26 +28,53 @@ export function EventsTable({ events, onEdit, onDelete }: Props) {
           <tbody className="divide-y divide-border">
             {events.length === 0 ? (
               <tr>
-                <td colSpan={5} className="p-6 text-center text-muted-foreground">
+                <td
+                  colSpan={5}
+                  className="p-6 text-center text-muted-foreground"
+                >
                   No hay eventos creados.
                 </td>
               </tr>
             ) : (
               events.map((event) => (
-                <tr key={event.id} className="transition-colors hover:bg-muted/30">
+                <tr
+                  key={event.id}
+                  className="transition-colors hover:bg-muted/30"
+                >
                   <td className="px-5 py-4 align-middle">
                     <div className="flex items-start gap-3">
                       <EventThumbnail event={event} />
                       <div className="space-y-1">
-                        <p className="font-semibold text-foreground">{event.title}</p>
-                        <p className="text-xs text-muted-foreground">{event.slug}</p>
+                        <div className="flex items-center gap-2">
+                          <p className="font-semibold text-foreground">
+                            {event.title}
+                          </p>
+                          {event.occurrences_count !== undefined &&
+                            event.occurrences_count > 1 && (
+                              <Badge
+                                variant="outline"
+                                className="h-5 px-1.5 text-[10px] bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-900/30 dark:text-indigo-400 dark:border-indigo-800"
+                                title={`${event.occurrences_count} sesiones programadas`}
+                              >
+                                <CalendarClock className="mr-1 h-3 w-3" />
+                                {event.occurrences_count}
+                              </Badge>
+                            )}
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          {event.slug}
+                        </p>
 
                         <div className="flex flex-wrap gap-1 pt-1">
                           {(event.category_name || event.category_slug) && (
-                            <Badge variant="outline">{event.category_name || event.category_slug}</Badge>
+                            <Badge variant="outline">
+                              {event.category_name || event.category_slug}
+                            </Badge>
                           )}
 
-                          {event.is_featured && <Badge variant="secondary">Destacado</Badge>}
+                          {event.is_featured && (
+                            <Badge variant="secondary">Destacado</Badge>
+                          )}
 
                           {event.is_free ? (
                             <Badge variant="secondary">Gratis</Badge>
@@ -67,7 +94,10 @@ export function EventsTable({ events, onEdit, onDelete }: Props) {
                             </Badge>
                           ))}
                           {(event.tags || []).length > 2 && (
-                            <Badge variant="outline" className="border-primary/20 bg-primary/10 text-primary">
+                            <Badge
+                              variant="outline"
+                              className="border-primary/20 bg-primary/10 text-primary"
+                            >
                               +{(event.tags || []).length - 2}
                             </Badge>
                           )}
@@ -78,13 +108,17 @@ export function EventsTable({ events, onEdit, onDelete }: Props) {
 
                   <td className="px-5 py-4 align-middle">
                     <div className="flex flex-col gap-1 text-sm text-foreground">
-                      <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                      <div className="flex items-center gap-1 text-xs text-muted-foreground">
                         <CalendarClock className="h-4 w-4" />
-                        Inicio
+                        Próxima
+                      </div>
+                      <span className="font-medium">
+                        {formatDate(event.start_at)}
                       </span>
-                      <span>{formatDate(event.start_at)}</span>
                       {event.end_at && (
-                        <span className="text-xs text-muted-foreground">Fin: {formatDate(event.end_at)}</span>
+                        <span className="text-[11px] text-muted-foreground opacity-70">
+                          {formatTime(event.end_at)}
+                        </span>
                       )}
                     </div>
                   </td>
@@ -92,11 +126,15 @@ export function EventsTable({ events, onEdit, onDelete }: Props) {
                   <td className="px-5 py-4 align-middle">
                     <div className="flex flex-col gap-1 text-sm text-foreground">
                       {event.venue_name && (
-                        <span className="text-xs font-medium text-foreground">{event.venue_name}</span>
+                        <span className="text-xs font-medium text-foreground">
+                          {event.venue_name}
+                        </span>
                       )}
                       <div className="flex items-center gap-2 text-sm text-foreground">
                         <MapPin className="h-4 w-4 text-muted-foreground" />
-                        <span className="truncate">{event.location_text || "Sin ubicacion"}</span>
+                        <span className="truncate max-w-[150px]">
+                          {event.location_text || "Sin ubicación"}
+                        </span>
                       </div>
                     </div>
                   </td>
@@ -107,7 +145,9 @@ export function EventsTable({ events, onEdit, onDelete }: Props) {
                         Publicado
                       </Badge>
                     ) : (
-                      <Badge className="bg-muted text-muted-foreground hover:bg-muted border-border">Borrador</Badge>
+                      <Badge className="bg-muted text-muted-foreground hover:bg-muted border-border">
+                        Borrador
+                      </Badge>
                     )}
                   </td>
 
@@ -155,6 +195,15 @@ function getEventImage(event: Event) {
     event.image_url ||
     ""
   );
+}
+
+function formatTime(value: string) {
+  if (!value) return "-";
+  const date = new Date(value);
+  return date.toLocaleTimeString(undefined, {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
 function formatDate(value: string) {

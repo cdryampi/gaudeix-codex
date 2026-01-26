@@ -3,14 +3,28 @@ import { API_ENDPOINTS } from "@/lib/config/constants";
 import { CreateEventDTO, Event, UpdateEventDTO } from "../types";
 
 export const eventsApi = {
-  getAll: async () => {
-    const response = await apiClient.get<Event[]>(API_ENDPOINTS.EVENTS.LIST);
+  getAll: async (params?: { exclude_children?: boolean }) => {
+    const response = await apiClient.get<Event[]>(API_ENDPOINTS.EVENTS.LIST, {
+      params: {
+        exclude_children: params?.exclude_children,
+      },
+    });
     return response.data.map(normalizeEvent);
   },
 
   getById: async (id: number) => {
-    const response = await apiClient.get<Event>(API_ENDPOINTS.EVENTS.DETAIL(String(id)));
+    const response = await apiClient.get<Event>(
+      API_ENDPOINTS.EVENTS.DETAIL(String(id)),
+    );
     return normalizeEvent(response.data);
+  },
+
+  getOccurrences: async (id: number) => {
+    // This endpoint now returns EventDate[] objects
+    const response = await apiClient.get<any[]>(
+      `${API_ENDPOINTS.EVENTS.DETAIL(String(id))}occurrences/`,
+    );
+    return response.data; // Already in correct format or needing minimal transform
   },
 
   create: async (data: CreateEventDTO) => {
@@ -19,7 +33,10 @@ export const eventsApi = {
       attachments_ids: data.attachments_ids ?? [],
       tag_ids: data.tag_ids ?? [],
     };
-    const response = await apiClient.post<Event>(API_ENDPOINTS.EVENTS.LIST, payload);
+    const response = await apiClient.post<Event>(
+      API_ENDPOINTS.EVENTS.LIST,
+      payload,
+    );
     return normalizeEvent(response.data);
   },
 
@@ -29,7 +46,10 @@ export const eventsApi = {
       attachments_ids: data.attachments_ids ?? [],
       tag_ids: data.tag_ids ?? [],
     };
-    const response = await apiClient.patch<Event>(API_ENDPOINTS.EVENTS.DETAIL(String(id)), payload);
+    const response = await apiClient.patch<Event>(
+      API_ENDPOINTS.EVENTS.DETAIL(String(id)),
+      payload,
+    );
     return normalizeEvent(response.data);
   },
 

@@ -38,7 +38,7 @@ class EventViewSet(viewsets.ModelViewSet):
     serializer_class = EventSerializer
 
     def get_permissions(self):
-        if self.action in ["list", "retrieve"]:
+        if self.action in ["list", "retrieve", "occurrences"]:
             return [AllowAny()]
         return [IsAuthenticated()]
 
@@ -103,15 +103,29 @@ class EventViewSet(viewsets.ModelViewSet):
             ).distinct()
 
         start_from = self._parse_datetime(params.get("start_from"))
-        if start_from:
-            queryset = queryset.filter(start_at__gte=start_from)
-
         start_to = self._parse_datetime(params.get("start_to"))
-        if start_to:
-            queryset = queryset.filter(start_at__lte=start_to)
+
+        if start_from or start_to:
+            date_filter = Q()
+            if start_from:
+                date_filter &= Q(dates__start_at__gte=start_from)
+            if start_to:
+                date_filter &= Q(dates__start_at__lte=start_to)
+
+            queryset = queryset.filter(date_filter).distinct()
+
+        # Keep original filters for backward compatibility or simple cached field queries
+        # start_from = self._parse_datetime(params.get("start_from"))
+        # if start_from:
+        #     queryset = queryset.filter(start_at__gte=start_from)
+        #
+        # start_to = self._parse_datetime(params.get("start_to"))
+        # if start_to:
+        #     queryset = queryset.filter(start_at__lte=start_to)
 
         queryset = queryset.annotate(
-            favorites_count=Count("favorited_by", distinct=True)
+            favorites_count=Count("favorited_by", distinct=True),
+            occurrences_count=Count("dates", distinct=True),
         )
         if self.request.user.is_authenticated:
             queryset = queryset.annotate(
@@ -249,6 +263,7 @@ class EventViewSet(viewsets.ModelViewSet):
             )
 
         source_title = event.title
+        source_summary = event.summary or ""
         source_description = event.description or ""
 
         # Import translation utility
@@ -274,6 +289,16 @@ class EventViewSet(viewsets.ModelViewSet):
                     log_translation=True,
                 )
 
+                # Translate summary if exists
+                translated_summary = ""
+                if source_summary:
+                    translated_summary = translate_text(
+                        text=source_summary,
+                        source_lang=source_lang,
+                        target_lang=target_lang,
+                        log_translation=True,
+                    )
+
                 # Translate description if exists
                 translated_description = ""
                 if source_description:
@@ -288,11 +313,13 @@ class EventViewSet(viewsets.ModelViewSet):
                 # Create or update translation for target language
                 event.set_current_language(target_lang, initialize=True)
                 event.title = translated_title
+                event.summary = translated_summary
                 event.description = translated_description
                 event.save_translations()
 
                 translations[target_lang] = {
                     "title": translated_title,
+                    "summary": translated_summary,
                     "description": translated_description,
                 }
 
@@ -325,3 +352,25 @@ class EventViewSet(viewsets.ModelViewSet):
             if len(errors) == 0
             else status.HTTP_207_MULTI_STATUS,
         )
+
+    @action(detail=True, methods=["get"], permission_classes=[AllowAny])
+    def occurrences(self, request, pk=None):
+        """
+        Get all occurrences (dates) of an event.
+        """
+        event = self.get_object()
+        # Return all EventDate objects for this event
+        dates = event.dates.all().order_by("start_at")
+
+        # We need a serializer for EventDate that maybe includes event info or just dates
+        # Using EventDateSerializer defined in serializers.py?
+        # But wait, serializers.py has EventDateSerializer.
+        from .serializers import EventDateSerializer
+
+        page = self.paginate_queryset(dates)
+        if page is not None:
+            serializer = EventDateSerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = EventDateSerializer(dates, many=True)
+        return Response(serializer.data)

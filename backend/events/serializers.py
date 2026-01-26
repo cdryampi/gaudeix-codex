@@ -9,7 +9,7 @@ from core.serializers import TagSerializer
 from media_files.models import DocumentFile, ImageFile
 from media_files.serializers import DocumentFileSerializer, ImageFileSerializer
 
-from .models import Event
+from .models import Event, EventDate
 
 
 class EventTranslationSerializer(serializers.Serializer):
@@ -18,12 +18,21 @@ class EventTranslationSerializer(serializers.Serializer):
     description = serializers.CharField(required=False, allow_blank=True)
 
 
+class EventDateSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)  # Allow passing ID for updates
+
+    class Meta:
+        model = EventDate
+        fields = ["id", "start_at", "end_at"]
+
+
 class EventSerializer(TranslatableModelSerializer):
     translations = TranslatedFieldsField(
         shared_model=Event,
         serializer_class=EventTranslationSerializer,
         required=False,
     )
+    dates = EventDateSerializer(many=True, required=False)
     category = serializers.PrimaryKeyRelatedField(read_only=True)
     category_id = serializers.PrimaryKeyRelatedField(
         queryset=Category.objects.all(),
@@ -57,6 +66,7 @@ class EventSerializer(TranslatableModelSerializer):
     is_future = serializers.SerializerMethodField()
     is_favorited = serializers.SerializerMethodField()
     favorites_count = serializers.IntegerField(read_only=True)
+    occurrences_count = serializers.IntegerField(read_only=True)
     image_url = serializers.SerializerMethodField()
 
     class Meta:
@@ -92,8 +102,10 @@ class EventSerializer(TranslatableModelSerializer):
             "is_future",
             "is_favorited",
             "favorites_count",
+            "occurrences_count",
             "image_url",
             "translations",
+            "dates",
         ]
         read_only_fields = [
             "id",
@@ -107,6 +119,7 @@ class EventSerializer(TranslatableModelSerializer):
             "is_future",
             "is_favorited",
             "favorites_count",
+            "occurrences_count",
             "featured_media",
             "attachments",
             "image_url",
@@ -174,7 +187,32 @@ class EventSerializer(TranslatableModelSerializer):
         self.save_translations(instance, translated_data)
         return instance
 
+    def validate(self, data):
+        """
+        Validate that the event has at least one date.
+        """
+        # For updates, we check if dates are provided or already exist
+        # For creation, dates must be provided
+        dates = data.get("dates")
+
+        if self.instance:
+            # Update: if dates is provided, it must not be empty
+            # If not provided, the existing ones stay, so it's fine.
+            if dates is not None and len(dates) == 0:
+                raise serializers.ValidationError(
+                    {"dates": "El evento debe tener al menos una fecha."}
+                )
+        else:
+            # Creation: dates must be provided and not empty
+            if not dates or len(dates) == 0:
+                raise serializers.ValidationError(
+                    {"dates": "Debes añadir al menos una fecha para crear el evento."}
+                )
+
+        return data
+
     def create(self, validated_data):
+        dates_data = validated_data.pop("dates", [])
         attachments = validated_data.pop("attachments_ids", [])
         tags = validated_data.pop("tag_ids", [])
         translations_data = validated_data.pop("translations", None)
@@ -189,7 +227,6 @@ class EventSerializer(TranslatableModelSerializer):
         )
         featured_media = validated_data.pop("featured_media_id", None)
 
-        # Backward compatibility: allow featured_media / attachments keys as in tests
         if featured_media is None and self.initial_data.get("featured_media"):
             featured_media = ImageFile.objects.filter(
                 pk=self.initial_data.get("featured_media")
@@ -212,7 +249,17 @@ class EventSerializer(TranslatableModelSerializer):
         if description is not None:
             instance.description = description
 
+        # Use the first date as the default start_at if provided
+        if dates_data:
+            first_date = dates_data[0]
+            instance.start_at = first_date.get("start_at")
+            instance.end_at = first_date.get("end_at")
+        elif "start_at" not in validated_data and self.initial_data.get("start_at"):
+            # Fallback if start_at was passed directly but not dates
+            pass
+
         instance.save()
+
         if featured_media is not None:
             instance.featured_media = featured_media
             instance.save()
@@ -234,9 +281,18 @@ class EventSerializer(TranslatableModelSerializer):
             instance.attachments.set(attachments)
         if tags:
             instance.tags.set(tags)
+
+        # Create dates
+        for date_data in dates_data:
+            EventDate.objects.create(event=instance, **date_data)
+
+        # Trigger update of cached fields in case they changed
+        instance.update_cached_dates()
+
         return instance
 
     def update(self, instance, validated_data):
+        dates_data = validated_data.pop("dates", None)
         attachments = validated_data.pop("attachments_ids", None)
         tags = validated_data.pop("tag_ids", None)
         translations_data = validated_data.pop("translations", None)
@@ -292,6 +348,23 @@ class EventSerializer(TranslatableModelSerializer):
             instance.attachments.set(attachments)
         if tags is not None:
             instance.tags.set(tags)
+
+        if dates_data is not None:
+            # Sync dates: delete missing, update existing, create new
+            current_ids = [d["id"] for d in dates_data if "id" in d]
+            instance.dates.exclude(id__in=current_ids).delete()
+
+            for date_data in dates_data:
+                if "id" in date_data:
+                    date_obj = EventDate.objects.get(id=date_data["id"], event=instance)
+                    date_obj.start_at = date_data.get("start_at", date_obj.start_at)
+                    date_obj.end_at = date_data.get("end_at", date_obj.end_at)
+                    date_obj.save()
+                else:
+                    EventDate.objects.create(event=instance, **date_data)
+
+            instance.update_cached_dates()
+
         return instance
 
     def _apply_translations(

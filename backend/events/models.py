@@ -33,9 +33,12 @@ class EventCategorySingleton(SingletonModel):
 
     @classmethod
     def get_default_category(cls):
-        """Get the default events category, creating singleton if needed."""
-        singleton = cls.get_solo()
-        return singleton.category if singleton.category_id else None
+        """Get the default events category safely."""
+        try:
+            singleton = cls.objects.filter(pk=1).first()
+            return singleton.category if singleton and singleton.category_id else None
+        except Exception:
+            return None
 
 
 class Event(ContentBase, TranslatableModel):
@@ -60,7 +63,7 @@ class Event(ContentBase, TranslatableModel):
         help_text=_("Category for this event (defaults to Events category)"),
     )
 
-    start_at = models.DateTimeField(_("Start at"))
+    start_at = models.DateTimeField(_("Start at"), null=True, blank=True)
     end_at = models.DateTimeField(_("End at"), null=True, blank=True)
     is_published = models.BooleanField(_("Is published"), default=True)
     points_value = models.PositiveIntegerField(
@@ -140,6 +143,25 @@ class Event(ContentBase, TranslatableModel):
     def is_future(self) -> bool:
         return self.start_at > timezone.now()
 
+    def update_cached_dates(self):
+        """
+        Update start_at/end_at based on the nearest upcoming EventDate.
+        If no future dates, use the last past date.
+        """
+        now = timezone.now()
+        # Find next future session
+        next_session = self.dates.filter(start_at__gte=now).order_by("start_at").first()
+
+        if not next_session:
+            # Fallback to last past session if no future ones
+            next_session = self.dates.order_by("-start_at").first()
+
+        if next_session:
+            self.start_at = next_session.start_at
+            self.end_at = next_session.end_at
+            # Avoid triggering signals recursively if called from signal
+            super().save(update_fields=["start_at", "end_at"])
+
     # Backward compatibility properties for API
     @property
     def created_at(self):
@@ -193,6 +215,36 @@ class Event(ContentBase, TranslatableModel):
             counter += 1
 
         return slug_candidate
+
+
+class EventDate(models.Model):
+    """
+    Individual session/date for an event.
+    Events can have multiple dates (e.g. a course happening every Monday).
+    """
+
+    event = models.ForeignKey(
+        Event,
+        on_delete=models.CASCADE,
+        related_name="dates",
+        verbose_name=_("Event"),
+    )
+    start_at = models.DateTimeField(_("Start at"))
+    end_at = models.DateTimeField(_("End at"), null=True, blank=True)
+
+    class Meta:
+        ordering = ("start_at",)
+        verbose_name = _("Event Date")
+        verbose_name_plural = _("Event Dates")
+
+    def __str__(self):
+        return f"{self.start_at} ({self.event.title})"
+
+    def clean(self):
+        if self.end_at and self.end_at < self.start_at:
+            raise ValidationError(
+                {"end_at": _("End date cannot be before start date.")}
+            )
 
 
 class UserFavoriteEvent(models.Model):

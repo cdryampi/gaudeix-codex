@@ -1,6 +1,12 @@
 import { MediaItem } from "@/features/media/types";
 import { Tag } from "@/features/tags/types";
 
+export type EventDate = {
+  id?: number;
+  start_at: string;
+  end_at?: string | null;
+};
+
 export type Event = {
   id: number;
   slug: string;
@@ -32,13 +38,15 @@ export type Event = {
       description?: string;
     };
   };
+  dates?: EventDate[];
+  occurrences_count?: number;
 };
 
 export type CreateEventDTO = {
   title: string;
   summary?: string;
   description?: string;
-  start_at: string;
+  start_at?: string;
   end_at?: string | null;
   is_published?: boolean;
   venue_name?: string;
@@ -58,6 +66,7 @@ export type CreateEventDTO = {
       description?: string;
     };
   };
+  dates?: EventDate[];
 };
 
 export type UpdateEventDTO = Partial<CreateEventDTO>;

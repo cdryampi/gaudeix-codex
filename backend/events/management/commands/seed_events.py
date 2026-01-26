@@ -19,7 +19,7 @@ from django.utils.dateparse import parse_datetime
 from django.utils import timezone
 
 from core.models import Category, Tag
-from events.models import Event, EventCategorySingleton
+from events.models import Event, EventCategorySingleton, EventDate
 from media_files.models import DocumentFile, ImageFile
 
 
@@ -30,7 +30,11 @@ class Command(BaseCommand):
     )
 
     def handle(self, *args, **options):
-        self.stdout.write(self.style.WARNING("Seeding sample events. Verify media, categories and tags before use."))
+        self.stdout.write(
+            self.style.WARNING(
+                "Seeding sample events. Verify media, categories and tags before use."
+            )
+        )
         with transaction.atomic():
             root_category = self._ensure_root_category()
             self._clear_events()
@@ -46,7 +50,9 @@ class Command(BaseCommand):
             category.taxonomy = "events"
             category.save(update_fields=["taxonomy"])
 
-        singleton, _ = EventCategorySingleton.objects.get_or_create(pk=1, defaults={"category": category})
+        singleton, _ = EventCategorySingleton.objects.get_or_create(
+            pk=1, defaults={"category": category}
+        )
         if singleton.category != category:
             singleton.category = category
             singleton.save(update_fields=["category"])
@@ -57,7 +63,12 @@ class Command(BaseCommand):
         Event.objects.all().delete()
         self.stdout.write(self.style.SUCCESS(f"Removed {count} existing events."))
 
-    def _create_events(self, root_category: Category, images: list[ImageFile], documents: list[DocumentFile]) -> None:
+    def _create_events(
+        self,
+        root_category: Category,
+        images: list[ImageFile],
+        documents: list[DocumentFile],
+    ) -> None:
         images = images or []
         documents = documents or []
         payload = self._load_seed_events_payload()
@@ -71,17 +82,12 @@ class Command(BaseCommand):
             category_slug = data.get("category_slug") or None
             category = self._resolve_category(root_category, category_slug)
 
-            start_at = self._resolve_datetime(data.get("start_at"), base_now, data.get("start_offset"), tzinfo)
-            end_at = self._resolve_datetime(data.get("end_at"), base_now, data.get("end_offset"), tzinfo)
-
             featured_media = self._resolve_featured_media(
                 media_dir,
                 data.get("featured_image_filename"),
             ) or self._pick_media(images, index)
 
             create_kwargs = {
-                "start_at": start_at,
-                "end_at": end_at,
                 "is_published": data.get("is_published", True),
                 "venue_name": data.get("venue_name", ""),
                 "location_text": data.get("location_text", ""),
@@ -103,7 +109,43 @@ class Command(BaseCommand):
 
             event = Event.objects.create(**create_kwargs)
 
-            attachments = data.get("attachment_filenames") or data.get("attachments") or []
+            # Create dates
+            start_at = self._resolve_datetime(
+                data.get("start_at"), base_now, data.get("start_offset"), tzinfo
+            )
+            end_at = self._resolve_datetime(
+                data.get("end_at"), base_now, data.get("end_offset"), tzinfo
+            )
+
+            if start_at:
+                EventDate.objects.create(event=event, start_at=start_at, end_at=end_at)
+                event.update_cached_dates()
+
+            # Create additional dates if present in payload (custom extension)
+            extra_dates = data.get("extra_dates", [])
+            for date_info in extra_dates:
+                extra_start = self._resolve_datetime(
+                    date_info.get("start_at"),
+                    base_now,
+                    date_info.get("start_offset"),
+                    tzinfo,
+                )
+                extra_end = self._resolve_datetime(
+                    date_info.get("end_at"),
+                    base_now,
+                    date_info.get("end_offset"),
+                    tzinfo,
+                )
+                if extra_start:
+                    EventDate.objects.create(
+                        event=event, start_at=extra_start, end_at=extra_end
+                    )
+
+            event.update_cached_dates()  # Ensure sync
+
+            attachments = (
+                data.get("attachment_filenames") or data.get("attachments") or []
+            )
             if attachments and isinstance(attachments, list):
                 event.attachments.set(self._resolve_attachments(attachments, documents))
 
@@ -122,10 +164,14 @@ class Command(BaseCommand):
             if slug in by_slug:
                 resolved.append(by_slug[slug])
                 continue
-            resolved.append(Tag.objects.create(slug=slug, nombre=slug.replace("-", " ").title()))
+            resolved.append(
+                Tag.objects.create(slug=slug, nombre=slug.replace("-", " ").title())
+            )
         return resolved
 
-    def _resolve_attachments(self, attachments: list[str], fallback_documents: list[DocumentFile]) -> list[DocumentFile]:
+    def _resolve_attachments(
+        self, attachments: list[str], fallback_documents: list[DocumentFile]
+    ) -> list[DocumentFile]:
         documents = list(DocumentFile.objects.filter(original_name__in=attachments))
         by_name = {d.original_name: d for d in documents}
         resolved: list[DocumentFile] = []
@@ -134,7 +180,9 @@ class Command(BaseCommand):
                 resolved.append(by_name[name])
                 continue
             if fallback_documents:
-                resolved.append(fallback_documents[len(resolved) % len(fallback_documents)])
+                resolved.append(
+                    fallback_documents[len(resolved) % len(fallback_documents)]
+                )
         return resolved
 
     def _apply_translations(self, event: Event, translations: dict) -> None:
@@ -179,7 +227,11 @@ class Command(BaseCommand):
         events = data.get("events")
         if not isinstance(events, list):
             raise CommandError(f"Expected 'events' array in {seed_path}")
-        return {"timezone": data.get("timezone"), "media_base_dir": data.get("media_base_dir"), "events": events}
+        return {
+            "timezone": data.get("timezone"),
+            "media_base_dir": data.get("media_base_dir"),
+            "events": events,
+        }
 
     def _resolve_tz(self, tz_name: str | None):
         if tz_name:
@@ -223,20 +275,35 @@ class Command(BaseCommand):
         category = Category.objects.filter(slug=slug).first()
         if category:
             return category
-        category = Category.objects.create(slug=slug, nombre=slug.replace("-", " ").title(), taxonomy=root_category.taxonomy, parent=root_category)
-        self.stdout.write(self.style.WARNING(f"Category '{slug}' not found, created under '{root_category.slug}'"))
+        category = Category.objects.create(
+            slug=slug,
+            nombre=slug.replace("-", " ").title(),
+            taxonomy=root_category.taxonomy,
+            parent=root_category,
+        )
+        self.stdout.write(
+            self.style.WARNING(
+                f"Category '{slug}' not found, created under '{root_category.slug}'"
+            )
+        )
         return category
 
-    def _resolve_featured_media(self, media_dir: Path | None, filename: str | None) -> ImageFile | None:
+    def _resolve_featured_media(
+        self, media_dir: Path | None, filename: str | None
+    ) -> ImageFile | None:
         if not filename or not media_dir:
             return None
         if not media_dir.exists():
-            self.stdout.write(self.style.WARNING(f"Media directory not found: {media_dir}"))
+            self.stdout.write(
+                self.style.WARNING(f"Media directory not found: {media_dir}")
+            )
             return None
 
         path = self._find_media_file(media_dir, filename)
         if not path:
-            self.stdout.write(self.style.WARNING(f"Featured image not found: {filename}"))
+            self.stdout.write(
+                self.style.WARNING(f"Featured image not found: {filename}")
+            )
             return None
 
         existing = ImageFile.objects.filter(original_name=path.name).first()

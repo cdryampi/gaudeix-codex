@@ -13,7 +13,14 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Loader2, Languages, AlertCircle, CheckCircle2, X, Check } from "lucide-react";
+import {
+  Loader2,
+  Languages,
+  AlertCircle,
+  CheckCircle2,
+  X,
+  Check,
+} from "lucide-react";
 import { llmApi, AutoTranslateEventResponse } from "../api/llm";
 import { LANGUAGES } from "@/lib/config/constants";
 
@@ -23,6 +30,7 @@ import { LANGUAGES } from "@/lib/config/constants";
 interface TranslationSuggestion {
   lang: string;
   title: string;
+  summary: string;
   description: string;
   edited: boolean;
 }
@@ -35,15 +43,16 @@ interface TranslationDialogProps {
   onOpenChange: (open: boolean) => void;
   eventId: string;
   currentTitle: string;
+  currentSummary: string;
   currentDescription: string;
   onApplyTranslations: (translations: {
-    [lang: string]: { title: string; description: string };
+    [lang: string]: { title: string; summary: string; description: string };
   }) => void;
 }
 
 /**
  * TranslationDialog Component
- * 
+ *
  * Provides AI-powered translation suggestions for events with:
  * - Language selection with flags
  * - Real-time translation
@@ -74,7 +83,7 @@ export function TranslationDialog({
     setSelectedLanguages((prev) =>
       prev.includes(langCode)
         ? prev.filter((code) => code !== langCode)
-        : [...prev, langCode]
+        : [...prev, langCode],
     );
   };
 
@@ -93,7 +102,8 @@ export function TranslationDialog({
     setTranslationErrors({});
 
     try {
-      const response: AutoTranslateEventResponse = await llmApi.autoTranslateEvent(eventId);
+      const response: AutoTranslateEventResponse =
+        await llmApi.autoTranslateEvent(eventId);
 
       if (response.success) {
         // Convert response to translation suggestions
@@ -102,6 +112,7 @@ export function TranslationDialog({
           .map((lang) => ({
             lang,
             title: response.translations[lang].title,
+            summary: response.translations[lang].summary || "",
             description: response.translations[lang].description,
             edited: false,
           }));
@@ -118,7 +129,7 @@ export function TranslationDialog({
           setError("Algunas traducciones fallaron. Revisa los errores abajo.");
         } else {
           setSuccess(
-            `✓ Traducciones guardadas correctamente en el servidor para ${suggestions.length} idioma${suggestions.length > 1 ? "s" : ""}.`
+            `✓ Traducciones guardadas correctamente en el servidor para ${suggestions.length} idioma${suggestions.length > 1 ? "s" : ""}.`,
           );
         }
       } else {
@@ -127,7 +138,7 @@ export function TranslationDialog({
     } catch (err) {
       console.error("Translation error:", err);
       setError(
-        "Error al conectar con el servicio de traducción. Inténtalo de nuevo."
+        "Error al conectar con el servicio de traducción. Inténtalo de nuevo.",
       );
     } finally {
       setIsTranslating(false);
@@ -139,15 +150,15 @@ export function TranslationDialog({
    */
   const updateTranslation = (
     lang: string,
-    field: "title" | "description",
-    value: string
+    field: "title" | "summary" | "description",
+    value: string,
   ) => {
     setTranslations((prev) =>
       prev.map((trans) =>
         trans.lang === lang
           ? { ...trans, [field]: value, edited: true }
-          : trans
-      )
+          : trans,
+      ),
     );
   };
 
@@ -167,11 +178,14 @@ export function TranslationDialog({
       (acc, trans) => {
         acc[trans.lang] = {
           title: trans.title,
+          summary: trans.summary,
           description: trans.description,
         };
         return acc;
       },
-      {} as { [lang: string]: { title: string; description: string } }
+      {} as {
+        [lang: string]: { title: string; summary: string; description: string };
+      },
     );
 
     onApplyTranslations(translationsToApply);
@@ -206,8 +220,9 @@ export function TranslationDialog({
             Traducir Evento con IA
           </DialogTitle>
           <DialogDescription>
-            Selecciona los idiomas a los que quieres traducir este evento.
-            Las traducciones se guardan automáticamente en el servidor y puedes revisarlas antes de cerrar.
+            Selecciona los idiomas a los que quieres traducir este evento. Las
+            traducciones se guardan automáticamente en el servidor y puedes
+            revisarlas antes de cerrar.
           </DialogDescription>
         </DialogHeader>
 
@@ -306,9 +321,33 @@ export function TranslationDialog({
                           id={`title-${trans.lang}`}
                           value={trans.title}
                           onChange={(e) =>
-                            updateTranslation(trans.lang, "title", e.target.value)
+                            updateTranslation(
+                              trans.lang,
+                              "title",
+                              e.target.value,
+                            )
                           }
                           placeholder="Título traducido"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor={`summary-${trans.lang}`}>
+                          Resumen breve
+                        </Label>
+                        <textarea
+                          id={`summary-${trans.lang}`}
+                          value={trans.summary}
+                          onChange={(e) =>
+                            updateTranslation(
+                              trans.lang,
+                              "summary",
+                              e.target.value,
+                            )
+                          }
+                          placeholder="Resumen breve traducido"
+                          className="w-full min-h-[60px] px-3 py-2 text-sm rounded-md border border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          rows={2}
                         />
                       </div>
 
@@ -323,7 +362,7 @@ export function TranslationDialog({
                             updateTranslation(
                               trans.lang,
                               "description",
-                              e.target.value
+                              e.target.value,
                             )
                           }
                           placeholder="Descripción traducida"
