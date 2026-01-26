@@ -6,7 +6,7 @@ from datetime import datetime
 import logging
 
 from django.db import transaction
-from django.db.models import Sum
+from django.db.models import Q, Sum
 from django.utils import timezone
 
 from .models import EventCheckin, PointTransaction, UserPoints
@@ -174,13 +174,18 @@ def get_monthly_rankings(limit: int | None = None) -> list[dict]:
 
 
 def get_user_rank(user) -> int:
-    points = list(
-        UserPoints.objects.select_related("user").order_by("-total_points", "user__id")
+    try:
+        user_points = UserPoints.objects.get(user=user)
+    except UserPoints.DoesNotExist:
+        return 0
+
+    return (
+        UserPoints.objects.filter(
+            Q(total_points__gt=user_points.total_points)
+            | Q(total_points=user_points.total_points, user__id__lt=user.id)
+        ).count()
+        + 1
     )
-    for index, entry in enumerate(points, start=1):
-        if entry.user_id == user.id:
-            return index
-    return 0
 
 
 def get_user_monthly_rank(user) -> int:
