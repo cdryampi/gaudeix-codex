@@ -1,8 +1,8 @@
-import type { EventCategory } from "@/data/mockEvents";
-import type { DateRangeFilter } from "@/features/agenda/utils";
+import { DateRangeFilter } from "@/features/agenda/utils";
 
-const CATEGORIES: Array<{ value: EventCategory | "all"; label: string }> = [
-  { value: "all", label: "Todas" },
+// TODO: Fetch categories from backend or keep this list in sync with DB
+const CATEGORIES: Array<{ value: string; label: string }> = [
+  { value: "all", label: "Todas las categorías" },
   { value: "Cultura", label: "Cultura" },
   { value: "Infantil", label: "Infantil" },
   { value: "Esports", label: "Esports" },
@@ -17,7 +17,7 @@ const RANGES: Array<{ value: DateRangeFilter; label: string }> = [
   { value: "today", label: "Hoy" },
   { value: "week", label: "Esta semana" },
   { value: "month", label: "Este mes" },
-  { value: "all", label: "Todo" },
+  { value: "all", label: "Todo el calendario" },
 ];
 
 export function AgendaFilters({
@@ -26,22 +26,30 @@ export function AgendaFilters({
   query,
   onChange,
 }: {
-  category: EventCategory | "all";
+  category: string;
   range: DateRangeFilter;
   query: string;
-  onChange: (next: { category: EventCategory | "all"; range: DateRangeFilter; query: string }) => void;
+  onChange: (next: {
+    category: string;
+    range: DateRangeFilter;
+    query: string;
+  }) => void;
 }) {
   return (
-    <div className="mt-6 grid gap-3 md:grid-cols-12">
+    <div className="mt-12 grid gap-4 md:grid-cols-12">
       <label className="md:col-span-3">
         <span className="sr-only">Categoría</span>
         <select
-          className="h-11 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm outline-none focus:border-puerto-rico-500 focus:ring-2 focus:ring-puerto-rico-500/20"
+          className="h-16 w-full rounded-2xl border border-white/10 bg-white/5 px-6 text-xs font-black uppercase tracking-widest text-white outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all appearance-none cursor-pointer"
           value={category}
-          onChange={(e) => onChange({ category: e.target.value as any, range, query })}
+          onChange={(e) => onChange({ category: e.target.value, range, query })}
         >
           {CATEGORIES.map((c) => (
-            <option key={c.value} value={c.value}>
+            <option
+              key={c.value}
+              value={c.value}
+              className="bg-slate-900 text-white"
+            >
               {c.label}
             </option>
           ))}
@@ -51,12 +59,18 @@ export function AgendaFilters({
       <label className="md:col-span-3">
         <span className="sr-only">Rango</span>
         <select
-          className="h-11 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm outline-none focus:border-puerto-rico-500 focus:ring-2 focus:ring-puerto-rico-500/20"
+          className="h-16 w-full rounded-2xl border border-white/10 bg-white/5 px-6 text-xs font-black uppercase tracking-widest text-white outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all appearance-none cursor-pointer"
           value={range}
-          onChange={(e) => onChange({ category, range: e.target.value as any, query })}
+          onChange={(e) =>
+            onChange({ category, range: e.target.value as any, query })
+          }
         >
           {RANGES.map((r) => (
-            <option key={r.value} value={r.value}>
+            <option
+              key={r.value}
+              value={r.value}
+              className="bg-slate-900 text-white"
+            >
               {r.label}
             </option>
           ))}
@@ -66,8 +80,8 @@ export function AgendaFilters({
       <label className="md:col-span-6">
         <span className="sr-only">Buscar</span>
         <input
-          className="h-11 w-full rounded-lg border border-gray-200 bg-white px-4 text-sm outline-none placeholder:text-gray-500 focus:border-puerto-rico-500 focus:ring-2 focus:ring-puerto-rico-500/20"
-          placeholder="Buscar por título o lugar"
+          className="h-16 w-full rounded-2xl border border-white/10 bg-white/5 px-8 text-sm font-bold text-white outline-none placeholder:text-white/30 focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all"
+          placeholder="Buscar por título o recinto..."
           value={query}
           onChange={(e) => onChange({ category, range, query: e.target.value })}
         />
@@ -75,4 +89,3 @@ export function AgendaFilters({
     </div>
   );
 }
-

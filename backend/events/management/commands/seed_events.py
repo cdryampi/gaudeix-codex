@@ -94,9 +94,12 @@ class Command(BaseCommand):
                 "is_featured": data.get("is_featured", False),
                 "is_free": data.get("is_free", True),
                 "price_text": data.get("price_text", ""),
+                "points_value": data.get("points_value", 20),
                 "category": category,
                 "featured_media": featured_media,
             }
+            if "price" in data:
+                create_kwargs["price"] = data["price"]
             if slug:
                 create_kwargs["slug"] = slug
 

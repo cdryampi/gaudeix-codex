@@ -1,4 +1,4 @@
-import type { EventItem, EventCategory } from "@/data/mockEvents";
+import { Event } from "@/features/events/types";
 
 export type DateRangeFilter = "today" | "week" | "month" | "all" | string;
 
@@ -26,8 +26,10 @@ function addMonths(date: Date, months: number) {
   return d;
 }
 
-export function sortEventsByDate(list: EventItem[]) {
-  return [...list].sort((a, b) => new Date(a.startAt).getTime() - new Date(b.startAt).getTime());
+export function sortEventsByDate(list: Event[]) {
+  return [...list].sort(
+    (a, b) => new Date(a.start_at).getTime() - new Date(b.start_at).getTime(),
+  );
 }
 
 export function isToday(date: Date, now = new Date()) {
@@ -41,16 +43,19 @@ export function isTomorrow(date: Date, now = new Date()) {
   return startOfDay(date).getTime() === tomorrow;
 }
 
-export function withinRange(startAt: string, range: DateRangeFilter, now = new Date()) {
+export function withinRange(
+  startAt: string,
+  range: DateRangeFilter,
+  now = new Date(),
+) {
   if (range === "all") return true;
 
   // Specific ISO Date (YYYY-MM-DD)
   if (/^\d{4}-\d{2}-\d{2}$/.test(range)) {
     const d = new Date(startAt);
-    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(
-      2,
-      "0"
-    )}`;
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
+      d.getDate(),
+    ).padStart(2, "0")}`;
     return key === range;
   }
 
@@ -66,45 +71,56 @@ export function withinRange(startAt: string, range: DateRangeFilter, now = new D
   return d.getTime() >= start.getTime() && d.getTime() <= end.getTime();
 }
 
-export function matchesQuery(event: EventItem, query: string) {
+export function matchesQuery(event: Event, query: string) {
   const q = query.trim().toLowerCase();
   if (!q) return true;
-  const haystack = `${event.title} ${event.venueName} ${event.locationText}`.toLowerCase();
+  const haystack =
+    `${event.title} ${event.venue_name} ${event.location_text}`.toLowerCase();
   return haystack.includes(q);
 }
 
 export function filterEvents(
-  events: EventItem[],
+  events: Event[],
   opts: {
-    category: EventCategory | "all";
+    category: string | "all";
     range: DateRangeFilter;
     query: string;
-  }
+  },
 ) {
   return events.filter((e) => {
-    if (opts.category !== "all" && e.category !== opts.category) return false;
-    if (!withinRange(e.startAt, opts.range)) return false;
+    // Note: We use category_name or category_slug for filtering if needed.
+    // Assuming UI passes "all" or a category name/slug.
+    if (opts.category !== "all") {
+      // Loose matching since backend category names might vary
+      const cat = (e.category_name || "").toLowerCase();
+      const filterCat = opts.category.toLowerCase();
+      if (!cat.includes(filterCat)) return false;
+    }
+    if (!withinRange(e.start_at, opts.range)) return false;
     if (!matchesQuery(e, opts.query)) return false;
     return true;
   });
 }
 
 export function formatDayLabel(date: Date) {
-  const fmt = new Intl.DateTimeFormat("es-ES", { weekday: "long", day: "2-digit", month: "long" });
+  const fmt = new Intl.DateTimeFormat("es-ES", {
+    weekday: "long",
+    day: "2-digit",
+    month: "long",
+  });
   const label = fmt.format(date);
   return label.charAt(0).toUpperCase() + label.slice(1);
 }
 
-export function groupEventsByDay(list: EventItem[]) {
+export function groupEventsByDay(list: Event[]) {
   const sorted = sortEventsByDate(list);
-  const map = new Map<string, { dayLabel: string; items: EventItem[] }>();
+  const map = new Map<string, { dayLabel: string; items: Event[] }>();
 
   for (const item of sorted) {
-    const d = new Date(item.startAt);
-    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(
-      2,
-      "0"
-    )}`;
+    const d = new Date(item.start_at);
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
+      d.getDate(),
+    ).padStart(2, "0")}`;
     const existing = map.get(key);
     if (existing) {
       existing.items.push(item);
@@ -115,4 +131,3 @@ export function groupEventsByDay(list: EventItem[]) {
 
   return Array.from(map.values());
 }
-

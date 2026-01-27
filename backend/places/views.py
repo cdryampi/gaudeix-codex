@@ -28,6 +28,7 @@ class PlaceViewSet(viewsets.ModelViewSet):
 
     queryset = Place.objects.all()
     serializer_class = PlaceSerializer
+    lookup_field = "slug"
 
     def get_permissions(self):
         if self.action in ["list", "retrieve"]:

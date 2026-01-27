@@ -36,6 +36,7 @@ class EventViewSet(viewsets.ModelViewSet):
         .prefetch_related("attachments", "tags")
     )
     serializer_class = EventSerializer
+    lookup_field = "slug"
 
     def get_permissions(self):
         if self.action in ["list", "retrieve", "occurrences"]:
