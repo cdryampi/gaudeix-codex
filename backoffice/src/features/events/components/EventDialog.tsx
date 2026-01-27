@@ -19,6 +19,9 @@ import {
   Plus,
   Calendar as CalendarIcon,
   Trash2,
+  Image as ImageIcon,
+  FileText,
+  Upload,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -43,12 +46,14 @@ import { CreateEventDTO, Event, EventDate } from "../types";
 import { mediaApi } from "@/features/media/api/media";
 import { categoriesApi } from "@/features/categories/api/categories";
 import { tagsApi } from "@/features/tags/api/tags";
+import { eventsApi } from "../api/events";
 import { Category } from "@/features/categories/types";
 import { Tag } from "@/features/tags/types";
 import { MediaItem } from "@/features/media/types";
 import { LANGUAGES } from "@/lib/config/constants";
 import { llmApi } from "../api/llm";
 import { TranslationDialog } from "./TranslationDialog";
+import { cn } from "@/lib/utils";
 
 type LocalTranslations = {
   [lang: string]: { title: string; summary?: string; description?: string };
@@ -172,7 +177,17 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
         description: form.description,
       };
     }
-    return translations[lang] || { title: "", summary: "", description: "" };
+    const trans = translations[lang] || {
+      title: "",
+      summary: "",
+      description: "",
+    };
+    // Ensure properties exist to avoid undefined in inputs
+    return {
+      title: trans.title || "",
+      summary: trans.summary || "",
+      description: trans.description || "",
+    };
   };
 
   const updateTranslatedField = (
@@ -202,7 +217,11 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
 
     setTranslating(true);
     try {
-      const response = await llmApi.autoTranslateEvent(String(event.id));
+      const response = await llmApi.autoTranslateEvent(String(event.id), {
+        title: form.title,
+        summary: form.summary,
+        description: form.description,
+      });
       if (response.success && response.translations[targetLang]) {
         setTranslations((prev) => ({
           ...prev,
@@ -344,7 +363,7 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
       }));
     } catch (err) {
       console.error(err);
-      toast.error("No se pudo subir el documento");
+      toast.error("No se pudo subir the document");
     } finally {
       if (docInputRef.current) docInputRef.current.value = "";
     }
@@ -358,6 +377,11 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
   const selectedCategory = useMemo(
     () => categories.find((cat) => cat.id === form.category_id),
     [categories, form.category_id],
+  );
+
+  const selectedAttachments = useMemo(
+    () => documents.filter((doc) => form.attachments_ids?.includes(doc.id)),
+    [documents, form.attachments_ids],
   );
 
   return (
@@ -531,47 +555,79 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
                 </div>
               </div>
 
-              <div className="grid gap-4 md:grid-cols-3">
-                <div className="flex flex-col gap-3 rounded-xl border p-4 shadow-sm">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-bold uppercase tracking-wider text-gray-500">
+              <div className="grid gap-6 md:grid-cols-3 p-4 border border-border rounded-xl bg-muted/10">
+                {/* Publicado */}
+                <div className="flex flex-col gap-1.5">
+                  <label className="inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      className="sr-only peer"
+                      checked={!!form.is_published}
+                      onChange={(e) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          is_published: e.target.checked,
+                        }))
+                      }
+                    />
+                    <div className="relative w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-100 dark:peer-focus:ring-primary-900 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-primary-600"></div>
+                    <span className="select-none ms-3 text-sm font-medium text-gray-900 dark:text-gray-100">
                       Publicado
                     </span>
-                    <Switch
-                      checked={form.is_published}
-                      onCheckedChange={(checked) =>
-                        setForm((prev) => ({ ...prev, is_published: checked }))
-                      }
-                    />
-                  </div>
+                  </label>
+                  <p className="text-[10px] text-muted-foreground leading-tight pl-12">
+                    Visible para todos los usuarios en la web.
+                  </p>
                 </div>
 
-                <div className="flex flex-col gap-3 rounded-xl border p-4 shadow-sm">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-bold uppercase tracking-wider text-gray-500">
+                {/* Destacado */}
+                <div className="flex flex-col gap-1.5">
+                  <label className="inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      className="sr-only peer"
+                      checked={!!form.is_featured}
+                      onChange={(e) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          is_featured: e.target.checked,
+                        }))
+                      }
+                    />
+                    <div className="relative w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-100 dark:peer-focus:ring-primary-900 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-primary-600"></div>
+                    <span className="select-none ms-3 text-sm font-medium text-gray-900 dark:text-gray-100">
                       Destacado
                     </span>
-                    <Switch
-                      checked={form.is_featured}
-                      onCheckedChange={(checked) =>
-                        setForm((prev) => ({ ...prev, is_featured: checked }))
-                      }
-                    />
-                  </div>
+                  </label>
+                  <p className="text-[10px] text-muted-foreground leading-tight pl-12">
+                    Aparecerá en posiciones prioritarias de la home.
+                  </p>
                 </div>
 
-                <div className="flex flex-col gap-3 rounded-xl border p-4 shadow-sm">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-bold uppercase tracking-wider text-gray-500">
-                      Gratuito
-                    </span>
-                    <Switch
-                      checked={form.is_free}
-                      onCheckedChange={(checked) =>
-                        setForm((prev) => ({ ...prev, is_free: checked }))
+                {/* Gratuito */}
+                <div className="flex flex-col gap-1.5">
+                  <label className="inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      className="sr-only peer"
+                      checked={!!form.is_free}
+                      onChange={(e) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          is_free: e.target.checked,
+                          price: e.target.checked ? null : prev.price,
+                          price_text: e.target.checked ? "" : prev.price_text,
+                        }))
                       }
                     />
-                  </div>
+                    <div className="relative w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-100 dark:peer-focus:ring-primary-900 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-primary-600"></div>
+                    <span className="select-none ms-3 text-sm font-medium text-gray-900 dark:text-gray-100">
+                      Gratuito
+                    </span>
+                  </label>
+                  <p className="text-[10px] text-muted-foreground leading-tight pl-12">
+                    Sin coste de entrada. Oculta campos de precio.
+                  </p>
                 </div>
               </div>
 
@@ -579,10 +635,11 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-2">
                     <Label htmlFor="price">Precio (€)</Label>
-                    <Input
+                    <input
                       id="price"
                       type="number"
                       step="0.01"
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       value={form.price !== null ? form.price : ""}
                       onChange={(e) =>
                         setForm((prev) => ({
@@ -693,10 +750,16 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
                 })}
               </Tabs>
 
-              <div className="space-y-3 rounded-lg border bg-muted/30 p-3">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-semibold">Imagen destacada</p>
-                  <div className="flex gap-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Featured Image Selection */}
+                <div className="space-y-3 rounded-xl border border-border/60 bg-muted/30 p-4 shadow-sm">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <ImageIcon className="h-4 w-4 text-primary-500" />
+                      <p className="text-sm font-bold uppercase tracking-wider text-foreground opacity-80">
+                        Imagen destacada
+                      </p>
+                    </div>
                     <input
                       type="file"
                       ref={imageInputRef}
@@ -704,38 +767,130 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
                       className="hidden"
                       accept="image/*"
                     />
+                    {!selectedImage && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="h-8 text-[10px] uppercase font-bold"
+                        onClick={() => imageInputRef.current?.click()}
+                      >
+                        <Upload className="mr-1.5 h-3.5 w-3.5" /> Subir
+                      </Button>
+                    )}
+                  </div>
+
+                  {selectedImage ? (
+                    <div className="group relative rounded-lg overflow-hidden border bg-background aspect-video flex items-center justify-center">
+                      <img
+                        src={selectedImage.thumbnail_url || selectedImage.file}
+                        className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          size="sm"
+                          className="h-8 text-[10px] font-bold uppercase"
+                          onClick={() => imageInputRef.current?.click()}
+                        >
+                          Cambiar
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="sm"
+                          className="h-8 text-[10px] font-bold uppercase"
+                          onClick={() =>
+                            setForm((p) => ({ ...p, featured_media_id: null }))
+                          }
+                        >
+                          Quitar
+                        </Button>
+                      </div>
+                      <div className="absolute bottom-0 left-0 right-0 bg-black/60 p-2 backdrop-blur-sm">
+                        <p className="text-[10px] text-white truncate font-medium">
+                          {selectedImage.original_name}
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div
+                      onClick={() => imageInputRef.current?.click()}
+                      className="rounded-lg border-2 border-dashed border-border flex flex-col items-center justify-center py-8 gap-2 cursor-pointer hover:border-primary-300 hover:bg-primary-50/10 transition-all"
+                    >
+                      <ImageIcon className="h-8 w-8 text-muted-foreground opacity-20" />
+                      <p className="text-xs text-muted-foreground">
+                        No hay imagen seleccionada
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Attachments Selection */}
+                <div className="space-y-3 rounded-xl border border-border/60 bg-muted/30 p-4 shadow-sm">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <FileText className="h-4 w-4 text-primary-500" />
+                      <p className="text-sm font-bold uppercase tracking-wider text-foreground opacity-80">
+                        Adjuntos
+                      </p>
+                    </div>
+                    <input
+                      type="file"
+                      ref={docInputRef}
+                      onChange={handleUploadDoc}
+                      className="hidden"
+                    />
                     <Button
                       type="button"
                       variant="outline"
                       size="sm"
-                      onClick={() => imageInputRef.current?.click()}
+                      className="h-8 text-[10px] uppercase font-bold"
+                      onClick={() => docInputRef.current?.click()}
                     >
-                      Subir
+                      <Plus className="mr-1.5 h-3.5 w-3.5" /> Añadir
                     </Button>
+                  </div>
+
+                  <div className="space-y-2 min-h-[100px]">
+                    {selectedAttachments.map((doc) => (
+                      <div
+                        key={doc.id}
+                        className="flex items-center justify-between gap-3 bg-background border p-2 rounded-lg group hover:border-primary-200 transition-all shadow-sm"
+                      >
+                        <div className="flex items-center gap-2 truncate">
+                          <FileText className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-[11px] font-medium truncate max-w-[150px]">
+                            {doc.original_name}
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          className="h-7 w-7 text-rose-600 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-md hover:bg-rose-50"
+                          onClick={() =>
+                            setForm((p) => ({
+                              ...p,
+                              attachments_ids: (p.attachments_ids ?? []).filter(
+                                (id) => id !== doc.id,
+                              ),
+                            }))
+                          }
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      </div>
+                    ))}
+                    {selectedAttachments.length === 0 && (
+                      <div className="flex flex-col items-center justify-center py-6 gap-2 opacity-30">
+                        <FileText className="h-8 w-8" />
+                        <p className="text-[11px] font-medium">
+                          Sin documentos adjuntos
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
-                {selectedImage && (
-                  <div className="flex items-center gap-3 bg-background p-2 rounded-md">
-                    <img
-                      src={selectedImage.thumbnail_url || selectedImage.file}
-                      className="h-12 w-12 rounded object-cover"
-                    />
-                    <span className="text-xs truncate">
-                      {selectedImage.original_name}
-                    </span>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() =>
-                        setForm((p) => ({ ...p, featured_media_id: null }))
-                      }
-                      className="ml-auto text-rose-600"
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
-                )}
               </div>
             </TabsContent>
 

@@ -251,9 +251,21 @@ class EventViewSet(viewsets.ModelViewSet):
         default_targets = [lang for lang in configured_langs if lang != source_lang]
         target_langs = request.data.get("target_langs", default_targets)
 
-        # Validate source language exists
-        event.set_current_language(source_lang)
-        if not event.title:
+        # Get source text from request or database
+        source_title = request.data.get("title", event.title)
+        source_summary = request.data.get("summary")
+        if source_summary is None:
+            # If not in request, get from DB for source lang
+            event.set_current_language(source_lang)
+            source_summary = event.summary or ""
+
+        source_description = request.data.get("description")
+        if source_description is None:
+            # If not in request, get from DB for source lang
+            event.set_current_language(source_lang)
+            source_description = event.description or ""
+
+        if not source_title:
             return Response(
                 {
                     "success": False,
@@ -261,10 +273,6 @@ class EventViewSet(viewsets.ModelViewSet):
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
-        source_title = event.title
-        source_summary = event.summary or ""
-        source_description = event.description or ""
 
         # Import translation utility
         try:

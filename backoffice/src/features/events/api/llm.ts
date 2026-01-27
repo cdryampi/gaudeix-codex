@@ -50,6 +50,7 @@ export const llmApi = {
     const response = await apiClient.post<TranslateResponse>(
       API_ENDPOINTS.LLM.TRANSLATE,
       data,
+      { timeout: 60000 }, // 1 minute for single text translation
     );
     return response.data;
   },
@@ -57,9 +58,14 @@ export const llmApi = {
   /**
    * Auto-translate event to all configured languages
    */
-  async autoTranslateEvent(id: string): Promise<AutoTranslateEventResponse> {
+  async autoTranslateEvent(
+    id: string,
+    data?: { title?: string; summary?: string; description?: string },
+  ): Promise<AutoTranslateEventResponse> {
     const response = await apiClient.post<AutoTranslateEventResponse>(
       API_ENDPOINTS.LLM.AUTO_TRANSLATE_EVENT(id),
+      data || {},
+      { timeout: 300000 }, // 5 minutes timeout for AI translation (considerate of local LLMs)
     );
     return response.data;
   },

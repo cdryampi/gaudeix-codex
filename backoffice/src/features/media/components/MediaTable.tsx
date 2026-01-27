@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { MediaItem } from "../types";
-import { Trash2, Pencil, ImageIcon, FileText } from "lucide-react";
+import { Trash2, Pencil, ImageIcon, FileText, Video } from "lucide-react";
 
 export type MediaLink = {
   label: string;
@@ -16,7 +16,12 @@ type Props = {
   linkedMap?: Record<string, MediaLink[]>;
 };
 
-export function MediaTable({ items, onDelete, onRename, linkedMap = {} }: Props) {
+export function MediaTable({
+  items,
+  onDelete,
+  onRename,
+  linkedMap = {},
+}: Props) {
   return (
     <div className="w-full overflow-hidden rounded-xl border border-border bg-card shadow-sm">
       <ScrollArea className="w-full">
@@ -69,10 +74,16 @@ export function MediaTable({ items, onDelete, onRename, linkedMap = {} }: Props)
                     <Badge variant="secondary" className="gap-1">
                       {item.type === "image" ? (
                         <ImageIcon className="h-3.5 w-3.5" />
+                      ) : item.type === "video" ? (
+                        <Video className="h-3.5 w-3.5" />
                       ) : (
                         <FileText className="h-3.5 w-3.5" />
                       )}
-                      {item.type === "image" ? "Imagen" : "Documento"}
+                      {item.type === "image"
+                        ? "Imagen"
+                        : item.type === "video"
+                          ? "Video"
+                          : "Documento"}
                     </Badge>
                   </td>
                   <td className="px-5 py-4 align-middle">
@@ -117,7 +128,10 @@ export function MediaTable({ items, onDelete, onRename, linkedMap = {} }: Props)
 }
 
 function Thumb({ item }: { item: MediaItem }) {
-  if (item.type === "image" && (item.thumbnail_url || item.variant_thumbnail)) {
+  if (
+    item.type === "image" &&
+    (item.thumbnail_url || item.variant_thumbnail || item.file)
+  ) {
     const src = item.thumbnail_url || item.variant_thumbnail || item.file;
     return (
       <img
@@ -127,6 +141,15 @@ function Thumb({ item }: { item: MediaItem }) {
       />
     );
   }
+
+  if (item.type === "video") {
+    return (
+      <div className="flex h-10 w-10 min-h-10 min-w-10 shrink-0 items-center justify-center rounded-md bg-purple-100 text-purple-600 ring-1 ring-purple-200 dark:bg-purple-900/30 dark:text-purple-300 dark:ring-purple-800">
+        <Video className="h-5 w-5" />
+      </div>
+    );
+  }
+
   return (
     <div className="flex h-10 w-10 min-h-10 min-w-10 shrink-0 items-center justify-center rounded-md bg-slate-100 text-slate-600 ring-1 ring-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:ring-slate-700">
       <FileText className="h-5 w-5" />
@@ -151,12 +174,17 @@ function LinkedModelCell({
   return (
     <div className="flex flex-col gap-1">
       {linked.map((link, index) => (
-        <div key={`${key}-${index}`} className="flex flex-wrap items-center gap-2">
+        <div
+          key={`${key}-${index}`}
+          className="flex flex-wrap items-center gap-2"
+        >
           <Badge variant="secondary" className="text-[11px] font-semibold">
             {link.label}
           </Badge>
           {link.subtitle && (
-            <span className="text-xs text-muted-foreground">{link.subtitle}</span>
+            <span className="text-xs text-muted-foreground">
+              {link.subtitle}
+            </span>
           )}
         </div>
       ))}
@@ -169,7 +197,7 @@ function formatSize(bytes: number) {
   const sizes = ["B", "KB", "MB", "GB"];
   const i = Math.min(
     Math.floor(Math.log(bytes) / Math.log(1024)),
-    sizes.length - 1
+    sizes.length - 1,
   );
   const value = bytes / Math.pow(1024, i);
   return `${value.toFixed(value >= 10 || i === 0 ? 0 : 1)} ${sizes[i]}`;

@@ -38,7 +38,11 @@ import { Place } from "@/features/places/types";
 import { StaticPage } from "@/features/static-pages/types";
 import { SiteSettings } from "@/features/site-settings/types";
 
-type LinkCollector = (type: MediaType, id: number | null | undefined, link: MediaLink) => void;
+type LinkCollector = (
+  type: MediaType,
+  id: number | null | undefined,
+  link: MediaLink,
+) => void;
 
 const fallbackLabel = (value: string | undefined | null, fallback: string) =>
   value && value.trim().length > 0 ? value : fallback;
@@ -47,7 +51,10 @@ function addEventLinks(events: Event[], addLink: LinkCollector) {
   events.forEach((event) => {
     const title = fallbackLabel(event.title, `Evento #${event.id}`);
     if (event.featured_media?.id) {
-      addLink("image", event.featured_media.id, { label: "Evento", subtitle: title });
+      addLink("image", event.featured_media.id, {
+        label: "Evento",
+        subtitle: title,
+      });
     }
     (event.attachments || []).forEach((attachment) => {
       addLink("document", attachment.id, { label: "Evento", subtitle: title });
@@ -59,7 +66,10 @@ function addPlaceLinks(places: Place[], addLink: LinkCollector) {
   places.forEach((place) => {
     const title = fallbackLabel(place.title, `Lugar #${place.id}`);
     if (place.featured_media?.id) {
-      addLink("image", place.featured_media.id, { label: "Lugar", subtitle: title });
+      addLink("image", place.featured_media.id, {
+        label: "Lugar",
+        subtitle: title,
+      });
     }
     (place.attachments || []).forEach((attachment) => {
       addLink("document", attachment.id, { label: "Lugar", subtitle: title });
@@ -87,8 +97,14 @@ function addStaticPageLinks(pages: StaticPage[], addLink: LinkCollector) {
 
 function addSiteSettingsLinks(settings: SiteSettings, addLink: LinkCollector) {
   addLink("image", settings.logo?.id, { label: "Ajustes", subtitle: "Logo" });
-  addLink("image", settings.logo_dark?.id, { label: "Ajustes", subtitle: "Logo dark" });
-  addLink("image", settings.favicon?.id, { label: "Ajustes", subtitle: "Favicon" });
+  addLink("image", settings.logo_dark?.id, {
+    label: "Ajustes",
+    subtitle: "Logo dark",
+  });
+  addLink("image", settings.favicon?.id, {
+    label: "Ajustes",
+    subtitle: "Favicon",
+  });
   addLink("image", settings.default_og_image?.id, {
     label: "Ajustes",
     subtitle: "OG image",
@@ -133,11 +149,12 @@ export function MediaPage() {
   const fetchMedia = async () => {
     try {
       setLoading(true);
-      const [images, documents] = await Promise.all([
+      const [images, documents, videos] = await Promise.all([
         mediaApi.listImages(),
         mediaApi.listDocuments(),
+        mediaApi.listVideos(),
       ]);
-      const merged = [...images, ...documents];
+      const merged = [...images, ...documents, ...videos];
       setItems(merged);
       setLinkedMap(await loadLinkedMap());
       setError(null);
@@ -159,17 +176,24 @@ export function MediaPage() {
       ]);
 
     const linked: Record<string, MediaLink[]> = {};
-    const addLink = (type: MediaType, id: number | null | undefined, link: MediaLink) => {
+    const addLink = (
+      type: MediaType,
+      id: number | null | undefined,
+      link: MediaLink,
+    ) => {
       if (!id) return;
       const key = `${type}-${id}`;
       if (!linked[key]) linked[key] = [];
       linked[key].push(link);
     };
 
-    const events = eventsResult.status === "fulfilled" ? eventsResult.value : [];
-    const places = placesResult.status === "fulfilled" ? placesResult.value : [];
+    const events =
+      eventsResult.status === "fulfilled" ? eventsResult.value : [];
+    const places =
+      placesResult.status === "fulfilled" ? placesResult.value : [];
     const pages = pagesResult.status === "fulfilled" ? pagesResult.value : [];
-    const settings = settingsResult.status === "fulfilled" ? settingsResult.value : null;
+    const settings =
+      settingsResult.status === "fulfilled" ? settingsResult.value : null;
 
     addEventLinks(events, addLink);
     addPlaceLinks(places, addLink);
@@ -301,7 +325,11 @@ export function MediaPage() {
           Página {page} de {totalPages} • {filtered.length} resultados
         </span>
         <div className="w-full md:w-auto">
-          <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+          />
         </div>
       </div>
 

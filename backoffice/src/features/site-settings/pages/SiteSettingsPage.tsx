@@ -5,23 +5,24 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
-  LayoutPanelTop,
   Palette,
   Phone,
   Plug,
   Search,
   Share2,
-  TriangleAlert,
   Video,
+  Image as ImageIcon,
+  LayoutPanelTop,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { siteSettingsApi } from "../api/siteSettings";
-import { StaticPage } from "@/features/static-pages/types";
 import { staticPagesApi } from "@/features/static-pages/api/staticPages";
+import { StaticPage } from "@/features/static-pages/types";
 import { toast } from "sonner";
 import { Textarea } from "@/components/ui/textarea";
+import { ImageSelector } from "@/features/media/components/ImageSelector";
+import { VideoSelector } from "@/features/media/components/VideoSelector";
+import { MediaItem } from "@/features/media/types";
 
 type FormState = ReturnType<typeof mapDefaults>;
 
@@ -62,32 +63,50 @@ function mapDefaults() {
 
 export function SiteSettingsPage() {
   const [form, setForm] = useState<FormState>(mapDefaults());
+  const [previews, setPreviews] = useState<Record<string, string | null>>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [staticPages, setStaticPages] = useState<StaticPage[]>([]);
+
+  const [activeImageField, setActiveImageField] = useState<
+    keyof FormState | null
+  >(null);
+  const [videoSelectorOpen, setVideoSelectorOpen] = useState(false);
 
   useEffect(() => {
     const load = async () => {
       try {
         setLoading(true);
         setError(null);
-        const [settings, pages] = await Promise.all([siteSettingsApi.get(), staticPagesApi.list()]);
+        const [settings, pages] = await Promise.all([
+          siteSettingsApi.get(),
+          staticPagesApi.list(),
+        ]);
         setStaticPages(pages);
+
         setForm((prev) => ({
           ...prev,
           ...settings,
-          logo_id: settings.logo_id ?? null,
-          logo_dark_id: settings.logo_dark_id ?? null,
-          favicon_id: settings.favicon_id ?? null,
+          logo_id: settings.logo?.id ?? null,
+          logo_dark_id: settings.logo_dark?.id ?? null,
+          favicon_id: settings.favicon?.id ?? null,
           privacy_page_id: settings.privacy_page_id ?? null,
           cookies_page_id: settings.cookies_page_id ?? null,
           legal_page_id: settings.legal_page_id ?? null,
           inclusion_page_id: settings.inclusion_page_id ?? null,
-          default_og_image_id: settings.default_og_image_id ?? null,
+          default_og_image_id: settings.default_og_image?.id ?? null,
           video_enabled: settings.video_enabled ?? true,
-          background_video_id: settings.background_video_id ?? null,
+          background_video_id: settings.background_video?.id ?? null,
         }));
+
+        setPreviews({
+          logo_id: settings.logo?.file ?? null,
+          logo_dark_id: settings.logo_dark?.file ?? null,
+          favicon_id: settings.favicon?.file ?? null,
+          default_og_image_id: settings.default_og_image?.file ?? null,
+          background_video_id: settings.background_video?.file ?? null,
+        });
       } catch (err) {
         console.error(err);
         setError("No se pudieron cargar las configuraciones");
@@ -102,6 +121,18 @@ export function SiteSettingsPage() {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
+  const handleImageSelect = (image: MediaItem) => {
+    if (!activeImageField) return;
+    handleChange(activeImageField, image.id);
+    setPreviews((prev) => ({ ...prev, [activeImageField]: image.file }));
+    setActiveImageField(null);
+  };
+
+  const handleVideoSelect = (video: MediaItem) => {
+    handleChange("background_video_id", video.id);
+    setPreviews((prev) => ({ ...prev, background_video_id: video.file }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
@@ -110,7 +141,7 @@ export function SiteSettingsPage() {
       toast.success("Configuración guardada");
     } catch (err) {
       console.error(err);
-      toast.error("No se pudo guardar la configuración");
+      toast.error("No se pudo guardar");
     } finally {
       setSaving(false);
     }
@@ -129,288 +160,451 @@ export function SiteSettingsPage() {
     };
   }, [staticPages]);
 
+  const ImageField = ({
+    label,
+    field,
+  }: {
+    label: string;
+    field: keyof FormState;
+  }) => (
+    <div className="space-y-2">
+      <Label>{label}</Label>
+      <div className="flex items-center gap-4">
+        <div
+          className="relative h-20 w-20 shrink-0 overflow-hidden rounded-md border border-border bg-muted/50 flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
+          onClick={() => setActiveImageField(field)}
+        >
+          {previews[field] ? (
+            <img
+              src={previews[field]!}
+              alt={label}
+              className="h-full w-full object-contain p-1"
+            />
+          ) : (
+            <ImageIcon className="h-8 w-8 text-muted-foreground/50" />
+          )}
+        </div>
+        <div className="flex flex-col gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setActiveImageField(field)}
+          >
+            Seleccionar
+          </Button>
+          {form[field] && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="text-destructive hover:text-destructive h-auto py-1"
+              onClick={() => {
+                handleChange(field, null);
+                setPreviews((prev) => ({ ...prev, [field]: null }));
+              }}
+            >
+              Quitar
+            </Button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <PageContainer>
-      <PageHeader title="Site settings" description="Configura branding, contacto, redes e integraciones públicas." />
-
-      <Alert variant="destructive" className="mb-4 w-3/4">
-        <TriangleAlert className="h-4 w-4" />
-        <AlertTitle>Header/Footer en BETA</AlertTitle>
-        <AlertDescription className="text-sm">
-          Los enlaces legales y la visualización del footer pueden requerir ajustes en frontend. Revisa después de guardar.
-        </AlertDescription>
-      </Alert>
+      <PageHeader
+        title="Site settings"
+        description="Configura branding, contacto, redes e integraciones públicas."
+      />
 
       <Card className="border-border bg-card">
         <CardContent className="p-6">
           {loading ? (
-            <div className="flex h-32 items-center justify-center text-muted-foreground">Cargando...</div>
+            <div className="flex h-32 items-center justify-center text-muted-foreground">
+              Cargando...
+            </div>
           ) : error ? (
             <div className="text-destructive">{error}</div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <section className="space-y-3 rounded-lg border border-border/60 bg-muted/20 p-4">
-                <div className="flex items-center gap-2">
-                  <Palette className="h-4 w-4 text-muted-foreground" />
-                  <h3 className="text-sm font-semibold text-foreground">Branding</h3>
+            <form onSubmit={handleSubmit} className="space-y-8">
+              {/* BRANDING */}
+              <section className="space-y-4">
+                <div className="flex items-center gap-2 border-b pb-2">
+                  <Palette className="h-5 w-5 text-primary" />
+                  <h3 className="text-lg font-medium">Branding</h3>
                 </div>
-                <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <Label>Nombre del sitio</Label>
-                  <Input value={form.site_name} onChange={(e) => handleChange("site_name", e.target.value)} />
-                </div>
-                <div className="space-y-2">
-                  <Label>Claim / Tagline</Label>
-                  <Input value={form.tagline} onChange={(e) => handleChange("tagline", e.target.value)} />
-                </div>
-                <div className="space-y-2">
-                  <Label>Logo (ID)</Label>
-                  <Input
-                    value={form.logo_id ?? ""}
-                    onChange={(e) => handleChange("logo_id", e.target.value ? Number(e.target.value) : null)}
-                    placeholder="ID de imagen"
+                <div className="grid gap-6 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label>Nombre del sitio</Label>
+                    <Input
+                      value={form.site_name}
+                      onChange={(e) =>
+                        handleChange("site_name", e.target.value)
+                      }
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Tagline</Label>
+                    <Input
+                      value={form.tagline}
+                      onChange={(e) => handleChange("tagline", e.target.value)}
+                    />
+                  </div>
+
+                  <ImageField label="Logotipo Principal" field="logo_id" />
+                  <ImageField label="Logotipo Oscuro" field="logo_dark_id" />
+                  <ImageField
+                    label="Icono del Sitio (Favicon)"
+                    field="favicon_id"
                   />
-                  <p className="text-xs text-muted-foreground">
-                    Solo introduce el ID de la imagen (no se listan todas para evitar cargas masivas).
-                  </p>
-                </div>
-                <div className="space-y-2">
-                  <Label>Logo (dark) ID</Label>
-                  <Input
-                    value={form.logo_dark_id ?? ""}
-                    onChange={(e) => handleChange("logo_dark_id", e.target.value ? Number(e.target.value) : null)}
-                    placeholder="ID de imagen"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Favicon (ID)</Label>
-                  <Input
-                    value={form.favicon_id ?? ""}
-                    onChange={(e) => handleChange("favicon_id", e.target.value ? Number(e.target.value) : null)}
-                    placeholder="ID de imagen"
-                  />
-                </div>
                 </div>
               </section>
 
-              <section className="space-y-3 rounded-lg border border-border/60 bg-muted/20 p-4">
-                <div className="flex items-center gap-2">
-                  <Phone className="h-4 w-4 text-muted-foreground" />
-                  <h3 className="text-sm font-semibold text-foreground">Contacto</h3>
+              {/* CONTACTO */}
+              <section className="space-y-4">
+                <div className="flex items-center gap-2 border-b pb-2">
+                  <Phone className="h-5 w-5 text-primary" />
+                  <h3 className="text-lg font-medium">Contacto</h3>
                 </div>
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-2">
                     <Label>Teléfono</Label>
-                    <Input value={form.phone} onChange={(e) => handleChange("phone", e.target.value)} />
+                    <Input
+                      value={form.phone}
+                      onChange={(e) => handleChange("phone", e.target.value)}
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label>Email soporte</Label>
-                    <Input value={form.support_email} onChange={(e) => handleChange("support_email", e.target.value)} />
+                    <Input
+                      value={form.support_email}
+                      onChange={(e) =>
+                        handleChange("support_email", e.target.value)
+                      }
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label>Email contacto</Label>
-                    <Input value={form.contact_email} onChange={(e) => handleChange("contact_email", e.target.value)} />
+                    <Input
+                      value={form.contact_email}
+                      onChange={(e) =>
+                        handleChange("contact_email", e.target.value)
+                      }
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label>Dirección</Label>
-                    <Input value={form.address} onChange={(e) => handleChange("address", e.target.value)} />
+                    <Input
+                      value={form.address}
+                      onChange={(e) => handleChange("address", e.target.value)}
+                    />
                   </div>
                   <div className="space-y-2 md:col-span-2">
                     <Label>Horario</Label>
-                    <Input value={form.schedule} onChange={(e) => handleChange("schedule", e.target.value)} />
+                    <Input
+                      value={form.schedule}
+                      onChange={(e) => handleChange("schedule", e.target.value)}
+                    />
                   </div>
                 </div>
               </section>
 
-              <section className="space-y-3 rounded-lg border border-border/60 bg-muted/20 p-4">
-                <div className="flex items-center gap-2">
-                  <Share2 className="h-4 w-4 text-muted-foreground" />
-                  <h3 className="text-sm font-semibold text-foreground">Redes sociales</h3>
+              {/* REDES SOCIALES */}
+              <section className="space-y-4">
+                <div className="flex items-center gap-2 border-b pb-2">
+                  <Share2 className="h-5 w-5 text-primary" />
+                  <h3 className="text-lg font-medium">Redes Sociales</h3>
                 </div>
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-2">
                     <Label>Facebook</Label>
-                    <Input value={form.facebook_url} onChange={(e) => handleChange("facebook_url", e.target.value)} />
+                    <Input
+                      value={form.facebook_url}
+                      onChange={(e) =>
+                        handleChange("facebook_url", e.target.value)
+                      }
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label>Instagram</Label>
-                    <Input value={form.instagram_url} onChange={(e) => handleChange("instagram_url", e.target.value)} />
+                    <Input
+                      value={form.instagram_url}
+                      onChange={(e) =>
+                        handleChange("instagram_url", e.target.value)
+                      }
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label>Twitter/X</Label>
-                    <Input value={form.twitter_url} onChange={(e) => handleChange("twitter_url", e.target.value)} />
+                    <Input
+                      value={form.twitter_url}
+                      onChange={(e) =>
+                        handleChange("twitter_url", e.target.value)
+                      }
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label>YouTube</Label>
-                    <Input value={form.youtube_url} onChange={(e) => handleChange("youtube_url", e.target.value)} />
+                    <Input
+                      value={form.youtube_url}
+                      onChange={(e) =>
+                        handleChange("youtube_url", e.target.value)
+                      }
+                    />
                   </div>
                 </div>
               </section>
 
-              <section className="space-y-3 rounded-lg border border-border/60 bg-muted/20 p-4">
-                <div className="flex items-center gap-2">
-                  <Plug className="h-4 w-4 text-muted-foreground" />
-                  <h3 className="text-sm font-semibold text-foreground">Integraciones públicas</h3>
+              {/* VIDEO HERO */}
+              <section className="space-y-4">
+                <div className="flex items-center gap-2 border-b pb-2">
+                  <Video className="h-5 w-5 text-primary" />
+                  <h3 className="text-lg font-medium">Vídeo Hero</h3>
+                </div>
+                <div className="rounded-lg border border-border bg-card p-4 space-y-6">
+                  <div className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm bg-muted/20">
+                    <div className="space-y-0.5">
+                      <Label className="text-base font-semibold">
+                        Activar Vídeo
+                      </Label>
+                      <p className="text-xs text-muted-foreground">
+                        Se mostrará en el fondo de la portada (Hero)
+                      </p>
+                    </div>
+                    <Switch
+                      checked={!!form.video_enabled}
+                      onCheckedChange={(checked) =>
+                        handleChange("video_enabled", checked)
+                      }
+                      className="data-[state=checked]:bg-primary"
+                    />
+                  </div>
+
+                  {form.video_enabled && (
+                    <div className="grid md:grid-cols-2 gap-6 pt-2">
+                      <div className="aspect-video bg-black rounded-lg overflow-hidden relative group border border-border">
+                        {previews.background_video_id ? (
+                          <video
+                            src={previews.background_video_id}
+                            className="w-full h-full object-cover"
+                            autoPlay
+                            muted
+                            loop
+                            playsInline
+                          />
+                        ) : (
+                          <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
+                            <Video className="h-10 w-10 mb-2 opacity-50" />
+                            <span className="text-xs">
+                              Sin vídeo seleccionado
+                            </span>
+                          </div>
+                        )}
+                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <Button
+                            type="button"
+                            variant="secondary"
+                            onClick={() => setVideoSelectorOpen(true)}
+                          >
+                            Cambiar Vídeo
+                          </Button>
+                        </div>
+                      </div>
+                      <div className="space-y-4">
+                        <div className="space-y-2">
+                          <Label>Título (Accesibilidad)</Label>
+                          <Input
+                            value={form.video_title}
+                            onChange={(e) =>
+                              handleChange("video_title", e.target.value)
+                            }
+                            placeholder="Descripción del vídeo..."
+                          />
+                        </div>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="w-full"
+                          onClick={() => setVideoSelectorOpen(true)}
+                        >
+                          Seleccionar de la librería
+                        </Button>
+                        <p className="text-xs text-muted-foreground">
+                          Se recomienda formato MP4, sin audio y tamaño menor a
+                          10MB.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </section>
+
+              {/* INTEGRACIONES */}
+              <section className="space-y-4">
+                <div className="flex items-center gap-2 border-b pb-2">
+                  <Plug className="h-5 w-5 text-primary" />
+                  <h3 className="text-lg font-medium">Integraciones</h3>
                 </div>
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-2">
-                    <Label>Maps base URL</Label>
-                    <Input value={form.maps_base_url} onChange={(e) => handleChange("maps_base_url", e.target.value)} />
+                    <Label>Maps URL</Label>
+                    <Input
+                      value={form.maps_base_url}
+                      onChange={(e) =>
+                        handleChange("maps_base_url", e.target.value)
+                      }
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label>Analytics ID</Label>
-                    <Input value={form.analytics_id} onChange={(e) => handleChange("analytics_id", e.target.value)} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Captcha site key</Label>
-                    <Input value={form.captcha_site_key} onChange={(e) => handleChange("captcha_site_key", e.target.value)} />
-                  </div>
-                </div>
-              </section>
-
-              <section className="space-y-3 rounded-lg border border-border/60 bg-muted/20 p-4">
-                <div className="flex items-center gap-2">
-                  <Video className="h-4 w-4 text-muted-foreground" />
-                  <h3 className="text-sm font-semibold text-foreground">Vídeo hero</h3>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Usa un vídeo propio (ID) o un enlace de YouTube. El vídeo interno se reproduce sin sonido como fondo.
-                </p>
-                <div className="grid gap-4 md:grid-cols-2">
-                  <label className="flex items-center justify-between rounded-lg border border-border/60 bg-background px-3 py-2 text-sm md:col-span-2">
-                    <span>Activar vídeo de fondo (hero)</span>
-                    <Switch
-                      checked={!!form.video_enabled}
-                      onCheckedChange={(checked) => handleChange("video_enabled", checked)}
-                    />
-                  </label>
-                  <div className="space-y-2">
-                    <Label>Video ID (interno)</Label>
                     <Input
-                      value={form.background_video_id ?? ""}
-                      onChange={(e) => handleChange("background_video_id", e.target.value ? Number(e.target.value) : null)}
-                      placeholder="ID de VideoFile"
+                      value={form.analytics_id}
+                      onChange={(e) =>
+                        handleChange("analytics_id", e.target.value)
+                      }
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>Youtube URL</Label>
+                    <Label>Captcha Key</Label>
                     <Input
-                      value={form.youtube_url || ""}
-                      onChange={(e) => handleChange("youtube_url", e.target.value)}
-                      placeholder="https://www.youtube.com/watch?v=..."
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Título interno</Label>
-                    <Input
-                      value={form.video_title || ""}
-                      onChange={(e) => handleChange("video_title", e.target.value)}
-                      placeholder="Vídeo Cabrera de Mar"
-                    />
-                  </div>
-                  <div className="space-y-2 md:col-span-2">
-                    <Label>Descripción interna</Label>
-                    <Textarea
-                      value={form.video_description_internal || ""}
-                      onChange={(e) => handleChange("video_description_internal", e.target.value)}
-                      rows={3}
+                      value={form.captcha_site_key}
+                      onChange={(e) =>
+                        handleChange("captcha_site_key", e.target.value)
+                      }
                     />
                   </div>
                 </div>
               </section>
 
-              <section className="space-y-3 rounded-lg border border-border/60 bg-muted/20 p-4">
-                <div className="flex items-center gap-2">
-                  <LayoutPanelTop className="h-4 w-4 text-muted-foreground" />
-                  <h3 className="text-sm font-semibold text-foreground">Header/Footer (BETA)</h3>
-                  <Badge>Beta</Badge>
+              {/* HEADER / FOOTER */}
+              <section className="space-y-4">
+                <div className="flex items-center gap-2 border-b pb-2">
+                  <LayoutPanelTop className="h-5 w-5 text-primary" />
+                  <h3 className="text-lg font-medium">Header / Footer</h3>
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  Ajusta con cuidado: estos enlaces se usan en el header/footer público.
-                </p>
                 <div className="grid gap-4 md:grid-cols-2">
-                  <label className="flex items-center justify-between rounded-lg border border-border/60 bg-background px-3 py-2 text-sm">
-                    <span>Mostrar selector de idioma</span>
+                  <label className="flex items-center justify-between rounded-lg border border-border p-3">
+                    <span className="text-sm font-medium">
+                      Selector de idioma
+                    </span>
                     <Switch
                       checked={!!form.show_language_switcher}
-                      onCheckedChange={(checked) => handleChange("show_language_switcher", checked)}
+                      onCheckedChange={(checked) =>
+                        handleChange("show_language_switcher", checked)
+                      }
                     />
                   </label>
-                  <label className="flex items-center justify-between rounded-lg border border-border/60 bg-background px-3 py-2 text-sm">
-                    <span>Mostrar redes en footer</span>
+                  <label className="flex items-center justify-between rounded-lg border border-border p-3">
+                    <span className="text-sm font-medium">Redes en footer</span>
                     <Switch
                       checked={!!form.show_social_footer}
-                      onCheckedChange={(checked) => handleChange("show_social_footer", checked)}
+                      onCheckedChange={(checked) =>
+                        handleChange("show_social_footer", checked)
+                      }
                     />
                   </label>
-                  {(() => {
-                    const fieldConfigs = [
-                      ["privacy_page_id", "Página de privacidad", optionsByTemplate.privacy],
-                      ["cookies_page_id", "Página de cookies", optionsByTemplate.cookies],
-                      ["legal_page_id", "Avís legal", optionsByTemplate.legal_notice],
-                      ["inclusion_page_id", "Diversitat i inclusió", optionsByTemplate.inclusion],
-                    ] as const;
-                    return fieldConfigs.map(([field, label, opts]) => (
-                      <div key={field} className="space-y-2">
-                        <Label>{label}</Label>
-                        <select
-                          value={(form as any)[field] ?? ""}
-                          onChange={(e) => handleChange(field as keyof FormState, e.target.value ? Number(e.target.value) : null)}
-                          className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
-                        >
-                          <option value="">Sin asignar</option>
-                          {opts.map((opt) => (
-                            <option key={opt.id} value={opt.id}>
-                              {opt.label}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    ));
-                  })()}
+
+                  {[
+                    [
+                      "privacy_page_id",
+                      "Privacidad",
+                      optionsByTemplate.privacy,
+                    ],
+                    ["cookies_page_id", "Cookies", optionsByTemplate.cookies],
+                    [
+                      "legal_page_id",
+                      "Aviso Legal",
+                      optionsByTemplate.legal_notice,
+                    ],
+                    [
+                      "inclusion_page_id",
+                      "Inclusión",
+                      optionsByTemplate.inclusion,
+                    ],
+                  ].map(([field, label, opts]: any) => (
+                    <div key={field} className="space-y-2">
+                      <Label>{label}</Label>
+                      <select
+                        value={(form as any)[field] ?? ""}
+                        onChange={(e) =>
+                          handleChange(
+                            field as keyof FormState,
+                            e.target.value ? Number(e.target.value) : null,
+                          )
+                        }
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                      >
+                        <option value="">Seleccionar página...</option>
+                        {opts.map((opt: any) => (
+                          <option key={opt.id} value={opt.id}>
+                            {opt.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  ))}
                 </div>
               </section>
 
-              <section className="space-y-3 rounded-lg border border-border/60 bg-muted/20 p-4">
-                <div className="flex items-center gap-2">
-                  <Search className="h-4 w-4 text-muted-foreground" />
-                  <h3 className="text-sm font-semibold text-foreground">SEO por defecto</h3>
+              {/* SEO */}
+              <section className="space-y-4">
+                <div className="flex items-center gap-2 border-b pb-2">
+                  <Search className="h-5 w-5 text-primary" />
+                  <h3 className="text-lg font-medium">SEO Default</h3>
                 </div>
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-2">
                     <Label>Metatítulo</Label>
-                    <Input value={form.default_metatitle} onChange={(e) => handleChange("default_metatitle", e.target.value)} />
+                    <Input
+                      value={form.default_metatitle}
+                      onChange={(e) =>
+                        handleChange("default_metatitle", e.target.value)
+                      }
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label>Metadescripción</Label>
                     <Textarea
                       value={form.default_metadescription}
-                      onChange={(e) => handleChange("default_metadescription", e.target.value)}
+                      onChange={(e) =>
+                        handleChange("default_metadescription", e.target.value)
+                      }
                       rows={3}
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label>Imagen OG por defecto (ID)</Label>
-                    <Input
-                      value={form.default_og_image_id ?? ""}
-                      onChange={(e) =>
-                        handleChange("default_og_image_id", e.target.value ? Number(e.target.value) : null)
-                      }
-                      placeholder="ID de imagen"
+                  <div className="md:col-span-2">
+                    <ImageField
+                      label="Imagen OG por defecto"
+                      field="default_og_image_id"
                     />
                   </div>
                 </div>
               </section>
 
-              <div className="flex justify-end">
-                <Button type="submit" disabled={saving}>
-                  {saving ? "Guardando..." : "Guardar cambios"}
+              <div className="sticky bottom-4 z-10 flex justify-end bg-background/80 p-4 backdrop-blur-sm border rounded-lg shadow-sm">
+                <Button type="submit" size="lg" disabled={saving}>
+                  {saving ? "Guardando..." : "Guardar Configuración"}
                 </Button>
               </div>
             </form>
           )}
         </CardContent>
       </Card>
+
+      <ImageSelector
+        open={!!activeImageField}
+        onOpenChange={(open) => !open && setActiveImageField(null)}
+        onSelect={handleImageSelect}
+      />
+
+      <VideoSelector
+        open={videoSelectorOpen}
+        onOpenChange={setVideoSelectorOpen}
+        value={form.background_video_id}
+        onSelect={handleVideoSelect}
+      />
     </PageContainer>
   );
 }

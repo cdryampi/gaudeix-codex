@@ -49,6 +49,7 @@ export function MediaFilters({
             <option value="all">Todos</option>
             <option value="image">Imágenes</option>
             <option value="document">Documentos</option>
+            <option value="video">Vídeos</option>
           </select>
         </div>
 

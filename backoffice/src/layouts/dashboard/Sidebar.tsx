@@ -33,14 +33,13 @@ const panelNavigation: NavItem[] = [
 
 const contentNavigation: NavItem[] = [
   { name: "Events", href: ROUTES.EVENTS, icon: FileText },
+  { name: "Lugares", href: ROUTES.PLACES, icon: MapPin },
   { name: "Categorías", href: ROUTES.CATEGORIES, icon: FolderOpen },
   { name: "Comentarios", href: "/comentarios", icon: MessageSquare },
 ];
 
 const mediaNavigation: NavItem[] = [
   { name: "Media", href: ROUTES.MEDIA, icon: Image },
-  { name: "Eventos", href: "/eventos-calendario", icon: Calendar },
-  { name: "Lugares", href: ROUTES.PLACES, icon: MapPin },
 ];
 
 const systemNavigation: NavItem[] = [
@@ -56,7 +55,13 @@ const systemNavigation: NavItem[] = [
 export function Sidebar() {
   const location = useLocation();
 
-  const NavSection = ({ title, items }: { title?: string; items: NavItem[] }) => (
+  const NavSection = ({
+    title,
+    items,
+  }: {
+    title?: string;
+    items: NavItem[];
+  }) => (
     <div className="mb-6">
       {title && (
         <h3 className="mb-2 px-4 text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
@@ -79,7 +84,9 @@ export function Sidebar() {
             >
               <Icon
                 className={`h-5 w-5 shrink-0 transition-colors ${
-                  isActive ? "text-primary-600 dark:text-primary-400" : "text-gray-400 group-hover:text-gray-600 dark:text-gray-500 dark:group-hover:text-gray-300"
+                  isActive
+                    ? "text-primary-600 dark:text-primary-400"
+                    : "text-gray-400 group-hover:text-gray-600 dark:text-gray-500 dark:group-hover:text-gray-300"
                 }`}
               />
               {item.name}
@@ -95,7 +102,9 @@ export function Sidebar() {
       {/* Brand Header */}
       <div className="flex h-24 items-center justify-center border-b border-gray-100 px-6 dark:border-gray-800">
         <div className="flex h-[3.75rem] w-[7.5rem] items-center justify-center rounded-lg bg-primary/10 p-2">
-          <span className="text-xl font-bold text-primary-600 dark:text-primary-400">GAUDEIX</span>
+          <span className="text-xl font-bold text-primary-600 dark:text-primary-400">
+            GAUDEIX
+          </span>
         </div>
       </div>
 
@@ -103,14 +112,19 @@ export function Sidebar() {
       <nav className="custom-scrollbar flex-1 overflow-y-auto py-6">
         <NavSection title="Dashboard" items={panelNavigation} />
         <NavSection title="Gestión de Contenido" items={contentNavigation} />
-        <NavSection title="Media & Lugares" items={mediaNavigation} />
-        <NavSection title="Configuración del Sistema" items={systemNavigation} />
+        <NavSection title="Media" items={mediaNavigation} />
+        <NavSection
+          title="Configuración del Sistema"
+          items={systemNavigation}
+        />
       </nav>
 
       {/* Footer Info */}
       <div className="border-t border-gray-100 p-4 dark:border-gray-800">
         <div className="rounded-lg bg-gray-50 p-3 text-xs text-gray-500 dark:bg-gray-800/50 dark:text-gray-400">
-          <p className="font-medium text-gray-900 dark:text-gray-200">Estado del Sistema</p>
+          <p className="font-medium text-gray-900 dark:text-gray-200">
+            Estado del Sistema
+          </p>
           <div className="mt-2 flex items-center gap-2">
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75"></span>
