@@ -1,48 +1,27 @@
 import { useEffect, useState } from "react";
-import { LogIn } from "lucide-react";
+import { LogIn, ChevronDown, Navigation, User } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 import { HEADER_NAV, type HeaderNavItem } from "@/data/headerNav";
 import { useAuthStore } from "@/features/auth/store";
-import { SocialMediaBar } from "@/features/social/components/SocialMediaBar";
-import { TicketCTA } from "@/features/tickets/components/TicketCTA";
 import logoCabrera from "@/assets/logo/logo-cabrera-white.png";
-
-const LANGUAGES = [
-  { code: "es", label: "ES" },
-  { code: "ca", label: "CA" },
-  { code: "en", label: "EN" },
-];
 
 export function SiteHeader({
   siteName = "Cabrera de Mar",
+  isTransparent = false,
 }: {
   siteName?: string;
+  isTransparent?: boolean;
 }) {
   const navItems: HeaderNavItem[] = HEADER_NAV;
   const user = useAuthStore((state) => state.user);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const logout = useAuthStore((state) => state.logout);
-  const [scrolled, setScrolled] = useState(false);
   const { pathname } = useLocation();
 
-  const isHeroPage =
-    pathname === "/" ||
-    pathname.startsWith("/agenda/") ||
-    pathname.startsWith("/noticias/");
-  const isTransparent = isHeroPage && !scrolled;
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
   return (
-    <header
-      className={`fixed top-0 z-[1000] w-full h-20 transition-all duration-500 ${
+    <div
+      className={`w-full h-24 transition-all duration-500 ${
         isTransparent
           ? "bg-transparent"
           : "bg-white/90 backdrop-blur-2xl border-b border-slate-100 shadow-xl"
@@ -63,64 +42,101 @@ export function SiteHeader({
         </Link>
 
         {/* NAVIGATION */}
-        <nav className="hidden lg:flex items-center gap-8">
+        <nav className="hidden lg:flex items-center gap-12">
           {navItems.map((item, idx) => (
-            <Link
-              key={idx}
-              to={item.href || "/"}
-              className={`text-[10px] font-black uppercase tracking-[0.2em] transition-colors ${
-                isTransparent
-                  ? "text-white/80 hover:text-white"
-                  : "text-slate-600 hover:text-primary"
-              }`}
-            >
-              {item.label}
-            </Link>
+            <div key={idx} className="group relative py-8">
+              <Link
+                to={item.href || "#"}
+                className={`flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.25em] transition-all hover:scale-105 ${
+                  isTransparent
+                    ? "text-white hover:text-white"
+                    : "text-slate-900 hover:text-primary"
+                }`}
+              >
+                {item.label}
+                {item.children && (
+                  <ChevronDown
+                    className={`h-3 w-3 opacity-30 group-hover:rotate-180 transition-transform duration-300`}
+                  />
+                )}
+              </Link>
+
+              {/* Submenu */}
+              {item.children && (
+                <div className="absolute top-full left-0 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2 z-50">
+                  <div className="bg-white rounded-[2rem] shadow-[0_20px_80px_rgba(0,0,0,0.15)] border border-slate-50 p-8 min-w-[280px] grid gap-6">
+                    {item.children.map((child, cIdx) => (
+                      <div key={cIdx} className="space-y-4">
+                        <Link
+                          to={child.href || "#"}
+                          className="block text-[10px] font-black uppercase tracking-widest text-slate-900 hover:text-primary transition-colors"
+                        >
+                          {child.label}
+                        </Link>
+                        {child.children && (
+                          <div className="pl-4 border-l-2 border-slate-100 space-y-3">
+                            {child.children.map((subChild, scIdx) => (
+                              <Link
+                                key={scIdx}
+                                to={subChild.href || "#"}
+                                className="block text-[9px] font-bold text-slate-400 hover:text-primary transition-colors uppercase tracking-widest"
+                              >
+                                {subChild.label}
+                              </Link>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           ))}
         </nav>
 
         {/* ACTIONS */}
-        <div className="flex items-center gap-4">
-          <SocialMediaBar scrolled={!isTransparent} />
-
-          <TicketCTA scrolled={!isTransparent} className="hidden md:flex" />
-
-          {/* Simple Language Switcher */}
-          <div
-            className={`flex p-1 rounded-xl backdrop-blur-md border ${isTransparent ? "border-white/10" : "border-slate-200"}`}
+        <div className="flex items-center gap-6">
+          <Link
+            to="/como-llegar"
+            className={`hidden md:flex items-center gap-2 px-6 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${
+              isTransparent
+                ? "bg-white/10 text-white hover:bg-white/20 border border-white/10"
+                : "bg-primary/5 text-primary hover:bg-primary/10 border border-primary/10"
+            }`}
           >
-            {LANGUAGES.map((lang) => (
-              <button
-                key={lang.code}
-                className={`px-3 py-1.5 text-[10px] font-black rounded-lg transition-all ${
-                  !isTransparent
-                    ? lang.code === "es"
-                      ? "bg-primary text-white"
-                      : "text-slate-500 hover:bg-slate-100"
-                    : lang.code === "es"
-                      ? "bg-white/20 text-white"
-                      : "text-white/50 hover:bg-white/10"
-                }`}
-              >
-                {lang.label}
-              </button>
-            ))}
-          </div>
+            <Navigation className="h-3.5 w-3.5" />
+            Llegar
+          </Link>
 
           {isAuthenticated ? (
-            <button
-              onClick={() => logout()}
-              className="h-10 px-4 rounded-xl bg-red-600 text-white text-[10px] font-black uppercase tracking-widest hover:bg-red-700 transition-colors"
-            >
-              SESIÓN
-            </button>
+            <div className="flex items-center gap-4">
+              <div
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl ${isTransparent ? "bg-white/10" : "bg-slate-50"}`}
+              >
+                <User
+                  className={`h-4 w-4 ${isTransparent ? "text-white" : "text-primary"}`}
+                />
+                <span
+                  className={`text-[10px] font-black uppercase tracking-widest ${isTransparent ? "text-white" : "text-slate-900"}`}
+                >
+                  {user?.username}
+                </span>
+              </div>
+              <button
+                onClick={() => logout()}
+                className="h-11 px-6 rounded-xl bg-red-600 text-white text-[10px] font-black uppercase tracking-widest hover:bg-red-700 transition-colors shadow-lg shadow-red-600/20"
+              >
+                SALIR
+              </button>
+            </div>
           ) : (
             <Link
               to="/login"
-              className={`flex h-10 items-center gap-3 px-6 rounded-xl transition-all font-black text-xs uppercase tracking-widest ${
+              className={`flex h-11 items-center gap-3 px-8 rounded-xl transition-all font-black text-[10px] uppercase tracking-widest ${
                 !isTransparent
-                  ? "bg-slate-900 text-white shadow-lg"
-                  : "bg-white/20 text-white backdrop-blur-md border border-white/10"
+                  ? "bg-slate-900 text-white shadow-xl shadow-slate-900/20 hover:bg-primary"
+                  : "bg-white text-slate-900 shadow-xl hover:scale-105"
               }`}
             >
               <LogIn className="h-4 w-4" />
@@ -129,6 +145,6 @@ export function SiteHeader({
           )}
         </div>
       </div>
-    </header>
+    </div>
   );
 }

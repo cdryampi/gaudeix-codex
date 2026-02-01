@@ -70,7 +70,7 @@ def test_event_checkin_endpoints(events_singleton):
     client = APIClient()
     client.force_authenticate(user=user)
 
-    checkin_url = reverse("event-checkin", kwargs={"pk": event.pk})
+    checkin_url = reverse("event-checkin", kwargs={"slug": event.slug})
     response = client.post(checkin_url, {}, format="json")
 
     assert response.status_code == status.HTTP_201_CREATED
@@ -79,7 +79,7 @@ def test_event_checkin_endpoints(events_singleton):
     second_response = client.post(checkin_url, {}, format="json")
     assert second_response.status_code == status.HTTP_400_BAD_REQUEST
 
-    my_checkin_url = reverse("event-my-checkin", kwargs={"pk": event.pk})
+    my_checkin_url = reverse("event-my-checkin", kwargs={"slug": event.slug})
     my_checkin_response = client.get(my_checkin_url)
 
     assert my_checkin_response.status_code == status.HTTP_200_OK

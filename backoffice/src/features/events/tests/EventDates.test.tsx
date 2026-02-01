@@ -42,7 +42,7 @@ describe("EventDialog Logic", () => {
   });
 
   test("adds a date", async () => {
-    render(
+    const { container } = render(
       <EventDialog
         open={true}
         onOpenChange={mockOnOpenChange}
@@ -50,10 +50,13 @@ describe("EventDialog Logic", () => {
       />,
     );
 
-    const datesTab = screen.getByRole("tab", { name: /fechas/i });
+    const datesTab = screen.getByRole("button", { name: /fechas/i });
     fireEvent.click(datesTab);
 
-    const startInput = screen.getByLabelText(/inicio/i);
+    // Label association is missing in component, using selector
+    const startInput = container.querySelector('input[type="datetime-local"]');
+    if (!startInput) throw new Error("Start date input not found");
+
     fireEvent.change(startInput, { target: { value: "2026-02-01T10:00" } });
 
     const addButton = screen.getByRole("button", { name: /registrar fecha/i });

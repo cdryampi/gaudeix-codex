@@ -1,35 +1,65 @@
 import { ReactNode, useEffect, useState } from "react";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
+import { SiteTopbar } from "@/components/site/SiteTopbar";
+import { useLocation } from "react-router-dom";
 import { apiGet } from "@/lib/api";
 
 interface MainLayoutProps {
   children: ReactNode;
 }
 
+interface SiteSettings {
+  site_name: string;
+  tagline: string;
+  is_alert_active?: boolean;
+}
+
 export function MainLayout({ children }: MainLayoutProps) {
-  const [settings, setSettings] = useState<{
-    site_name: string;
-    tagline: string;
-  } | null>(null);
+  const [settings, setSettings] = useState<SiteSettings | null>(null);
+  const [scrolled, setScrolled] = useState(false);
+  const { pathname } = useLocation();
+
+  const isHeroPage =
+    pathname === "/" ||
+    pathname.startsWith("/agenda/") ||
+    pathname.startsWith("/lugares/") ||
+    pathname.startsWith("/noticias/");
+  const isTransparent = isHeroPage && !scrolled;
 
   useEffect(() => {
     const load = async () => {
       try {
-        const site = await apiGet<{ site_name: string; tagline: string }>(
-          "/site-settings/",
-        );
+        const site = await apiGet<SiteSettings>("/site-settings/");
         setSettings(site);
       } catch (err) {
         console.warn("API not available for settings.", err);
       }
     };
     load();
+
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
     <div className="min-h-screen bg-white text-slate-900 selection:bg-accent selection:text-slate-950">
-      <SiteHeader siteName={settings?.site_name} />
+      {/* GLOBAL HEADER WRAPPER */}
+      <div className="fixed top-0 z-[1000] w-full">
+        <div
+          className={`transition-all duration-500 ease-in-out overflow-hidden ${scrolled ? "h-0 opacity-0" : "h-12 opacity-100"}`}
+        >
+          <SiteTopbar isTransparent={isTransparent} />
+        </div>
+        <SiteHeader
+          siteName={settings?.site_name}
+          isTransparent={isTransparent}
+        />
+      </div>
+
       <main className="relative">{children}</main>
       <SiteFooter />
     </div>

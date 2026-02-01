@@ -128,7 +128,7 @@ class PlaceViewSet(viewsets.ModelViewSet):
         return r * c
 
     @action(detail=True, methods=["post"], permission_classes=[IsAuthenticated])
-    def auto_translate(self, request, pk=None):
+    def auto_translate(self, request, slug=None):
         """
         Auto-translate place to all configured languages using LLM.
         """

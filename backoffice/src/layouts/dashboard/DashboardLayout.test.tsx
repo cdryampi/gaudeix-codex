@@ -8,8 +8,8 @@ describe("DashboardLayout", () => {
 
     expect(screen.getByText("Resumen")).toBeInTheDocument();
     expect(screen.getByText("Usuarios")).toBeInTheDocument();
-    expect(screen.getByText("Media")).toBeInTheDocument();
-    expect(screen.getByText("Eventos")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /media/i })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /eventos/i })).toBeInTheDocument();
   });
 
   it("renders header", () => {

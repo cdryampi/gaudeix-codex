@@ -14,6 +14,7 @@ import {
   Video,
   Image as ImageIcon,
   LayoutPanelTop,
+  BellRing,
 } from "lucide-react";
 import { siteSettingsApi } from "../api/siteSettings";
 import { staticPagesApi } from "@/features/static-pages/api/staticPages";
@@ -58,6 +59,12 @@ function mapDefaults() {
     default_metatitle: "",
     default_metadescription: "",
     default_og_image_id: null as number | null,
+    alert_enabled: false,
+    alert_message: "",
+    alert_type: "info" as "info" | "success" | "warning" | "danger",
+    alert_link: "",
+    alert_start_at: null as string | null,
+    alert_end_at: null as string | null,
   };
 }
 
@@ -354,6 +361,108 @@ export function SiteSettingsPage() {
                       }
                     />
                   </div>
+                </div>
+              </section>
+
+              <section className="space-y-4">
+                <div className="flex items-center gap-2 border-b pb-2">
+                  <BellRing className="h-5 w-5 text-primary" />
+                  <h3 className="text-lg font-medium">
+                    Avisos Globales / Emergencias
+                  </h3>
+                </div>
+                <div className="rounded-lg border border-border bg-card p-4 space-y-6">
+                  <div className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm bg-muted/20">
+                    <div className="space-y-0.5">
+                      <Label className="text-base font-semibold">
+                        Activar Aviso Global
+                      </Label>
+                      <p className="text-xs text-muted-foreground">
+                        Muestra una barra de alerta en toda la web.
+                      </p>
+                    </div>
+                    <Switch
+                      checked={!!form.alert_enabled}
+                      onCheckedChange={(checked) =>
+                        handleChange("alert_enabled", checked)
+                      }
+                    />
+                  </div>
+
+                  {form.alert_enabled && (
+                    <div className="grid gap-6">
+                      <div className="space-y-2">
+                        <Label>Mensaje del aviso</Label>
+                        <Textarea
+                          value={form.alert_message}
+                          onChange={(e) =>
+                            handleChange("alert_message", e.target.value)
+                          }
+                          placeholder="Escribe el mensaje urgente..."
+                          rows={3}
+                        />
+                      </div>
+                      <div className="grid md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <Label>Tipo de aviso</Label>
+                          <select
+                            value={form.alert_type}
+                            onChange={(e) =>
+                              handleChange("alert_type", e.target.value)
+                            }
+                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                          >
+                            <option value="info">Información (Azul)</option>
+                            <option value="success">Éxito (Verde)</option>
+                            <option value="warning">
+                              Advertencia (Naranja)
+                            </option>
+                            <option value="danger">
+                              Urgente/Peligro (Rojo)
+                            </option>
+                          </select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Enlace 'Saber más' (Opcional)</Label>
+                          <Input
+                            value={form.alert_link}
+                            onChange={(e) =>
+                              handleChange("alert_link", e.target.value)
+                            }
+                            placeholder="https://..."
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Fecha Inicio</Label>
+                          <Input
+                            type="datetime-local"
+                            value={
+                              form.alert_start_at
+                                ? form.alert_start_at.slice(0, 16)
+                                : ""
+                            }
+                            onChange={(e) =>
+                              handleChange("alert_start_at", e.target.value)
+                            }
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Fecha Fin</Label>
+                          <Input
+                            type="datetime-local"
+                            value={
+                              form.alert_end_at
+                                ? form.alert_end_at.slice(0, 16)
+                                : ""
+                            }
+                            onChange={(e) =>
+                              handleChange("alert_end_at", e.target.value)
+                            }
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </section>
 

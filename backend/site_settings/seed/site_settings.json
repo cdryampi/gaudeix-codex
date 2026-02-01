@@ -11,7 +11,10 @@
   "youtube_url": "https://www.youtube.com/ajuntamentcabrera",
   "twitter_url": "https://twitter.com/cabrerademar",
   "maps_base_url": "https://maps.google.com/?q=Cabrera+de+Mar",
+  "latitude": 41.5262,
+  "longitude": 2.3933,
   "analytics_id": "GAUDEIX-CA-0001",
+
   "captcha_site_key": "",
   "default_metatitle": "Gaudeix Cabrera de Mar",
   "default_metadescription": "Explora la riqueza cultural de Cabrera de Mar con nuestras propuestas. Descubre el arte, la historia y las tradiciones en esta localidad de la costa catalana.",
@@ -19,6 +22,11 @@
   "favicon_file": "favicon-32x32.png",
   "video_title": "Vídeo de fondo Cabrera de Mar",
   "video_description_internal": "Video silenciado para hero/background.",
+  "alert_enabled": true,
+  "alert_message": "Mantenimiento programado: No habrá servicio de trenes R1 hoy 29/01/2026 por obras en la vía.",
+  "alert_type": "warning",
+  "alert_start_at": "2026-01-28T00:00:00Z",
+  "alert_end_at": "2026-01-29T23:59:59Z",
   "link_pages_by_template": {
     "privacy_page": "privacy",
     "cookies_page": "cookies",

@@ -13,9 +13,9 @@ export interface Tag {
 export interface ImageFile {
   id: string;
   file: string;
-  thumbnail: string;
-  medium: string;
-  large: string;
+  variant_thumbnail: string;
+  variant_medium: string;
+  variant_large: string;
   title?: string;
 }
 

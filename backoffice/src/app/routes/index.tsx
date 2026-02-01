@@ -20,6 +20,7 @@ import { SiteSettingsPage } from "@/features/site-settings/pages/SiteSettingsPag
 import { VideoSettingsPage } from "@/features/site-settings/pages/VideoSettingsPage";
 import { HeaderMenuPage } from "@/features/site-settings/pages/HeaderMenuPage";
 import { LLMSettingsPage } from "@/features/llm-settings/pages/LLMSettingsPage";
+import { SendNotificationPage } from "@/features/notifications/pages/SendNotificationPage";
 
 /**
  * Application routing configuration
@@ -118,6 +119,10 @@ export const router = createBrowserRouter([
       {
         path: "settings/llm",
         element: <LLMSettingsPage />,
+      },
+      {
+        path: "notifications",
+        element: <SendNotificationPage />,
       },
     ],
   },

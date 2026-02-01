@@ -18,6 +18,7 @@ import {
   Bot,
   MapPin,
   LucideIcon,
+  Send,
 } from "lucide-react";
 import { ROUTES } from "@/lib/config/constants";
 
@@ -32,10 +33,14 @@ const panelNavigation: NavItem[] = [
 ];
 
 const contentNavigation: NavItem[] = [
-  { name: "Events", href: ROUTES.EVENTS, icon: FileText },
+  { name: "Eventos", href: ROUTES.EVENTS, icon: FileText },
   { name: "Lugares", href: ROUTES.PLACES, icon: MapPin },
   { name: "Categorías", href: ROUTES.CATEGORIES, icon: FolderOpen },
   { name: "Comentarios", href: "/comentarios", icon: MessageSquare },
+];
+
+const marketingNavigation: NavItem[] = [
+  { name: "Notificaciones", href: "/dashboard/notifications", icon: Send },
 ];
 
 const mediaNavigation: NavItem[] = [
@@ -112,6 +117,7 @@ export function Sidebar() {
       <nav className="custom-scrollbar flex-1 overflow-y-auto py-6">
         <NavSection title="Dashboard" items={panelNavigation} />
         <NavSection title="Gestión de Contenido" items={contentNavigation} />
+        <NavSection title="Marketing" items={marketingNavigation} />
         <NavSection title="Media" items={mediaNavigation} />
         <NavSection
           title="Configuración del Sistema"

@@ -5,16 +5,16 @@ export const ROUTES = {
   // Public routes
   HOME: "/",
   TEST: "/test",
-  
+
   // Auth routes
   LOGIN: "/login",
   REGISTER: "/register",
   RESET_PASSWORD: "/reset-password",
-  
+
   // Protected routes - Dashboard
   DASHBOARD: "/dashboard",
   DASHBOARD_HOME: "/dashboard",
-  
+
   // Dashboard subroutes (full paths for navigation)
   USERS: "/dashboard/users",
   MEDIA: "/dashboard/media",
@@ -27,6 +27,7 @@ export const ROUTES = {
   VIDEO_SETTINGS: "/dashboard/settings/video",
   HEADER_MENU: "/dashboard/settings/header",
   LLM_SETTINGS: "/dashboard/settings/llm",
+  NOTIFICATIONS: "/dashboard/notifications",
 } as const;
 
 /**
@@ -34,7 +35,9 @@ export const ROUTES = {
  */
 export const API_CONFIG = {
   BASE_URL: import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api/v1",
-  HEALTH_CHECK_URL: import.meta.env.VITE_HEALTH_CHECK_URL || "http://localhost:8000/api/health/",
+  HEALTH_CHECK_URL:
+    import.meta.env.VITE_HEALTH_CHECK_URL ||
+    "http://localhost:8000/api/health/",
   TIMEOUT: 30000, // 30 seconds
 } as const;
 
@@ -52,7 +55,8 @@ export const APP_CONFIG = {
     PAGE_SIZE_OPTIONS: [5, 10, 20, 50, 100],
   },
   EVENTS: {
-    PAGE_SIZE_DEFAULT: Number(import.meta.env.VITE_EVENTS_PAGE_SIZE_DEFAULT) || 5,
+    PAGE_SIZE_DEFAULT:
+      Number(import.meta.env.VITE_EVENTS_PAGE_SIZE_DEFAULT) || 5,
   },
 } as const;
 

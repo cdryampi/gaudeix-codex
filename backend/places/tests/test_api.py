@@ -145,7 +145,7 @@ def test_retrieve_place_detail(media_root, places_singleton, sample_document, sa
     place.attachments.add(sample_document)
 
     client = APIClient()
-    url = reverse("place-detail", kwargs={"pk": place.pk})
+    url = reverse("place-detail", kwargs={"slug": place.slug})
     response = client.get(url)
 
     assert response.status_code == status.HTTP_200_OK
@@ -158,7 +158,7 @@ def test_retrieve_place_detail(media_root, places_singleton, sample_document, sa
 def test_update_place_authenticated(media_root, places_singleton, auth_client):
     place = Place.objects.create(title="Old Title", latitude=1.0, longitude=1.0)
 
-    url = reverse("place-detail", kwargs={"pk": place.pk})
+    url = reverse("place-detail", kwargs={"slug": place.slug})
     data = {"title": "Updated Title", "is_published": False}
 
     response = auth_client.patch(url, data, format="json")
@@ -172,7 +172,7 @@ def test_update_place_authenticated(media_root, places_singleton, auth_client):
 def test_delete_place_authenticated(media_root, places_singleton, auth_client):
     place = Place.objects.create(title="To Delete", latitude=1.0, longitude=1.0)
 
-    url = reverse("place-detail", kwargs={"pk": place.pk})
+    url = reverse("place-detail", kwargs={"slug": place.slug})
     response = auth_client.delete(url)
 
     assert response.status_code == status.HTTP_204_NO_CONTENT
@@ -258,7 +258,7 @@ def test_auto_translate_success(media_root, places_singleton, auth_client, monke
     fake_module = types.SimpleNamespace(translate_text=fake_translate_text, TranslationError=FakeTranslationError)
     monkeypatch.setitem(sys.modules, "llm_translations.utils", fake_module)
 
-    url = reverse("place-auto-translate", kwargs={"pk": place.pk})
+    url = reverse("place-auto-translate", kwargs={"slug": place.slug})
     response = auth_client.post(url, {"source_lang": "ca", "target_langs": ["en"]}, format="json")
 
     assert response.status_code == status.HTTP_200_OK
@@ -270,7 +270,7 @@ def test_auto_translate_success(media_root, places_singleton, auth_client, monke
 def test_auto_translate_missing_content(media_root, places_singleton, auth_client):
     place = Place.objects.create(title="", latitude=1.0, longitude=1.0)
 
-    url = reverse("place-auto-translate", kwargs={"pk": place.pk})
+    url = reverse("place-auto-translate", kwargs={"slug": place.slug})
     response = auth_client.post(url, {"source_lang": "es"}, format="json")
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST

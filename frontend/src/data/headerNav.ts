@@ -5,38 +5,34 @@ export type HeaderNavItem = {
 };
 
 export const HEADER_NAV: HeaderNavItem[] = [
-  { label: "Inicio", href: "#inicio" },
+  { label: "Inicio", href: "/" },
   {
-    label: "Qué hacer",
+    label: "Explora",
+    href: "/lugares",
     children: [
-      {
-        label: "Rutas autoguiadas",
-        children: [
-          { label: "Castillo de Burriac", href: "#burriac" },
-          { label: "Ruta del patrimonio histórico", href: "#patrimoni" },
-          { label: "Itinerario de naturaleza", href: "#natura" },
-          { label: "Ruta en bicicleta", href: "#bici" },
-        ],
-      },
-      { label: "Naturaleza", href: "#natura" },
-      { label: "Fiestas y tradiciones", href: "#festes" },
+      { label: "Patrimonio", href: "/lugares?category=heritage" },
+      { label: "Naturaleza", href: "/lugares?category=nature" },
+      { label: "Playas", href: "/lugares?category=beaches" },
+      { label: "Cultura", href: "/lugares?category=culture" },
+      { label: "Compras", href: "/lugares?category=shopping" },
     ],
   },
   {
-    label: "Dónde comer",
+    label: "Gastronomía",
+    href: "/lugares?category=restaurants",
     children: [
-      { label: "Gastronomía local", href: "#gastronomia" },
-      { label: "Mercado local", href: "#mercado" },
+      { label: "Restaurantes", href: "/lugares?category=restaurants" },
     ],
   },
-  { label: "Dónde dormir", href: "#alojamientos" },
-  { label: "Agenda", href: "#eventos" },
+  { label: "Alojamiento", href: "/lugares?category=accommodations" },
+  { label: "Agenda", href: "/agenda" },
   {
-    label: "Descubre",
+    label: "Información",
+    href: "/#mapa",
     children: [
-      { label: "Mapa interactivo", href: "#mapa" },
-      { label: "Cómo llegar", href: "#como-llegar" },
+      { label: "Mapa interactivo", href: "/#mapa" },
+      { label: "Cómo llegar", href: "/como-llegar" },
+      { label: "Noticias", href: "/#noticias" },
     ],
   },
 ];
-

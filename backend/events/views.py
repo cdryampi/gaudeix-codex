@@ -159,7 +159,7 @@ class EventViewSet(viewsets.ModelViewSet):
         permission_classes=[IsAuthenticated],
         url_path="checkin",
     )
-    def checkin(self, request, pk=None):
+    def checkin(self, request, slug=None):
         event = self.get_object()
         try:
             checkin = award_event_checkin(user=request.user, event=event)
@@ -182,7 +182,7 @@ class EventViewSet(viewsets.ModelViewSet):
         permission_classes=[IsAuthenticated],
         url_path="my-checkin",
     )
-    def my_checkin(self, request, pk=None):
+    def my_checkin(self, request, slug=None):
         event = self.get_object()
         checkin = EventCheckin.objects.filter(user=request.user, event=event).first()
         if not checkin:
@@ -202,7 +202,7 @@ class EventViewSet(viewsets.ModelViewSet):
         permission_classes=[IsAuthenticated],
         url_path="favorite",
     )
-    def favorite(self, request, pk=None):
+    def favorite(self, request, slug=None):
         event = self.get_object()
         if request.method.lower() == "post":
             UserFavoriteEvent.objects.get_or_create(user=request.user, event=event)
@@ -219,7 +219,7 @@ class EventViewSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=True, methods=["post"], permission_classes=[IsAuthenticated])
-    def auto_translate(self, request, pk=None):
+    def auto_translate(self, request, slug=None):
         """
         Auto-translate event to all configured languages using LLM.
 
@@ -363,7 +363,7 @@ class EventViewSet(viewsets.ModelViewSet):
         )
 
     @action(detail=True, methods=["get"], permission_classes=[AllowAny])
-    def occurrences(self, request, pk=None):
+    def occurrences(self, request, slug=None):
         """
         Get all occurrences (dates) of an event.
         """

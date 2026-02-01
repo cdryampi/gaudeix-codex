@@ -12,8 +12,12 @@ from core.models import Category
 
 class SiteSettings(SingletonModel):
     # Branding
-    site_name = models.CharField(max_length=150, verbose_name=_("Nom del site"), blank=True, default="")
-    tagline = models.CharField(max_length=255, verbose_name=_("Claim/Tagline"), blank=True, default="")
+    site_name = models.CharField(
+        max_length=150, verbose_name=_("Nom del site"), blank=True, default=""
+    )
+    tagline = models.CharField(
+        max_length=255, verbose_name=_("Claim/Tagline"), blank=True, default=""
+    )
     logo = models.ForeignKey(
         ImageFile,
         null=True,
@@ -40,11 +44,21 @@ class SiteSettings(SingletonModel):
     )
 
     # Contacto
-    phone = models.CharField(max_length=50, verbose_name=_("Telèfon"), blank=True, default="")
-    support_email = models.EmailField(verbose_name=_("Email de suport"), blank=True, default="")
-    contact_email = models.EmailField(verbose_name=_("Email de contacte"), blank=True, default="")
-    address = models.CharField(max_length=255, verbose_name=_("Adreça"), blank=True, default="")
-    schedule = models.CharField(max_length=255, verbose_name=_("Horari"), blank=True, default="")
+    phone = models.CharField(
+        max_length=50, verbose_name=_("Telèfon"), blank=True, default=""
+    )
+    support_email = models.EmailField(
+        verbose_name=_("Email de suport"), blank=True, default=""
+    )
+    contact_email = models.EmailField(
+        verbose_name=_("Email de contacte"), blank=True, default=""
+    )
+    address = models.CharField(
+        max_length=255, verbose_name=_("Adreça"), blank=True, default=""
+    )
+    schedule = models.CharField(
+        max_length=255, verbose_name=_("Horari"), blank=True, default=""
+    )
 
     # Social (urls simples)
     facebook_url = models.URLField(verbose_name=_("Facebook"), blank=True, default="")
@@ -53,13 +67,42 @@ class SiteSettings(SingletonModel):
     youtube_url = models.URLField(verbose_name=_("YouTube"), blank=True, default="")
 
     # Integracions públiques
-    maps_base_url = models.URLField(verbose_name=_("Maps base URL"), blank=True, default="")
-    analytics_id = models.CharField(max_length=100, verbose_name=_("Analytics ID"), blank=True, default="")
-    captcha_site_key = models.CharField(max_length=200, verbose_name=_("Captcha site key"), blank=True, default="")
+    maps_base_url = models.URLField(
+        verbose_name=_("Maps base URL"), blank=True, default=""
+    )
+    latitude = models.DecimalField(
+        max_length=50,
+        verbose_name=_("Latitud"),
+        blank=True,
+        null=True,
+        max_digits=9,
+        decimal_places=6,
+        help_text=_("Latitud del centre del poble"),
+    )
+    longitude = models.DecimalField(
+        max_length=50,
+        verbose_name=_("Longitud"),
+        blank=True,
+        null=True,
+        max_digits=9,
+        decimal_places=6,
+        help_text=_("Longitud del centre del poble"),
+    )
+    analytics_id = models.CharField(
+        max_length=100, verbose_name=_("Analytics ID"), blank=True, default=""
+    )
+
+    captcha_site_key = models.CharField(
+        max_length=200, verbose_name=_("Captcha site key"), blank=True, default=""
+    )
 
     # Header/Footer (beta)
-    show_language_switcher = models.BooleanField(default=True, verbose_name=_("Mostrar selector d'idioma (BETA)"))
-    show_social_footer = models.BooleanField(default=True, verbose_name=_("Mostrar xarxes al footer (BETA)"))
+    show_language_switcher = models.BooleanField(
+        default=True, verbose_name=_("Mostrar selector d'idioma (BETA)")
+    )
+    show_social_footer = models.BooleanField(
+        default=True, verbose_name=_("Mostrar xarxes al footer (BETA)")
+    )
     privacy_page = models.ForeignKey(
         StaticPage,
         null=True,
@@ -94,8 +137,12 @@ class SiteSettings(SingletonModel):
     )
 
     # SEO per defecte
-    default_metatitle = models.CharField(max_length=255, verbose_name=_("Metatítol per defecte"), blank=True, default="")
-    default_metadescription = models.TextField(verbose_name=_("Metadescripció per defecte"), blank=True, default="")
+    default_metatitle = models.CharField(
+        max_length=255, verbose_name=_("Metatítol per defecte"), blank=True, default=""
+    )
+    default_metadescription = models.TextField(
+        verbose_name=_("Metadescripció per defecte"), blank=True, default=""
+    )
     default_og_image = models.ForeignKey(
         ImageFile,
         null=True,
@@ -119,10 +166,58 @@ class SiteSettings(SingletonModel):
         related_name="site_background_video",
         verbose_name=_("Vídeo de fons"),
     )
-    youtube_url = models.URLField(verbose_name=_("Vídeo YouTube"), blank=True, default="")
-    video_title = models.CharField(max_length=255, verbose_name=_("Títol del vídeo"), blank=True, default="")
+    youtube_url = models.URLField(
+        verbose_name=_("Vídeo YouTube"), blank=True, default=""
+    )
+    video_title = models.CharField(
+        max_length=255, verbose_name=_("Títol del vídeo"), blank=True, default=""
+    )
     video_description_internal = models.TextField(
         verbose_name=_("Descripció interna del vídeo"), blank=True, default=""
+    )
+
+    # Avisos globales / Mantenimiento
+    alert_enabled = models.BooleanField(
+        default=False,
+        verbose_name=_("Activar avís global"),
+        help_text=_("Mostra una barra d'avís a tota la web para comunicats urgents."),
+    )
+    alert_message = models.TextField(
+        verbose_name=_("Missatge de l'avís"),
+        blank=True,
+        default="",
+        help_text=_("Text que es mostrarà a la barra d'avís."),
+    )
+    alert_type = models.CharField(
+        max_length=20,
+        choices=[
+            ("info", _("Informació (Blau)")),
+            ("success", _("Èxit (Verd)")),
+            ("warning", _("Advertència (Taronja)")),
+            ("danger", _("Urgent/Perill (Vermell)")),
+        ],
+        default="info",
+        verbose_name=_("Tipus d'avís"),
+    )
+    alert_link = models.URLField(
+        verbose_name=_("Enllaç de l'avís"),
+        blank=True,
+        default="",
+        help_text=_("URL opcional para 'Saber més'."),
+    )
+    alert_start_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name=_("Data d'inici de l'avís"),
+        help_text=_("L'avís no es mostrarà abans d'aquesta data (opcional)."),
+    )
+    alert_end_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name=_("Data de fi de l'avís"),
+        help_text=_(
+            "L'avís s'ocultarà automàticament després d'aquesta data (opcional)."
+        ),
     )
 
     class Meta:
@@ -131,6 +226,31 @@ class SiteSettings(SingletonModel):
 
     def __str__(self):
         return self.site_name or "Site Settings"
+
+    @property
+    def is_alert_active(self) -> bool:
+        """Determina si l'avís global ha de ser visible actualment."""
+        if not self.alert_enabled or not self.alert_message:
+            return False
+
+        from django.utils import timezone
+        import logging
+
+        logger = logging.getLogger(__name__)
+
+        now = timezone.now()
+
+        # Log precision for debugging dates
+        logger.info(
+            f"Checking alert: now={now}, start={self.alert_start_at}, end={self.alert_end_at}"
+        )
+
+        if self.alert_start_at and now < self.alert_start_at:
+            return False
+        if self.alert_end_at and now > self.alert_end_at:
+            return False
+
+        return True
 
 
 class MenuItem(models.Model):
@@ -166,7 +286,9 @@ class MenuItem(models.Model):
         verbose_name=_("Padre"),
     )
     order = models.PositiveIntegerField(default=0, verbose_name=_("Orden"))
-    type = models.CharField(max_length=20, choices=TypeChoices.choices, verbose_name=_("Tipo"))
+    type = models.CharField(
+        max_length=20, choices=TypeChoices.choices, verbose_name=_("Tipo")
+    )
 
     category = models.ForeignKey(
         Category,
@@ -185,7 +307,9 @@ class MenuItem(models.Model):
         verbose_name=_("Página estática"),
     )
     url = models.URLField(blank=True, default="", verbose_name=_("URL personalizada"))
-    label = models.CharField(max_length=200, blank=True, default="", verbose_name=_("Etiqueta"))
+    label = models.CharField(
+        max_length=200, blank=True, default="", verbose_name=_("Etiqueta")
+    )
 
     class Meta:
         verbose_name = _("Menu Item")
@@ -194,9 +318,15 @@ class MenuItem(models.Model):
 
     def __str__(self):
         if self.type == self.TypeChoices.CATEGORY and self.category_id:
-            return self.category.safe_translation_getter("nombre", any_language=True) or self.category.slug
+            return (
+                self.category.safe_translation_getter("nombre", any_language=True)
+                or self.category.slug
+            )
         if self.type == self.TypeChoices.STATIC_PAGE and self.static_page_id:
-            return self.static_page.safe_translation_getter("titulo", any_language=True) or self.static_page.slug
+            return (
+                self.static_page.safe_translation_getter("titulo", any_language=True)
+                or self.static_page.slug
+            )
         return self.label or self.url or f"MenuItem #{self.pk}"
 
     def clean(self):
@@ -207,19 +337,29 @@ class MenuItem(models.Model):
             if not self.category_id:
                 raise ValidationError({"category": _("Requerida para tipo categoría.")})
             if self.static_page_id or self.url:
-                raise ValidationError({"type": _("Solo puede apuntar a una categoría.")})
+                raise ValidationError(
+                    {"type": _("Solo puede apuntar a una categoría.")}
+                )
         elif self.type == self.TypeChoices.STATIC_PAGE:
             if not self.static_page_id:
-                raise ValidationError({"static_page": _("Requerida para tipo página estática.")})
+                raise ValidationError(
+                    {"static_page": _("Requerida para tipo página estática.")}
+                )
             if self.category_id or self.url:
-                raise ValidationError({"type": _("Solo puede apuntar a una página estática.")})
+                raise ValidationError(
+                    {"type": _("Solo puede apuntar a una página estática.")}
+                )
         elif self.type == self.TypeChoices.CUSTOM:
             if not self.url:
                 raise ValidationError({"url": _("Requerida para link personalizado.")})
             if not self.label:
-                raise ValidationError({"label": _("Etiqueta requerida para link personalizado.")})
+                raise ValidationError(
+                    {"label": _("Etiqueta requerida para link personalizado.")}
+                )
             if self.category_id or self.static_page_id:
-                raise ValidationError({"type": _("Solo puede apuntar a una URL personalizada.")})
+                raise ValidationError(
+                    {"type": _("Solo puede apuntar a una URL personalizada.")}
+                )
 
         # Validate parent: same location/settings, no cycles, max 3 levels
         parent = self.parent
@@ -227,16 +367,26 @@ class MenuItem(models.Model):
         depth = 0
         while parent:
             if parent.location != self.location:
-                raise ValidationError({"parent": _("El padre debe estar en la misma ubicación.")})
+                raise ValidationError(
+                    {"parent": _("El padre debe estar en la misma ubicación.")}
+                )
             if parent.settings_id != self.settings_id:
-                raise ValidationError({"parent": _("El padre debe pertenecer al mismo site.")})
+                raise ValidationError(
+                    {"parent": _("El padre debe pertenecer al mismo site.")}
+                )
             if parent == self or (self.pk and parent.pk == self.pk):
-                raise ValidationError({"parent": _("Un ítem no puede ser su propio padre.")})
+                raise ValidationError(
+                    {"parent": _("Un ítem no puede ser su propio padre.")}
+                )
             if parent.pk and parent.pk in seen:
-                raise ValidationError({"parent": _("No se pueden crear ciclos en el menú.")})
+                raise ValidationError(
+                    {"parent": _("No se pueden crear ciclos en el menú.")}
+                )
             if parent.pk:
                 seen.add(parent.pk)
             depth += 1
             if depth >= 3:
-                raise ValidationError({"parent": _("Máximo 3 niveles (raíz > hijo > nieto).")})
+                raise ValidationError(
+                    {"parent": _("Máximo 3 niveles (raíz > hijo > nieto).")}
+                )
             parent = parent.parent

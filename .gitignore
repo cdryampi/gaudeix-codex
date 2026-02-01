@@ -105,3 +105,6 @@ e2e_output.txt
 # Deployment / containerization artifacts
 docker-compose.override.yml
 *.env.docker
+
+# Development plans and drafts
+.sisyphus/

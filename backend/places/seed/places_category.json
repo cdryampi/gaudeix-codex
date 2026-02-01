@@ -1,28 +1,85 @@
 {
   "root": {
     "slug": "places",
-    "translations": { "ca": "Llocs", "es": "Lugares", "en": "Places", "fr": "Lieux" }
+    "translations": {
+      "ca": "Llocs",
+      "es": "Lugares",
+      "en": "Places",
+      "fr": "Lieux"
+    }
   },
   "templates": [
     {
-      "slug": "poi",
+      "slug": "restaurants",
       "taxonomy": "template",
       "translations": {
-        "ca": "Punt d'interès",
-        "es": "Punto de interés",
-        "en": "Point of interest",
-        "fr": "Point d'intérêt"
+        "ca": "Restaurants",
+        "es": "Restaurantes",
+        "en": "Restaurants",
+        "fr": "Restaurants"
       }
     },
-    { "slug": "restaurant", "taxonomy": "template", "translations": { "ca": "Restaurant", "es": "Restaurante", "en": "Restaurant", "fr": "Restaurant" } },
-    { "slug": "bar", "taxonomy": "template", "translations": { "ca": "Bar", "es": "Bar", "en": "Bar", "fr": "Bar" } },
-    { "slug": "hotel", "taxonomy": "template", "translations": { "ca": "Hotel", "es": "Hotel", "en": "Hotel", "fr": "Hôtel" } },
-    { "slug": "apartment", "taxonomy": "template", "translations": { "ca": "Apartament", "es": "Apartamento", "en": "Apartment", "fr": "Appartement" } },
-    { "slug": "viewpoint", "taxonomy": "template", "translations": { "ca": "Mirador", "es": "Mirador", "en": "Viewpoint", "fr": "Point de vue" } },
-    { "slug": "museum", "taxonomy": "template", "translations": { "ca": "Museu", "es": "Museo", "en": "Museum", "fr": "Musée" } },
-    { "slug": "beach", "taxonomy": "template", "translations": { "ca": "Platja", "es": "Playa", "en": "Beach", "fr": "Plage" } }
+    {
+      "slug": "accommodations",
+      "taxonomy": "template",
+      "translations": {
+        "ca": "On dormir",
+        "es": "Dónde dormir",
+        "en": "Where to sleep",
+        "fr": "Où dormir"
+      }
+    },
+    {
+      "slug": "nature",
+      "taxonomy": "template",
+      "translations": {
+        "ca": "Natura",
+        "es": "Naturaleza",
+        "en": "Nature",
+        "fr": "Nature"
+      }
+    },
+    {
+      "slug": "heritage",
+      "taxonomy": "template",
+      "translations": {
+        "ca": "Patrimoni",
+        "es": "Patrimonio",
+        "en": "Heritage",
+        "fr": "Patrimoine"
+      }
+    },
+    {
+      "slug": "beaches",
+      "taxonomy": "template",
+      "translations": {
+        "ca": "Platges",
+        "es": "Playas",
+        "en": "Beaches",
+        "fr": "Plages"
+      }
+    },
+    {
+      "slug": "culture",
+      "taxonomy": "template",
+      "translations": {
+        "ca": "Cultura",
+        "es": "Cultura",
+        "en": "Culture",
+        "fr": "Culture"
+      }
+    },
+    {
+      "slug": "shopping",
+      "taxonomy": "template",
+      "translations": {
+        "ca": "Compres",
+        "es": "Compras",
+        "en": "Shopping",
+        "fr": "Shopping"
+      }
+    }
   ],
   "singleton_pk": 1,
   "assign_root_to_existing_places": true
 }
-

@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #3E9124;
-  --color-secondary: #E97B1C;
-  --color-accent: #F6B324;
-  --color-background-light: #FAFAF9;
+  --color-primary: #3e9124;
+  --color-secondary: #e97b1c;
+  --color-accent: #f6b324;
+  --color-background-light: #fafaf9;
   --color-background-dark: #121417;
 
   --font-plus-jakarta: "Plus Jakarta Sans", sans-serif;
@@ -48,6 +48,19 @@
     opacity: 0.02;
     pointer-events: none;
   }
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 12s linear infinite;
 }
 
 @keyframes shine {

@@ -5,7 +5,7 @@
     "location_text": "Turó de Burriac",
     "latitude": 41.5311,
     "longitude": 2.3853,
-    "category_slug": "viewpoint",
+    "category_slug": "nature",
     "image_filename": "castell_burriac.png",
     "translations": {
       "es": {
@@ -24,7 +24,7 @@
     "location_text": "Carrer Major/Carrer d'Ilturo",
     "latitude": 41.5262,
     "longitude": 2.3933,
-    "category_slug": "museum",
+    "category_slug": "heritage",
     "image_filename": "ilturo.png",
     "translations": {
       "es": {
@@ -43,7 +43,7 @@
     "location_text": "Passeig Marítim",
     "latitude": 41.5178,
     "longitude": 2.4081,
-    "category_slug": "beach",
+    "category_slug": "beaches",
     "image_filename": "platja_cabrera.png",
     "translations": {
       "es": {
@@ -57,40 +57,141 @@
     }
   },
   {
-    "title": "Can Martinet",
-    "description": "Centre cultural polivalent on s'organitzen exposicions, tallers i activitats comunitàries.",
-    "location_text": "Avinguda Pare Jaume Català",
-    "latitude": 41.5275,
-    "longitude": 2.3951,
-    "category_slug": "poi",
-    "image_filename": "can_martinet.png",
+    "title": "Restaurant del Poble",
+    "description": "Cuina tradicional mediterrània amb productes de proximitat i vistes al mar.",
+    "location_text": "Carrer de Mar, 10",
+    "latitude": 41.519,
+    "longitude": 2.405,
+    "category_slug": "restaurants",
+    "image_filename": "cooperativa.png",
+    "cuisine_type": "Mediterránea",
+    "capacity": 50,
     "translations": {
       "es": {
-        "title": "Can Martinet",
-        "description": "Centro cultural polivalente donde se organizan exposiciones, talleres y actividades comunitarias."
+        "title": "Restaurante del Pueblo",
+        "description": "Cocina tradicional mediterránea con productos de proximidad y vistas al mar."
       },
       "en": {
-        "title": "Can Martinet Cultural Center",
-        "description": "Multipurpose cultural center hosting exhibitions, workshops, and community activities."
+        "title": "Village Restaurant",
+        "description": "Traditional Mediterranean cuisine with local products and sea views."
       }
     }
   },
   {
-    "title": "Restaurant Cal Tete",
-    "description": "Gastronomia local de qualitat amb productes del territori i vistes privilegiades.",
-    "location_text": "Nucli Antic",
-    "latitude": 41.5260,
-    "longitude": 2.3940,
-    "category_slug": "restaurant",
-    "image_filename": "cal_tete.png",
+    "title": "Hotel Cabrera Mar",
+    "description": "Descansa amb el so de les onades en aquest acollidor hotel a primera línia de mar.",
+    "location_text": "Passeig Marítim, 45",
+    "latitude": 41.516,
+    "longitude": 2.411,
+    "category_slug": "accommodations",
+    "image_filename": "can_bartomeu.png",
+    "type": "Hotel",
+    "stars": 4,
+    "check_in_time": "14:00",
+    "check_out_time": "12:00",
     "translations": {
       "es": {
-        "title": "Restaurante Cal Tete",
-        "description": "Gastronomía local de calidad con productos del territorio y vistas privilegiadas."
+        "title": "Hotel Cabrera Mar",
+        "description": "Descansa con el sonido de las olas en este acogedor hotel en primera línea de mar."
       },
       "en": {
-        "title": "Cal Tete Restaurant",
-        "description": "High-quality local gastronomy with regional products and privileged views."
+        "title": "Cabrera Mar Hotel",
+        "description": "Rest with the sound of the waves in this cozy hotel on the seafront."
+      }
+    }
+  },
+  {
+    "title": "Can Bartomeu",
+    "description": "Espai públic i parc municipal situat en una antiga masia, pulmó verd del municipi.",
+    "location_text": "Camí de Can Bartomeu, s/n",
+    "latitude": 41.5285,
+    "longitude": 2.3921,
+    "category_slug": "nature",
+    "image_filename": "can_bartomeu.png",
+    "translations": {
+      "es": {
+        "title": "Can Bartomeu",
+        "description": "Espacio público y parque municipal situado en una antigua masía, pulmón verde del municipio."
+      },
+      "en": {
+        "title": "Can Bartomeu Park",
+        "description": "Public space and municipal park located in an old farmhouse, the town's green lung."
+      }
+    }
+  },
+  {
+    "title": "Biblioteca Ilturo",
+    "description": "Modern centre de lectura i cultura al cor de Cabrera de Mar.",
+    "location_text": "Carrer de Sant Vicenç, 2",
+    "latitude": 41.5271,
+    "longitude": 2.3942,
+    "category_slug": "culture",
+    "image_filename": "biblioteca_ilturo.png",
+    "translations": {
+      "es": {
+        "title": "Biblioteca Ilturo",
+        "description": "Moderno centro de lectura y cultura en el corazón de Cabrera de Mar."
+      },
+      "en": {
+        "title": "Ilturo Library",
+        "description": "Modern reading and cultural center in the heart of Cabrera de Mar."
+      }
+    }
+  },
+  {
+    "title": "Ca l'Arnau",
+    "description": "Espai cultural i seu de l'Arxiu Municipal, exemple d'arquitectura civil de la vila.",
+    "location_text": "Carrer de Baix, 23",
+    "latitude": 41.5265,
+    "longitude": 2.3948,
+    "category_slug": "culture",
+    "image_filename": "can_arnau.png",
+    "translations": {
+      "es": {
+        "title": "Ca l'Arnau",
+        "description": "Espacio cultural y sede del Archivo Municipal, ejemplo de arquitectura civil de la villa."
+      },
+      "en": {
+        "title": "Ca l'Arnau Cultural Space",
+        "description": "Cultural space and Municipal Archive headquarters, an example of the town's civil architecture."
+      }
+    }
+  },
+  {
+    "title": "Plaça de la Vila",
+    "description": "Centre neuràlgic de Cabrera, on s'ubica l'Ajuntament i es fan els principals actes socials.",
+    "location_text": "Plaça de la Vila, 1",
+    "latitude": 41.5268,
+    "longitude": 2.3938,
+    "category_slug": "culture",
+    "image_filename": "escultura_ilturo.png",
+    "translations": {
+      "es": {
+        "title": "Plaza de la Villa",
+        "description": "Centro neurálgico de Cabrera, donde se ubica el Ayuntamiento y se celebran los principales actos sociales."
+      },
+      "en": {
+        "title": "Town Square",
+        "description": "Heart of Cabrera, location of the Town Hall and venue for major social events."
+      }
+    }
+  },
+  {
+    "title": "Església de Sant Vicenç",
+    "description": "Església parroquial del segle XVI d'estil gòtic tardà, centre religiós i històric.",
+    "location_text": "Plaça de l'Església",
+    "latitude": 41.5269,
+    "longitude": 2.3935,
+    "category_slug": "heritage",
+    "image_filename": "iglesia.png",
+    "translations": {
+      "es": {
+        "title": "Iglesia de San Vicente",
+        "description": "Iglesia parroquial del siglo XVI de estilo gótico tardío, centro religioso e histórico."
+      },
+      "en": {
+        "title": "Saint Vincent Church",
+        "description": "16th-century late Gothic parish church, a religious and historical centerpiece."
       }
     }
   }

@@ -50,6 +50,13 @@ export type SiteSettings = {
   default_metadescription: string;
   default_og_image?: LinkedImage | null;
   default_og_image_id?: number | null;
+  alert_enabled?: boolean;
+  alert_message?: string;
+  alert_type?: "info" | "success" | "warning" | "danger";
+  alert_link?: string;
+  alert_start_at?: string | null;
+  alert_end_at?: string | null;
+  is_alert_active?: boolean;
 };
 
 export type LinkedVideo = {

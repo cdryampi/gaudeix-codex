@@ -1,10 +1,11 @@
 import { useMemo, useState } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
 import { InteractiveMap } from "@/components/site/InteractiveMap";
 import { HeroVideoFrame } from "@/features/hero/components/HeroVideo";
 import { getEvents } from "@/features/events/api";
+import { ChevronRight } from "lucide-react";
 import { FEATURED_CATEGORIES } from "@/features/categories/categoriesData";
 import { FeaturedCategoryCard } from "@/features/categories/components/FeaturedCategoryCard";
 import { NewsCard } from "@/features/news/components/NewsCard";
@@ -21,6 +22,11 @@ import PasswordResetPage from "@/pages/PasswordResetPage";
 import NewsDetailPage from "@/pages/NewsDetailPage";
 import { EventDetailPage } from "@/features/agenda/pages/EventDetailPage";
 import { AgendaPage } from "@/features/agenda/pages/AgendaPage";
+import { PlacesPage } from "@/features/places/pages/PlacesPage";
+import { PlaceDetailPage } from "@/features/places/pages/PlaceDetailPage";
+import { RankingsPage } from "@/features/gamification/pages/RankingsPage";
+import { ComoLlegarPage } from "@/features/site-settings/pages/ComoLlegarPage";
+import { VisitUsCTA } from "@/features/site-settings/components/VisitUsCTA";
 import { MainLayout } from "@/components/layouts/MainLayout";
 
 import { listNewsItems } from "@/features/news/api";
@@ -30,8 +36,8 @@ function HomePage() {
 
   // Fetch Events
   const { data: eventsData } = useQuery({
-    queryKey: ["events", { is_published: true, limit: 100 }],
-    queryFn: () => getEvents({ is_published: true, limit: 100 }),
+    queryKey: ["events", { is_published: true, limit: 10, upcoming: true }],
+    queryFn: () => getEvents({ is_published: true, limit: 10, upcoming: true }),
   });
 
   const allEvents = useMemo(() => {
@@ -50,11 +56,12 @@ function HomePage() {
   });
 
   const visibleEvents = useMemo(() => {
-    return filterEvents(allEvents, {
+    const filtered = filterEvents(allEvents, {
       category: "all",
       range: eventFilter,
       query: "",
     });
+    return filtered.slice(0, 10);
   }, [allEvents, eventFilter]);
 
   const groupedEvents = useMemo(() => {
@@ -62,7 +69,7 @@ function HomePage() {
   }, [visibleEvents]);
 
   return (
-    <>
+    <main>
       {/* SECTION 1: VIDEO HERO */}
       <section id="inicio" className="h-screen">
         <HeroVideoFrame />
@@ -129,13 +136,23 @@ function HomePage() {
 
         <div className="container mx-auto px-6 pb-48 space-y-32">
           {groupedEvents.length > 0 ? (
-            groupedEvents.map((group) => (
-              <EventDayGroup
-                key={group.dayLabel}
-                dayLabel={group.dayLabel}
-                items={group.items}
-              />
-            ))
+            <>
+              {groupedEvents.map((group) => (
+                <EventDayGroup
+                  key={group.dayLabel}
+                  dayLabel={group.dayLabel}
+                  items={group.items}
+                />
+              ))}
+              <div className="flex justify-center mt-20">
+                <Link
+                  to="/agenda"
+                  className="h-16 px-12 rounded-[2rem] bg-accent text-slate-900 text-xs font-black uppercase tracking-[0.2em] hover:scale-105 transition-transform flex items-center shadow-2xl"
+                >
+                  Ver calendario completo
+                </Link>
+              </div>
+            </>
           ) : (
             <div className="py-24 text-center border-4 border-dashed border-white/10 rounded-[4rem]">
               <span className="text-4xl md:text-6xl font-black uppercase tracking-tighter text-white/20">
@@ -171,14 +188,49 @@ function HomePage() {
       </section>
 
       {/* SECTION 5: MAPA */}
-      <section id="mapa" className="bg-slate-50 py-24">
-        <div className="container mx-auto px-6">
-          <div className="overflow-hidden rounded-[3rem] shadow-2xl">
+      <section
+        id="mapa"
+        className="bg-slate-950 py-32 overflow-hidden relative"
+      >
+        {/* Background Accents */}
+        <div className="absolute -right-64 -top-64 h-[600px] w-[600px] rounded-full bg-primary/10 blur-[120px]" />
+        <div className="absolute -left-64 -bottom-64 h-[600px] w-[600px] rounded-full bg-accent/5 blur-[120px]" />
+
+        <div className="container mx-auto px-6 relative z-10">
+          <div className="mb-20">
+            <span className="text-sm font-black uppercase tracking-[0.5em] text-accent mb-8 block">
+              Explora el Territorio
+            </span>
+            <h2 className="text-[clamp(4rem,10vw,12rem)] font-black text-white leading-[0.75] tracking-tighter uppercase mb-12">
+              MAPA <br />
+              <span className="italic text-accent">INTERACTIVO</span>
+            </h2>
+            <p className="text-2xl md:text-3xl font-bold text-slate-400 max-w-3xl leading-snug tracking-tight">
+              Localiza todos los puntos de interés, desde el patrimonio
+              histórico hasta los mejores lugares para comer y dormir.
+            </p>
+          </div>
+
+          <div className="overflow-hidden rounded-[4rem] shadow-[0_0_80px_rgba(0,0,0,0.5)] h-[700px] border border-white/5 bg-slate-900 relative group">
             <InteractiveMap />
+
+            {/* Map Overlay Button */}
+            <div className="absolute bottom-12 left-1/2 -translate-x-1/2">
+              <Link
+                to="/lugares"
+                className="flex items-center gap-4 px-10 py-5 rounded-full bg-white text-slate-900 text-xs font-black uppercase tracking-[0.2em] shadow-2xl hover:scale-105 transition-transform"
+              >
+                Abrir explorador completo
+                <ChevronRight className="h-4 w-4" />
+              </Link>
+            </div>
           </div>
         </div>
       </section>
-    </>
+
+      {/* SECTION 6: VISIT US CTA */}
+      <VisitUsCTA />
+    </main>
   );
 }
 
@@ -189,6 +241,10 @@ export default function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/agenda" element={<AgendaPage />} />
         <Route path="/agenda/:slug" element={<EventDetailPage />} />
+        <Route path="/lugares" element={<PlacesPage />} />
+        <Route path="/lugares/:slug" element={<PlaceDetailPage />} />
+        <Route path="/rankings" element={<RankingsPage />} />
+        <Route path="/como-llegar" element={<ComoLlegarPage />} />
         <Route path="/noticias/:slug" element={<NewsDetailPage />} />
 
         {/* Auth Routes */}

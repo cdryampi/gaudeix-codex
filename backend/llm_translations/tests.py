@@ -118,7 +118,7 @@ class TestPlaceAutoTranslateIntegration:
         fake_module = types.SimpleNamespace(translate_text=fake_translate_text, TranslationError=FakeTranslationError)
         monkeypatch.setitem(sys.modules, "llm_translations.utils", fake_module)
 
-        url = reverse("place-auto-translate", kwargs={"pk": place_with_category.pk})
+        url = reverse("place-auto-translate", kwargs={"slug": place_with_category.slug})
         resp = auth_client.post(url, {"source_lang": "ca", "target_langs": ["en"]}, format="json")
 
         assert resp.status_code == 200

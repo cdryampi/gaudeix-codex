@@ -130,7 +130,7 @@ def test_update_event_dates_api(media_root, events_singleton):
 
     client = APIClient()
     client.force_authenticate(user=user)
-    url = reverse("event-detail", kwargs={"pk": event.pk})
+    url = reverse("event-detail", kwargs={"slug": event.slug})
 
     new_start = timezone.now().replace(microsecond=0) + timezone.timedelta(days=5)
     data = {"title": "Updated", "dates": [{"start_at": new_start.isoformat()}]}
@@ -183,7 +183,7 @@ def test_update_event_dates_api_v2(events_singleton):
     event = Event.objects.create(title="Concert")
     EventDate.objects.create(event=event, start_at=start)
 
-    url = reverse("event-detail", kwargs={"pk": event.pk})
+    url = reverse("event-detail", kwargs={"slug": event.slug})
 
     # Replace dates with new set
     new_start = timezone.now().replace(microsecond=0) + timezone.timedelta(days=5)
@@ -210,7 +210,7 @@ def test_occurrences_endpoint(events_singleton):
     )
 
     client = APIClient()
-    url = reverse("event-occurrences", kwargs={"pk": event.pk})
+    url = reverse("event-occurrences", kwargs={"slug": event.slug})
     response = client.get(url)
 
     assert response.status_code == status.HTTP_200_OK

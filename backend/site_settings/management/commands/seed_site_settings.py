@@ -30,14 +30,33 @@ class Command(BaseCommand):
             "youtube_url",
             "twitter_url",
             "maps_base_url",
+            "latitude",
+            "longitude",
             "analytics_id",
             "captcha_site_key",
             "default_metatitle",
             "default_metadescription",
             "video_title",
             "video_description_internal",
+            "alert_enabled",
+            "alert_message",
+            "alert_type",
+            "alert_link",
+            "alert_start_at",
+            "alert_end_at",
         ):
-            self._set_if_empty(settings_obj, field, seed_data.get(field))
+            if field in [
+                "latitude",
+                "longitude",
+                "alert_enabled",
+                "alert_message",
+                "alert_type",
+                "alert_start_at",
+                "alert_end_at",
+            ]:
+                setattr(settings_obj, field, seed_data.get(field))
+            else:
+                self._set_if_empty(settings_obj, field, seed_data.get(field))
 
         # Try to auto-link static pages by template
         link_pages_by_template = seed_data.get("link_pages_by_template", {}) or {}
@@ -62,11 +81,21 @@ class Command(BaseCommand):
         favicon_filename = seed_data.get("favicon_file")
         video_filename = seed_data.get("background_video_file")
 
-        logo_path = static_dir / logo_filename if isinstance(logo_filename, str) and logo_filename else None
-        favicon_path = (
-            static_dir / favicon_filename if isinstance(favicon_filename, str) and favicon_filename else None
+        logo_path = (
+            static_dir / logo_filename
+            if isinstance(logo_filename, str) and logo_filename
+            else None
         )
-        video_path = static_dir / video_filename if isinstance(video_filename, str) and video_filename else None
+        favicon_path = (
+            static_dir / favicon_filename
+            if isinstance(favicon_filename, str) and favicon_filename
+            else None
+        )
+        video_path = (
+            static_dir / video_filename
+            if isinstance(video_filename, str) and video_filename
+            else None
+        )
 
         if logo_path and logo_path.is_file() and not settings_obj.logo:
             settings_obj.logo = self._create_image(

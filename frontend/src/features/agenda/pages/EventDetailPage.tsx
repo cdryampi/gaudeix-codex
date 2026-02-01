@@ -136,7 +136,7 @@ export function EventDetailPage() {
   const startDate = new Date(event.start_at);
   const imageUrl =
     event.image_url ||
-    event.featured_media?.large ||
+    event.featured_media?.variant_large ||
     event.featured_media?.file ||
     "/placeholder-event.jpg";
   const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${event.venue_name} ${event.location_text}`)}`;
