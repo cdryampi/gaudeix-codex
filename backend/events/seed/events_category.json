@@ -2,27 +2,214 @@
   "root": {
     "slug": "events",
     "taxonomy": "events",
-    "translations": { "ca": "Esdeveniments", "es": "Eventos", "en": "Events", "fr": "Événements" }
+    "icon": "calendar",
+    "featured_image": "events_root.png",
+    "metatitulo": "Esdeveniments - Cabrera de Mar",
+    "metadescripcion": "No et perdis res del que passa a Cabrera de Mar. Festes, cultura, esports i molt més.",
+    "translations": {
+      "ca": "Esdeveniments",
+      "es": "Eventos",
+      "en": "Events",
+      "fr": "Événements"
+    },
+    "descriptions": {
+      "ca": "No et perdis res del que passa a Cabrera de Mar. Festes, cultura, esports i molt més.",
+      "es": "No te pierdas nada de lo que ocurre en Cabrera de Mar. Fiestas, cultura, deportes y mucho más.",
+      "en": "Don't miss anything that happens in Cabrera de Mar. Festivities, culture, sports and much more.",
+      "fr": "Ne manquez rien de ce qui se passe à Cabrera de Mar. Fêtes, culture, sports et bien plus encore."
+    }
   },
   "subcategories": [
-    { "slug": "cultura", "translations": { "ca": "Cultura", "es": "Cultura", "en": "Culture", "fr": "Culture" } },
-    { "slug": "festes", "translations": { "ca": "Festes", "es": "Fiestas", "en": "Festivities", "fr": "Fêtes" } },
-    { "slug": "infantil", "translations": { "ca": "Infantil", "es": "Infantil", "en": "Kids", "fr": "Enfants" } },
-    { "slug": "joves", "translations": { "ca": "Joves", "es": "Jóvenes", "en": "Youth", "fr": "Jeunes" } },
-    { "slug": "esports", "translations": { "ca": "Esports", "es": "Deportes", "en": "Sports", "fr": "Sports" } },
+    {
+      "slug": "cultura",
+      "icon": "clapperboard",
+      "featured_image": "events_cultura.png",
+      "metatitulo": "Cultura - Esdeveniments",
+      "metadescripcion": "Activitats culturals, exposicions i xerrades a Cabrera de Mar.",
+      "translations": {
+        "ca": "Cultura",
+        "es": "Cultura",
+        "en": "Culture",
+        "fr": "Culture"
+      },
+      "descriptions": {
+        "ca": "Activitats culturals, exposicions i xerrades.",
+        "es": "Actividades culturales, exposiciones y charlas.",
+        "en": "Cultural activities, exhibitions and talks.",
+        "fr": "Activités culturelles, expositions et conférences."
+      }
+    },
+    {
+      "slug": "festes",
+      "icon": "party-popper",
+      "featured_image": "events_festes.png",
+      "metatitulo": "Festes i Tradicions",
+      "metadescripcion": "Festes populars, tradicions i celebracions locals a Cabrera de Mar.",
+      "translations": {
+        "ca": "Festes",
+        "es": "Fiestas",
+        "en": "Festivities",
+        "fr": "Fêtes"
+      },
+      "descriptions": {
+        "ca": "Festes populars, tradicions i celebracions locals.",
+        "es": "Fiestas populares, tradiciones y celebraciones locales.",
+        "en": "Popular festivals, traditions and local celebrations.",
+        "fr": "Fêtes populares, traditions et célébrations locales."
+      }
+    },
+    {
+      "slug": "infantil",
+      "icon": "baby",
+      "featured_image": "events_infantil.png",
+      "metatitulo": "Activitats Infantils",
+      "metadescripcion": "Activitats pensades per als més petits de la casa a Cabrera de Mar.",
+      "translations": {
+        "ca": "Infantil",
+        "es": "Infantil",
+        "en": "Kids",
+        "fr": "Enfants"
+      },
+      "descriptions": {
+        "ca": "Activitats pensades per als més petits de la casa.",
+        "es": "Actividades pensadas para los más pequeños de la casa.",
+        "en": "Activities designed for the little ones in the house.",
+        "fr": "Activités conçues pour les plus petits de la maison."
+      }
+    },
+    {
+      "slug": "joves",
+      "icon": "users",
+      "featured_image": "events_joves.png",
+      "metatitulo": "Espai Jove - Activitats",
+      "metadescripcion": "Espais i activitats per al jovent de Cabrera de Mar.",
+      "translations": {
+        "ca": "Joves",
+        "es": "Jóvenes",
+        "en": "Youth",
+        "fr": "Jeunes"
+      },
+      "descriptions": {
+        "ca": "Espais i activitats per al jovent de Cabrera.",
+        "es": "Espacios y actividades para la juventud de Cabrera.",
+        "en": "Spaces and activities for the youth of Cabrera.",
+        "fr": "Espaces et activités pour les jeunes de Cabrera."
+      }
+    },
+    {
+      "slug": "esports",
+      "icon": "trophy",
+      "featured_image": "events_esports.png",
+      "metatitulo": "Esports i Curses",
+      "metadescripcion": "Esdeveniments esportius, curses i competicions a Cabrera de Mar.",
+      "translations": {
+        "ca": "Esports",
+        "es": "Deportes",
+        "en": "Sports",
+        "fr": "Sports"
+      },
+      "descriptions": {
+        "ca": "Esdeveniments esportius, curses i competicions.",
+        "es": "Eventos deportivos, carreras y competiciones.",
+        "en": "Sports events, races and competitions.",
+        "fr": "Événements sportifs, courses et compétitions."
+      }
+    },
     {
       "slug": "fires-i-mercats",
+      "icon": "shopping-cart",
+      "featured_image": "events_fires_mercats.png",
+      "metatitulo": "Fires i Mercats",
+      "metadescripcion": "Mercats setmanals i fires d'artesania i proximitat a Cabrera de Mar.",
       "translations": {
         "ca": "Fires i mercats",
         "es": "Ferias y mercados",
         "en": "Fairs and markets",
         "fr": "Foires et marchés"
+      },
+      "descriptions": {
+        "ca": "Mercats setmanals i fires d'artesania i proximitat.",
+        "es": "Mercados semanales y ferias de artesanía y proximidad.",
+        "en": "Weekly markets and craft and local fairs.",
+        "fr": "Marchés hebdomadaires et foires artisanales et locales."
       }
     },
-    { "slug": "formacio", "translations": { "ca": "Formació", "es": "Formación", "en": "Training", "fr": "Formation" } },
-    { "slug": "musica", "translations": { "ca": "Música", "es": "Música", "en": "Music", "fr": "Musique" } },
-    { "slug": "teatre", "translations": { "ca": "Teatre", "es": "Teatro", "en": "Theatre", "fr": "Théâtre" } },
-    { "slug": "altres", "translations": { "ca": "Altres", "es": "Otros", "en": "Other", "fr": "Autres" } }
+    {
+      "slug": "formacio",
+      "icon": "graduation-cap",
+      "featured_image": "events_formacio.png",
+      "metatitulo": "Cursos i Formació",
+      "metadescripcion": "Cursos, tallers i oportunitats d'aprenentatge a Cabrera de Mar.",
+      "translations": {
+        "ca": "Formació",
+        "es": "Formación",
+        "en": "Training",
+        "fr": "Formation"
+      },
+      "descriptions": {
+        "ca": "Cursos, tallers i oportunitats d'aprenentatge.",
+        "es": "Cursos, talleres y oportunidades de aprendizaje.",
+        "en": "Courses, workshops and learning opportunities.",
+        "fr": "Cours, ateliers et opportunités d'apprentissage."
+      }
+    },
+    {
+      "slug": "musica",
+      "icon": "music",
+      "featured_image": "events_musica.png",
+      "metatitulo": "Concerts i Música",
+      "metadescripcion": "Concerts, recitals i festivals de música a Cabrera de Mar.",
+      "translations": {
+        "ca": "Música",
+        "es": "Música",
+        "en": "Music",
+        "fr": "Musique"
+      },
+      "descriptions": {
+        "ca": "Concerts, recitals i festivals de música.",
+        "es": "Conciertos, recitales y festivales de música.",
+        "en": "Concerts, recitals and music festivals.",
+        "fr": "Concerts, récitals et festivals de musique."
+      }
+    },
+    {
+      "slug": "teatre",
+      "icon": "theater",
+      "featured_image": "theater.png",
+      "metatitulo": "Teatre i Arts Escèniques",
+      "metadescripcion": "Arts escèniques, obres de teatre i dansa a Cabrera de Mar.",
+      "translations": {
+        "ca": "Teatre",
+        "es": "Teatro",
+        "en": "Theatre",
+        "fr": "Théâtre"
+      },
+      "descriptions": {
+        "ca": "Arts escèniques, obres de teatre i dansa.",
+        "es": "Artes escénicas, obras de teatro y danza.",
+        "en": "Performing arts, theatre plays and dance.",
+        "fr": "Arts de la scène, pièces de théâtre et danse."
+      }
+    },
+    {
+      "slug": "altres",
+      "icon": "ellipsis",
+      "featured_image": "networking.png",
+      "metatitulo": "Altres esdeveniments",
+      "metadescripcion": "Altres esdeveniments d'interès general a Cabrera de Mar.",
+      "translations": {
+        "ca": "Altres",
+        "es": "Otros",
+        "en": "Other",
+        "fr": "Autres"
+      },
+      "descriptions": {
+        "ca": "Altres esdeveniments d'interès general.",
+        "es": "Otros eventos de interés general.",
+        "en": "Other events of general interest.",
+        "fr": "Autres événements d'intérêt général."
+      }
+    }
   ],
   "singleton_pk": 1,
   "assign_to_existing_events": true

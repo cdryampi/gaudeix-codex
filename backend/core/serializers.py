@@ -4,6 +4,9 @@ from django.conf import settings
 from rest_framework import serializers
 from parler_rest.serializers import TranslatableModelSerializer, TranslatedFieldsField
 
+from media_files.models import DocumentFile, ImageFile
+from media_files.serializers import DocumentFileSerializer, ImageFileSerializer
+
 from .models import Category, Tag
 
 
@@ -23,6 +26,20 @@ class CategorySerializer(TranslatableModelSerializer):
         required=False,
         allow_null=True,
     )
+    featured_media = ImageFileSerializer(read_only=True)
+    featured_media_id = serializers.PrimaryKeyRelatedField(
+        queryset=ImageFile.objects.all(),
+        allow_null=True,
+        required=False,
+        write_only=True,
+    )
+    attachments = DocumentFileSerializer(many=True, read_only=True)
+    attachments_ids = serializers.PrimaryKeyRelatedField(
+        queryset=DocumentFile.objects.all(),
+        many=True,
+        required=False,
+        write_only=True,
+    )
     created_at = serializers.DateTimeField(source="fecha_creacion", read_only=True)
     updated_at = serializers.DateTimeField(source="fecha_modificacion", read_only=True)
 
@@ -34,6 +51,11 @@ class CategorySerializer(TranslatableModelSerializer):
             "taxonomy",
             "parent",
             "icon",
+            "is_published",
+            "featured_media",
+            "featured_media_id",
+            "attachments",
+            "attachments_ids",
             "nombre",
             "descripcion",
             "translations",
@@ -44,6 +66,8 @@ class CategorySerializer(TranslatableModelSerializer):
             "id",
             "created_at",
             "updated_at",
+            "featured_media",
+            "attachments",
         ]
 
     def validate(self, attrs):
@@ -86,10 +110,21 @@ class CategorySerializer(TranslatableModelSerializer):
         return instance
 
     def create(self, validated_data):
+        attachments = validated_data.pop("attachments_ids", [])
         translations_data = validated_data.pop("translations", None)
         base_language = settings.LANGUAGE_CODE
         nombre = validated_data.pop("nombre", None) or self.initial_data.get("nombre")
         descripcion = validated_data.pop("descripcion", None) or self.initial_data.get("descripcion")
+        featured_media = validated_data.pop("featured_media_id", None)
+
+        if featured_media is None and self.initial_data.get("featured_media"):
+            featured_media = ImageFile.objects.filter(
+                pk=self.initial_data.get("featured_media")
+            ).first()
+        if not attachments and self.initial_data.get("attachments"):
+            attachments = list(
+                DocumentFile.objects.filter(pk__in=self.initial_data.get("attachments"))
+            )
 
         instance = Category()
         instance.set_current_language(base_language)
@@ -102,6 +137,10 @@ class CategorySerializer(TranslatableModelSerializer):
 
         instance.save()
 
+        if featured_media is not None:
+            instance.featured_media = featured_media
+            instance.save()
+
         if translations_data:
             self._apply_translations(instance, translations_data, skip_language=base_language)
             instance.set_current_language(base_language)
@@ -111,13 +150,25 @@ class CategorySerializer(TranslatableModelSerializer):
             if descripcion is not None:
                 instance.descripcion = descripcion
             instance.save()
+        if attachments:
+            instance.attachments.set(attachments)
         return instance
 
     def update(self, instance, validated_data):
+        attachments = validated_data.pop("attachments_ids", None)
         translations_data = validated_data.pop("translations", None)
         base_language = settings.LANGUAGE_CODE
         nombre = validated_data.pop("nombre", None) or self.initial_data.get("nombre")
         descripcion = validated_data.pop("descripcion", None) or self.initial_data.get("descripcion")
+        featured_media = validated_data.pop("featured_media_id", None)
+        if featured_media is None and self.initial_data.get("featured_media"):
+            featured_media = ImageFile.objects.filter(
+                pk=self.initial_data.get("featured_media")
+            ).first()
+        if attachments is None and self.initial_data.get("attachments"):
+            attachments = list(
+                DocumentFile.objects.filter(pk__in=self.initial_data.get("attachments"))
+            )
 
         instance.set_current_language(base_language)
         for attr, value in validated_data.items():
@@ -128,6 +179,9 @@ class CategorySerializer(TranslatableModelSerializer):
             instance.descripcion = descripcion
 
         instance.save()
+        if featured_media is not None:
+            instance.featured_media = featured_media
+            instance.save()
         if translations_data:
             self._apply_translations(instance, translations_data, skip_language=base_language)
             instance.set_current_language(base_language)
@@ -137,6 +191,8 @@ class CategorySerializer(TranslatableModelSerializer):
             if descripcion is not None:
                 instance.descripcion = descripcion
             instance.save()
+        if attachments is not None:
+            instance.attachments.set(attachments)
         return instance
 
     def _apply_translations(self, instance: Category, translations: dict, skip_language: str | None = None) -> None:

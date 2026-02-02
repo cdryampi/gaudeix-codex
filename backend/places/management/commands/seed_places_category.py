@@ -14,7 +14,10 @@ from django.core.management.base import CommandError
 from django.db import transaction
 
 from core.models import Category
+from media_files.models import ImageFile
 from places.models import Place, PlaceCategorySingleton
+import mimetypes
+from django.core.files import File
 
 
 class Command(BaseCommand):
@@ -35,11 +38,22 @@ class Command(BaseCommand):
 
     def _create_root_category(self, definition: dict) -> Category:
         slug = definition["slug"]
+        icon = definition.get("icon", "")
         translations = definition.get("translations", {}) or {}
+        descriptions = definition.get("descriptions", {}) or {}
+        featured_image_name = definition.get("featured_image")
+
         category, created = Category.objects.get_or_create(
             slug=slug,
-            defaults={"nombre": translations.get("en") or slug},
+            defaults={
+                "nombre": translations.get("en") or slug,
+                "icon": icon,
+            },
         )
+
+        if not created and icon and category.icon != icon:
+            category.icon = icon
+            category.save(update_fields=["icon"])
 
         for lang_code, name in translations.items():
             category.set_current_language(lang_code)
@@ -47,31 +61,88 @@ class Command(BaseCommand):
                 category.nombre = name
                 category.save()
 
+        for lang_code, desc in descriptions.items():
+            category.set_current_language(lang_code)
+            if category.descripcion != desc:
+                category.descripcion = desc
+                category.save()
+
+        if featured_image_name:
+            self._apply_featured_image(category, featured_image_name)
+
         if created:
-            self.stdout.write(self.style.SUCCESS("Created root category 'places'"))
+            self.stdout.write(self.style.SUCCESS(f"Created root category '{slug}'"))
         else:
-            self.stdout.write(self.style.WARNING(f"Root category '{slug}' already exists"))
+            self.stdout.write(self.style.WARNING(f"Root category '{slug}' updated"))
         return category
 
     def _create_template_categories(self, templates: list[dict]) -> None:
         for entry in templates:
             slug = entry["slug"]
             names = entry.get("translations", {}) or {}
+            descs = entry.get("descriptions", {}) or {}
+            icon = entry.get("icon", "")
+            featured_image_name = entry.get("featured_image")
+
             category, created = Category.objects.get_or_create(
                 slug=slug,
-                defaults={"nombre": names.get("en", slug), "taxonomy": "template"},
+                defaults={
+                    "nombre": names.get("en", slug),
+                    "taxonomy": "template",
+                    "icon": icon,
+                },
             )
             if category.taxonomy != "template":
                 category.taxonomy = "template"
+                category.save(update_fields=["taxonomy"])
+            
+            if icon and category.icon != icon:
+                category.icon = icon
+                category.save(update_fields=["icon"])
+
             for lang_code, name in names.items():
                 category.set_current_language(lang_code)
                 if category.nombre != name:
                     category.nombre = name
-            category.save()
+                    category.save()
+
+            for lang_code, desc in descs.items():
+                category.set_current_language(lang_code)
+                if category.descripcion != desc:
+                    category.descripcion = desc
+                    category.save()
+
+            if featured_image_name:
+                self._apply_featured_image(category, featured_image_name)
+
             if created:
                 self.stdout.write(self.style.SUCCESS(f"Created template category '{slug}'"))
             else:
-                self.stdout.write(self.style.WARNING(f"Template category '{slug}' already exists"))
+                self.stdout.write(self.style.WARNING(f"Template category '{slug}' updated"))
+
+    def _apply_featured_image(self, category: Category, image_name: str) -> None:
+        # Check if image already exists
+        image_file = ImageFile.objects.filter(original_name=image_name).first()
+        if not image_file:
+            # Try to load from backend/seed/images
+            seed_images_dir = Path(__file__).resolve().parents[4] / "seed" / "images"
+            if not seed_images_dir.exists():
+                seed_images_dir = Path(__file__).resolve().parents[3] / "seed" / "images"
+            image_path = seed_images_dir / image_name
+            if image_path.exists():
+                with image_path.open("rb") as f:
+                    image_file = ImageFile.objects.create(
+                        file=File(f, name=image_name),
+                        original_name=image_name,
+                        mime_type=mimetypes.guess_type(image_name)[0] or "image/png",
+                        size_bytes=image_path.stat().st_size,
+                    )
+                self.stdout.write(self.style.SUCCESS(f"Created ImageFile for {image_name}"))
+        
+        if image_file and category.featured_media != image_file:
+            category.featured_media = image_file
+            category.save(update_fields=["featured_media"])
+            self.stdout.write(self.style.SUCCESS(f"Assigned featured image {image_name} to category {category.slug}"))
 
     def _create_singleton(self, category: Category, pk: int) -> PlaceCategorySingleton:
         singleton, created = PlaceCategorySingleton.objects.get_or_create(
@@ -113,7 +184,9 @@ class Command(BaseCommand):
         )
 
     def _load_seed_data(self) -> dict:
-        seed_path = Path(__file__).resolve().parents[2] / "seed" / "places_category.json"
+        seed_path = Path(__file__).resolve().parents[3] / "seed" / "places_category.json"
+        if not seed_path.exists():
+             seed_path = Path(__file__).resolve().parents[2] / "seed" / "places_category.json"
         try:
             data = json.loads(seed_path.read_text(encoding="utf-8"))
         except FileNotFoundError as exc:

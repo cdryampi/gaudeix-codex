@@ -1,82 +1,162 @@
 {
   "root": {
     "slug": "places",
+    "icon": "map-pin",
+    "featured_image": "places_root.png",
+    "metatitulo": "Llocs - Cabrera de Mar",
+    "metadescripcion": "Explora els llocs més emblemàtics i interessants de Cabrera de Mar.",
     "translations": {
       "ca": "Llocs",
       "es": "Lugares",
       "en": "Places",
       "fr": "Lieux"
+    },
+    "descriptions": {
+      "ca": "Explora els llocs més emblemàtics i interessants de Cabrera de Mar.",
+      "es": "Explora los lugares más emblemáticos e interesantes de Cabrera de Mar.",
+      "en": "Explore the most emblematic and interesting places in Cabrera de Mar.",
+      "fr": "Explorez les lieux les plus emblématiques et intéressants de Cabrera de Mar."
     }
   },
   "templates": [
     {
       "slug": "restaurants",
       "taxonomy": "template",
+      "icon": "utensils",
+      "featured_image": "places_restaurants.png",
+      "metatitulo": "Restaurants - Cabrera de Mar",
+      "metadescripcion": "Gaudeix de la millor gastronomia local en els nostres restaurants i bars.",
       "translations": {
         "ca": "Restaurants",
         "es": "Restaurantes",
         "en": "Restaurants",
         "fr": "Restaurants"
+      },
+      "descriptions": {
+        "ca": "Gaudeix de la millor gastronomia local en els nostres restaurants i bars.",
+        "es": "Disfruta de la mejor gastronomía local en nuestros restaurantes y bares.",
+        "en": "Enjoy the best local gastronomy in our restaurants and bars.",
+        "fr": "Profitez de la meilleure gastronomie locale dans nos restaurants et bars."
       }
     },
     {
       "slug": "accommodations",
       "taxonomy": "template",
+      "icon": "bed",
+      "featured_image": "places_accommodations.png",
+      "metatitulo": "On dormir - Cabrera de Mar",
+      "metadescripcion": "Troba l'allotjament perfecte per a la teva estada a Cabrera de Mar.",
       "translations": {
         "ca": "On dormir",
         "es": "Dónde dormir",
         "en": "Where to sleep",
         "fr": "Où dormir"
+      },
+      "descriptions": {
+        "ca": "Troba l'allotjament perfecte per a la teva estada a Cabrera de Mar.",
+        "es": "Encuentra el alojamiento perfecto para tu estancia en Cabrera de Mar.",
+        "en": "Find the perfect accommodation for your stay in Cabrera de Mar.",
+        "fr": "Trouvez l'hébergement idéal pour votre séjour à Cabrera de Mar."
       }
     },
     {
       "slug": "nature",
       "taxonomy": "template",
+      "icon": "leaf",
+      "featured_image": "places_nature.png",
+      "metatitulo": "Natura - Cabrera de Mar",
+      "metadescripcion": "Espais naturals, rutes de senderisme i paisatges increïbles.",
       "translations": {
         "ca": "Natura",
         "es": "Naturaleza",
         "en": "Nature",
         "fr": "Nature"
+      },
+      "descriptions": {
+        "ca": "Espais naturals, rutes de senderisme i paisatges increïbles.",
+        "es": "Espacios naturales, rutas de senderismo y paisajes increíbles.",
+        "en": "Natural spaces, hiking trails and incredible landscapes.",
+        "fr": "Espaces naturels, sentiers de randonnée et paysages incroyables."
       }
     },
     {
       "slug": "heritage",
       "taxonomy": "template",
+      "icon": "landmark",
+      "featured_image": "places_heritage.png",
+      "metatitulo": "Patrimoni - Cabrera de Mar",
+      "metadescripcion": "Descobreix la història i el llegat cultural de la nostra vila.",
       "translations": {
         "ca": "Patrimoni",
         "es": "Patrimonio",
         "en": "Heritage",
         "fr": "Patrimoine"
+      },
+      "descriptions": {
+        "ca": "Descobreix la història i el llegat cultural de la nostra vila.",
+        "es": "Descubre la historia y el legado cultural de nuestra villa.",
+        "en": "Discover the history and cultural legacy of our village.",
+        "fr": "Découvrez l'histoire et l'héritage culturel de notre village."
       }
     },
     {
       "slug": "beaches",
       "taxonomy": "template",
+      "icon": "waves",
+      "featured_image": "places_beaches.png",
+      "metatitulo": "Platges - Cabrera de Mar",
+      "metadescripcion": "Relaxa't a les nostres platges de sorra daurada i aigües cristal·lines.",
       "translations": {
         "ca": "Platges",
         "es": "Playas",
         "en": "Beaches",
         "fr": "Plages"
+      },
+      "descriptions": {
+        "ca": "Relaxa't a les nostres platges de sorra daurada i aigües cristal·lines.",
+        "es": "Relájate en nuestras playas de arena dorada y aguas cristalinas.",
+        "en": "Relax on our golden sand beaches and crystal clear waters.",
+        "fr": "Détendez-vous sur nos plages de sable doré et nos eaux cristallines."
       }
     },
     {
       "slug": "culture",
       "taxonomy": "template",
+      "icon": "palette",
+      "featured_image": "places_culture.png",
+      "metatitulo": "Cultura - Cabrera de Mar",
+      "metadescripcion": "Museus, galeries d'art i expressions culturals de Cabrera.",
       "translations": {
         "ca": "Cultura",
         "es": "Cultura",
         "en": "Culture",
         "fr": "Culture"
+      },
+      "descriptions": {
+        "ca": "Museus, galeries d'art i expressions culturals de Cabrera.",
+        "es": "Museos, galerías de arte y expresiones culturales de Cabrera.",
+        "en": "Museums, art galleries and cultural expressions of Cabrera.",
+        "fr": "Musées, galeries d'art et expressions culturelles de Cabrera."
       }
     },
     {
       "slug": "shopping",
       "taxonomy": "template",
+      "icon": "shopping-bag",
+      "featured_image": "places_shopping.png",
+      "metatitulo": "Compres - Cabrera de Mar",
+      "metadescripcion": "Petit comerç local i mercats amb productes de proximitat.",
       "translations": {
         "ca": "Compres",
         "es": "Compras",
         "en": "Shopping",
         "fr": "Shopping"
+      },
+      "descriptions": {
+        "ca": "Petit comerç local i mercats amb productes de proximitat.",
+        "es": "Pequeño comercio local y mercados con productos de proximidad.",
+        "en": "Small local shops and markets with local products.",
+        "fr": "Petits commerces locaux et marchés de produits locaux."
       }
     }
   ],

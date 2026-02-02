@@ -6,8 +6,11 @@ import { InteractiveMap } from "@/components/site/InteractiveMap";
 import { HeroVideoFrame } from "@/features/hero/components/HeroVideo";
 import { getEvents } from "@/features/events/api";
 import { ChevronRight } from "lucide-react";
-import { FEATURED_CATEGORIES } from "@/features/categories/categoriesData";
-import { FeaturedCategoryCard } from "@/features/categories/components/FeaturedCategoryCard";
+import { getCategories } from "@/features/categories/api";
+import {
+  FeaturedCategoryCard,
+  CategoryCardProps,
+} from "@/features/categories/components/FeaturedCategoryCard";
 import { NewsCard } from "@/features/news/components/NewsCard";
 import { EventDayGroup } from "@/features/agenda/components/EventDayGroup";
 import {
@@ -25,11 +28,14 @@ import { AgendaPage } from "@/features/agenda/pages/AgendaPage";
 import { PlacesPage } from "@/features/places/pages/PlacesPage";
 import { PlaceDetailPage } from "@/features/places/pages/PlaceDetailPage";
 import { RankingsPage } from "@/features/gamification/pages/RankingsPage";
+import { CategoriesPage } from "@/features/categories/pages/CategoriesPage";
+import { CategoryDetailPage } from "@/features/categories/pages/CategoryDetailPage";
 import { ComoLlegarPage } from "@/features/site-settings/pages/ComoLlegarPage";
 import { VisitUsCTA } from "@/features/site-settings/components/VisitUsCTA";
 import { MainLayout } from "@/components/layouts/MainLayout";
 
 import { listNewsItems } from "@/features/news/api";
+import { Category } from "@/features/categories/types";
 
 function HomePage() {
   const [eventFilter, setEventFilter] = useState<DateRangeFilter>("all");
@@ -39,6 +45,19 @@ function HomePage() {
     queryKey: ["events", { is_published: true, limit: 10, upcoming: true }],
     queryFn: () => getEvents({ is_published: true, limit: 10, upcoming: true }),
   });
+
+  // Fetch Categories
+  const { data: categoriesData } = useQuery({
+    queryKey: ["categories"],
+    queryFn: () => getCategories(),
+  });
+
+  const featuredCategories = useMemo(() => {
+    const list = Array.isArray(categoriesData)
+      ? categoriesData
+      : categoriesData?.results || [];
+    return list.slice(0, 8);
+  }, [categoriesData]);
 
   const allEvents = useMemo(() => {
     if (!eventsData) return [];
@@ -92,11 +111,41 @@ function HomePage() {
         </div>
 
         <div className="container mx-auto px-6 pb-48">
-          <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-4">
-            {FEATURED_CATEGORIES.map((c) => (
-              <FeaturedCategoryCard key={c.id} category={c} />
-            ))}
-          </div>
+          {!categoriesData && !featuredCategories.length ? (
+            // Loading Skeleton
+            <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-4">
+              {[1, 2, 3, 4].map((i) => (
+                <div
+                  key={i}
+                  className="h-[400px] md:h-[540px] rounded-[4rem] bg-slate-100 animate-pulse"
+                />
+              ))}
+            </div>
+          ) : featuredCategories.length === 0 ? (
+            // Empty State
+            <div className="flex flex-col items-center justify-center py-20 border-4 border-dashed border-slate-100 rounded-[4rem]">
+              <p className="text-2xl font-bold text-slate-300 uppercase tracking-widest text-center">
+                Próximamente más categorías
+              </p>
+            </div>
+          ) : (
+            // Categories Grid
+            <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-4">
+              {featuredCategories.map((c: Category) => {
+                const props: CategoryCardProps = {
+                  id: c.id,
+                  title: c.nombre,
+                  href: `/categorias/${c.slug}`,
+                  image:
+                    c.featured_media?.variant_medium || c.featured_media?.file,
+                  icon: c.icon,
+                  description: c.descripcion,
+                  taxonomy: c.taxonomy,
+                };
+                return <FeaturedCategoryCard key={c.id} category={props} />;
+              })}
+            </div>
+          )}
         </div>
       </section>
 
@@ -243,6 +292,8 @@ export default function App() {
         <Route path="/agenda/:slug" element={<EventDetailPage />} />
         <Route path="/lugares" element={<PlacesPage />} />
         <Route path="/lugares/:slug" element={<PlaceDetailPage />} />
+        <Route path="/categorias" element={<CategoriesPage />} />
+        <Route path="/categorias/:slug" element={<CategoryDetailPage />} />
         <Route path="/rankings" element={<RankingsPage />} />
         <Route path="/como-llegar" element={<ComoLlegarPage />} />
         <Route path="/noticias/:slug" element={<NewsDetailPage />} />

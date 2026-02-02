@@ -4,17 +4,26 @@ import { Category, CategoryPayload, CategoryUpdatePayload } from "../types";
 
 export const categoriesApi = {
   async list(params?: { search?: string; taxonomy?: string; slug?: string }) {
-    const response = await apiClient.get<Category[]>(API_ENDPOINTS.CATEGORIES.LIST, { params });
+    const response = await apiClient.get<Category[]>(
+      API_ENDPOINTS.CATEGORIES.LIST,
+      { params },
+    );
     return response.data.map(normalizeCategory);
   },
 
   async create(payload: CategoryPayload) {
-    const response = await apiClient.post<Category>(API_ENDPOINTS.CATEGORIES.LIST, payload);
+    const response = await apiClient.post<Category>(
+      API_ENDPOINTS.CATEGORIES.LIST,
+      payload,
+    );
     return normalizeCategory(response.data);
   },
 
   async update(id: number, payload: CategoryUpdatePayload) {
-    const response = await apiClient.patch<Category>(API_ENDPOINTS.CATEGORIES.DETAIL(String(id)), payload);
+    const response = await apiClient.patch<Category>(
+      API_ENDPOINTS.CATEGORIES.DETAIL(String(id)),
+      payload,
+    );
     return normalizeCategory(response.data);
   },
 
@@ -22,8 +31,14 @@ export const categoriesApi = {
     await apiClient.delete(API_ENDPOINTS.CATEGORIES.DETAIL(String(id)));
   },
 
-  async autoTranslate(id: number, data: { source_lang?: string; target_langs?: string[] }) {
-    const response = await apiClient.post(API_ENDPOINTS.CATEGORIES.AUTO_TRANSLATE(String(id)), data);
+  async autoTranslate(
+    id: number,
+    data: { source_lang?: string; target_langs?: string[] },
+  ) {
+    const response = await apiClient.post(
+      API_ENDPOINTS.CATEGORIES.AUTO_TRANSLATE(String(id)),
+      data,
+    );
     return response.data as {
       success: boolean;
       translations: Record<string, { nombre: string; descripcion: string }>;
@@ -39,5 +54,10 @@ function normalizeCategory(category: Category): Category {
     descripcion: category.descripcion || "",
     translations: category.translations || {},
     icon: category.icon || "",
+    is_published: category.is_published ?? true,
+    featured_media_id: category.featured_media_id ?? null,
+    attachments_ids: category.attachments_ids ?? [],
+    seo_title: category.seo_title || "",
+    seo_description: category.seo_description || "",
   };
 }

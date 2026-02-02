@@ -29,6 +29,14 @@ class Command(BaseCommand):
         "Run `seed_events_category` and `seed_tags` first for best results."
     )
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--day-offset",
+            type=int,
+            default=0,
+            help="Number of days to shift the base 'now' for offsets.",
+        )
+
     def handle(self, *args, **options):
         self.stdout.write(
             self.style.WARNING(
@@ -39,7 +47,7 @@ class Command(BaseCommand):
             root_category = self._ensure_root_category()
             self._clear_events()
             images, documents = self._ensure_media_files()
-            self._create_events(root_category, images, documents)
+            self._create_events(root_category, images, documents, **options)
 
     def _ensure_root_category(self) -> Category:
         category, _ = Category.objects.get_or_create(
@@ -68,6 +76,7 @@ class Command(BaseCommand):
         root_category: Category,
         images: list[ImageFile],
         documents: list[DocumentFile],
+        **options,
     ) -> None:
         images = images or []
         documents = documents or []
@@ -75,7 +84,9 @@ class Command(BaseCommand):
         events_data = payload["events"]
         tzinfo = self._resolve_tz(payload.get("timezone"))
         media_dir = self._resolve_media_dir(payload.get("media_base_dir"))
-        base_now = timezone.now()
+        
+        day_offset = options.get("day_offset", 0)
+        base_now = timezone.now() + timedelta(days=day_offset)
 
         for index, data in enumerate(events_data):
             slug = data.get("slug") or None

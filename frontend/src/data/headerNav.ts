@@ -6,6 +6,7 @@ export type HeaderNavItem = {
 
 export const HEADER_NAV: HeaderNavItem[] = [
   { label: "Inicio", href: "/" },
+  { label: "Categorías", href: "/categorias" },
   {
     label: "Explora",
     href: "/lugares",

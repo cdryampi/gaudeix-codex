@@ -27,6 +27,7 @@ class CategoryAdmin(TranslatableAdmin):
     list_filter = (
         "taxonomy",
         "parent",
+        "is_published",
         "fecha_creacion",
     )
 
@@ -38,8 +39,9 @@ class CategoryAdmin(TranslatableAdmin):
     )
 
     fieldsets = (
-        ("Informació bàsica", {"fields": ("slug", "taxonomy", "parent", "icon")}),
+        ("Informació bàsica", {"fields": ("slug", "taxonomy", "parent", "icon", "is_published")}),
         ("Contingut traduïble", {"fields": ("nombre", "descripcion")}),
+        ("Media", {"fields": ("featured_media", "attachments"), "classes": ("collapse",)}),
         ("Metadades SEO", {"fields": ("metatitulo", "metadescripcion"), "classes": ("collapse",)}),
         (
             "Auditoria",

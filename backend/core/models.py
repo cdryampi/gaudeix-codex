@@ -179,6 +179,30 @@ class Category(TranslatableModel, BaseModel, MetadataModel):
         verbose_name="Icona",
         help_text="Identificador d'icona per mostrar al front/back office"
     )
+
+    is_published = models.BooleanField(
+        default=True,
+        verbose_name="Publicada",
+        help_text="Si la categoria esta publicada"
+    )
+
+    featured_media = models.ForeignKey(
+        "media_files.ImageFile",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="featured_in_categories",
+        verbose_name="Media destacada",
+        help_text="Imagen destacada para la categoria"
+    )
+
+    attachments = models.ManyToManyField(
+        "media_files.DocumentFile",
+        blank=True,
+        related_name="attached_to_categories",
+        verbose_name="Adjuntos",
+        help_text="Documentos adjuntos de la categoria"
+    )
     
     class Meta:
         verbose_name = "Category"

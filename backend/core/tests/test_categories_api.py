@@ -1,10 +1,15 @@
+import os
+from pathlib import Path
+
 import pytest
 from django.contrib.auth import get_user_model
+from django.core.files import File
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
 
 from core.models import Category
+from media_files.models import DocumentFile, ImageFile
 
 User = get_user_model()
 
@@ -17,6 +22,41 @@ def auth_client():
     client = APIClient()
     client.force_authenticate(user=user)
     return client
+
+
+@pytest.fixture
+def media_root(settings, tmp_path):
+    settings.MEDIA_ROOT = tmp_path
+    return tmp_path
+
+
+@pytest.fixture
+def sample_files_path() -> Path:
+    return Path(__file__).resolve().parents[2] / "events" / "tests" / "files"
+
+
+@pytest.fixture
+def sample_document(sample_files_path) -> DocumentFile:
+    pdf_path = sample_files_path / "sample.pdf"
+    with pdf_path.open("rb") as source:
+        return DocumentFile.objects.create(
+            file=File(source, name=pdf_path.name),
+            original_name=pdf_path.name,
+            mime_type="application/pdf",
+            size_bytes=os.path.getsize(pdf_path),
+        )
+
+
+@pytest.fixture
+def sample_image(sample_files_path) -> ImageFile:
+    image_path = sample_files_path / "sample.png"
+    with image_path.open("rb") as source:
+        return ImageFile.objects.create(
+            file=File(source, name=image_path.name),
+            original_name=image_path.name,
+            mime_type="image/png",
+            size_bytes=os.path.getsize(image_path),
+        )
 
 
 def test_list_and_filter_categories():
@@ -92,6 +132,55 @@ def test_create_category_with_parent_and_filter(auth_client):
     detail_url = reverse("category-detail", kwargs={"pk": resp_create.data["id"]})
     resp_invalid = auth_client.patch(detail_url, {"parent": resp_create.data["id"]}, format="json")
     assert resp_invalid.status_code == status.HTTP_400_BAD_REQUEST
+
+
+def test_create_category_with_media_and_attachments(
+    auth_client, media_root, sample_image, sample_document
+):
+    url = reverse("category-list")
+    payload = {
+        "slug": "heritage",
+        "taxonomy": "template",
+        "nombre": "Heritage",
+        "descripcion": "Historic places",
+        "is_published": False,
+        "featured_media_id": sample_image.id,
+        "attachments_ids": [sample_document.id],
+    }
+
+    resp_create = auth_client.post(url, payload, format="json")
+    assert resp_create.status_code == status.HTTP_201_CREATED
+    assert resp_create.data["is_published"] is False
+    assert resp_create.data["featured_media"]["id"] == sample_image.id
+    assert len(resp_create.data["attachments"]) == 1
+    assert resp_create.data["attachments"][0]["id"] == sample_document.id
+    assert "featured_media_id" not in resp_create.data
+    assert "attachments_ids" not in resp_create.data
+
+    category = Category.objects.get(pk=resp_create.data["id"])
+    assert category.featured_media_id == sample_image.id
+    assert list(category.attachments.values_list("id", flat=True)) == [sample_document.id]
+
+
+def test_update_category_media_and_translations(
+    auth_client, media_root, sample_image, sample_document
+):
+    category = Category.objects.create(slug="culture", nombre="Culture", taxonomy="template")
+    url = reverse("category-detail", kwargs={"pk": category.pk})
+    payload = {
+        "featured_media_id": sample_image.id,
+        "attachments_ids": [sample_document.id],
+        "translations": {"es": {"nombre": "Cultura", "descripcion": "Espacios culturales"}},
+    }
+
+    resp_patch = auth_client.patch(url, payload, format="json")
+    assert resp_patch.status_code == status.HTTP_200_OK
+    category.refresh_from_db()
+    assert category.featured_media_id == sample_image.id
+    assert list(category.attachments.values_list("id", flat=True)) == [sample_document.id]
+    category.set_current_language("es")
+    assert category.nombre == "Cultura"
+    assert category.descripcion == "Espacios culturales"
 
 
 def test_auto_translate_success(auth_client, monkeypatch):

@@ -8,33 +8,40 @@
 ## Dependencias Principales
 
 ### Core Django (Framework Web)
+
 - `Django==5.2.8` - Framework web principal
 - `djangorestframework==3.16.1` - API REST
 - `drf-spectacular==0.29.0` - Documentación OpenAPI/Swagger
 
 ### Autenticación y Seguridad
+
 - `django-allauth==65.13.1` - Sistema de autenticación completo
 - `djangorestframework_simplejwt==5.5.1` - Tokens JWT
-- `dj-rest-auth==7.0.1` - Endpoints de autenticación REST
+- `dj-rest-auth==7.0.2` - Endpoints de autenticación REST
 - `cryptography==46.0.3` - Criptografía (necesaria para JWT)
 - `cffi==2.0.0` - Foreign Function Interface (requerida por cryptography)
 - `PyJWT==2.10.1` - JSON Web Tokens
 
 ### Base de Datos
+
 - `psycopg==3.2.13` - Adaptador PostgreSQL (versión 3)
 - `psycopg-binary==3.2.13` - Versión binaria para Windows
 
 ### Internacionalización
+
 - `django-parler==2.3` - Traducciones de modelos
 - `django-parler-rest==2.2` - Integración con DRF
 
 ### Media y Archivos
+
 - `pillow==12.0.0` - Procesamiento de imágenes
 
 ### Firebase
+
 - `firebase-admin==6.8.0` - SDK de Firebase Admin (FCM, Firestore)
 
 ### LLM (Large Language Models)
+
 - `openai==1.58.1` - API de OpenAI (GPT-4, etc.)
 - `google-generativeai==0.8.3` - API de Google (Gemini)
 - `anthropic==0.42.0` - API de Anthropic (Claude)
@@ -42,12 +49,14 @@
 - `groq==0.13.0` - API de Groq
 
 ### Utilidades Django
+
 - `django-cors-headers==4.9.0` - CORS para frontend
 - `django-simple-history==3.10.1` - Historial de cambios en modelos
 - `django-solo==2.4.0` - Singleton models
 - `django-environ==0.12.0` - Variables de entorno
 
 ### HTTP y Networking
+
 - `requests==2.32.5` - Cliente HTTP síncrono
 - `httpx==0.27.2` - Cliente HTTP asíncrono
 - `urllib3==2.5.0` - Utilidades HTTP de bajo nivel
@@ -55,6 +64,7 @@
 ## Dependencias de Desarrollo
 
 ### Testing
+
 - `pytest==9.0.1` - Framework de testing
 - `pytest-django==4.11.1` - Integración Pytest-Django
 - `pytest-cov==6.0.0` - Cobertura de código
@@ -62,6 +72,7 @@
 - `tomli==2.4.0` - Parser TOML (requerido por pytest/mypy)
 
 ### Linting y Type Checking
+
 - `ruff==0.9.1` - Linter y formatter rápido
 - `mypy==1.14.1` - Type checker estático
 - `mypy_extensions==1.1.0` - Extensiones para mypy
@@ -73,6 +84,7 @@
 **Síntoma**: `ImportError: DLL load failed while importing _rust`
 
 **Solución**:
+
 ```bash
 pip install --force-reinstall cffi
 pip install --force-reinstall cryptography==46.0.3
@@ -83,6 +95,7 @@ pip install --force-reinstall cryptography==46.0.3
 **Síntoma**: `ImportError: cannot import name '_imaging'`
 
 **Solución**:
+
 ```bash
 pip uninstall pillow
 pip install pillow==12.0.0
@@ -93,6 +106,7 @@ pip install pillow==12.0.0
 **Síntoma**: `ModuleNotFoundError: No module named 'psycopg'`
 
 **Solución**:
+
 ```bash
 pip install psycopg==3.2.13 psycopg-binary==3.2.13
 ```

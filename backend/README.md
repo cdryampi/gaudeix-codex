@@ -5,6 +5,7 @@ Configuración base de Django para el proyecto **gaudeix_backend**.
 ## Instalación de Dependencias
 
 ### Producción
+
 ```bash
 # Desde la raíz del proyecto
 .venv\Scripts\python.exe -m pip install -r backend/requirements.txt
@@ -16,17 +17,20 @@ pip install -r requirements.txt
 ```
 
 ### Desarrollo (incluye testing y linting)
+
 ```bash
 # Instalar dependencias de desarrollo adicionales
 pip install -r requirements-dev.txt
 ```
 
 ### Notas Importantes
+
 - **Pillow**: Requiere instalación correcta para procesamiento de imágenes
 - **Cryptography**: Necesaria para JWT/autenticación. En Windows, asegúrate de que `cffi` esté instalado
 - **PostgreSQL**: Requiere `psycopg` y `psycopg-binary` para la conexión a la base de datos
 
 Si tienes problemas con `cryptography` en Windows:
+
 ```bash
 pip install --force-reinstall cffi
 pip install --force-reinstall cryptography==46.0.3
@@ -56,6 +60,7 @@ cp backend/.env.example backend/.env
 ```
 
 Valores principales (PostgreSQL):
+
 ```
 DATABASE_URL=postgresql://postgres:thos@localhost:5432/migration
 DJANGO_SECRET_KEY=dev-secret-key-change-in-production-123456789
@@ -90,20 +95,28 @@ python manage.py seed_places_category
 python manage.py seed_places
 ```
 
-Seed general (secuencial):
+### Deep Seed (Nuclear Cleanup & Sync)
+
+Para resolver inconsistencias y realizar un reset completo y limpio con datos estéticos sincronizados entre Backend y Frontend (incluyendo imágenes AI premium e iconos de Lucide):
 
 ```bash
-# Seeds en orden (usuarios, media, pages, settings, social, places, events...)
-python manage.py seed_all
+# Limpiar TODO (Categorías, Places, Events, Media) y volver a sembrar con fechas de HOY
+python nuclear_cleanup.py
 
-# Hard reset (PELIGROSO): flush + migrate + seed_all
-python manage.py seed_all --hard-reset --noinput
+# Limpiar y sembrar con eventos desplazados 10 días al futuro (útil para pruebas de agenda)
+python nuclear_cleanup.py --days 10
+
+# Solo limpiar (sin volver a sembrar)
+python nuclear_cleanup.py --no-seed
 ```
 
-`seed_places` usa las imágenes incluidas en `places/management/commands/images/` y crea datos de ejemplo con media y traducciones.
+`nuclear_cleanup.py` orquesta la eliminación nuclear de registros protegidos y lanza los comandos de seed en el orden correcto (`places_category`, `events_category`, `tags`, `places`, `events`).
+
+`seed_places` usa las imágenes incluidas en `seed/images/` y crea datos de ejemplo con media y traducciones.
 Los datos de seeds están separados en JSON por app (p.ej. `places/seed/places.json`, `events/seed/events.json`, `core/seed/tags.json`).
 
 Usuarios creados:
+
 - **Admin**: `ADMIN_USER` / `ADMIN_PASSWORD` (defaults: `admin` / `admin123`)
 - **System**: `SYSTEM_USER` / `SYSTEM_PASSWORD` (defaults: `system` / `system123`)
 
