@@ -43,9 +43,10 @@ class LLMProviderConfig(SingletonModel):
         # Mistral models
         MISTRAL_LARGE = "mistral-large-latest", _("Mistral Large")
 
-        # Groq models
-        LLAMA_3_70B = "llama-3.1-70b-versatile", _("Llama 3.1 70B")
+        # Groq models (production - see console.groq.com/docs/models)
+        LLAMA_3_3_70B = "llama-3.3-70b-versatile", _("Llama 3.3 70B")
         LLAMA_3_8B_INSTANT = "llama-3.1-8b-instant", _("Llama 3.1 8B Instant")
+        GPT_OSS_120B = "openai/gpt-oss-120b", _("GPT OSS 120B")
         GPT_OSS_20B = "openai/gpt-oss-20b", _("GPT OSS 20B")
 
         # Local models (Ollama/LM Studio compatible)
