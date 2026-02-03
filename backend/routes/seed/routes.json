@@ -1,0 +1,202 @@
+[
+  {
+    "slug": "cami-de-ronda-cabrera",
+    "route_type": "walking",
+    "difficulty": "moderate",
+    "distance_km": 8.5,
+    "duration_minutes": 180,
+    "elevation_gain": 250,
+    "elevation_loss": 250,
+    "is_circular": true,
+    "start_latitude": 41.5181,
+    "start_longitude": 2.3931,
+    "end_latitude": 41.5181,
+    "end_longitude": 2.3931,
+    "is_published": true,
+    "is_featured": true,
+    "title": "Camí de Ronda de Cabrera de Mar",
+    "summary": "Ruta costanera amb vistes espectaculars al Maresme.",
+    "description": "Aquesta ruta segueix l'antic camí de ronda que connectava les torres de vigilància de la costa. Passareu per cales amagades, pinedes mediterrànies i gaudireu de vistes impressionants del mar. És una ruta ideal per fer en família o amb amics, amb zones d'ombra i àrees de descans.",
+    "instructions": "Sortida des del Passeig Marítim. Seguiu les marques grogues i blanques del sender GR-92. Porteu aigua i protecció solar.",
+    "translations": {
+      "es": {
+        "title": "Camino de Ronda de Cabrera de Mar",
+        "summary": "Ruta costera con vistas espectaculares al Maresme.",
+        "description": "Esta ruta sigue el antiguo camino de ronda que conectaba las torres de vigilancia de la costa. Pasaréis por calas escondidas, pinares mediterráneos y disfrutaréis de vistas impresionantes del mar. Es una ruta ideal para hacer en familia o con amigos, con zonas de sombra y áreas de descanso.",
+        "instructions": "Salida desde el Paseo Marítimo. Seguid las marcas amarillas y blancas del sendero GR-92. Llevad agua y protección solar."
+      },
+      "en": {
+        "title": "Cabrera de Mar Coastal Path",
+        "summary": "Coastal route with spectacular views of the Maresme coast.",
+        "description": "This route follows the ancient coastal patrol path that connected the watchtowers along the coast. You will pass through hidden coves, Mediterranean pine forests and enjoy impressive sea views. It's an ideal route for families or groups of friends, with shaded areas and rest spots.",
+        "instructions": "Start from the Seafront Promenade. Follow the yellow and white marks of the GR-92 trail. Bring water and sun protection."
+      },
+      "fr": {
+        "title": "Chemin de Ronde de Cabrera de Mar",
+        "summary": "Route côtière avec des vues spectaculaires sur le Maresme.",
+        "description": "Cette route suit l'ancien chemin de ronde qui reliait les tours de guet de la côte. Vous passerez par des criques cachées, des pinèdes méditerranéennes et profiterez de vues impressionnantes sur la mer. C'est une route idéale pour les familles ou les groupes d'amis, avec des zones ombragées et des aires de repos.",
+        "instructions": "Départ depuis la Promenade Maritime. Suivez les marques jaunes et blanches du sentier GR-92. Apportez de l'eau et une protection solaire."
+      }
+    }
+  },
+  {
+    "slug": "ruta-dels-ibers",
+    "route_type": "guided",
+    "difficulty": "easy",
+    "distance_km": 4.2,
+    "duration_minutes": 90,
+    "elevation_gain": 80,
+    "elevation_loss": 80,
+    "is_circular": true,
+    "start_latitude": 41.5225,
+    "start_longitude": 2.3985,
+    "end_latitude": 41.5225,
+    "end_longitude": 2.3985,
+    "is_published": true,
+    "is_featured": false,
+    "title": "Ruta dels Ibers de Cabrera",
+    "summary": "Descobreix el passat ibèric de Cabrera amb visita al jaciment arqueològic.",
+    "description": "Ruta guiada que us portarà a conèixer el poblat ibèric de Burriac i el seu entorn. Aprendreu sobre la vida quotidiana dels ibers, les seves tradicions i la importància estratègica d'aquest assentament. Inclou visita al centre d'interpretació i explicacions d'arqueòlegs professionals.",
+    "instructions": "Recomanem reservar plaça amb antelació. Les visites guiades surten del Museu Municipal a les 10h i 17h. Durada aproximada: 1h 30min.",
+    "translations": {
+      "es": {
+        "title": "Ruta de los Íberos de Cabrera",
+        "summary": "Descubre el pasado ibérico de Cabrera con visita al yacimiento arqueológico.",
+        "description": "Ruta guiada que os llevará a conocer el poblado ibérico de Burriac y su entorno. Aprenderéis sobre la vida cotidiana de los íberos, sus tradiciones y la importancia estratégica de este asentamiento. Incluye visita al centro de interpretación y explicaciones de arqueólogos profesionales.",
+        "instructions": "Recomendamos reservar plaza con antelación. Las visitas guiadas salen del Museo Municipal a las 10h y 17h. Duración aproximada: 1h 30min."
+      },
+      "en": {
+        "title": "Iberian Route of Cabrera",
+        "summary": "Discover Cabrera's Iberian past with a visit to the archaeological site.",
+        "description": "Guided tour that will take you to explore the Iberian settlement of Burriac and its surroundings. You will learn about the daily life of the Iberians, their traditions and the strategic importance of this settlement. Includes visit to the interpretation center and explanations from professional archaeologists.",
+        "instructions": "We recommend booking in advance. Guided tours depart from the Municipal Museum at 10am and 5pm. Approximate duration: 1h 30min."
+      },
+      "fr": {
+        "title": "Route des Ibères de Cabrera",
+        "summary": "Découvrez le passé ibérique de Cabrera avec une visite du site archéologique.",
+        "description": "Visite guidée qui vous emmènera découvrir le village ibérique de Burriac et ses environs. Vous apprendrez la vie quotidienne des Ibères, leurs traditions et l'importance stratégique de ce site. Comprend la visite du centre d'interprétation et des explications d'archéologues professionnels.",
+        "instructions": "Nous recommandons de réserver à l'avance. Les visites guidées partent du Musée Municipal à 10h et 17h. Durée approximative: 1h 30min."
+      }
+    }
+  },
+  {
+    "slug": "ruta-btt-maresme",
+    "route_type": "cycling",
+    "difficulty": "difficult",
+    "distance_km": 25.0,
+    "duration_minutes": 150,
+    "elevation_gain": 650,
+    "elevation_loss": 650,
+    "is_circular": true,
+    "start_latitude": 41.52,
+    "start_longitude": 2.39,
+    "end_latitude": 41.52,
+    "end_longitude": 2.39,
+    "is_published": true,
+    "is_featured": false,
+    "title": "Ruta BTT Serralada del Maresme",
+    "summary": "Circuit de BTT per la serralada litoral amb trams tècnics.",
+    "description": "Ruta de bicicleta de muntanya que recorre els camins i senders de la Serralada Litoral. Inclou pujades exigents, baixades tècniques i trams de single track. Passareu per fonts naturals, ermites i miradors amb vistes panoràmiques al mar i a l'interior.",
+    "instructions": "Ruta per a ciclistes experimentats. Porteu casc, eines bàsiques i suficient aigua. Els mesos d'estiu es recomana sortir a primera hora del matí.",
+    "translations": {
+      "es": {
+        "title": "Ruta BTT Sierra del Maresme",
+        "summary": "Circuito de BTT por la sierra litoral con tramos técnicos.",
+        "description": "Ruta de bicicleta de montaña que recorre los caminos y senderos de la Sierra Litoral. Incluye subidas exigentes, bajadas técnicas y tramos de single track. Pasaréis por fuentes naturales, ermitas y miradores con vistas panorámicas al mar y al interior.",
+        "instructions": "Ruta para ciclistas experimentados. Llevad casco, herramientas básicas y suficiente agua. En verano se recomienda salir a primera hora de la mañana."
+      },
+      "en": {
+        "title": "Maresme Mountain Bike Route",
+        "summary": "MTB circuit through the coastal mountain range with technical sections.",
+        "description": "Mountain bike route that follows the paths and trails of the Coastal Mountain Range. It includes demanding climbs, technical descents and single track sections. You will pass natural springs, hermitages and viewpoints with panoramic views of the sea and inland.",
+        "instructions": "Route for experienced cyclists. Bring helmet, basic tools and enough water. In summer it is recommended to start early in the morning."
+      },
+      "fr": {
+        "title": "Route VTT de la Sierra du Maresme",
+        "summary": "Circuit VTT à travers la chaîne côtière avec des sections techniques.",
+        "description": "Route de VTT qui parcourt les chemins et sentiers de la chaîne côtière. Elle comprend des montées exigeantes, des descentes techniques et des sections de single track. Vous passerez par des sources naturelles, des ermitages et des belvédères avec des vues panoramiques sur la mer et l'intérieur.",
+        "instructions": "Route pour cyclistes expérimentés. Apportez un casque, des outils de base et suffisamment d'eau. En été, il est recommandé de partir tôt le matin."
+      }
+    }
+  },
+  {
+    "slug": "passeig-vinyaters",
+    "route_type": "walking",
+    "difficulty": "easy",
+    "distance_km": 3.0,
+    "duration_minutes": 60,
+    "elevation_gain": 30,
+    "elevation_loss": 30,
+    "is_circular": false,
+    "start_latitude": 41.515,
+    "start_longitude": 2.4,
+    "end_latitude": 41.52,
+    "end_longitude": 2.41,
+    "is_published": true,
+    "is_featured": false,
+    "title": "Passeig dels Vinyaters",
+    "summary": "Ruta entre vinyes amb degustació de vins locals.",
+    "description": "Passeig relaxat entre les vinyes de la DO Alella. La ruta passa per tres cellers on podreu degustar els vins blancs característics de la zona, elaborats amb raïm pansa blanca. Una experiència perfecta per als amants del vi i la natura.",
+    "instructions": "Les degustacions requereixen reserva prèvia als cellers. Recomanem no portar vehicle si penseu tastar vins.",
+    "translations": {
+      "es": {
+        "title": "Paseo de los Viñadores",
+        "summary": "Ruta entre viñedos con degustación de vinos locales.",
+        "description": "Paseo relajado entre los viñedos de la DO Alella. La ruta pasa por tres bodegas donde podréis degustar los vinos blancos característicos de la zona, elaborados con uva pansa blanca. Una experiencia perfecta para los amantes del vino y la naturaleza.",
+        "instructions": "Las degustaciones requieren reserva previa en las bodegas. Recomendamos no llevar vehículo si pensáis catar vinos."
+      },
+      "en": {
+        "title": "Winemakers' Walk",
+        "summary": "Route through vineyards with local wine tasting.",
+        "description": "Relaxed walk through the vineyards of the DO Alella appellation. The route passes through three wineries where you can taste the characteristic white wines of the area, made with pansa blanca grapes. A perfect experience for wine and nature lovers.",
+        "instructions": "Wine tastings require prior reservation at the wineries. We recommend not bringing a vehicle if you plan to taste wines."
+      },
+      "fr": {
+        "title": "Promenade des Vignerons",
+        "summary": "Route à travers les vignobles avec dégustation de vins locaux.",
+        "description": "Promenade détendue à travers les vignobles de l'appellation DO Alella. La route passe par trois caves où vous pourrez déguster les vins blancs caractéristiques de la région, élaborés avec du raisin pansa blanca. Une expérience parfaite pour les amateurs de vin et de nature.",
+        "instructions": "Les dégustations nécessitent une réservation préalable dans les caves. Nous recommandons de ne pas prendre de véhicule si vous prévoyez de déguster des vins."
+      }
+    }
+  },
+  {
+    "slug": "volta-al-terme",
+    "route_type": "mixed",
+    "difficulty": "moderate",
+    "distance_km": 18.5,
+    "duration_minutes": 300,
+    "elevation_gain": 400,
+    "elevation_loss": 400,
+    "is_circular": true,
+    "start_latitude": 41.5175,
+    "start_longitude": 2.395,
+    "end_latitude": 41.5175,
+    "end_longitude": 2.395,
+    "is_published": true,
+    "is_featured": true,
+    "title": "Volta al Terme de Cabrera",
+    "summary": "Recorregut complet pels límits del municipi amb diferents paisatges.",
+    "description": "Ruta que circumval·la tot el terme municipal de Cabrera de Mar. Travessa paisatges molt diversos: platja, zones agrícoles, bosc mediterrani i serralada. És una manera excel·lent de conèixer la diversitat del territori i la seva riquesa natural i patrimonial.",
+    "instructions": "Ruta llarga recomanada per a excursionistes amb experiència. Porteu menjar i aigua suficient. Es pot dividir en dues etapes.",
+    "translations": {
+      "es": {
+        "title": "Vuelta al Término de Cabrera",
+        "summary": "Recorrido completo por los límites del municipio con diferentes paisajes.",
+        "description": "Ruta que circunvala todo el término municipal de Cabrera de Mar. Atraviesa paisajes muy diversos: playa, zonas agrícolas, bosque mediterráneo y sierra. Es una manera excelente de conocer la diversidad del territorio y su riqueza natural y patrimonial.",
+        "instructions": "Ruta larga recomendada para excursionistas con experiencia. Llevad comida y agua suficiente. Se puede dividir en dos etapas."
+      },
+      "en": {
+        "title": "Tour of Cabrera's Municipal Boundaries",
+        "summary": "Complete route around the municipal boundaries with diverse landscapes.",
+        "description": "Route that circles the entire municipal area of Cabrera de Mar. It crosses very diverse landscapes: beach, agricultural areas, Mediterranean forest and mountain range. It's an excellent way to discover the territory's diversity and its natural and heritage richness.",
+        "instructions": "Long route recommended for experienced hikers. Bring enough food and water. Can be divided into two stages."
+      },
+      "fr": {
+        "title": "Tour du Territoire de Cabrera",
+        "summary": "Parcours complet des limites de la commune avec des paysages variés.",
+        "description": "Route qui fait le tour de tout le territoire municipal de Cabrera de Mar. Elle traverse des paysages très divers: plage, zones agricoles, forêt méditerranéenne et chaîne de montagnes. C'est une excellente façon de découvrir la diversité du territoire et sa richesse naturelle et patrimoniale.",
+        "instructions": "Longue route recommandée pour les randonneurs expérimentés. Apportez suffisamment de nourriture et d'eau. Peut être divisée en deux étapes."
+      }
+    }
+  }
+]

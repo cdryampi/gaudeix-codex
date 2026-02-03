@@ -21,6 +21,8 @@ import { VideoSettingsPage } from "@/features/site-settings/pages/VideoSettingsP
 import { HeaderMenuPage } from "@/features/site-settings/pages/HeaderMenuPage";
 import { LLMSettingsPage } from "@/features/llm-settings/pages/LLMSettingsPage";
 import { SendNotificationPage } from "@/features/notifications/pages/SendNotificationPage";
+import { RoutesPage } from "@/features/routes/pages/RoutesPage";
+import { FestesPage } from "@/features/festes/pages/FestesPage";
 
 /**
  * Application routing configuration
@@ -123,6 +125,14 @@ export const router = createBrowserRouter([
       {
         path: "notifications",
         element: <SendNotificationPage />,
+      },
+      {
+        path: "routes",
+        element: <RoutesPage />,
+      },
+      {
+        path: "festes",
+        element: <FestesPage />,
       },
     ],
   },

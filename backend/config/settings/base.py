@@ -89,6 +89,8 @@ INSTALLED_APPS = [
     "static_pages.apps.StaticPagesConfig",
     "site_settings.apps.SiteSettingsConfig",
     "news",
+    "routes.apps.RoutesConfig",
+    "festes.apps.FestesConfig",
 ]
 
 SITE_ID = 1

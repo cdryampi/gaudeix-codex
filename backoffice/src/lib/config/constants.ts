@@ -28,6 +28,8 @@ export const ROUTES = {
   HEADER_MENU: "/dashboard/settings/header",
   LLM_SETTINGS: "/dashboard/settings/llm",
   NOTIFICATIONS: "/dashboard/notifications",
+  ROUTES_HIKING: "/dashboard/routes",
+  FESTES: "/dashboard/festes",
 } as const;
 
 /**
@@ -110,6 +112,14 @@ export const QUERY_KEYS = {
     LIST: ["social", "list"],
     DETAIL: (id: string) => ["social", "detail", id],
   },
+  ROUTES_HIKING: {
+    LIST: ["routes", "list"],
+    DETAIL: (slug: string) => ["routes", "detail", slug],
+  },
+  FESTES: {
+    LIST: ["festes", "list"],
+    DETAIL: (slug: string) => ["festes", "detail", slug],
+  },
 } as const;
 
 /**
@@ -170,6 +180,21 @@ export const API_ENDPOINTS = {
     TRANSLATE: "/llm-config/translate/",
     AUTO_TRANSLATE_EVENT: (id: string) => `/events/${id}/auto_translate/`,
     LOGS: "/translation-logs/",
+  },
+  ROUTES_HIKING: {
+    LIST: "/routes/",
+    DETAIL: (slug: string) => `/routes/${slug}/`,
+    AUTO_TRANSLATE: (slug: string) => `/routes/${slug}/auto_translate/`,
+  },
+  FESTES: {
+    LIST: "/festes/",
+    DETAIL: (slug: string) => `/festes/${slug}/`,
+    CURRENT: "/festes/current/",
+    AUTO_TRANSLATE: (slug: string) => `/festes/${slug}/auto_translate/`,
+  },
+  SPONSORS: {
+    LIST: "/sponsors/",
+    DETAIL: (id: string) => `/sponsors/${id}/`,
   },
 } as const;
 

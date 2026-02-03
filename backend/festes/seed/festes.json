@@ -1,0 +1,167 @@
+[
+  {
+    "slug": "festa-major-cabrera-2025",
+    "year": 2025,
+    "start_date": "2025-08-15",
+    "end_date": "2025-08-20",
+    "is_published": true,
+    "is_featured": true,
+    "is_current": true,
+    "title": "Festa Major de Cabrera de Mar 2025",
+    "subtitle": "Viu la festa!",
+    "summary": "Celebrem la Festa Major amb més de 50 activitats per a tota la família.",
+    "description": "La Festa Major de Cabrera de Mar arriba carregada d'activitats per a tots els públics. Durant sis dies, gaudireu de concerts, espectacles infantils, activitats esportives, cercavila de gegants i capgrossos, correfoc i molt més. No us perdeu el pregó inaugural ni el castell de focs artificials que tancarà les festes!",
+    "program_text": "Divendres 15: Pregó i concert inaugural\nDissabte 16: Cercavila de gegants, havaneres\nDiumenge 17: Activitats infantils, ball de tarda\nDilluns 18: Concurs de paelles, cinema a la fresca\nDimarts 19: Sardanes, correfoc\nDimecres 20: Concert final i castell de focs",
+    "translations": {
+      "es": {
+        "title": "Fiesta Mayor de Cabrera de Mar 2025",
+        "subtitle": "¡Vive la fiesta!",
+        "summary": "Celebramos la Fiesta Mayor con más de 50 actividades para toda la familia.",
+        "description": "La Fiesta Mayor de Cabrera de Mar llega cargada de actividades para todos los públicos. Durante seis días, disfrutaréis de conciertos, espectáculos infantiles, actividades deportivas, pasacalle de gigantes y cabezudos, correfoc y mucho más. ¡No os perdáis el pregón inaugural ni el castillo de fuegos artificiales que cerrará las fiestas!",
+        "program_text": "Viernes 15: Pregón y concierto inaugural\nSábado 16: Pasacalle de gigantes, habaneras\nDomingo 17: Actividades infantiles, baile de tarde\nLunes 18: Concurso de paellas, cine al aire libre\nMartes 19: Sardanas, correfoc\nMiércoles 20: Concierto final y castillo de fuegos"
+      },
+      "en": {
+        "title": "Cabrera de Mar Town Festival 2025",
+        "subtitle": "Live the celebration!",
+        "summary": "We celebrate the Town Festival with over 50 activities for the whole family.",
+        "description": "Cabrera de Mar's Town Festival arrives packed with activities for all audiences. For six days, you will enjoy concerts, children's shows, sports activities, giant and big-head parade, correfoc fire run and much more. Don't miss the opening speech or the fireworks display that will close the festivities!",
+        "program_text": "Friday 15: Opening speech and inaugural concert\nSaturday 16: Giant parade, havaneres\nSunday 17: Children's activities, afternoon dance\nMonday 18: Paella contest, outdoor cinema\nTuesday 19: Sardanes, correfoc\nWednesday 20: Final concert and fireworks"
+      },
+      "fr": {
+        "title": "Fête Majeure de Cabrera de Mar 2025",
+        "subtitle": "Vivez la fête!",
+        "summary": "Nous célébrons la Fête Majeure avec plus de 50 activités pour toute la famille.",
+        "description": "La Fête Majeure de Cabrera de Mar arrive chargée d'activités pour tous les publics. Pendant six jours, vous profiterez de concerts, spectacles pour enfants, activités sportives, défilé de géants et grosses têtes, correfoc et bien plus encore. Ne manquez pas le discours d'ouverture ni le feu d'artifice qui clôturera les festivités!",
+        "program_text": "Vendredi 15: Discours d'ouverture et concert inaugural\nSamedi 16: Défilé de géants, havaneres\nDimanche 17: Activités pour enfants, bal de l'après-midi\nLundi 18: Concours de paëllas, cinéma en plein air\nMardi 19: Sardanes, correfoc\nMercredi 20: Concert final et feu d'artifice"
+      }
+    },
+    "sponsors": [
+      {
+        "name": "Ajuntament de Cabrera de Mar",
+        "tier": "platinum",
+        "website": "https://www.cabrerademar.cat",
+        "order": 1
+      },
+      {
+        "name": "Diputació de Barcelona",
+        "tier": "gold",
+        "website": "https://www.diba.cat",
+        "order": 2
+      },
+      {
+        "name": "Celler de Cabrera",
+        "tier": "silver",
+        "website": "",
+        "order": 3
+      },
+      {
+        "name": "Forn El Forner",
+        "tier": "bronze",
+        "website": "",
+        "order": 4
+      },
+      {
+        "name": "Bar El Racó",
+        "tier": "collaborator",
+        "website": "",
+        "order": 5
+      }
+    ]
+  },
+  {
+    "slug": "festa-major-cabrera-2024",
+    "year": 2024,
+    "start_date": "2024-08-16",
+    "end_date": "2024-08-21",
+    "is_published": true,
+    "is_featured": false,
+    "is_current": false,
+    "title": "Festa Major de Cabrera de Mar 2024",
+    "subtitle": "Cabrera en festa!",
+    "summary": "Edició commemorativa amb actes especials.",
+    "description": "L'edició 2024 de la Festa Major va ser especialment emotiva amb la celebració del centenari de la plaça Major. Vam comptar amb actuacions musicals de primer nivell, exposicions temporals i un homenatge als veïns més grans del poble.",
+    "program_text": "Vegeu l'arxiu de la Festa Major 2024.",
+    "translations": {
+      "es": {
+        "title": "Fiesta Mayor de Cabrera de Mar 2024",
+        "subtitle": "¡Cabrera en fiesta!",
+        "summary": "Edición conmemorativa con actos especiales.",
+        "description": "La edición 2024 de la Fiesta Mayor fue especialmente emotiva con la celebración del centenario de la plaza Mayor. Contamos con actuaciones musicales de primer nivel, exposiciones temporales y un homenaje a los vecinos más mayores del pueblo.",
+        "program_text": "Ved el archivo de la Fiesta Mayor 2024."
+      },
+      "en": {
+        "title": "Cabrera de Mar Town Festival 2024",
+        "subtitle": "Cabrera celebrates!",
+        "summary": "Commemorative edition with special events.",
+        "description": "The 2024 edition of the Town Festival was especially emotional with the celebration of the Main Square centenary. We featured top-level musical performances, temporary exhibitions and a tribute to the village's oldest residents.",
+        "program_text": "See the Town Festival 2024 archive."
+      },
+      "fr": {
+        "title": "Fête Majeure de Cabrera de Mar 2024",
+        "subtitle": "Cabrera en fête!",
+        "summary": "Édition commémorative avec des événements spéciaux.",
+        "description": "L'édition 2024 de la Fête Majeure a été particulièrement émouvante avec la célébration du centenaire de la Place Majeure. Nous avons eu des spectacles musicaux de haut niveau, des expositions temporaires et un hommage aux plus anciens résidents du village.",
+        "program_text": "Voir les archives de la Fête Majeure 2024."
+      }
+    },
+    "sponsors": [
+      {
+        "name": "Ajuntament de Cabrera de Mar",
+        "tier": "platinum",
+        "website": "https://www.cabrerademar.cat",
+        "order": 1
+      },
+      {
+        "name": "Consell Comarcal del Maresme",
+        "tier": "gold",
+        "website": "https://www.ccmaresme.cat",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "slug": "carnestoltes-2025",
+    "year": 2025,
+    "start_date": "2025-02-28",
+    "end_date": "2025-03-04",
+    "is_published": true,
+    "is_featured": false,
+    "is_current": false,
+    "title": "Carnestoltes de Cabrera 2025",
+    "subtitle": "Disfressa't i participa!",
+    "summary": "La festa més boja de l'any arriba a Cabrera.",
+    "description": "El Carnestoltes de Cabrera és una celebració molt arrelada al poble. Durant cinc dies, el Rei Carnestoltes pren el poder i tot s'omple de color, música i diversió. Destaca la Rua del dissabte amb les comparses locals i la Gran Festa de disfresses del diumenge.",
+    "program_text": "Divendres: Arribada del Rei Carnestoltes\nDissabte: Gran Rua de Carnestoltes\nDiumenge: Festa de disfresses\nDilluns: Ball de màscares\nDimarts: Enterrament de la Sardina",
+    "translations": {
+      "es": {
+        "title": "Carnaval de Cabrera 2025",
+        "subtitle": "¡Disfrazate y participa!",
+        "summary": "La fiesta más loca del año llega a Cabrera.",
+        "description": "El Carnaval de Cabrera es una celebración muy arraigada en el pueblo. Durante cinco días, el Rey Carnaval toma el poder y todo se llena de color, música y diversión. Destaca el Desfile del sábado con las comparsas locales y la Gran Fiesta de disfraces del domingo.",
+        "program_text": "Viernes: Llegada del Rey Carnaval\nSábado: Gran Desfile de Carnaval\nDomingo: Fiesta de disfraces\nLunes: Baile de máscaras\nMartes: Entierro de la Sardina"
+      },
+      "en": {
+        "title": "Cabrera Carnival 2025",
+        "subtitle": "Dress up and join in!",
+        "summary": "The craziest party of the year comes to Cabrera.",
+        "description": "Cabrera's Carnival is a deeply rooted celebration in the village. For five days, the Carnival King takes power and everything fills with color, music and fun. Highlights include Saturday's Parade with local groups and Sunday's Grand Costume Party.",
+        "program_text": "Friday: Arrival of the Carnival King\nSaturday: Grand Carnival Parade\nSunday: Costume party\nMonday: Masked ball\nTuesday: Burial of the Sardine"
+      },
+      "fr": {
+        "title": "Carnaval de Cabrera 2025",
+        "subtitle": "Déguisez-vous et participez!",
+        "summary": "La fête la plus folle de l'année arrive à Cabrera.",
+        "description": "Le Carnaval de Cabrera est une célébration très enracinée dans le village. Pendant cinq jours, le Roi Carnaval prend le pouvoir et tout se remplit de couleur, musique et amusement. Le Défilé du samedi avec les groupes locaux et la Grande Fête costumée du dimanche sont les points forts.",
+        "program_text": "Vendredi: Arrivée du Roi Carnaval\nSamedi: Grand Défilé de Carnaval\nDimanche: Fête costumée\nLundi: Bal masqué\nMardi: Enterrement de la Sardine"
+      }
+    },
+    "sponsors": [
+      {
+        "name": "Ajuntament de Cabrera de Mar",
+        "tier": "platinum",
+        "website": "https://www.cabrerademar.cat",
+        "order": 1
+      }
+    ]
+  }
+]

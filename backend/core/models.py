@@ -146,6 +146,9 @@ class Category(TranslatableModel, BaseModel, MetadataModel):
         SEASON = "season", "Temporada"
         NEWS = "news", "Noticias"
         OTHER = "other", "Otro"
+        # New taxonomies for legacy models
+        ROUTES = "routes", "Rutas"
+        FESTES = "festes", "Festes Majors"
 
     slug = models.SlugField(
         max_length=150,
