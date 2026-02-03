@@ -16,6 +16,7 @@ class LLMProviderConfig(SingletonModel):
 
     class Provider(models.TextChoices):
         """Supported LLM providers."""
+
         OPENAI = "openai", _("OpenAI")
         GEMINI = "gemini", _("Google Gemini")
         ANTHROPIC = "anthropic", _("Anthropic Claude")
@@ -25,29 +26,35 @@ class LLMProviderConfig(SingletonModel):
 
     class Model(models.TextChoices):
         """Supported LLM models."""
+
         # OpenAI models
         GPT_4O = "gpt-4o", _("GPT-4o")
         GPT_4O_MINI = "gpt-4o-mini", _("GPT-4o Mini")
         GPT_4_TURBO = "gpt-4-turbo", _("GPT-4 Turbo")
-        
+
         # Gemini models
         GEMINI_2_FLASH = "gemini-2.0-flash-exp", _("Gemini 2.0 Flash")
         GEMINI_PRO = "gemini-1.5-pro", _("Gemini 1.5 Pro")
-        
+
         # Anthropic models
         CLAUDE_SONNET = "claude-3-5-sonnet-20241022", _("Claude 3.5 Sonnet")
         CLAUDE_HAIKU = "claude-3-5-haiku-20241022", _("Claude 3.5 Haiku")
-        
+
         # Mistral models
         MISTRAL_LARGE = "mistral-large-latest", _("Mistral Large")
-        
+
         # Groq models
         LLAMA_3_70B = "llama-3.1-70b-versatile", _("Llama 3.1 70B")
-        
+        LLAMA_3_8B_INSTANT = "llama-3.1-8b-instant", _("Llama 3.1 8B Instant")
+        GPT_OSS_20B = "openai/gpt-oss-20b", _("GPT OSS 20B")
+
         # Local models (Ollama/LM Studio compatible)
         LLAMA_3_8B = "llama3.2:latest", _("Llama 3.2 (Local)")
         MISTRAL_7B = "mistral:latest", _("Mistral 7B (Local)")
-        MISTRAL_NEMO = "mistralai/mistral-nemo-instruct-2407", _("Mistral Nemo Instruct (Local)")
+        MISTRAL_NEMO = (
+            "mistralai/mistral-nemo-instruct-2407",
+            _("Mistral Nemo Instruct (Local)"),
+        )
         QWEN_7B = "qwen2.5:latest", _("Qwen 2.5 (Local)")
         GEMMA_7B = "gemma2:latest", _("Gemma 2 (Local)")
 
@@ -77,7 +84,9 @@ class LLMProviderConfig(SingletonModel):
         _("Temperature"),
         default=0.3,
         validators=[MinValueValidator(0.0), MaxValueValidator(2.0)],
-        help_text=_("Controls randomness in translations (0.0-2.0, lower is more deterministic)"),
+        help_text=_(
+            "Controls randomness in translations (0.0-2.0, lower is more deterministic)"
+        ),
     )
 
     max_tokens = models.PositiveIntegerField(
@@ -219,4 +228,3 @@ class TranslationLog(models.Model):
     def __str__(self) -> str:
         status = "✓" if self.success else "✗"
         return f"{status} {self.source_language} → {self.target_language} ({self.provider})"
-

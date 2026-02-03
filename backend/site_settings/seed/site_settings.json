@@ -1,5 +1,7 @@
 {
   "site_name": "Gaudeix Cabrera de Mar",
+  "background_video_file": "gaudeix_home.mp4",
+  "video_enabled": true,
   "tagline": "Turismo y cultura en Cabrera de Mar",
   "phone": "+34 937 501 006",
   "support_email": "soporte@cabrerademar.cat",

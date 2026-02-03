@@ -1,16 +1,16 @@
 [
   {
     "title": "Castell de Burriac",
-    "description": "Icònica torre de guaita situada al capdamunt d'un turó, oferint vistes panoràmiques del Maresme.",
-    "location_text": "Turó de Burriac",
+    "description": "Iconica torre de guaita situada al capdamunt d'un turo, oferint vistes panoramiques del Maresme.",
+    "location_text": "Turo de Burriac",
     "latitude": 41.5311,
     "longitude": 2.3853,
     "category_slug": "nature",
-    "image_filename": "castell_burriac.png",
+    "image_filename": "nature.png",
     "translations": {
       "es": {
         "title": "Castillo de Burriac",
-        "description": "Icónica torre de vigilancia situada en la cima de una colina, ofreciendo vistas panorámicas del Maresme."
+        "description": "Iconica torre de vigilancia situada en la cima de una colina, ofreciendo vistas panoramicas del Maresme."
       },
       "en": {
         "title": "Burriac Castle",
@@ -20,16 +20,16 @@
   },
   {
     "title": "Yacimiento Romano Ilturo",
-    "description": "Restes arqueològiques de l'antiga ciutat romana, un viatge fascinant pel passat històric de la vila.",
+    "description": "Restes arqueologiques de l'antiga ciutat romana, un viatge fascinant pel passat historic de la vila.",
     "location_text": "Carrer Major/Carrer d'Ilturo",
     "latitude": 41.5262,
     "longitude": 2.3933,
     "category_slug": "heritage",
-    "image_filename": "ilturo.png",
+    "image_filename": "tradition.png",
     "translations": {
       "es": {
         "title": "Yacimiento Romano Ilturo",
-        "description": "Restos arqueológicos de la antigua ciudad romana, un viaje fascinante por el pasado histórico de la villa."
+        "description": "Restos arqueologicos de la antigua ciudad romana, un viaje fascinante por el pasado historico de la villa."
       },
       "en": {
         "title": "Ilturo Roman Site",
@@ -39,16 +39,16 @@
   },
   {
     "title": "Platja de Cabrera de Mar",
-    "description": "Àmplia zona de sorra ideal per gaudir de la brisa mediterrània i les aigües tranquil·les.",
-    "location_text": "Passeig Marítim",
+    "description": "Amplia zona de sorra ideal per gaudir de la brisa mediterrania i les aigues tranquil·les.",
+    "location_text": "Passeig Maritim",
     "latitude": 41.5178,
     "longitude": 2.4081,
     "category_slug": "beaches",
-    "image_filename": "platja_cabrera.png",
+    "image_filename": "beach.png",
     "translations": {
       "es": {
         "title": "Playa de Cabrera de Mar",
-        "description": "Amplia zona de arena ideal para disfrutar de la brisa mediterránea y las aguas tranquilas."
+        "description": "Amplia zona de arena ideal para disfrutar de la brisa mediterranea y las aguas tranquilas."
       },
       "en": {
         "title": "Cabrera de Mar Beach",
@@ -58,18 +58,18 @@
   },
   {
     "title": "Restaurant del Poble",
-    "description": "Cuina tradicional mediterrània amb productes de proximitat i vistes al mar.",
+    "description": "Cuina tradicional mediterrania amb productes de proximitat i vistes al mar.",
     "location_text": "Carrer de Mar, 10",
     "latitude": 41.519,
     "longitude": 2.405,
     "category_slug": "restaurants",
-    "image_filename": "cooperativa.png",
-    "cuisine_type": "Mediterránea",
+    "image_filename": "food.png",
+    "cuisine_type": "Mediterranea",
     "capacity": 50,
     "translations": {
       "es": {
         "title": "Restaurante del Pueblo",
-        "description": "Cocina tradicional mediterránea con productos de proximidad y vistas al mar."
+        "description": "Cocina tradicional mediterranea con productos de proximidad y vistas al mar."
       },
       "en": {
         "title": "Village Restaurant",
@@ -79,12 +79,12 @@
   },
   {
     "title": "Hotel Cabrera Mar",
-    "description": "Descansa amb el so de les onades en aquest acollidor hotel a primera línia de mar.",
-    "location_text": "Passeig Marítim, 45",
+    "description": "Descansa amb el so de les onades en aquest acollidor hotel a primera linia de mar.",
+    "location_text": "Passeig Maritim, 45",
     "latitude": 41.516,
     "longitude": 2.411,
     "category_slug": "accommodations",
-    "image_filename": "can_bartomeu.png",
+    "image_filename": "wellness.png",
     "type": "Hotel",
     "stars": 4,
     "check_in_time": "14:00",
@@ -92,7 +92,7 @@
     "translations": {
       "es": {
         "title": "Hotel Cabrera Mar",
-        "description": "Descansa con el sonido de las olas en este acogedor hotel en primera línea de mar."
+        "description": "Descansa con el sonido de las olas en este acogedor hotel en primera linea de mar."
       },
       "en": {
         "title": "Cabrera Mar Hotel",
@@ -102,16 +102,16 @@
   },
   {
     "title": "Can Bartomeu",
-    "description": "Espai públic i parc municipal situat en una antiga masia, pulmó verd del municipi.",
-    "location_text": "Camí de Can Bartomeu, s/n",
+    "description": "Espai public i parc municipal situat en una antiga masia, pulmo verd del municipi.",
+    "location_text": "Cami de Can Bartomeu, s/n",
     "latitude": 41.5285,
     "longitude": 2.3921,
     "category_slug": "nature",
-    "image_filename": "can_bartomeu.png",
+    "image_filename": "nature.png",
     "translations": {
       "es": {
         "title": "Can Bartomeu",
-        "description": "Espacio público y parque municipal situado en una antigua masía, pulmón verde del municipio."
+        "description": "Espacio publico y parque municipal situado en una antigua masia, pulmon verde del municipio."
       },
       "en": {
         "title": "Can Bartomeu Park",
@@ -122,15 +122,15 @@
   {
     "title": "Biblioteca Ilturo",
     "description": "Modern centre de lectura i cultura al cor de Cabrera de Mar.",
-    "location_text": "Carrer de Sant Vicenç, 2",
+    "location_text": "Carrer de Sant Vicenc, 2",
     "latitude": 41.5271,
     "longitude": 2.3942,
     "category_slug": "culture",
-    "image_filename": "biblioteca_ilturo.png",
+    "image_filename": "art.png",
     "translations": {
       "es": {
         "title": "Biblioteca Ilturo",
-        "description": "Moderno centro de lectura y cultura en el corazón de Cabrera de Mar."
+        "description": "Moderno centro de lectura y cultura en el corazon de Cabrera de Mar."
       },
       "en": {
         "title": "Ilturo Library",
@@ -145,7 +145,7 @@
     "latitude": 41.5265,
     "longitude": 2.3948,
     "category_slug": "culture",
-    "image_filename": "can_arnau.png",
+    "image_filename": "art.png",
     "translations": {
       "es": {
         "title": "Ca l'Arnau",
@@ -158,17 +158,17 @@
     }
   },
   {
-    "title": "Plaça de la Vila",
-    "description": "Centre neuràlgic de Cabrera, on s'ubica l'Ajuntament i es fan els principals actes socials.",
-    "location_text": "Plaça de la Vila, 1",
+    "title": "Placa de la Vila",
+    "description": "Centre neuralgic de Cabrera, on s'ubica l'Ajuntament i es fan els principals actes socials.",
+    "location_text": "Placa de la Vila, 1",
     "latitude": 41.5268,
     "longitude": 2.3938,
     "category_slug": "culture",
-    "image_filename": "escultura_ilturo.png",
+    "image_filename": "tradition.png",
     "translations": {
       "es": {
         "title": "Plaza de la Villa",
-        "description": "Centro neurálgico de Cabrera, donde se ubica el Ayuntamiento y se celebran los principales actos sociales."
+        "description": "Centro neuralgico de Cabrera, donde se ubica el Ayuntamiento y se celebran los principales actos sociales."
       },
       "en": {
         "title": "Town Square",
@@ -177,21 +177,440 @@
     }
   },
   {
-    "title": "Església de Sant Vicenç",
-    "description": "Església parroquial del segle XVI d'estil gòtic tardà, centre religiós i històric.",
-    "location_text": "Plaça de l'Església",
+    "title": "Esglesia de Sant Vicenc",
+    "description": "Esglesia parroquial del segle XVI d'estil gotic tarda, centre religios i historic.",
+    "location_text": "Placa de l'Esglesia",
     "latitude": 41.5269,
     "longitude": 2.3935,
     "category_slug": "heritage",
-    "image_filename": "iglesia.png",
+    "image_filename": "tradition.png",
     "translations": {
       "es": {
         "title": "Iglesia de San Vicente",
-        "description": "Iglesia parroquial del siglo XVI de estilo gótico tardío, centro religioso e histórico."
+        "description": "Iglesia parroquial del siglo XVI de estilo gotico tardio, centro religioso e historico."
       },
       "en": {
         "title": "Saint Vincent Church",
         "description": "16th-century late Gothic parish church, a religious and historical centerpiece."
+      }
+    }
+  },
+  {
+    "title": "Can Maresme Restaurant",
+    "description": "Cuina d'autor amb productes de la terra i el mar, especialitat en peix fresc del dia.",
+    "location_text": "Carrer Major, 45",
+    "latitude": 41.5275,
+    "longitude": 2.3945,
+    "category_slug": "restaurants",
+    "image_filename": "food.png",
+    "cuisine_type": "Cuina d'autor",
+    "capacity": 40,
+    "translations": {
+      "es": {
+        "title": "Restaurante Can Maresme",
+        "description": "Cocina de autor con productos de la tierra y el mar, especialidad en pescado fresco del dia."
+      },
+      "en": {
+        "title": "Can Maresme Restaurant",
+        "description": "Signature cuisine with local land and sea products, specialty in fresh fish of the day."
+      }
+    }
+  },
+  {
+    "title": "La Marinera",
+    "description": "Tasca marinera amb les millors tapes de peix i marisc de la costa.",
+    "location_text": "Passeig Maritim, 12",
+    "latitude": 41.5172,
+    "longitude": 2.4075,
+    "category_slug": "restaurants",
+    "image_filename": "food.png",
+    "cuisine_type": "Marisc i tapes",
+    "capacity": 35,
+    "translations": {
+      "es": {
+        "title": "La Marinera",
+        "description": "Tasca marinera con las mejores tapas de pescado y marisco de la costa."
+      },
+      "en": {
+        "title": "La Marinera",
+        "description": "Seafood tavern with the best fish and shellfish tapas from the coast."
+      }
+    }
+  },
+  {
+    "title": "El Raco del Mar",
+    "description": "Restaurant familiar amb terrassa al costat de la platja, ideal per a arrossos i fideuaes.",
+    "location_text": "Avinguda del Mar, 8",
+    "latitude": 41.5168,
+    "longitude": 2.409,
+    "category_slug": "restaurants",
+    "image_filename": "food.png",
+    "cuisine_type": "Arrossos",
+    "capacity": 60,
+    "translations": {
+      "es": {
+        "title": "El Rincon del Mar",
+        "description": "Restaurante familiar con terraza junto a la playa, ideal para arroces y fideuaes."
+      },
+      "en": {
+        "title": "The Sea Corner",
+        "description": "Family restaurant with terrace by the beach, ideal for rice dishes and fideuaes."
+      }
+    }
+  },
+  {
+    "title": "Bar Sport Cabrera",
+    "description": "Bar historic del poble amb vermut casolans i entrepans tradicionals.",
+    "location_text": "Placa de la Vila, 5",
+    "latitude": 41.5267,
+    "longitude": 2.394,
+    "category_slug": "restaurants",
+    "image_filename": "food.png",
+    "cuisine_type": "Bar tradicional",
+    "capacity": 25,
+    "translations": {
+      "es": {
+        "title": "Bar Sport Cabrera",
+        "description": "Bar historico del pueblo con vermuts caseros y bocadillos tradicionales."
+      },
+      "en": {
+        "title": "Bar Sport Cabrera",
+        "description": "Historic village bar with homemade vermouth and traditional sandwiches."
+      }
+    }
+  },
+  {
+    "title": "Hostal Burriac",
+    "description": "Acollidor hostal familiar amb vistes a la muntanya, punt de partida ideal per a excursions.",
+    "location_text": "Carrer de Dalt, 15",
+    "latitude": 41.529,
+    "longitude": 2.39,
+    "category_slug": "accommodations",
+    "image_filename": "wellness.png",
+    "type": "Hostal",
+    "stars": 2,
+    "check_in_time": "15:00",
+    "check_out_time": "11:00",
+    "translations": {
+      "es": {
+        "title": "Hostal Burriac",
+        "description": "Acogedor hostal familiar con vistas a la montana, punto de partida ideal para excursiones."
+      },
+      "en": {
+        "title": "Burriac Hostal",
+        "description": "Cozy family hostal with mountain views, ideal starting point for excursions."
+      }
+    }
+  },
+  {
+    "title": "Casa Rural Maresme",
+    "description": "Allotjament rural en masia restaurada amb piscina i jardins mediterranis.",
+    "location_text": "Cami de Can Bartomeu, 12",
+    "latitude": 41.53,
+    "longitude": 2.388,
+    "category_slug": "accommodations",
+    "image_filename": "wellness.png",
+    "type": "Casa rural",
+    "stars": 3,
+    "check_in_time": "16:00",
+    "check_out_time": "10:00",
+    "translations": {
+      "es": {
+        "title": "Casa Rural Maresme",
+        "description": "Alojamiento rural en masia restaurada con piscina y jardines mediterraneos."
+      },
+      "en": {
+        "title": "Maresme Rural House",
+        "description": "Rural accommodation in restored farmhouse with pool and Mediterranean gardens."
+      }
+    }
+  },
+  {
+    "title": "Apartaments Platja",
+    "description": "Apartaments moderns amb cuina equipada i vistes directes al mar Mediterrani.",
+    "location_text": "Passeig Maritim, 30",
+    "latitude": 41.5165,
+    "longitude": 2.41,
+    "category_slug": "accommodations",
+    "image_filename": "wellness.png",
+    "type": "Apartaments",
+    "stars": 3,
+    "check_in_time": "14:00",
+    "check_out_time": "11:00",
+    "translations": {
+      "es": {
+        "title": "Apartamentos Playa",
+        "description": "Apartamentos modernos con cocina equipada y vistas directas al mar Mediterraneo."
+      },
+      "en": {
+        "title": "Beach Apartments",
+        "description": "Modern apartments with equipped kitchen and direct views of the Mediterranean Sea."
+      }
+    }
+  },
+  {
+    "title": "Riera de Cabrera",
+    "description": "Espai natural protegit amb vegetacio de ribera i fauna autoctona.",
+    "location_text": "Riera de Cabrera",
+    "latitude": 41.524,
+    "longitude": 2.396,
+    "category_slug": "nature",
+    "image_filename": "nature.png",
+    "translations": {
+      "es": {
+        "title": "Riera de Cabrera",
+        "description": "Espacio natural protegido con vegetacion de ribera y fauna autoctona."
+      },
+      "en": {
+        "title": "Cabrera Stream",
+        "description": "Protected natural area with riparian vegetation and native wildlife."
+      }
+    }
+  },
+  {
+    "title": "Mirador del Maresme",
+    "description": "Punt panoramic amb vistes espectaculars de tota la comarca i el mar.",
+    "location_text": "Cami del Mirador",
+    "latitude": 41.532,
+    "longitude": 2.384,
+    "category_slug": "nature",
+    "image_filename": "nature.png",
+    "translations": {
+      "es": {
+        "title": "Mirador del Maresme",
+        "description": "Punto panoramico con vistas espectaculares de toda la comarca y el mar."
+      },
+      "en": {
+        "title": "Maresme Viewpoint",
+        "description": "Panoramic spot with spectacular views of the entire region and the sea."
+      }
+    }
+  },
+  {
+    "title": "Bosc de Can Bartomeu",
+    "description": "Bosc mediterrani amb rutes de senderisme i area de picnic.",
+    "location_text": "Parc de Can Bartomeu",
+    "latitude": 41.5295,
+    "longitude": 2.391,
+    "category_slug": "nature",
+    "image_filename": "nature.png",
+    "translations": {
+      "es": {
+        "title": "Bosque de Can Bartomeu",
+        "description": "Bosque mediterraneo con rutas de senderismo y area de picnic."
+      },
+      "en": {
+        "title": "Can Bartomeu Forest",
+        "description": "Mediterranean forest with hiking trails and picnic area."
+      }
+    }
+  },
+  {
+    "title": "Torre de Guaita",
+    "description": "Antiga torre de vigilancia costera del segle XV, patrimoni historic local.",
+    "location_text": "Carrer de la Torre, s/n",
+    "latitude": 41.5195,
+    "longitude": 2.405,
+    "category_slug": "heritage",
+    "image_filename": "tradition.png",
+    "translations": {
+      "es": {
+        "title": "Torre de Vigia",
+        "description": "Antigua torre de vigilancia costera del siglo XV, patrimonio historico local."
+      },
+      "en": {
+        "title": "Watchtower",
+        "description": "Ancient coastal watchtower from the 15th century, local historical heritage."
+      }
+    }
+  },
+  {
+    "title": "Capella de Sant Pere",
+    "description": "Petita capella romanica del segle XII amb frescos restaurats.",
+    "location_text": "Cami de Sant Pere",
+    "latitude": 41.5305,
+    "longitude": 2.387,
+    "category_slug": "heritage",
+    "image_filename": "tradition.png",
+    "translations": {
+      "es": {
+        "title": "Capilla de San Pedro",
+        "description": "Pequena capilla romanica del siglo XII con frescos restaurados."
+      },
+      "en": {
+        "title": "Saint Peter's Chapel",
+        "description": "Small 12th-century Romanesque chapel with restored frescoes."
+      }
+    }
+  },
+  {
+    "title": "Font Romana",
+    "description": "Font d'aigua natural d'origen roma, encara funcional despres de dos mil·lenis.",
+    "location_text": "Carrer de la Font",
+    "latitude": 41.5258,
+    "longitude": 2.3955,
+    "category_slug": "heritage",
+    "image_filename": "tradition.png",
+    "translations": {
+      "es": {
+        "title": "Fuente Romana",
+        "description": "Fuente de agua natural de origen romano, aun funcional despues de dos milenios."
+      },
+      "en": {
+        "title": "Roman Fountain",
+        "description": "Natural water fountain of Roman origin, still functional after two millennia."
+      }
+    }
+  },
+  {
+    "title": "Cala del Moro",
+    "description": "Petita cala amb aigues cristal·lines i roques, ideal per a snorkel.",
+    "location_text": "Sud del Passeig Maritim",
+    "latitude": 41.515,
+    "longitude": 2.412,
+    "category_slug": "beaches",
+    "image_filename": "beach.png",
+    "translations": {
+      "es": {
+        "title": "Cala del Moro",
+        "description": "Pequena cala con aguas cristalinas y rocas, ideal para snorkel."
+      },
+      "en": {
+        "title": "Moro Cove",
+        "description": "Small cove with crystal-clear waters and rocks, ideal for snorkeling."
+      }
+    }
+  },
+  {
+    "title": "Platja de les Roques",
+    "description": "Zona de bany amb formacions rocoses naturals i piscines de marea.",
+    "location_text": "Nord del Passeig Maritim",
+    "latitude": 41.52,
+    "longitude": 2.406,
+    "category_slug": "beaches",
+    "image_filename": "beach.png",
+    "translations": {
+      "es": {
+        "title": "Playa de las Rocas",
+        "description": "Zona de bano con formaciones rocosas naturales y piscinas de marea."
+      },
+      "en": {
+        "title": "Rocky Beach",
+        "description": "Swimming area with natural rock formations and tide pools."
+      }
+    }
+  },
+  {
+    "title": "Centre Civic de Cabrera",
+    "description": "Espai polivalent per a activitats culturals, tallers i exposicions.",
+    "location_text": "Carrer de l'Escola, 5",
+    "latitude": 41.5272,
+    "longitude": 2.395,
+    "category_slug": "culture",
+    "image_filename": "art.png",
+    "translations": {
+      "es": {
+        "title": "Centro Civico de Cabrera",
+        "description": "Espacio polivalente para actividades culturales, talleres y exposiciones."
+      },
+      "en": {
+        "title": "Cabrera Civic Center",
+        "description": "Multipurpose space for cultural activities, workshops and exhibitions."
+      }
+    }
+  },
+  {
+    "title": "Casal de Joves",
+    "description": "Punt de trobada per a joves amb sala de musica, jocs i activitats.",
+    "location_text": "Carrer de Sant Jordi, 10",
+    "latitude": 41.526,
+    "longitude": 2.3965,
+    "category_slug": "culture",
+    "image_filename": "party.png",
+    "translations": {
+      "es": {
+        "title": "Casal de Jovenes",
+        "description": "Punto de encuentro para jovenes con sala de musica, juegos y actividades."
+      },
+      "en": {
+        "title": "Youth Center",
+        "description": "Meeting point for young people with music room, games and activities."
+      }
+    }
+  },
+  {
+    "title": "Escola de Musica Municipal",
+    "description": "Formacio musical per a totes les edats, des d'iniciacio fins a grau professional.",
+    "location_text": "Carrer de la Musica, 3",
+    "latitude": 41.5278,
+    "longitude": 2.393,
+    "category_slug": "culture",
+    "image_filename": "concert.png",
+    "translations": {
+      "es": {
+        "title": "Escuela de Musica Municipal",
+        "description": "Formacion musical para todas las edades, desde iniciacion hasta grado profesional."
+      },
+      "en": {
+        "title": "Municipal Music School",
+        "description": "Music education for all ages, from beginners to professional level."
+      }
+    }
+  },
+  {
+    "title": "Mercat Municipal",
+    "description": "Mercat cobert amb parades de productes frescos, peix, carn i formatges locals.",
+    "location_text": "Placa del Mercat, 1",
+    "latitude": 41.5263,
+    "longitude": 2.3952,
+    "category_slug": "shopping",
+    "image_filename": "market.png",
+    "translations": {
+      "es": {
+        "title": "Mercado Municipal",
+        "description": "Mercado cubierto con puestos de productos frescos, pescado, carne y quesos locales."
+      },
+      "en": {
+        "title": "Municipal Market",
+        "description": "Covered market with stalls selling fresh produce, fish, meat and local cheeses."
+      }
+    }
+  },
+  {
+    "title": "Cooperativa Agricola",
+    "description": "Historic edifici que ara acull una botiga de productes de proximitat i vi local.",
+    "location_text": "Carrer de la Cooperativa, 8",
+    "latitude": 41.5255,
+    "longitude": 2.3958,
+    "category_slug": "shopping",
+    "image_filename": "market.png",
+    "translations": {
+      "es": {
+        "title": "Cooperativa Agricola",
+        "description": "Historico edificio que ahora alberga una tienda de productos de proximidad y vino local."
+      },
+      "en": {
+        "title": "Agricultural Cooperative",
+        "description": "Historic building now housing a shop with local products and wines."
+      }
+    }
+  },
+  {
+    "title": "Fleca del Poble",
+    "description": "Forn tradicional amb pa de llenya, coques i pastissos artesanals.",
+    "location_text": "Carrer Major, 22",
+    "latitude": 41.527,
+    "longitude": 2.3942,
+    "category_slug": "shopping",
+    "image_filename": "food.png",
+    "translations": {
+      "es": {
+        "title": "Panaderia del Pueblo",
+        "description": "Horno tradicional con pan de lena, cocas y pasteles artesanales."
+      },
+      "en": {
+        "title": "Village Bakery",
+        "description": "Traditional bakery with wood-fired bread, flatbreads and artisan pastries."
       }
     }
   }

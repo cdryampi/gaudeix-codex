@@ -1,30 +1,142 @@
 [
-    {
-        "title": "Aprovació del pressupost municipal 2026",
-        "summary": "El Ple de l'Ajuntament ha aprovat les noves partides destinades a inversions culturals i esportives.",
-        "body": "En la sessió d'ahir es van aprovar els pressupostos amb un fort enfocament en la millora dels equipaments públics. S'inclou la restauració d'una nova fase del Castell de Burriac i la digitalització del museu Ilturo.",
-        "is_published": true,
-        "image_filename": "noticia_ple.png",
-        "translations": {
-            "es": {
-                "title": "Aprobación del presupuesto municipal 2026",
-                "summary": "El Pleno del Ayuntamiento ha aprobado las nuevas partidas destinadas a inversiones culturales y deportivas.",
-                "body": "En la sesión de ayer se aprobaron los presupuestos con un fuerte enfoque en la mejora de los equipamientos públicos. Se incluye la restauración de una nueva fase del Castillo de Burriac y la digitalización del museo Ilturo."
-            }
-        }
-    },
-    {
-        "title": "Torna la Fira d'Artesania del Maresme",
-        "summary": "Més de 50 paradistes ompliran la plaça del Poble amb productes de proximitat i km 0.",
-        "body": "Aquest cap de setmana Cabrera de Mar es converteix en l'epicentre de l'artesania. Tallers, parades de menjar i música en directe acompanyaran la mostra.",
-        "is_published": true,
-        "image_filename": "noticia_fira.png",
-        "translations": {
-            "es": {
-                "title": "Vuelve la Feria de Artesanía del Maresme",
-                "summary": "Más de 50 paradistas llenarán la plaza del Pueblo con productos de proximidad y km 0.",
-                "body": "Este fin de semana Cabrera de Mar se convierte en el epicentro de la artesanía. Talleres, puestos de comida y música en directo acompañarán la muestra."
-            }
-        }
+  {
+    "title": "Aprovacio del pressupost municipal 2026",
+    "summary": "El Ple de l'Ajuntament ha aprovat les noves partides destinades a inversions culturals i esportives.",
+    "body": "En la sessio d'ahir es van aprovar els pressupostos amb un fort enfocament en la millora dels equipaments publics. S'inclou la restauracio d'una nova fase del Castell de Burriac i la digitalitzacio del museu Ilturo.",
+    "is_published": true,
+    "image_filename": "tradition.png",
+    "translations": {
+      "es": {
+        "title": "Aprobacion del presupuesto municipal 2026",
+        "summary": "El Pleno del Ayuntamiento ha aprobado las nuevas partidas destinadas a inversiones culturales y deportivas.",
+        "body": "En la sesion de ayer se aprobaron los presupuestos con un fuerte enfoque en la mejora de los equipamientos publicos. Se incluye la restauracion de una nueva fase del Castillo de Burriac y la digitalizacion del museo Ilturo."
+      }
     }
+  },
+  {
+    "title": "Torna la Fira d'Artesania del Maresme",
+    "summary": "Mes de 50 paradistes ompliran la placa del Poble amb productes de proximitat i km 0.",
+    "body": "Aquest cap de setmana Cabrera de Mar es converteix en l'epicentre de l'artesania. Tallers, parades de menjar i musica en directe acompanyaran la mostra.",
+    "is_published": true,
+    "image_filename": "market.png",
+    "translations": {
+      "es": {
+        "title": "Vuelve la Feria de Artesania del Maresme",
+        "summary": "Mas de 50 paradistas llenaran la plaza del Pueblo con productos de proximidad y km 0.",
+        "body": "Este fin de semana Cabrera de Mar se convierte en el epicentro de la artesania. Talleres, puestos de comida y musica en directo acompanaran la muestra."
+      }
+    }
+  },
+  {
+    "title": "Nova area de jocs infantils al parc de Can Bartomeu",
+    "summary": "L'Ajuntament inaugura un espai de jocs inclusiu amb elements accessibles per a tots els infants.",
+    "body": "El nou parc infantil compta amb gronxadors adaptats, tobogans accessibles i paviment de seguretat. Una inversio de 85.000 euros que beneficiara a les families del municipi.",
+    "is_published": true,
+    "image_filename": "family.png",
+    "translations": {
+      "es": {
+        "title": "Nueva area de juegos infantiles en el parque de Can Bartomeu",
+        "summary": "El Ayuntamiento inaugura un espacio de juegos inclusivo con elementos accesibles para todos los ninos.",
+        "body": "El nuevo parque infantil cuenta con columpios adaptados, toboganes accesibles y pavimento de seguridad. Una inversion de 85.000 euros que beneficiara a las familias del municipio."
+      }
+    }
+  },
+  {
+    "title": "El Club Esportiu Cabrera ascendeix a Primera Catalana",
+    "summary": "Historic ascens del primer equip de futbol despres d'una temporada excel·lent.",
+    "body": "Amb una victoria per 3-1, el CE Cabrera ha aconseguit l'ascens a Primera Catalana. L'equip ha mostrat un joc brillant durant tota la temporada, amb 22 victories en 30 partits.",
+    "is_published": true,
+    "image_filename": "sports.png",
+    "translations": {
+      "es": {
+        "title": "El Club Deportivo Cabrera asciende a Primera Catalana",
+        "summary": "Historico ascenso del primer equipo de futbol tras una temporada excelente.",
+        "body": "Con una victoria por 3-1, el CE Cabrera ha conseguido el ascenso a Primera Catalana. El equipo ha mostrado un juego brillante durante toda la temporada, con 22 victorias en 30 partidos."
+      }
+    }
+  },
+  {
+    "title": "Campanya de neteja de platges amb 200 voluntaris",
+    "summary": "Veins i visitants uneixen forces per mantenir la costa neta i lliure de plastics.",
+    "body": "La jornada de voluntariat va aconseguir recollir mes de 500 kg de residus. L'Ajuntament agraeix la participacio i anuncia noves jornades per als proxims mesos.",
+    "is_published": true,
+    "image_filename": "beach.png",
+    "translations": {
+      "es": {
+        "title": "Campana de limpieza de playas con 200 voluntarios",
+        "summary": "Vecinos y visitantes unen fuerzas para mantener la costa limpia y libre de plasticos.",
+        "body": "La jornada de voluntariado consiguio recoger mas de 500 kg de residuos. El Ayuntamiento agradece la participacion y anuncia nuevas jornadas para los proximos meses."
+      }
+    }
+  },
+  {
+    "title": "Inauguracio de la nova sala d'exposicions de Ca l'Arnau",
+    "summary": "L'espai cultural amplia les seves instal·lacions amb una sala polivalent de 200 m2.",
+    "body": "La nova sala permetra acollir exposicions, concerts i conferencies. Ja esta programada la primera mostra amb obres d'artistes locals del Maresme.",
+    "is_published": true,
+    "image_filename": "art.png",
+    "translations": {
+      "es": {
+        "title": "Inauguracion de la nueva sala de exposiciones de Ca l'Arnau",
+        "summary": "El espacio cultural amplia sus instalaciones con una sala polivalente de 200 m2.",
+        "body": "La nueva sala permitira acoger exposiciones, conciertos y conferencias. Ya esta programada la primera muestra con obras de artistas locales del Maresme."
+      }
+    }
+  },
+  {
+    "title": "Obert el periode d'inscripcio per a les activitats d'estiu",
+    "summary": "Casals, campus esportius i tallers per a infants i joves fins al setembre.",
+    "body": "L'Ajuntament ha obert les inscripcions per a totes les activitats d'estiu. Hi ha places per a mes de 500 infants i joves amb preus reduits per a families nombroses.",
+    "is_published": true,
+    "image_filename": "party.png",
+    "translations": {
+      "es": {
+        "title": "Abierto el periodo de inscripcion para las actividades de verano",
+        "summary": "Casales, campus deportivos y talleres para ninos y jovenes hasta septiembre.",
+        "body": "El Ayuntamiento ha abierto las inscripciones para todas las actividades de verano. Hay plazas para mas de 500 ninos y jovenes con precios reducidos para familias numerosas."
+      }
+    }
+  },
+  {
+    "title": "Nou servei de biblioteca a domicili per a persones grans",
+    "summary": "La Biblioteca Ilturo portara llibres i audiovisuals a qui no pugui desplacar-se.",
+    "body": "El servei es gratuuit i esta destinat a persones majors de 65 anys amb mobilitat reduida. Les solicituds es poden fer per telefon o a traves de la web municipal.",
+    "is_published": true,
+    "image_filename": "networking.png",
+    "translations": {
+      "es": {
+        "title": "Nuevo servicio de biblioteca a domicilio para personas mayores",
+        "summary": "La Biblioteca Ilturo llevara libros y audiovisuales a quien no pueda desplazarse.",
+        "body": "El servicio es gratuito y esta destinado a personas mayores de 65 anos con movilidad reducida. Las solicitudes se pueden hacer por telefono o a traves de la web municipal."
+      }
+    }
+  },
+  {
+    "title": "Cabrera de Mar rebra el premi de Vila Sostenible 2026",
+    "summary": "Reconeixement per les politiques de reciclatge i eficiencia energetica.",
+    "body": "El jurat ha destacat la reduccio del 30% en consum energetic dels edificis publics i l'augment del 45% en la taxa de reciclatge. El premi es lliurara en una cerimonia a Barcelona.",
+    "is_published": true,
+    "image_filename": "nature.png",
+    "translations": {
+      "es": {
+        "title": "Cabrera de Mar recibira el premio de Villa Sostenible 2026",
+        "summary": "Reconocimiento por las politicas de reciclaje y eficiencia energetica.",
+        "body": "El jurado ha destacado la reduccion del 30% en consumo energetico de los edificios publicos y el aumento del 45% en la tasa de reciclaje. El premio se entregara en una ceremonia en Barcelona."
+      }
+    }
+  },
+  {
+    "title": "Ampliacio de l'horari del servei de bus urba",
+    "summary": "El bus nocturn funcionara els caps de setmana fins a les 2 de la matinada.",
+    "body": "A partir del proper mes, el servei de bus urba ampliara els seus horaris. La linia nocturna connectara el centre amb la platja i les urbanitzacions.",
+    "is_published": true,
+    "image_filename": "tech.png",
+    "translations": {
+      "es": {
+        "title": "Ampliacion del horario del servicio de bus urbano",
+        "summary": "El bus nocturno funcionara los fines de semana hasta las 2 de la madrugada.",
+        "body": "A partir del proximo mes, el servicio de bus urbano ampliara sus horarios. La linea nocturna conectara el centro con la playa y las urbanizaciones."
+      }
+    }
+  }
 ]

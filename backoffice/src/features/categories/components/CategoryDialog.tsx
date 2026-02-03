@@ -65,6 +65,24 @@ const emptyForm: CategoryPayload = {
   seo_description: "",
 };
 
+const buildFormFromCategory = (category?: Category): CategoryPayload => {
+  if (!category) return emptyForm;
+  return {
+    slug: category.slug,
+    taxonomy: category.taxonomy || "",
+    icon: category.icon || "",
+    parent: category.parent ?? null,
+    nombre: category.nombre,
+    descripcion: category.descripcion || "",
+    translations: category.translations || {},
+    is_published: category.is_published ?? true,
+    featured_media_id: category.featured_media_id ?? null,
+    attachments_ids: category.attachments_ids ?? [],
+    seo_title: category.seo_title || "",
+    seo_description: category.seo_description || "",
+  };
+};
+
 export function CategoryDialog({
   open,
   onOpenChange,
@@ -72,7 +90,9 @@ export function CategoryDialog({
   category,
   categories = [],
 }: Props) {
-  const [form, setForm] = useState<CategoryPayload>(emptyForm);
+  const [form, setForm] = useState<CategoryPayload>(() =>
+    buildFormFromCategory(category),
+  );
   const [activeLang, setActiveLang] = useState("ca");
   const [activeTab, setActiveTab] = useState("general");
   const [translations, setTranslations] = useState<LocalTranslations>({});
@@ -89,26 +109,8 @@ export function CategoryDialog({
   );
 
   useEffect(() => {
-    if (category) {
-      setForm({
-        slug: category.slug,
-        taxonomy: category.taxonomy || "",
-        icon: category.icon || "",
-        parent: category.parent ?? null,
-        nombre: category.nombre,
-        descripcion: category.descripcion || "",
-        translations: category.translations || {},
-        is_published: category.is_published ?? true,
-        featured_media_id: category.featured_media_id ?? null,
-        attachments_ids: category.attachments_ids ?? [],
-        seo_title: category.seo_title || "",
-        seo_description: category.seo_description || "",
-      });
-      setTranslations(category.translations || {});
-    } else {
-      setForm(emptyForm);
-      setTranslations({});
-    }
+    setForm(buildFormFromCategory(category));
+    setTranslations(category?.translations || {});
     setActiveTab("general");
     setActiveLang("ca");
   }, [category, open]);
@@ -321,15 +323,41 @@ export function CategoryDialog({
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="taxonomy">Taxonomía</Label>
-                  <Input
-                    id="taxonomy"
-                    name="taxonomy"
-                    value={form.taxonomy || ""}
-                    onChange={(e) =>
-                      setForm((prev) => ({ ...prev, taxonomy: e.target.value }))
+                  <Select
+                    value={form.taxonomy || "none"}
+                    onValueChange={(val) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        taxonomy: val === "none" ? "" : val,
+                      }))
                     }
-                    placeholder="template, theme, etc."
-                  />
+                  >
+                    <SelectTrigger id="taxonomy">
+                      <SelectValue placeholder="Selecciona taxonomía">
+                        {form.taxonomy === "events" && "Eventos"}
+                        {form.taxonomy === "places" && "Lugares"}
+                        {form.taxonomy === "template" && "Plantilla"}
+                        {form.taxonomy === "theme" && "Tema"}
+                        {form.taxonomy === "audience" && "Audiencia"}
+                        {form.taxonomy === "season" && "Temporada"}
+                        {form.taxonomy === "news" && "Noticias"}
+                        {form.taxonomy === "other" && "Otro"}
+                        {(!form.taxonomy || form.taxonomy === "none") &&
+                          "Sin taxonomía"}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">Sin taxonomía</SelectItem>
+                      <SelectItem value="events">Eventos</SelectItem>
+                      <SelectItem value="places">Lugares</SelectItem>
+                      <SelectItem value="template">Plantilla</SelectItem>
+                      <SelectItem value="theme">Tema</SelectItem>
+                      <SelectItem value="audience">Audiencia</SelectItem>
+                      <SelectItem value="season">Temporada</SelectItem>
+                      <SelectItem value="news">Noticias</SelectItem>
+                      <SelectItem value="other">Otro</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-2 sm:col-span-2">
                   <Label htmlFor="parent">Categoría padre</Label>

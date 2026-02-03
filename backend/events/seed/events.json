@@ -15,26 +15,26 @@
       },
       "is_published": true,
       "is_featured": true,
-      "venue_name": "Església Parroquial de Sant Feliu",
-      "location_text": "Església Sant Feliu",
+      "venue_name": "Esglesia Parroquial de Sant Feliu",
+      "location_text": "Esglesia Sant Feliu",
       "featured_image_filename": "XXXVI cicle de concerts de orgue.jpeg",
       "points_value": 20,
       "translations": {
         "ca": {
           "title": "Cicle de Concerts d'Orgue: Avui",
           "summary": "Gran concert d'obertura del cicle d'orgue.",
-          "description": "Gaudeix de la sonoritat única de l'orgue de Sant Feliu avui mateix."
+          "description": "Gaudeix de la sonoritat unica de l'orgue de Sant Feliu avui mateix."
         },
         "es": {
-          "title": "Ciclo de Conciertos de Órgano: Hoy",
-          "summary": "Gran concierto de apertura del ciclo de órgano.",
-          "description": "Disfruta de la sonoridad única del órgano de Sant Feliu hoy mismo."
+          "title": "Ciclo de Conciertos de Organo: Hoy",
+          "summary": "Gran concierto de apertura del ciclo de organo.",
+          "description": "Disfruta de la sonoridad unica del organo de Sant Feliu hoy mismo."
         }
       }
     },
     {
       "slug": "mercat-setmanal-dema",
-      "category_slug": "festes",
+      "category_slug": "fires-i-mercats",
       "start_offset": {
         "days": 1,
         "hours": 9
@@ -54,7 +54,7 @@
         }
       ],
       "is_published": true,
-      "venue_name": "Plaça del Poble",
+      "venue_name": "Placa del Poble",
       "location_text": "Cabrera de Mar",
       "featured_image_filename": "fira_nadal.jpg",
       "points_value": 10,
@@ -62,11 +62,11 @@
         "ca": {
           "title": "Mercat Setmanal de Proximitat",
           "summary": "Productes frescos i artesania local.",
-          "description": "Vine cada setmana a la plaça per trobar els millors productes del Maresme."
+          "description": "Vine cada setmana a la placa per trobar els millors productes del Maresme."
         },
         "es": {
           "title": "Mercado Semanal de Proximidad",
-          "summary": "Productos frescos y artesanía local.",
+          "summary": "Productos frescos y artesania local.",
           "description": "Ven cada semana a la plaza para encontrar los mejores productos del Maresme."
         }
       }
@@ -85,7 +85,7 @@
       "is_published": true,
       "is_free": false,
       "price": "8.00",
-      "price_text": "8 €",
+      "price_text": "8 EUR",
       "points_value": 30,
       "venue_name": "Yacimiento Ilturo",
       "location_text": "Cabrera de Mar",
@@ -93,20 +93,20 @@
       "tags": ["historia", "taller", "familiar"],
       "translations": {
         "ca": {
-          "title": "Taller de Ceràmica Romana",
-          "summary": "Crea la teva pròpia peça històrica a Ilturo.",
-          "description": "Activitat familiar per aprendre tècniques de terrissa romana."
+          "title": "Taller de Ceramica Romana",
+          "summary": "Crea la teva propia peca historica a Ilturo.",
+          "description": "Activitat familiar per aprendre tecniques de terrissa romana."
         },
         "es": {
-          "title": "Taller de Cerámica Romana",
-          "summary": "Crea tu propia pieza histórica en Ilturo.",
-          "description": "Actividad familiar para aprender técnicas de alfarería romana."
+          "title": "Taller de Ceramica Romana",
+          "summary": "Crea tu propia pieza historica en Ilturo.",
+          "description": "Actividad familiar para aprender tecnicas de alfareria romana."
         }
       }
     },
     {
       "slug": "excursio-burriac-nocturna",
-      "category_slug": "festes",
+      "category_slug": "esports",
       "start_offset": {
         "days": 10,
         "hours": 20
@@ -124,19 +124,19 @@
       "translations": {
         "ca": {
           "title": "Pujada Nocturna al Castell de Burriac",
-          "summary": "Excursió sota la llum de la lluna plena.",
+          "summary": "Excursio sota la llum de la lluna plena.",
           "description": "Gaudeix de les millors vistes de la costa il·luminades des del cim de Burriac."
         },
         "es": {
           "title": "Subida Nocturna al Castillo de Burriac",
-          "summary": "Excursión bajo la luz de la luna llena.",
+          "summary": "Excursion bajo la luz de la luna llena.",
           "description": "Disfruta de las mejores vistas de la costa iluminadas desde la cima de Burriac."
         }
       }
     },
     {
       "slug": "conferencia-historia",
-      "category_slug": "teatre",
+      "category_slug": "cultura",
       "start_offset": {
         "days": 15,
         "hours": 18
@@ -152,13 +152,13 @@
       "points_value": 15,
       "translations": {
         "ca": {
-          "title": "Conferència: Els Secrets d'Ilturo",
-          "summary": "Xerrada sobre els últims descobriments arqueològics.",
+          "title": "Conferencia: Els Secrets d'Ilturo",
+          "summary": "Xerrada sobre els ultims descobriments arqueologics.",
           "description": "Escolta als experts sobre el passat de la nostra vila."
         },
         "es": {
           "title": "Conferencia: Los Secretos de Ilturo",
-          "summary": "Charla sobre los últimos descubrimientos arqueológicos.",
+          "summary": "Charla sobre los ultimos descubrimientos arqueologicos.",
           "description": "Escucha a los expertos sobre el pasado de nuestra villa."
         }
       }
@@ -184,7 +184,7 @@
       "is_featured": true,
       "is_free": false,
       "price": "12.00",
-      "price_text": "12 €",
+      "price_text": "12 EUR",
       "points_value": 40,
       "venue_name": "Platja de Cabrera",
       "location_text": "Zona Chiringuito",
@@ -192,19 +192,19 @@
       "translations": {
         "ca": {
           "title": "Jazz a la Platja",
-          "summary": "Música en directe al costat del mar.",
+          "summary": "Musica en directe al costat del mar.",
           "description": "Una vetllada inoblidable amb jazz en directe i la brisa marina."
         },
         "es": {
           "title": "Jazz en la Playa",
-          "summary": "Música en directo junto al mar.",
+          "summary": "Musica en directo junto al mar.",
           "description": "Una velada inolvidable con jazz en directo y la brisa marina."
         }
       }
     },
     {
       "slug": "fira-artesania-mes-1",
-      "category_slug": "festes",
+      "category_slug": "fires-i-mercats",
       "start_offset": {
         "days": 40,
         "hours": 10
@@ -222,12 +222,461 @@
         "ca": {
           "title": "Fira d'Artesania d'Hivern",
           "summary": "Grans expositors d'artesania i gastronomia local.",
-          "description": "El centre de la vila s'omple d'artesania d'aquí a un mes i escaig."
+          "description": "El centre de la vila s'omple d'artesania d'aqui a un mes i escaig."
         },
         "es": {
-          "title": "Feria de Artesanía de Invierno",
-          "summary": "Grandes expositores de artesanía y gastronomía local.",
-          "description": "El centro de la villa se llena de artesanía dentro de un mes y pico."
+          "title": "Feria de Artesania de Invierno",
+          "summary": "Grandes expositores de artesania y gastronomia local.",
+          "description": "El centro de la villa se llena de artesania dentro de un mes y pico."
+        }
+      }
+    },
+    {
+      "slug": "concert-coral-nadal",
+      "category_slug": "musica",
+      "start_offset": {
+        "days": 3,
+        "hours": 18
+      },
+      "end_offset": {
+        "days": 3,
+        "hours": 20
+      },
+      "is_published": true,
+      "venue_name": "Esglesia de Sant Vicenc",
+      "location_text": "Placa de l'Esglesia",
+      "featured_image_filename": "XXXVI cicle de concerts de orgue.jpeg",
+      "points_value": 15,
+      "translations": {
+        "ca": {
+          "title": "Concert de la Coral de Cabrera",
+          "summary": "Actuacio de la coral local amb repertori classic.",
+          "description": "La coral de Cabrera interpreta obres del repertori classic i popular."
+        },
+        "es": {
+          "title": "Concierto de la Coral de Cabrera",
+          "summary": "Actuacion de la coral local con repertorio clasico.",
+          "description": "La coral de Cabrera interpreta obras del repertorio clasico y popular."
+        }
+      }
+    },
+    {
+      "slug": "exposicio-art-local",
+      "category_slug": "cultura",
+      "start_offset": {
+        "days": 7,
+        "hours": 11
+      },
+      "end_offset": {
+        "days": 14,
+        "hours": 20
+      },
+      "is_published": true,
+      "venue_name": "Ca l'Arnau",
+      "location_text": "Sala d'Exposicions",
+      "featured_image_filename": "casa_trenc_alba.jpeg",
+      "points_value": 10,
+      "translations": {
+        "ca": {
+          "title": "Exposicio: Artistes del Maresme",
+          "summary": "Mostra col·lectiva de pintors i escultors locals.",
+          "description": "Una setmana per descobrir el talent artistic de la comarca."
+        },
+        "es": {
+          "title": "Exposicion: Artistas del Maresme",
+          "summary": "Muestra colectiva de pintores y escultores locales.",
+          "description": "Una semana para descubrir el talento artistico de la comarca."
+        }
+      }
+    },
+    {
+      "slug": "revetlla-sant-joan",
+      "category_slug": "festes",
+      "start_offset": {
+        "days": 20,
+        "hours": 22
+      },
+      "end_offset": {
+        "days": 21,
+        "hours": 3
+      },
+      "is_published": true,
+      "is_featured": true,
+      "venue_name": "Platja de Cabrera",
+      "location_text": "Tota la platja",
+      "featured_image_filename": "fira_nadal.jpg",
+      "points_value": 50,
+      "translations": {
+        "ca": {
+          "title": "Revetlla de Sant Joan",
+          "summary": "Nit de foc i festa a la platja.",
+          "description": "Celebra la nit mes magica de l'any amb fogueres, petards i coca."
+        },
+        "es": {
+          "title": "Verbena de San Juan",
+          "summary": "Noche de fuego y fiesta en la playa.",
+          "description": "Celebra la noche mas magica del ano con hogueras, petardos y coca."
+        }
+      }
+    },
+    {
+      "slug": "contacontes-biblioteca",
+      "category_slug": "infantil",
+      "start_offset": {
+        "days": 2,
+        "hours": 17
+      },
+      "end_offset": {
+        "days": 2,
+        "hours": 18
+      },
+      "extra_dates": [
+        {
+          "start_offset": { "days": 9, "hours": 17 },
+          "end_offset": { "days": 9, "hours": 18 }
+        },
+        {
+          "start_offset": { "days": 16, "hours": 17 },
+          "end_offset": { "days": 16, "hours": 18 }
+        }
+      ],
+      "is_published": true,
+      "venue_name": "Biblioteca Ilturo",
+      "location_text": "Sala infantil",
+      "featured_image_filename": "reforc_escolar.jpg",
+      "points_value": 10,
+      "translations": {
+        "ca": {
+          "title": "Contacontes a la Biblioteca",
+          "summary": "Sessions de contes per als mes petits.",
+          "description": "Cada dissabte, contes i activitats per a nens de 3 a 8 anys."
+        },
+        "es": {
+          "title": "Cuentacuentos en la Biblioteca",
+          "summary": "Sesiones de cuentos para los mas pequenos.",
+          "description": "Cada sabado, cuentos y actividades para ninos de 3 a 8 anos."
+        }
+      }
+    },
+    {
+      "slug": "taller-manualitats-infantil",
+      "category_slug": "infantil",
+      "start_offset": {
+        "days": 6,
+        "hours": 10
+      },
+      "end_offset": {
+        "days": 6,
+        "hours": 12
+      },
+      "is_published": true,
+      "is_free": false,
+      "price": "5.00",
+      "price_text": "5 EUR",
+      "venue_name": "Centre Civic",
+      "location_text": "Sala de tallers",
+      "featured_image_filename": "reforc_escolar.jpg",
+      "points_value": 15,
+      "translations": {
+        "ca": {
+          "title": "Taller de Manualitats Creatives",
+          "summary": "Activitat creativa per a nens i nenes.",
+          "description": "Aprenen a crear joguines i decoracions amb materials reciclats."
+        },
+        "es": {
+          "title": "Taller de Manualidades Creativas",
+          "summary": "Actividad creativa para ninos y ninas.",
+          "description": "Aprenden a crear juguetes y decoraciones con materiales reciclados."
+        }
+      }
+    },
+    {
+      "slug": "torneig-gaming-joves",
+      "category_slug": "joves",
+      "start_offset": {
+        "days": 12,
+        "hours": 16
+      },
+      "end_offset": {
+        "days": 12,
+        "hours": 21
+      },
+      "is_published": true,
+      "venue_name": "Casal de Joves",
+      "location_text": "Sala de jocs",
+      "featured_image_filename": "reforc_escolar.jpg",
+      "points_value": 25,
+      "tags": ["joves", "gaming", "esports"],
+      "translations": {
+        "ca": {
+          "title": "Torneig de Gaming",
+          "summary": "Competicio de videojocs per a joves.",
+          "description": "Competeix amb altres joves en els jocs mes populars del moment."
+        },
+        "es": {
+          "title": "Torneo de Gaming",
+          "summary": "Competicion de videojuegos para jovenes.",
+          "description": "Compite con otros jovenes en los juegos mas populares del momento."
+        }
+      }
+    },
+    {
+      "slug": "volei-platja-estiu",
+      "category_slug": "esports",
+      "start_offset": {
+        "days": 30,
+        "hours": 10
+      },
+      "end_offset": {
+        "days": 30,
+        "hours": 14
+      },
+      "is_published": true,
+      "venue_name": "Platja de Cabrera",
+      "location_text": "Pistes de volei",
+      "featured_image_filename": "fira_nadal.jpg",
+      "points_value": 30,
+      "translations": {
+        "ca": {
+          "title": "Torneig de Volei Platja",
+          "summary": "Competicio esportiva a la sorra.",
+          "description": "Inscriu-te i participa en el torneig de volei platja de l'estiu."
+        },
+        "es": {
+          "title": "Torneo de Voley Playa",
+          "summary": "Competicion deportiva en la arena.",
+          "description": "Inscribete y participa en el torneo de voley playa del verano."
+        }
+      }
+    },
+    {
+      "slug": "cursa-popular-cabrera",
+      "category_slug": "esports",
+      "start_offset": {
+        "days": 45,
+        "hours": 9
+      },
+      "end_offset": {
+        "days": 45,
+        "hours": 12
+      },
+      "is_published": true,
+      "is_featured": true,
+      "is_free": false,
+      "price": "10.00",
+      "price_text": "10 EUR",
+      "venue_name": "Placa de la Vila",
+      "location_text": "Sortida i arribada",
+      "featured_image_filename": "fira_nadal.jpg",
+      "points_value": 40,
+      "translations": {
+        "ca": {
+          "title": "Cursa Popular de Cabrera",
+          "summary": "10 km per camins i carrers del poble.",
+          "description": "La cursa mes esperada de l'any amb categories per a totes les edats."
+        },
+        "es": {
+          "title": "Carrera Popular de Cabrera",
+          "summary": "10 km por caminos y calles del pueblo.",
+          "description": "La carrera mas esperada del ano con categorias para todas las edades."
+        }
+      }
+    },
+    {
+      "slug": "obra-teatre-local",
+      "category_slug": "teatre",
+      "start_offset": {
+        "days": 18,
+        "hours": 20
+      },
+      "end_offset": {
+        "days": 18,
+        "hours": 22
+      },
+      "extra_dates": [
+        {
+          "start_offset": { "days": 19, "hours": 18 },
+          "end_offset": { "days": 19, "hours": 20 }
+        }
+      ],
+      "is_published": true,
+      "is_free": false,
+      "price": "8.00",
+      "price_text": "8 EUR",
+      "venue_name": "Centre Civic",
+      "location_text": "Sala d'actes",
+      "featured_image_filename": "casa_trenc_alba.jpeg",
+      "points_value": 20,
+      "translations": {
+        "ca": {
+          "title": "El Misteri de la Masia",
+          "summary": "Obra de teatre del grup local Els Arlequins.",
+          "description": "Una comedia de misteri ambientada en una masia del Maresme."
+        },
+        "es": {
+          "title": "El Misterio de la Masia",
+          "summary": "Obra de teatro del grupo local Els Arlequins.",
+          "description": "Una comedia de misterio ambientada en una masia del Maresme."
+        }
+      }
+    },
+    {
+      "slug": "curs-cuina-mediterrania",
+      "category_slug": "formacio",
+      "start_offset": {
+        "days": 8,
+        "hours": 18
+      },
+      "end_offset": {
+        "days": 8,
+        "hours": 21
+      },
+      "is_published": true,
+      "is_free": false,
+      "price": "25.00",
+      "price_text": "25 EUR",
+      "venue_name": "Centre Civic",
+      "location_text": "Cuina comunitaria",
+      "featured_image_filename": "casa_trenc_alba.jpeg",
+      "points_value": 35,
+      "tags": ["gastronomia", "formacio", "cuina"],
+      "translations": {
+        "ca": {
+          "title": "Curs de Cuina Mediterrania",
+          "summary": "Aprenen a cuinar plats tradicionals.",
+          "description": "Taller practica amb degustacio dels plats preparats."
+        },
+        "es": {
+          "title": "Curso de Cocina Mediterranea",
+          "summary": "Aprenden a cocinar platos tradicionales.",
+          "description": "Taller practica con degustacion de los platos preparados."
+        }
+      }
+    },
+    {
+      "slug": "curs-catala-adults",
+      "category_slug": "formacio",
+      "start_offset": {
+        "days": 22,
+        "hours": 19
+      },
+      "end_offset": {
+        "days": 22,
+        "hours": 21
+      },
+      "extra_dates": [
+        {
+          "start_offset": { "days": 29, "hours": 19 },
+          "end_offset": { "days": 29, "hours": 21 }
+        },
+        {
+          "start_offset": { "days": 36, "hours": 19 },
+          "end_offset": { "days": 36, "hours": 21 }
+        }
+      ],
+      "is_published": true,
+      "venue_name": "Biblioteca Ilturo",
+      "location_text": "Aula de formacio",
+      "featured_image_filename": "reforc_escolar.jpg",
+      "points_value": 20,
+      "translations": {
+        "ca": {
+          "title": "Curs de Catala per a Adults",
+          "summary": "Classes de catala nivell basic.",
+          "description": "Curs intensiu per aprendre catala des de zero."
+        },
+        "es": {
+          "title": "Curso de Catalan para Adultos",
+          "summary": "Clases de catalan nivel basico.",
+          "description": "Curso intensivo para aprender catalan desde cero."
+        }
+      }
+    },
+    {
+      "slug": "ballada-sardanes",
+      "category_slug": "festes",
+      "start_offset": {
+        "days": 4,
+        "hours": 12
+      },
+      "end_offset": {
+        "days": 4,
+        "hours": 14
+      },
+      "is_published": true,
+      "venue_name": "Placa de la Vila",
+      "location_text": "Davant l'Ajuntament",
+      "featured_image_filename": "fira_nadal.jpg",
+      "points_value": 15,
+      "translations": {
+        "ca": {
+          "title": "Ballada de Sardanes",
+          "summary": "Dansa tradicional catalana a la placa.",
+          "description": "Uneix-te a la rotllana i balla amb la cobla local."
+        },
+        "es": {
+          "title": "Baile de Sardanas",
+          "summary": "Danza tradicional catalana en la plaza.",
+          "description": "Unete al corro y baila con la cobla local."
+        }
+      }
+    },
+    {
+      "slug": "correfoc-festa-major",
+      "category_slug": "festes",
+      "start_offset": {
+        "days": 50,
+        "hours": 22
+      },
+      "end_offset": {
+        "days": 50,
+        "hours": 24
+      },
+      "is_published": true,
+      "is_featured": true,
+      "venue_name": "Carrers del centre",
+      "location_text": "Recorregut historic",
+      "featured_image_filename": "fira_nadal.jpg",
+      "points_value": 50,
+      "translations": {
+        "ca": {
+          "title": "Correfoc de Festa Major",
+          "summary": "Foc i festa pels carrers del poble.",
+          "description": "Els diables de Cabrera encenen la nit amb foc i musica."
+        },
+        "es": {
+          "title": "Correfoc de Fiesta Mayor",
+          "summary": "Fuego y fiesta por las calles del pueblo.",
+          "description": "Los diablos de Cabrera encienden la noche con fuego y musica."
+        }
+      }
+    },
+    {
+      "slug": "cine-estiu-platja",
+      "category_slug": "cultura",
+      "start_offset": {
+        "days": 35,
+        "hours": 21
+      },
+      "end_offset": {
+        "days": 35,
+        "hours": 23
+      },
+      "is_published": true,
+      "venue_name": "Platja de Cabrera",
+      "location_text": "Pantalla gegant",
+      "featured_image_filename": "casa_trenc_alba.jpeg",
+      "points_value": 15,
+      "translations": {
+        "ca": {
+          "title": "Cinema a la Fresca",
+          "summary": "Pel·licula sota les estrelles a la platja.",
+          "description": "Porta la teva cadira i gaudeix del cinema amb els peus a la sorra."
+        },
+        "es": {
+          "title": "Cine al Aire Libre",
+          "summary": "Pelicula bajo las estrellas en la playa.",
+          "description": "Trae tu silla y disfruta del cine con los pies en la arena."
         }
       }
     }

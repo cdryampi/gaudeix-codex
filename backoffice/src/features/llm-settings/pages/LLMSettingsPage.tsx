@@ -7,15 +7,37 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Bot, RefreshCw, TriangleAlert } from "lucide-react";
 import { toast } from "sonner";
 
 import { llmSettingsApi } from "../api/llmSettings";
-import { LLMProviderConfig, LLMProviderConfigUpdatePayload, TranslationLog } from "../types";
+import {
+  LLMProviderConfig,
+  LLMProviderConfigUpdatePayload,
+  TranslationLog,
+} from "../types";
 
 const PROVIDERS = [
   { value: "openai", label: "OpenAI" },
@@ -26,7 +48,10 @@ const PROVIDERS = [
   { value: "local", label: "Local (Ollama / LM Studio)" },
 ];
 
-const MODELS_BY_PROVIDER: Record<string, Array<{ value: string; label: string }>> = {
+const MODELS_BY_PROVIDER: Record<
+  string,
+  Array<{ value: string; label: string }>
+> = {
   openai: [
     { value: "gpt-4o", label: "GPT-4o" },
     { value: "gpt-4o-mini", label: "GPT-4o Mini" },
@@ -41,11 +66,18 @@ const MODELS_BY_PROVIDER: Record<string, Array<{ value: string; label: string }>
     { value: "claude-3-5-haiku-20241022", label: "Claude 3.5 Haiku" },
   ],
   mistral: [{ value: "mistral-large-latest", label: "Mistral Large" }],
-  groq: [{ value: "llama-3.1-70b-versatile", label: "Llama 3.1 70B" }],
+  groq: [
+    { value: "llama-3.1-70b-versatile", label: "Llama 3.1 70B" },
+    { value: "llama-3.1-8b-instant", label: "Llama 3.1 8B Instant" },
+    { value: "openai/gpt-oss-20b", label: "GPT OSS 20B" },
+  ],
   local: [
     { value: "llama3.2:latest", label: "Llama 3.2 (Local)" },
     { value: "mistral:latest", label: "Mistral 7B (Local)" },
-    { value: "mistralai/mistral-nemo-instruct-2407", label: "Mistral Nemo Instruct (Local)" },
+    {
+      value: "mistralai/mistral-nemo-instruct-2407",
+      label: "Mistral Nemo Instruct (Local)",
+    },
     { value: "qwen2.5:latest", label: "Qwen 2.5 (Local)" },
     { value: "gemma2:latest", label: "Gemma 2 (Local)" },
   ],
@@ -101,7 +133,7 @@ export function LLMSettingsPage() {
 
   const modelOptions = useMemo(() => {
     const provider = form?.provider;
-    const options = provider ? MODELS_BY_PROVIDER[provider] ?? [] : [];
+    const options = provider ? (MODELS_BY_PROVIDER[provider] ?? []) : [];
     const current = form?.model_name;
     if (current && !options.some((o) => o.value === current)) {
       return [{ value: current, label: `${current} (actual)` }, ...options];
@@ -127,10 +159,16 @@ export function LLMSettingsPage() {
       try {
         setLoading(true);
         setError(null);
-        const [config, logList] = await Promise.all([llmSettingsApi.getConfig(), llmSettingsApi.listLogs()]);
+        const [config, logList] = await Promise.all([
+          llmSettingsApi.getConfig(),
+          llmSettingsApi.listLogs(),
+        ]);
         setConfig(config);
         setForm(toFormState(config));
-        setCredentialsDraft((prev) => ({ ...prev, local_api_url: config.local_api_url ?? "" }));
+        setCredentialsDraft((prev) => ({
+          ...prev,
+          local_api_url: config.local_api_url ?? "",
+        }));
         setLogs(logList);
       } catch (err) {
         console.error(err);
@@ -186,7 +224,8 @@ export function LLMSettingsPage() {
     if (!status.configured) return <Badge variant="destructive">Faltan</Badge>;
     return (
       <Badge className="bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/15">
-        Configuradas{status.source ? ` (${String(status.source).toUpperCase()})` : ""}
+        Configuradas
+        {status.source ? ` (${String(status.source).toUpperCase()})` : ""}
       </Badge>
     );
   };
@@ -209,13 +248,17 @@ export function LLMSettingsPage() {
       setForm(toFormState(updated));
       setCredentialsDraft((prev) => ({
         ...prev,
-        [field]: field === "local_api_url" ? updated.local_api_url ?? "" : "",
+        [field]: field === "local_api_url" ? (updated.local_api_url ?? "") : "",
       }));
-      toast.success(field === "local_api_url" ? "URL guardada" : "API key guardada");
+      toast.success(
+        field === "local_api_url" ? "URL guardada" : "API key guardada",
+      );
     } catch (err: any) {
       console.error(err);
       const msg =
-        err?.response?.data?.[field]?.[0] || err?.response?.data?.detail || "No se pudo guardar la credencial";
+        err?.response?.data?.[field]?.[0] ||
+        err?.response?.data?.detail ||
+        "No se pudo guardar la credencial";
       toast.error(String(msg));
     } finally {
       setSaving(false);
@@ -237,7 +280,9 @@ export function LLMSettingsPage() {
     } catch (err: any) {
       console.error(err);
       const msg =
-        err?.response?.data?.[field]?.[0] || err?.response?.data?.detail || "No se pudo borrar la credencial";
+        err?.response?.data?.[field]?.[0] ||
+        err?.response?.data?.detail ||
+        "No se pudo borrar la credencial";
       toast.error(String(msg));
     } finally {
       setSaving(false);
@@ -248,13 +293,17 @@ export function LLMSettingsPage() {
 
   return (
     <PageContainer>
-      <PageHeader title="LLM" description="Configura proveedor/modelo de traducción y revisa los logs de uso." />
+      <PageHeader
+        title="LLM"
+        description="Configura proveedor/modelo de traducción y revisa los logs de uso."
+      />
 
       <Alert className="mb-4 w-3/4">
         <TriangleAlert className="h-4 w-4" />
         <AlertTitle>Credenciales</AlertTitle>
         <AlertDescription className="text-sm">
-          Configura las API keys desde este panel y se guardan en la base de datos. Por seguridad, no se vuelven a mostrar.
+          Configura las API keys desde este panel y se guardan en la base de
+          datos. Por seguridad, no se vuelven a mostrar.
         </AlertDescription>
       </Alert>
 
@@ -262,7 +311,9 @@ export function LLMSettingsPage() {
         <Card className="border-border bg-card">
           <CardContent className="p-6">
             {loading ? (
-              <div className="flex h-32 items-center justify-center text-muted-foreground">Cargando...</div>
+              <div className="flex h-32 items-center justify-center text-muted-foreground">
+                Cargando...
+              </div>
             ) : error ? (
               <div className="text-destructive">{error}</div>
             ) : !form ? (
@@ -272,17 +323,30 @@ export function LLMSettingsPage() {
                 <div className="flex items-center justify-between gap-4">
                   <div>
                     <Label className="text-base">Traducción automática</Label>
-                    <p className="text-sm text-muted-foreground">Activa o desactiva el servicio LLM.</p>
+                    <p className="text-sm text-muted-foreground">
+                      Activa o desactiva el servicio LLM.
+                    </p>
                   </div>
-                  <Switch checked={form.is_active} onCheckedChange={(v) => onChange("is_active", v)} />
+                  <Switch
+                    checked={form.is_active}
+                    onCheckedChange={(v) => onChange("is_active", v)}
+                  />
                 </div>
 
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-2">
                     <Label>Provider</Label>
-                    <Select value={form.provider} onValueChange={(v) => onChange("provider", v)}>
+                    <Select
+                      value={form.provider}
+                      onValueChange={(v) => onChange("provider", v)}
+                    >
                       <SelectTrigger>
-                        <SelectValue placeholder="Selecciona un provider" />
+                        <SelectValue placeholder="Selecciona un provider">
+                          {
+                            PROVIDERS.find((p) => p.value === form.provider)
+                              ?.label
+                          }
+                        </SelectValue>
                       </SelectTrigger>
                       <SelectContent>
                         {PROVIDERS.map((p) => (
@@ -296,9 +360,18 @@ export function LLMSettingsPage() {
 
                   <div className="space-y-2">
                     <Label>Model name</Label>
-                    <Select value={form.model_name} onValueChange={(v) => onChange("model_name", v)}>
+                    <Select
+                      value={form.model_name}
+                      onValueChange={(v) => onChange("model_name", v)}
+                    >
                       <SelectTrigger>
-                        <SelectValue placeholder="Selecciona un modelo" />
+                        <SelectValue placeholder="Selecciona un modelo">
+                          {
+                            modelOptions.find(
+                              (m) => m.value === form.model_name,
+                            )?.label
+                          }
+                        </SelectValue>
                       </SelectTrigger>
                       <SelectContent>
                         {modelOptions.map((m) => (
@@ -320,9 +393,13 @@ export function LLMSettingsPage() {
                       min={0}
                       max={2}
                       value={form.temperature}
-                      onChange={(e) => onChange("temperature", Number(e.target.value))}
+                      onChange={(e) =>
+                        onChange("temperature", Number(e.target.value))
+                      }
                     />
-                    <p className="text-xs text-muted-foreground">Rango recomendado: 0.0 – 2.0</p>
+                    <p className="text-xs text-muted-foreground">
+                      Rango recomendado: 0.0 – 2.0
+                    </p>
                   </div>
 
                   <div className="space-y-2">
@@ -331,7 +408,9 @@ export function LLMSettingsPage() {
                       type="number"
                       min={1}
                       value={form.max_tokens}
-                      onChange={(e) => onChange("max_tokens", Number(e.target.value))}
+                      onChange={(e) =>
+                        onChange("max_tokens", Number(e.target.value))
+                      }
                     />
                   </div>
                 </div>
@@ -341,14 +420,17 @@ export function LLMSettingsPage() {
                     <div>
                       <Label className="text-base">API Keys (DB)</Label>
                       <p className="text-sm text-muted-foreground">
-                        Guarda la API key aquí (no se muestra de nuevo) o usa env vars del backend.
+                        Guarda la API key aquí (no se muestra de nuevo) o usa
+                        env vars del backend.
                       </p>
                     </div>
                     {config && config.provider === form.provider ? (
                       config.credentials_configured ? (
                         <Badge className="bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/15">
                           Configuradas
-                          {config.credentials_source ? ` (${config.credentials_source.toUpperCase()})` : ""}
+                          {config.credentials_source
+                            ? ` (${config.credentials_source.toUpperCase()})`
+                            : ""}
                         </Badge>
                       ) : (
                         <Badge variant="destructive">Faltan</Badge>
@@ -405,11 +487,20 @@ export function LLMSettingsPage() {
                         type="password"
                         autoComplete="off"
                         value={credentialsDraft.openai_api_key}
-                        onChange={(e) => setCredentialsDraft((prev) => ({ ...prev, openai_api_key: e.target.value }))}
+                        onChange={(e) =>
+                          setCredentialsDraft((prev) => ({
+                            ...prev,
+                            openai_api_key: e.target.value,
+                          }))
+                        }
                         placeholder="Pega la API key..."
                       />
                       <div className="flex justify-end gap-2">
-                        <Button type="button" onClick={() => saveCredential("openai_api_key")} disabled={saving}>
+                        <Button
+                          type="button"
+                          onClick={() => saveCredential("openai_api_key")}
+                          disabled={saving}
+                        >
                           Guardar
                         </Button>
                         <Button
@@ -432,11 +523,20 @@ export function LLMSettingsPage() {
                         type="password"
                         autoComplete="off"
                         value={credentialsDraft.gemini_api_key}
-                        onChange={(e) => setCredentialsDraft((prev) => ({ ...prev, gemini_api_key: e.target.value }))}
+                        onChange={(e) =>
+                          setCredentialsDraft((prev) => ({
+                            ...prev,
+                            gemini_api_key: e.target.value,
+                          }))
+                        }
                         placeholder="Pega la API key..."
                       />
                       <div className="flex justify-end gap-2">
-                        <Button type="button" onClick={() => saveCredential("gemini_api_key")} disabled={saving}>
+                        <Button
+                          type="button"
+                          onClick={() => saveCredential("gemini_api_key")}
+                          disabled={saving}
+                        >
                           Guardar
                         </Button>
                         <Button
@@ -460,12 +560,19 @@ export function LLMSettingsPage() {
                         autoComplete="off"
                         value={credentialsDraft.anthropic_api_key}
                         onChange={(e) =>
-                          setCredentialsDraft((prev) => ({ ...prev, anthropic_api_key: e.target.value }))
+                          setCredentialsDraft((prev) => ({
+                            ...prev,
+                            anthropic_api_key: e.target.value,
+                          }))
                         }
                         placeholder="Pega la API key..."
                       />
                       <div className="flex justify-end gap-2">
-                        <Button type="button" onClick={() => saveCredential("anthropic_api_key")} disabled={saving}>
+                        <Button
+                          type="button"
+                          onClick={() => saveCredential("anthropic_api_key")}
+                          disabled={saving}
+                        >
                           Guardar
                         </Button>
                         <Button
@@ -488,11 +595,20 @@ export function LLMSettingsPage() {
                         type="password"
                         autoComplete="off"
                         value={credentialsDraft.mistral_api_key}
-                        onChange={(e) => setCredentialsDraft((prev) => ({ ...prev, mistral_api_key: e.target.value }))}
+                        onChange={(e) =>
+                          setCredentialsDraft((prev) => ({
+                            ...prev,
+                            mistral_api_key: e.target.value,
+                          }))
+                        }
                         placeholder="Pega la API key..."
                       />
                       <div className="flex justify-end gap-2">
-                        <Button type="button" onClick={() => saveCredential("mistral_api_key")} disabled={saving}>
+                        <Button
+                          type="button"
+                          onClick={() => saveCredential("mistral_api_key")}
+                          disabled={saving}
+                        >
                           Guardar
                         </Button>
                         <Button
@@ -515,11 +631,20 @@ export function LLMSettingsPage() {
                         type="password"
                         autoComplete="off"
                         value={credentialsDraft.groq_api_key}
-                        onChange={(e) => setCredentialsDraft((prev) => ({ ...prev, groq_api_key: e.target.value }))}
+                        onChange={(e) =>
+                          setCredentialsDraft((prev) => ({
+                            ...prev,
+                            groq_api_key: e.target.value,
+                          }))
+                        }
                         placeholder="Pega la API key..."
                       />
                       <div className="flex justify-end gap-2">
-                        <Button type="button" onClick={() => saveCredential("groq_api_key")} disabled={saving}>
+                        <Button
+                          type="button"
+                          onClick={() => saveCredential("groq_api_key")}
+                          disabled={saving}
+                        >
                           Guardar
                         </Button>
                         <Button
@@ -540,11 +665,20 @@ export function LLMSettingsPage() {
                       </div>
                       <Input
                         value={credentialsDraft.local_api_url}
-                        onChange={(e) => setCredentialsDraft((prev) => ({ ...prev, local_api_url: e.target.value }))}
+                        onChange={(e) =>
+                          setCredentialsDraft((prev) => ({
+                            ...prev,
+                            local_api_url: e.target.value,
+                          }))
+                        }
                         placeholder="http://localhost:11434"
                       />
                       <div className="flex justify-end gap-2">
-                        <Button type="button" onClick={() => saveCredential("local_api_url")} disabled={saving}>
+                        <Button
+                          type="button"
+                          onClick={() => saveCredential("local_api_url")}
+                          disabled={saving}
+                        >
                           Guardar
                         </Button>
                         <Button
@@ -576,16 +710,25 @@ export function LLMSettingsPage() {
             <div className="mb-4 flex items-center justify-between gap-3">
               <div>
                 <h3 className="text-base font-semibold">Logs</h3>
-                <p className="text-sm text-muted-foreground">Últimas traducciones registradas.</p>
+                <p className="text-sm text-muted-foreground">
+                  Últimas traducciones registradas.
+                </p>
               </div>
-              <Button variant="outline" onClick={fetchLogs} disabled={refreshingLogs} className="gap-2">
+              <Button
+                variant="outline"
+                onClick={fetchLogs}
+                disabled={refreshingLogs}
+                className="gap-2"
+              >
                 <RefreshCw className="h-4 w-4" />
                 {refreshingLogs ? "Actualizando..." : "Actualizar"}
               </Button>
             </div>
 
             {logs.length === 0 ? (
-              <div className="text-sm text-muted-foreground">No hay logs todavía.</div>
+              <div className="text-sm text-muted-foreground">
+                No hay logs todavía.
+              </div>
             ) : (
               <div className="max-h-[520px] overflow-auto rounded-md border">
                 <Table>
@@ -609,14 +752,20 @@ export function LLMSettingsPage() {
                         <TableCell className="whitespace-nowrap">
                           {new Date(log.created_at).toLocaleString()}
                         </TableCell>
-                        <TableCell>{log.provider_display || log.provider}</TableCell>
-                        <TableCell className="font-mono text-xs">{log.model_name}</TableCell>
+                        <TableCell>
+                          {log.provider_display || log.provider}
+                        </TableCell>
+                        <TableCell className="font-mono text-xs">
+                          {log.model_name}
+                        </TableCell>
                         <TableCell className="whitespace-nowrap">
                           <span className="font-mono text-xs">
                             {log.source_language} → {log.target_language}
                           </span>
                         </TableCell>
-                        <TableCell className="text-right font-mono text-xs">{log.tokens_used ?? "-"}</TableCell>
+                        <TableCell className="text-right font-mono text-xs">
+                          {log.tokens_used ?? "-"}
+                        </TableCell>
                         <TableCell>
                           {log.success ? (
                             <Badge className="bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/15">
@@ -636,7 +785,10 @@ export function LLMSettingsPage() {
         </Card>
       </div>
 
-      <Dialog open={!!selectedLog} onOpenChange={(open) => (!open ? setSelectedLog(null) : null)}>
+      <Dialog
+        open={!!selectedLog}
+        onOpenChange={(open) => (!open ? setSelectedLog(null) : null)}
+      >
         <DialogContent className="max-w-3xl">
           <DialogHeader>
             <DialogTitle>Detalle del log</DialogTitle>
@@ -645,17 +797,22 @@ export function LLMSettingsPage() {
           {selectedLog && (
             <div className="space-y-4">
               <div className="flex flex-wrap items-center gap-2">
-                <Badge variant={selectedLog.success ? "secondary" : "destructive"}>
+                <Badge
+                  variant={selectedLog.success ? "secondary" : "destructive"}
+                >
                   {selectedLog.success ? "OK" : "Error"}
                 </Badge>
-                <Badge variant="outline">{selectedLog.provider_display || selectedLog.provider}</Badge>
+                <Badge variant="outline">
+                  {selectedLog.provider_display || selectedLog.provider}
+                </Badge>
                 <Badge variant="outline" className="font-mono text-xs">
                   {selectedLog.model_name}
                 </Badge>
                 <span className="text-sm text-muted-foreground">
                   {new Date(selectedLog.created_at).toLocaleString()} ·{" "}
                   <span className="font-mono">
-                    {selectedLog.source_language} → {selectedLog.target_language}
+                    {selectedLog.source_language} →{" "}
+                    {selectedLog.target_language}
                   </span>
                 </span>
               </div>
@@ -664,18 +821,28 @@ export function LLMSettingsPage() {
                 <Alert variant="destructive">
                   <TriangleAlert className="h-4 w-4" />
                   <AlertTitle>Error</AlertTitle>
-                  <AlertDescription className="text-sm">{selectedLog.error_message}</AlertDescription>
+                  <AlertDescription className="text-sm">
+                    {selectedLog.error_message}
+                  </AlertDescription>
                 </Alert>
               )}
 
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label>Texto origen</Label>
-                  <Textarea value={selectedLog.source_text} readOnly className="min-h-[180px]" />
+                  <Textarea
+                    value={selectedLog.source_text}
+                    readOnly
+                    className="min-h-[180px]"
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label>Texto traducido</Label>
-                  <Textarea value={selectedLog.translated_text} readOnly className="min-h-[180px]" />
+                  <Textarea
+                    value={selectedLog.translated_text}
+                    readOnly
+                    className="min-h-[180px]"
+                  />
                 </div>
               </div>
             </div>
