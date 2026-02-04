@@ -16,6 +16,7 @@ from django.db import transaction
 
 from media_files.models import ImageFile
 from news.models import News
+from core.models import Category
 
 
 class Command(BaseCommand):
@@ -40,10 +41,17 @@ class Command(BaseCommand):
             image_filename = data.get("image_filename")
             featured_media = images.get(image_filename) if image_filename else None
 
+            # Get category by slug
+            category_slug = data.get("category_slug")
+            category = None
+            if category_slug:
+                category = Category.objects.filter(slug=category_slug).first()
+
             news = News.objects.create(
                 slug=f"noticia-{index}",
                 is_published=data.get("is_published", True),
                 featured_media=featured_media,
+                category=category,
             )
 
             # Apply base fields and translations
@@ -63,7 +71,7 @@ class Command(BaseCommand):
             news.save()
             # Slug is regenerated in save() if not unique or empty,
             # but we set it manually above for control.
-            
+
             self.stdout.write(self.style.SUCCESS(f"Created news: {news.title}"))
 
     def _load_seed_news(self) -> list[dict]:
@@ -96,4 +104,3 @@ class Command(BaseCommand):
             )
         self.stdout.write(self.style.SUCCESS(f"Seeded ImageFile from {path}"))
         return instance
-

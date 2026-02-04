@@ -2,21 +2,64 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from parler.models import TranslatableModel, TranslatedFields
+from solo.models import SingletonModel
 from core.models import ContentBase
+
+
+class NewsCategorySingleton(SingletonModel):
+    """
+    Singleton model to hold the default 'News' category.
+    This ensures all news are under a single category hierarchy.
+    """
+
+    category = models.ForeignKey(
+        "core.Category",
+        on_delete=models.PROTECT,
+        related_name="news_singleton",
+        verbose_name=_("News Category"),
+        help_text=_("The root category for all news"),
+    )
+
+    class Meta:
+        verbose_name = _("News Category Configuration")
+
+    def __str__(self) -> str:
+        return f"News Category: {self.category}"
+
+    @classmethod
+    def get_default_category(cls):
+        """Get the default news category safely."""
+        try:
+            singleton = cls.objects.filter(pk=1).first()
+            return singleton.category if singleton and singleton.category_id else None
+        except Exception:
+            return None
+
 
 class News(ContentBase, TranslatableModel):
     """
     Model for news and announcements.
     """
+
     translations = TranslatedFields(
         title=models.CharField(_("Title"), max_length=200),
         summary=models.TextField(_("Summary"), blank=True),
         body=models.TextField(_("Body"), blank=True),
     )
-    
+
     is_published = models.BooleanField(_("Is published"), default=True)
     published_at = models.DateTimeField(_("Published at"), default=timezone.now)
-    
+
+    category = models.ForeignKey(
+        "core.Category",
+        on_delete=models.PROTECT,
+        related_name="news",
+        null=True,
+        blank=True,
+        verbose_name=_("Category"),
+        help_text=_("Category for this news (defaults to News category)"),
+    )
+
     featured_media = models.ForeignKey(
         "media_files.ImageFile",
         null=True,
@@ -38,15 +81,18 @@ class News(ContentBase, TranslatableModel):
         # Slug generation logic handled safely
         if not self.slug:
             from django.utils.text import slugify
+
             # In Parler, if PK is not set, we can't always get the translation safely in some contexts,
             # but usually it's fine if it was set before save.
             try:
-                title = self.safe_translation_getter("title", any_language=True) or "news"
+                title = (
+                    self.safe_translation_getter("title", any_language=True) or "news"
+                )
             except:
                 title = "news"
-            
+
             self.slug = slugify(title) or "news"
-            
+
             # Simple unique check
             if not self.pk:
                 orig_slug = self.slug

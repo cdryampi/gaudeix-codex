@@ -5,6 +5,7 @@
     "body": "En la sessio d'ahir es van aprovar els pressupostos amb un fort enfocament en la millora dels equipaments publics. S'inclou la restauracio d'una nova fase del Castell de Burriac i la digitalitzacio del museu Ilturo.",
     "is_published": true,
     "image_filename": "news-pressupost-2026.png",
+    "category_slug": "actualitat",
     "translations": {
       "es": {
         "title": "Aprobacion del presupuesto municipal 2026",
@@ -19,6 +20,7 @@
     "body": "Aquest cap de setmana Cabrera de Mar es converteix en l'epicentre de l'artesania. Tallers, parades de menjar i musica en directe acompanyaran la mostra.",
     "is_published": true,
     "image_filename": "news-fira-artesania.png",
+    "category_slug": "cultura",
     "translations": {
       "es": {
         "title": "Vuelve la Feria de Artesania del Maresme",
@@ -33,6 +35,7 @@
     "body": "El nou parc infantil compta amb gronxadors adaptats, tobogans accessibles i paviment de seguretat. Una inversio de 85.000 euros que beneficiara a les families del municipi.",
     "is_published": true,
     "image_filename": "news-jocs-infantils.png",
+    "category_slug": "urbanisme",
     "translations": {
       "es": {
         "title": "Nueva area de juegos infantiles en el parque de Can Bartomeu",
@@ -47,6 +50,7 @@
     "body": "Amb una victoria per 3-1, el CE Cabrera ha aconseguit l'ascens a Primera Catalana. L'equip ha mostrat un joc brillant durant tota la temporada, amb 22 victories en 30 partits.",
     "is_published": true,
     "image_filename": "news-ce-cabrera-ascens.png",
+    "category_slug": "esports",
     "translations": {
       "es": {
         "title": "El Club Deportivo Cabrera asciende a Primera Catalana",
@@ -61,6 +65,7 @@
     "body": "La jornada de voluntariat va aconseguir recollir mes de 500 kg de residus. L'Ajuntament agraeix la participacio i anuncia noves jornades per als proxims mesos.",
     "is_published": true,
     "image_filename": "news-neteja-platges.png",
+    "category_slug": "medi-ambient",
     "translations": {
       "es": {
         "title": "Campana de limpieza de playas con 200 voluntarios",
@@ -75,6 +80,7 @@
     "body": "La nova sala permetra acollir exposicions, concerts i conferencies. Ja esta programada la primera mostra amb obres d'artistes locals del Maresme.",
     "is_published": true,
     "image_filename": "news-art-arnau.png",
+    "category_slug": "cultura",
     "translations": {
       "es": {
         "title": "Inauguracion de la nueva sala de exposiciones de Ca l'Arnau",
@@ -89,6 +95,7 @@
     "body": "L'Ajuntament ha obert les inscripcions per a totes les activitats d'estiu. Hi ha places per a mes de 500 infants i joves amb preus reduits per a families nombroses.",
     "is_published": true,
     "image_filename": "news-activitats-estiu.png",
+    "category_slug": "educacio",
     "translations": {
       "es": {
         "title": "Abierto el periodo de inscripcion para las actividades de verano",
@@ -103,6 +110,7 @@
     "body": "El servei es gratuuit i esta destinat a persones majors de 65 anys amb mobilitat reduida. Les solicituds es poden fer per telefon o a traves de la web municipal.",
     "is_published": true,
     "image_filename": "news-biblioteca-domicili.png",
+    "category_slug": "salut",
     "translations": {
       "es": {
         "title": "Nuevo servicio de biblioteca a domicilio para personas mayores",
@@ -117,6 +125,7 @@
     "body": "El jurat ha destacat la reduccio del 30% en consum energetic dels edificis publics i l'augment del 45% en la taxa de reciclatge. El premi es lliurara en una cerimonia a Barcelona.",
     "is_published": true,
     "image_filename": "news-vila-sostenible.png",
+    "category_slug": "medi-ambient",
     "translations": {
       "es": {
         "title": "Cabrera de Mar recibira el premio de Villa Sostenible 2026",
@@ -131,6 +140,7 @@
     "body": "A partir del proper mes, el servei de bus urba ampliara els seus horaris. La linia nocturna connectara el centre amb la platja i les urbanitzacions.",
     "is_published": true,
     "image_filename": null,
+    "category_slug": "actualitat",
     "translations": {
       "es": {
         "title": "Ampliacion del horario del servicio de bus urbano",
