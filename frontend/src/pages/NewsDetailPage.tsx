@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, Calendar, Tag } from "lucide-react";
-import { SiteHeader } from "@/components/site/SiteHeader";
 import { getNewsItem } from "@/features/news/api";
 import type { NewsItem } from "@/features/news/types";
 import { formatDateTime } from "@/features/agenda/dateUtils";
@@ -23,8 +22,8 @@ export default function NewsDetailPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-white">
-        <SiteHeader />
-        <div className="flex h-[50vh] items-center justify-center">
+        {/* Header provided by MainLayout */}
+        <div className="flex h-screen items-center justify-center">
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
         </div>
       </div>
@@ -34,16 +33,16 @@ export default function NewsDetailPage() {
   if (!news) {
     return (
       <div className="min-h-screen bg-white">
-        <SiteHeader />
-        <div className="container mx-auto px-6 py-24 text-center">
+        {/* Header provided by MainLayout */}
+        <div className="container mx-auto px-6 pt-36 pb-24 text-center">
           <h1 className="text-4xl font-black uppercase text-slate-900">
             Noticia no encontrada
           </h1>
           <Link
-            to="/"
+            to="/noticias"
             className="mt-8 inline-block text-primary hover:underline"
           >
-            Volver al inicio
+            Volver a noticias
           </Link>
         </div>
       </div>
@@ -52,7 +51,7 @@ export default function NewsDetailPage() {
 
   return (
     <div className="min-h-screen bg-white text-slate-900">
-      <SiteHeader />
+      {/* Header provided by MainLayout with transparent overlay on hero */}
 
       <article>
         {/* Header Image */}
