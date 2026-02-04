@@ -131,3 +131,17 @@ dist-ssr
 .vscode
 .idea
 *.local
+
+# TypeScript build artifacts in src (emitted by tsc)
+# These should never be committed - only .ts/.tsx source files
+src/**/*.js
+src/**/*.d.ts
+!src/vite-env.d.ts
+*.js.map
+*.d.ts.map
+
+# Config file artifacts
+vite.config.js
+vite.config.d.ts
+vitest.config.js
+vitest.config.d.ts
