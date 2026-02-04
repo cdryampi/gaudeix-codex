@@ -9,12 +9,15 @@ django.setup()
 from core.models import Category, Tag
 from places.models import Place, PlaceCategorySingleton
 from events.models import Event, EventCategorySingleton
+from festes.models import Festa, FestaCategorySingleton
+from routes.models import Route, RouteCategorySingleton
+from news.models import News
 from media_files.models import ImageFile, DocumentFile, VideoFile
 
 def cleanup():
     print("Starting NUCLEAR CLEANUP...")
     
-    # 1. Delete Events & Places (they have ForeignKeys to Category)
+    # 1. Delete dependent entities
     print(f"Deleting {Event.objects.count()} events...")
     Event.objects.all().delete()
     EventCategorySingleton.objects.all().delete()
@@ -22,13 +25,22 @@ def cleanup():
     print(f"Deleting {Place.objects.count()} places...")
     Place.objects.all().delete()
     PlaceCategorySingleton.objects.all().delete()
+
+    print(f"Deleting {Festa.objects.count()} festes...")
+    Festa.objects.all().delete()
+    FestaCategorySingleton.objects.all().delete()
+
+    print(f"Deleting {Route.objects.count()} routes...")
+    Route.objects.all().delete()
+    RouteCategorySingleton.objects.all().delete()
+
+    print(f"Deleting {News.objects.count()} news...")
+    News.objects.all().delete()
     
     # 2. Delete Categories in hierarchical order
-    # First delete entries without children repeatedly until all are gone
     print(f"Deleting {Category.objects.count()} categories hierarchicaly...")
     while Category.objects.count() > 0:
         count_before = Category.objects.count()
-        # Delete categories that are not parents of any other category
         Category.objects.filter(children__isnull=True).delete()
         if Category.objects.count() == count_before:
             print("Warning: Could not delete all categories due to remains. Force clearing parents.")
@@ -55,17 +67,34 @@ def seed(day_offset=0):
     
     print("- Seeding Events Categories...")
     call_command('seed_events_category')
+
+    print("- Seeding Festes Categories...")
+    call_command('seed_festes_category')
+
+    print("- Seeding Routes Categories...")
+    call_command('seed_routes_category')
     
     print("- Seeding Tags...")
     call_command('seed_tags')
     
     print("- Seeding Places...")
     call_command('seed_places')
+
+    print("- Seeding Festes...")
+    call_command('seed_festes')
+
+    print("- Seeding Routes...")
+    call_command('seed_routes')
+
+    print("- Seeding News...")
+    call_command('seed_news')
     
     print(f"- Seeding Events (with day offset {day_offset})...")
     call_command('seed_events', day_offset=day_offset)
     
     print("\nDEEP SEED FINISHED. System is ready.")
+
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Clean and re-seed the database.")

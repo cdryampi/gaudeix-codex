@@ -4,7 +4,7 @@
     "summary": "El Ple de l'Ajuntament ha aprovat les noves partides destinades a inversions culturals i esportives.",
     "body": "En la sessio d'ahir es van aprovar els pressupostos amb un fort enfocament en la millora dels equipaments publics. S'inclou la restauracio d'una nova fase del Castell de Burriac i la digitalitzacio del museu Ilturo.",
     "is_published": true,
-    "image_filename": "tradition.png",
+    "image_filename": "news-pressupost-2026.png",
     "translations": {
       "es": {
         "title": "Aprobacion del presupuesto municipal 2026",
@@ -18,7 +18,7 @@
     "summary": "Mes de 50 paradistes ompliran la placa del Poble amb productes de proximitat i km 0.",
     "body": "Aquest cap de setmana Cabrera de Mar es converteix en l'epicentre de l'artesania. Tallers, parades de menjar i musica en directe acompanyaran la mostra.",
     "is_published": true,
-    "image_filename": "market.png",
+    "image_filename": "news-fira-artesania.png",
     "translations": {
       "es": {
         "title": "Vuelve la Feria de Artesania del Maresme",
@@ -32,7 +32,7 @@
     "summary": "L'Ajuntament inaugura un espai de jocs inclusiu amb elements accessibles per a tots els infants.",
     "body": "El nou parc infantil compta amb gronxadors adaptats, tobogans accessibles i paviment de seguretat. Una inversio de 85.000 euros que beneficiara a les families del municipi.",
     "is_published": true,
-    "image_filename": "family.png",
+    "image_filename": "news-jocs-infantils.png",
     "translations": {
       "es": {
         "title": "Nueva area de juegos infantiles en el parque de Can Bartomeu",
@@ -46,7 +46,7 @@
     "summary": "Historic ascens del primer equip de futbol despres d'una temporada excel·lent.",
     "body": "Amb una victoria per 3-1, el CE Cabrera ha aconseguit l'ascens a Primera Catalana. L'equip ha mostrat un joc brillant durant tota la temporada, amb 22 victories en 30 partits.",
     "is_published": true,
-    "image_filename": "sports.png",
+    "image_filename": "news-ce-cabrera-ascens.png",
     "translations": {
       "es": {
         "title": "El Club Deportivo Cabrera asciende a Primera Catalana",
@@ -60,7 +60,7 @@
     "summary": "Veins i visitants uneixen forces per mantenir la costa neta i lliure de plastics.",
     "body": "La jornada de voluntariat va aconseguir recollir mes de 500 kg de residus. L'Ajuntament agraeix la participacio i anuncia noves jornades per als proxims mesos.",
     "is_published": true,
-    "image_filename": "beach.png",
+    "image_filename": "news-neteja-platges.png",
     "translations": {
       "es": {
         "title": "Campana de limpieza de playas con 200 voluntarios",
@@ -74,7 +74,7 @@
     "summary": "L'espai cultural amplia les seves instal·lacions amb una sala polivalent de 200 m2.",
     "body": "La nova sala permetra acollir exposicions, concerts i conferencies. Ja esta programada la primera mostra amb obres d'artistes locals del Maresme.",
     "is_published": true,
-    "image_filename": "art.png",
+    "image_filename": "news-art-arnau.png",
     "translations": {
       "es": {
         "title": "Inauguracion de la nueva sala de exposiciones de Ca l'Arnau",
@@ -88,7 +88,7 @@
     "summary": "Casals, campus esportius i tallers per a infants i joves fins al setembre.",
     "body": "L'Ajuntament ha obert les inscripcions per a totes les activitats d'estiu. Hi ha places per a mes de 500 infants i joves amb preus reduits per a families nombroses.",
     "is_published": true,
-    "image_filename": "party.png",
+    "image_filename": "news-activitats-estiu.png",
     "translations": {
       "es": {
         "title": "Abierto el periodo de inscripcion para las actividades de verano",
@@ -102,7 +102,7 @@
     "summary": "La Biblioteca Ilturo portara llibres i audiovisuals a qui no pugui desplacar-se.",
     "body": "El servei es gratuuit i esta destinat a persones majors de 65 anys amb mobilitat reduida. Les solicituds es poden fer per telefon o a traves de la web municipal.",
     "is_published": true,
-    "image_filename": "networking.png",
+    "image_filename": "news-biblioteca-domicili.png",
     "translations": {
       "es": {
         "title": "Nuevo servicio de biblioteca a domicilio para personas mayores",
@@ -116,7 +116,7 @@
     "summary": "Reconeixement per les politiques de reciclatge i eficiencia energetica.",
     "body": "El jurat ha destacat la reduccio del 30% en consum energetic dels edificis publics i l'augment del 45% en la taxa de reciclatge. El premi es lliurara en una cerimonia a Barcelona.",
     "is_published": true,
-    "image_filename": "nature.png",
+    "image_filename": "news-vila-sostenible.png",
     "translations": {
       "es": {
         "title": "Cabrera de Mar recibira el premio de Villa Sostenible 2026",
@@ -130,7 +130,7 @@
     "summary": "El bus nocturn funcionara els caps de setmana fins a les 2 de la matinada.",
     "body": "A partir del proper mes, el servei de bus urba ampliara els seus horaris. La linia nocturna connectara el centre amb la platja i les urbanitzacions.",
     "is_published": true,
-    "image_filename": "tech.png",
+    "image_filename": null,
     "translations": {
       "es": {
         "title": "Ampliacion del horario del servicio de bus urbano",
