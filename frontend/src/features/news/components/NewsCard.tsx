@@ -1,13 +1,18 @@
 import { useMemo } from "react";
+import { Link } from "react-router-dom";
 import { ArrowRight, Tag } from "lucide-react";
 import type { NewsItem } from "../types";
 import { formatDateTime } from "@/features/agenda/dateUtils";
 
 export function NewsCard({ news }: { news: NewsItem }) {
-  const dateLabel = useMemo(() => formatDateTime(news.publishedAt), [news.publishedAt]);
+  const dateLabel = useMemo(
+    () => formatDateTime(news.publishedAt),
+    [news.publishedAt],
+  );
 
   return (
-    <div
+    <Link
+      to={`/noticias/${news.slug}`}
       className="group flex flex-col overflow-hidden rounded-[4rem] bg-white text-slate-900 transition-all hover:-translate-y-4 hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.15)] h-full"
     >
       <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-200">
@@ -41,17 +46,14 @@ export function NewsCard({ news }: { news: NewsItem }) {
         )}
 
         <div className="mt-auto pt-8 border-t border-slate-100 flex items-center justify-between">
-          <a
-            href={`/noticias/${news.slug}`}
-            className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 group-hover:text-primary transition-colors"
-          >
+          <span className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 group-hover:text-primary transition-colors">
             Leer más
-          </a>
+          </span>
           <div className="h-14 w-14 flex items-center justify-center rounded-2xl bg-slate-50 text-slate-900 group-hover:bg-primary group-hover:text-white transition-all">
             <ArrowRight className="h-7 w-7" />
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
