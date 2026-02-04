@@ -54,7 +54,7 @@ export default function NewsDetailPage() {
       {/* Header provided by MainLayout with transparent overlay on hero */}
 
       <article>
-        {/* Hero Image */}
+        {/* Hero Image - Match EventDetailPage exactly */}
         <div className="relative h-[70vh] w-full overflow-hidden bg-slate-900 md:h-[85vh]">
           <img
             src={news.imageUrl}
@@ -63,10 +63,10 @@ export default function NewsDetailPage() {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/20 to-transparent" />
 
-          {/* Navigation & Breadcrumbs Overlay */}
-          <div className="absolute top-0 left-0 right-0 z-10 pt-32 px-6 md:px-16">
+          {/* Breadcrumb Overlay - TOP */}
+          <div className="absolute top-0 left-0 right-0 z-10 pt-36 px-6 md:px-16">
             <div className="container mx-auto">
-              <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-white/40 mb-12">
+              <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-white/40">
                 <Link to="/" className="hover:text-white transition-colors">
                   Inicio
                 </Link>
@@ -85,19 +85,22 @@ export default function NewsDetailPage() {
             </div>
           </div>
 
+          {/* Content Overlay - BOTTOM */}
           <div className="absolute bottom-0 left-0 right-0 p-6 md:p-16">
             <div className="container mx-auto">
-              <div className="flex items-center justify-between mb-12">
+              {/* Back Button */}
+              <div className="flex items-center justify-between mb-8">
                 <Link
                   to="/noticias"
-                  className="inline-flex items-center gap-3 rounded-2xl bg-white/10 px-8 py-4 text-[10px] font-black uppercase tracking-[0.2em] text-white backdrop-blur-md transition-all hover:bg-white/20"
+                  className="inline-flex items-center gap-3 rounded-2xl bg-white/10 px-6 py-3 text-[10px] font-black uppercase tracking-[0.2em] text-white backdrop-blur-md transition-all hover:bg-white/20"
                 >
                   <ArrowLeft className="h-4 w-4" />
                   Volver a Noticias
                 </Link>
               </div>
 
-              <div className="mb-8 flex flex-wrap gap-3">
+              {/* Category & Date Badges */}
+              <div className="mb-6 flex flex-wrap gap-3">
                 <span className="rounded-full bg-primary px-5 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-white shadow-xl shadow-primary/20">
                   {news.category}
                 </span>
@@ -106,7 +109,8 @@ export default function NewsDetailPage() {
                 </span>
               </div>
 
-              <h1 className="text-6xl font-black uppercase leading-[0.9] tracking-tighter text-white md:text-8xl lg:text-9xl max-w-5xl">
+              {/* Title - Smaller for news (long titles) */}
+              <h1 className="text-4xl font-black uppercase leading-[0.9] tracking-tighter text-white md:text-6xl lg:text-7xl max-w-4xl">
                 {news.title}
               </h1>
             </div>
