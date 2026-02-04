@@ -41,7 +41,10 @@ export async function listNewsItems(): Promise<NewsItem[]> {
       id: String(item.id),
       title: item.title,
       category: mapCategoryName(item.category_name),
-      imageUrl: item.image_url || "/placeholder-news.jpg",
+      imageUrl:
+        item.featured_media?.variant_medium ||
+        item.featured_media?.file ||
+        "/placeholder-news.jpg",
       publishedAt: item.published_at,
       slug: item.slug,
       excerpt: item.summary,
@@ -65,7 +68,10 @@ export async function getNewsItem(slug: string): Promise<NewsItem | null> {
           id: String(match.id),
           title: match.title,
           category: mapCategoryName(match.category_name),
-          imageUrl: match.image_url || "/placeholder-news.jpg",
+          imageUrl:
+            match.featured_media?.variant_medium ||
+            match.featured_media?.file ||
+            "/placeholder-news.jpg",
           publishedAt: match.published_at,
           slug: match.slug,
           excerpt: match.summary,

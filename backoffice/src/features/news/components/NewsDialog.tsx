@@ -40,6 +40,7 @@ const emptyForm: CreateNewsDTO = {
   excerpt: "",
   content: "",
   is_published: true,
+  is_featured: false,
   publish_date: null,
   category_id: null,
   featured_media_id: null,
@@ -73,6 +74,7 @@ export function NewsDialog({ open, onOpenChange, onSubmit, news }: Props) {
         excerpt: news.excerpt || "",
         content: news.content || "",
         is_published: news.is_published,
+        is_featured: !!news.is_featured,
         publish_date: news.publish_date || null,
         category_id: news.category ?? null,
         featured_media_id: news.featured_media?.id ?? null,
@@ -224,7 +226,7 @@ export function NewsDialog({ open, onOpenChange, onSubmit, news }: Props) {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Settings Row */}
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="category_id">Categoría</Label>
               <Select
@@ -266,8 +268,12 @@ export function NewsDialog({ open, onOpenChange, onSubmit, news }: Props) {
                 }
               />
             </div>
+          </div>
 
-            <div className="flex items-center space-x-2 pt-7">
+          {/* Publication Settings */}
+          <div className="grid gap-6 md:grid-cols-2 p-4 border border-border rounded-xl bg-muted/10">
+            {/* Publicado */}
+            <div className="flex flex-col gap-1.5">
               <label className="inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
@@ -285,6 +291,33 @@ export function NewsDialog({ open, onOpenChange, onSubmit, news }: Props) {
                   Publicado
                 </span>
               </label>
+              <p className="text-[10px] text-muted-foreground leading-tight pl-12">
+                Visible para todos los usuarios en la web.
+              </p>
+            </div>
+
+            {/* Destacado */}
+            <div className="flex flex-col gap-1.5">
+              <label className="inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="sr-only peer"
+                  checked={!!form.is_featured}
+                  onChange={(e) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      is_featured: e.target.checked,
+                    }))
+                  }
+                />
+                <div className="relative w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-100 dark:peer-focus:ring-primary-900 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-primary-600"></div>
+                <span className="select-none ms-3 text-sm font-medium text-gray-900 dark:text-gray-100">
+                  Destacado
+                </span>
+              </label>
+              <p className="text-[10px] text-muted-foreground leading-tight pl-12">
+                Aparecerá en posiciones prioritarias de la home.
+              </p>
             </div>
           </div>
 

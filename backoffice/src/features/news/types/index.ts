@@ -10,6 +10,7 @@ export type News = {
   excerpt?: string;
   content?: string;
   is_published: boolean;
+  is_featured?: boolean;
   publish_date?: string | null;
   category?: number | null;
   category_slug?: string;
@@ -32,6 +33,7 @@ export type CreateNewsDTO = {
   excerpt?: string;
   content?: string;
   is_published?: boolean;
+  is_featured?: boolean;
   publish_date?: string | null;
   category_id?: number | null;
   featured_media_id?: number | null;
