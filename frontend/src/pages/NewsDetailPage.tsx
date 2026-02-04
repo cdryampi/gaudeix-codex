@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, Calendar, Tag } from "lucide-react";
+import { ArrowLeft, ChevronRight } from "lucide-react";
 import { getNewsItem } from "@/features/news/api";
 import type { NewsItem } from "@/features/news/types";
 import { formatDateTime } from "@/features/agenda/dateUtils";
@@ -54,37 +54,59 @@ export default function NewsDetailPage() {
       {/* Header provided by MainLayout with transparent overlay on hero */}
 
       <article>
-        {/* Header Image */}
-        <div className="relative h-[60vh] w-full overflow-hidden bg-slate-900">
+        {/* Hero Image */}
+        <div className="relative h-[70vh] w-full overflow-hidden bg-slate-900 md:h-[85vh]">
           <img
             src={news.imageUrl}
             alt={news.title}
             className="h-full w-full object-cover opacity-80"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/20 to-transparent" />
 
-          <div className="absolute bottom-0 left-0 w-full p-6 md:p-20">
+          {/* Navigation & Breadcrumbs Overlay */}
+          <div className="absolute top-0 left-0 right-0 z-10 pt-32 px-6 md:px-16">
             <div className="container mx-auto">
-              <Link
-                to="/noticias"
-                className="mb-8 inline-flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-white/80 hover:text-white"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Volver
-              </Link>
+              <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-white/40 mb-12">
+                <Link to="/" className="hover:text-white transition-colors">
+                  Inicio
+                </Link>
+                <ChevronRight className="h-3 w-3" />
+                <Link
+                  to="/noticias"
+                  className="hover:text-white transition-colors"
+                >
+                  Noticias
+                </Link>
+                <ChevronRight className="h-3 w-3" />
+                <span className="text-accent truncate max-w-[200px] md:max-w-none">
+                  {news.title}
+                </span>
+              </nav>
+            </div>
+          </div>
 
-              <div className="mb-6 flex flex-wrap gap-6 text-sm font-bold uppercase tracking-widest text-white/60">
-                <span className="flex items-center gap-2">
-                  <Tag className="h-4 w-4 text-primary" />
+          <div className="absolute bottom-0 left-0 right-0 p-6 md:p-16">
+            <div className="container mx-auto">
+              <div className="flex items-center justify-between mb-12">
+                <Link
+                  to="/noticias"
+                  className="inline-flex items-center gap-3 rounded-2xl bg-white/10 px-8 py-4 text-[10px] font-black uppercase tracking-[0.2em] text-white backdrop-blur-md transition-all hover:bg-white/20"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  Volver a Noticias
+                </Link>
+              </div>
+
+              <div className="mb-8 flex flex-wrap gap-3">
+                <span className="rounded-full bg-primary px-5 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-white shadow-xl shadow-primary/20">
                   {news.category}
                 </span>
-                <span className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-primary" />
+                <span className="rounded-full bg-white/10 px-5 py-2 text-[10px] font-bold uppercase tracking-wider text-white backdrop-blur-sm border border-white/10">
                   {formatDateTime(news.publishedAt)}
                 </span>
               </div>
 
-              <h1 className="max-w-4xl text-4xl font-black uppercase leading-none tracking-tighter text-white md:text-6xl lg:text-7xl">
+              <h1 className="text-6xl font-black uppercase leading-[0.9] tracking-tighter text-white md:text-8xl lg:text-9xl max-w-5xl">
                 {news.title}
               </h1>
             </div>
