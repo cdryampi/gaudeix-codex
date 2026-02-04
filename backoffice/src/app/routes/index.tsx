@@ -23,6 +23,7 @@ import { LLMSettingsPage } from "@/features/llm-settings/pages/LLMSettingsPage";
 import { SendNotificationPage } from "@/features/notifications/pages/SendNotificationPage";
 import { RoutesPage } from "@/features/routes/pages/RoutesPage";
 import { FestesPage } from "@/features/festes/pages/FestesPage";
+import { NewsPage } from "@/features/news/pages/NewsPage";
 
 /**
  * Application routing configuration
@@ -133,6 +134,10 @@ export const router = createBrowserRouter([
       {
         path: "festes",
         element: <FestesPage />,
+      },
+      {
+        path: "news",
+        element: <NewsPage />,
       },
     ],
   },

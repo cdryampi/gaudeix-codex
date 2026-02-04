@@ -30,6 +30,7 @@ export const ROUTES = {
   NOTIFICATIONS: "/dashboard/notifications",
   ROUTES_HIKING: "/dashboard/routes",
   FESTES: "/dashboard/festes",
+  NEWS: "/dashboard/news",
 } as const;
 
 /**
@@ -120,6 +121,10 @@ export const QUERY_KEYS = {
     LIST: ["festes", "list"],
     DETAIL: (slug: string) => ["festes", "detail", slug],
   },
+  NEWS: {
+    LIST: ["news", "list"],
+    DETAIL: (id: string) => ["news", "detail", id],
+  },
 } as const;
 
 /**
@@ -195,6 +200,10 @@ export const API_ENDPOINTS = {
   SPONSORS: {
     LIST: "/sponsors/",
     DETAIL: (id: string) => `/sponsors/${id}/`,
+  },
+  NEWS: {
+    LIST: "/news/",
+    DETAIL: (id: string) => `/news/${id}/`,
   },
 } as const;
 
