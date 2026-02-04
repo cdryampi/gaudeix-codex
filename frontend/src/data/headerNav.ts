@@ -26,6 +26,8 @@ export const HEADER_NAV: HeaderNavItem[] = [
     ],
   },
   { label: "Alojamiento", href: "/lugares?category=accommodations" },
+  { label: "Rutas", href: "/rutas" },
+  { label: "Festes", href: "/festes" },
   { label: "Agenda", href: "/agenda" },
   {
     label: "Información",

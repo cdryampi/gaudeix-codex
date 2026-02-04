@@ -34,6 +34,14 @@ import { ComoLlegarPage } from "@/features/site-settings/pages/ComoLlegarPage";
 import { VisitUsCTA } from "@/features/site-settings/components/VisitUsCTA";
 import { MainLayout } from "@/components/layouts/MainLayout";
 
+// Routes (hiking/cycling)
+import { RoutesPage } from "@/features/routes/pages/RoutesPage";
+import { RouteDetailPage } from "@/features/routes/pages/RouteDetailPage";
+
+// Festes (festivals)
+import { FestesPage } from "@/features/festes/pages/FestesPage";
+import { FestaDetailPage } from "@/features/festes/pages/FestaDetailPage";
+
 import { listNewsItems } from "@/features/news/api";
 import { Category } from "@/features/categories/types";
 
@@ -297,6 +305,14 @@ export default function App() {
         <Route path="/rankings" element={<RankingsPage />} />
         <Route path="/como-llegar" element={<ComoLlegarPage />} />
         <Route path="/noticias/:slug" element={<NewsDetailPage />} />
+
+        {/* Routes (hiking/cycling) */}
+        <Route path="/rutas" element={<RoutesPage />} />
+        <Route path="/rutas/:slug" element={<RouteDetailPage />} />
+
+        {/* Festes (festivals) */}
+        <Route path="/festes" element={<FestesPage />} />
+        <Route path="/festes/:slug" element={<FestaDetailPage />} />
 
         {/* Auth Routes */}
         <Route path="/login" element={<LoginPage />} />
