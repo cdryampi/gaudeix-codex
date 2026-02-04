@@ -42,6 +42,9 @@ import { RouteDetailPage } from "@/features/routes/pages/RouteDetailPage";
 import { FestesPage } from "@/features/festes/pages/FestesPage";
 import { FestaDetailPage } from "@/features/festes/pages/FestaDetailPage";
 
+// News
+import { NewsPage } from "@/features/news/pages/NewsPage";
+
 import { listNewsItems } from "@/features/news/api";
 import { Category } from "@/features/categories/types";
 
@@ -313,6 +316,9 @@ export default function App() {
         {/* Festes (festivals) */}
         <Route path="/festes" element={<FestesPage />} />
         <Route path="/festes/:slug" element={<FestaDetailPage />} />
+
+        {/* News */}
+        <Route path="/noticias" element={<NewsPage />} />
 
         {/* Auth Routes */}
         <Route path="/login" element={<LoginPage />} />

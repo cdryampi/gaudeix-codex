@@ -35,7 +35,7 @@ export const HEADER_NAV: HeaderNavItem[] = [
     children: [
       { label: "Mapa interactivo", href: "/#mapa" },
       { label: "Cómo llegar", href: "/como-llegar" },
-      { label: "Noticias", href: "/#noticias" },
+      { label: "Noticias", href: "/noticias" },
     ],
   },
 ];
