@@ -58,29 +58,25 @@ export async function listNewsItems(): Promise<NewsItem[]> {
 
 export async function getNewsItem(slug: string): Promise<NewsItem | null> {
   try {
-    const data = await apiGet<NewsBackendItem>(`/news/?search=${slug}`);
-    // Search returns a list, find exact match or take first
-    const results = (data as any).results || data; // handle pagination vs list
-    if (Array.isArray(results)) {
-      const match = results.find((n: any) => n.slug === slug);
-      if (match) {
-        return {
-          id: String(match.id),
-          title: match.title,
-          category: mapCategoryName(match.category_name),
-          imageUrl:
-            match.featured_media?.variant_medium ||
-            match.featured_media?.file ||
-            "/placeholder-news.jpg",
-          publishedAt: match.published_at,
-          slug: match.slug,
-          excerpt: match.summary,
-          body: match.body,
-        };
-      }
-    }
-    return null;
+    // Use direct slug lookup endpoint: /news/{slug}/
+    const item = await apiGet<NewsBackendItem>(`/news/${slug}/`);
+
+    return {
+      id: String(item.id),
+      title: item.title,
+      category: mapCategoryName(item.category_name),
+      imageUrl:
+        item.featured_media?.variant_large ||
+        item.featured_media?.variant_medium ||
+        item.featured_media?.file ||
+        "/placeholder-news.jpg",
+      publishedAt: item.published_at,
+      slug: item.slug,
+      excerpt: item.summary,
+      body: item.body,
+    };
   } catch (err) {
+    console.warn("News not found, using mock fallback:", err);
     // Fallback mock
     return mockNews.find((n) => n.slug === slug) || null;
   }

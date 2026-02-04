@@ -13,10 +13,22 @@ logger = logging.getLogger(__name__)
 class NewsViewSet(viewsets.ModelViewSet):
     """
     API endpoints for news.
+
+    Supports:
+    - list: GET /news/ - List all news (filterable)
+    - retrieve: GET /news/{slug}/ - Get single news by slug
+    - create/update/delete: Authenticated only
+
+    Filters:
+    - ?is_published=true/false - Filter by publication status
+    - ?slug=xxx - Filter by exact slug
+    - ?category=id or ?category=slug - Filter by category
+    - ?search=term - Search in title
     """
 
     queryset = News.objects.all().select_related("featured_media", "category")
     serializer_class = NewsSerializer
+    lookup_field = "slug"  # Use slug for detail endpoint /news/{slug}/
 
     def get_permissions(self):
         if self.action in ["list", "retrieve"]:
@@ -34,6 +46,11 @@ class NewsViewSet(viewsets.ModelViewSet):
                 queryset = queryset.filter(is_published=True)
             elif normalized in {"false", "0", "no"}:
                 queryset = queryset.filter(is_published=False)
+
+        # Filter by exact slug
+        slug = params.get("slug")
+        if slug:
+            queryset = queryset.filter(slug=slug)
 
         search = params.get("search") or params.get("q")
         if search:
