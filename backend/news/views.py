@@ -36,7 +36,7 @@ class NewsViewSet(viewsets.ModelViewSet):
         return [IsAuthenticated()]
 
     def get_queryset(self):
-        queryset = self.queryset
+        queryset = News.objects.all().select_related("featured_media", "category")
         params = self.request.query_params
 
         is_published = params.get("is_published")
@@ -66,8 +66,29 @@ class NewsViewSet(viewsets.ModelViewSet):
 
         return queryset
 
+    def list(self, request, *args, **kwargs):
+        response = super().list(request, *args, **kwargs)
+        response["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+        response["Pragma"] = "no-cache"
+        response["Expires"] = "0"
+        return response
+
+    @action(detail=False, methods=["delete"], url_path=r"by-id/(?P<id>\d+)")
+    def delete_by_id(self, request, id=None):
+        """
+        Delete news by numeric ID.
+
+        DELETE /news/by-id/{id}/
+        """
+        news = News.objects.filter(id=id).first()
+        if not news:
+            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        news.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
     @action(detail=True, methods=["post"], permission_classes=[IsAuthenticated])
-    def auto_translate(self, request, pk=None):
+    def auto_translate(self, request, slug=None):
         """
         Auto-translate news to all configured languages using LLM.
         """

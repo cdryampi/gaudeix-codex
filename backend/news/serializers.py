@@ -1,8 +1,8 @@
 from django.conf import settings
 from rest_framework import serializers
 from parler_rest.serializers import TranslatableModelSerializer, TranslatedFieldsField
-from media_files.serializers import ImageFileSerializer
-from media_files.models import ImageFile
+from media_files.serializers import ImageFileSerializer, DocumentFileSerializer
+from media_files.models import ImageFile, DocumentFile
 from core.models import Category
 from .models import News
 
@@ -39,6 +39,16 @@ class NewsSerializer(TranslatableModelSerializer):
     )
     image_url = serializers.SerializerMethodField()
 
+    # Attachments (PDF documents)
+    attachments = DocumentFileSerializer(many=True, read_only=True)
+    attachments_ids = serializers.PrimaryKeyRelatedField(
+        queryset=DocumentFile.objects.all(),
+        many=True,
+        required=False,
+        write_only=True,
+        source="attachments",
+    )
+
     class Meta:
         model = News
         fields = [
@@ -48,6 +58,7 @@ class NewsSerializer(TranslatableModelSerializer):
             "summary",
             "body",
             "is_published",
+            "is_featured",
             "published_at",
             "category",
             "category_id",
@@ -56,6 +67,8 @@ class NewsSerializer(TranslatableModelSerializer):
             "featured_media",
             "featured_media_id",
             "image_url",
+            "attachments",
+            "attachments_ids",
             "translations",
             "fecha_creacion",
             "fecha_modificacion",
