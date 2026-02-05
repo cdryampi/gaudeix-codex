@@ -5,7 +5,9 @@ from django.core.management.base import BaseCommand, CommandError
 
 
 class Command(BaseCommand):
-    help = "Seed the database with demo data for all apps (optionally hard reset first)."
+    help = (
+        "Seed the database with demo data for all apps (optionally hard reset first)."
+    )
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -24,7 +26,11 @@ class Command(BaseCommand):
         noinput: bool = options["noinput"]
 
         if hard_reset:
-            self.stdout.write(self.style.WARNING("Hard reset requested: flushing database and re-applying migrations."))
+            self.stdout.write(
+                self.style.WARNING(
+                    "Hard reset requested: flushing database and re-applying migrations."
+                )
+            )
             call_command("flush", interactive=not noinput)
             call_command("migrate", interactive=not noinput)
 
@@ -39,7 +45,7 @@ class Command(BaseCommand):
             ("seed_places", "Seeding places..."),
             ("seed_events_category", "Seeding events category..."),
             ("seed_events", "Seeding events..."),
-            ("seed_news", "Seeding news..."),
+            # Note: News are now scraped from external sources, no seed command
             ("seed_gamification", "Seeding gamification..."),
         ]
 
@@ -48,6 +54,8 @@ class Command(BaseCommand):
             try:
                 call_command(command_name)
             except CommandError as exc:
-                raise CommandError(f"seed_all failed running `{command_name}`: {exc}") from exc
+                raise CommandError(
+                    f"seed_all failed running `{command_name}`: {exc}"
+                ) from exc
 
         self.stdout.write(self.style.SUCCESS("Seed process completed."))
