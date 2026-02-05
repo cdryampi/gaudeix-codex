@@ -48,6 +48,7 @@ class News(ContentBase, TranslatableModel):
     )
 
     is_published = models.BooleanField(_("Is published"), default=True)
+    is_featured = models.BooleanField(_("Is featured"), default=False)
     published_at = models.DateTimeField(_("Published at"), default=timezone.now)
 
     category = models.ForeignKey(
@@ -67,6 +68,14 @@ class News(ContentBase, TranslatableModel):
         on_delete=models.SET_NULL,
         related_name="featured_in_news",
         verbose_name=_("Featured media"),
+    )
+
+    attachments = models.ManyToManyField(
+        "media_files.DocumentFile",
+        blank=True,
+        related_name="attached_to_news",
+        verbose_name=_("Attachments"),
+        help_text=_("PDF documents and other files attached to this news"),
     )
 
     class Meta:
