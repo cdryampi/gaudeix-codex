@@ -91,6 +91,7 @@ INSTALLED_APPS = [
     "news",
     "routes.apps.RoutesConfig",
     "festes.apps.FestesConfig",
+    "scraper.apps.ScraperConfig",
 ]
 
 SITE_ID = 1
