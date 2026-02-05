@@ -70,6 +70,7 @@ class CustomProvider(BaseProvider):
 Configuration for the active LLM provider.
 
 **Fields**:
+
 - `provider`: Choice field (openai, gemini, anthropic, mistral, groq, local)
 - `model_name`: Specific model to use
 - `is_active`: Enable/disable LLM translation globally
@@ -77,11 +78,12 @@ Configuration for the active LLM provider.
 - `max_tokens`: Maximum tokens for output (default 2000)
 
 **Supported Models**:
+
 - **OpenAI**: GPT-4o, GPT-4o Mini, GPT-4 Turbo
 - **Gemini**: Gemini 2.0 Flash, Gemini 1.5 Pro
 - **Anthropic**: Claude 3.5 Sonnet, Claude 3.5 Haiku
 - **Mistral**: Mistral Large
-- **Groq**: Llama 3.1 70B
+- **Groq**: Llama 3.3 70B, Llama 3.1 8B Instant, GPT OSS 120B, GPT OSS 20B, Groq Compound, Groq Compound Mini, Llama 4 Maverick (preview), Llama 4 Scout (preview), Kimi K2 (preview), Qwen3 32B (preview)
 - **Local**: Mistral Nemo Instruct (via Ollama/LM Studio)
 
 ### TranslationLog
@@ -89,6 +91,7 @@ Configuration for the active LLM provider.
 Audit log for all translation requests.
 
 **Fields**:
+
 - `provider`, `model_name`: Which LLM was used
 - `source_text`, `translated_text`: Original and translated content
 - `source_language`, `target_language`: Language codes (ca, es, en, fr)
@@ -103,12 +106,14 @@ Audit log for all translation requests.
 ### LLM Configuration
 
 **GET /api/v1/llm-config/**
+
 ```bash
 curl -H "Authorization: Bearer <token>" \
   http://localhost:8000/api/v1/llm-config/
 ```
 
 **PATCH /api/v1/llm-config/1/**
+
 ```bash
 curl -X PATCH \
   -H "Authorization: Bearer <token>" \
@@ -120,6 +125,7 @@ curl -X PATCH \
 ### Manual Translation
 
 **POST /api/v1/llm-config/translate/**
+
 ```bash
 curl -X POST \
   -H "Authorization: Bearer <token>" \
@@ -129,6 +135,7 @@ curl -X POST \
 ```
 
 Response:
+
 ```json
 {
   "original_text": "Hola món",
@@ -144,6 +151,7 @@ Response:
 ### Event Auto-Translation
 
 **POST /api/v1/events/{id}/auto_translate/**
+
 ```bash
 curl -X POST \
   -H "Authorization: Bearer <token>" \
@@ -153,6 +161,7 @@ curl -X POST \
 ```
 
 Response:
+
 ```json
 {
   "success": true,
@@ -178,6 +187,7 @@ Response:
 ### Translation Logs
 
 **GET /api/v1/translation-logs/**
+
 ```bash
 # All logs
 curl -H "Authorization: Bearer <token>" \
@@ -211,6 +221,7 @@ You can also store provider credentials in the database via the singleton config
 fallback.
 
 **Local LLM Setup** (Ollama/LM Studio):
+
 1. Install Ollama or LM Studio
 2. Start server on default port (1234 for LM Studio)
 3. Set `LLM_LOCAL_API_URL` to server URL (without `/v1` suffix)
@@ -228,6 +239,7 @@ fallback.
 6. Save
 
 **Provider credentials**:
+
 - Use Backoffice (**Sistema → LLM**) to store the API key / local URL in DB (recommended for dev).
 - Or set the corresponding `LLM_*` env vars (recommended for production).
 
@@ -292,14 +304,14 @@ class CustomProvider(BaseProvider):
     def __init__(self, api_key: str):
         super().__init__(api_key=api_key)
         # Initialize your client
-        
+
     def translate(self, text, source_lang, target_lang, model, temperature, max_tokens):
         # Implement translation logic
         prompt = self.build_translation_prompt(text, source_lang, target_lang)
-        
+
         # Call your LLM API
         response = self.client.complete(...)
-        
+
         return TranslationResult(
             translated_text=response.text,
             tokens_used=response.tokens,
@@ -382,6 +394,7 @@ pytest llm_translations/tests.py --cov=llm_translations --cov-report=html
 ## Cost Tracking
 
 Review translation costs via:
+
 - **Django Admin** → Translation Logs
 - **API**: `GET /api/v1/translation-logs/?provider=openai`
 
@@ -403,6 +416,7 @@ Cost estimates are calculated based on token usage and provider pricing.
 - **Gemini**: Good balance, generous free tier
 
 For production, consider:
+
 - Caching translations (implement in views layer)
 - Async processing for bulk translations
 - Rate limiting for external APIs

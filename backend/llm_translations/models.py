@@ -48,6 +48,26 @@ class LLMProviderConfig(SingletonModel):
         LLAMA_3_8B_INSTANT = "llama-3.1-8b-instant", _("Llama 3.1 8B Instant")
         GPT_OSS_120B = "openai/gpt-oss-120b", _("GPT OSS 120B")
         GPT_OSS_20B = "openai/gpt-oss-20b", _("GPT OSS 20B")
+        GROQ_COMPOUND = "groq/compound", _("Groq Compound")
+        GROQ_COMPOUND_MINI = "groq/compound-mini", _("Groq Compound Mini")
+
+        # Groq models (preview)
+        LLAMA_4_MAVERICK = (
+            "meta-llama/llama-4-maverick-17b-128e-instruct",
+            _("Llama 4 Maverick 17B 128E (Preview)"),
+        )
+        LLAMA_4_SCOUT = (
+            "meta-llama/llama-4-scout-17b-16e-instruct",
+            _("Llama 4 Scout 17B 16E (Preview)"),
+        )
+        KIMI_K2 = (
+            "moonshotai/kimi-k2-instruct-0905",
+            _("Kimi K2 Instruct 0905 (Preview)"),
+        )
+        QWEN3_32B = (
+            "qwen/qwen3-32b",
+            _("Qwen3 32B (Preview)"),
+        )
 
         # Local models (Ollama/LM Studio compatible)
         LLAMA_3_8B = "llama3.2:latest", _("Llama 3.2 (Local)")
