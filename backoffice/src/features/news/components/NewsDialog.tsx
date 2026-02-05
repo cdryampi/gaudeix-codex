@@ -258,14 +258,15 @@ export function NewsDialog({ open, onOpenChange, onSubmit, news }: Props) {
               <Label htmlFor="publish_date">Fecha publicación</Label>
               <Input
                 id="publish_date"
-                type="date"
-                value={form.publish_date || ""}
+                type="datetime-local"
+                value={toDatetimeLocal(form.publish_date)}
                 onChange={(e) =>
                   setForm((prev) => ({
                     ...prev,
-                    publish_date: e.target.value || null,
+                    publish_date: e.target.value ? toIso(e.target.value) : null,
                   }))
                 }
+                className="bg-white dark:bg-gray-800"
               />
             </div>
           </div>
@@ -538,4 +539,24 @@ export function NewsDialog({ open, onOpenChange, onSubmit, news }: Props) {
       </DialogContent>
     </Dialog>
   );
+}
+
+/**
+ * Convert ISO date string to datetime-local input format (YYYY-MM-DDTHH:MM)
+ */
+function toDatetimeLocal(iso: string | null | undefined): string {
+  if (!iso) return "";
+  const date = new Date(iso);
+  if (isNaN(date.getTime())) return "";
+  const offset = date.getTimezoneOffset();
+  const adjusted = new Date(date.getTime() - offset * 60 * 1000);
+  return adjusted.toISOString().slice(0, 16);
+}
+
+/**
+ * Convert datetime-local input value to ISO string
+ */
+function toIso(value: string): string {
+  if (!value) return value;
+  return new Date(value).toISOString();
 }

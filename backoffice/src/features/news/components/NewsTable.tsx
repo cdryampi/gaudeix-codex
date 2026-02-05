@@ -11,7 +11,7 @@ import { MediaThumbnail } from "@/components/common/MediaThumbnail";
 type Props = {
   news: News[];
   onEdit: (news: News) => void;
-  onDelete: (id: number) => void;
+  onDelete: (news: News) => void;
 };
 
 export function NewsTable({ news, onEdit, onDelete }: Props) {
@@ -105,7 +105,7 @@ export function NewsTable({ news, onEdit, onDelete }: Props) {
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
-                        onClick={() => onDelete(item.id)}
+                        onClick={() => onDelete(item)}
                         aria-label={`Eliminar ${item.title}`}
                       >
                         <Trash2 className="h-4 w-4" />

@@ -35,7 +35,7 @@ export function NewsPage() {
   // Dialog/Form states
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingNews, setEditingNews] = useState<News | undefined>();
-  const [deleteNewsId, setDeleteNewsId] = useState<number | null>(null);
+  const [deleteNews, setDeleteNews] = useState<News | null>(null);
 
   // Filter states
   const [search, setSearch] = useState("");
@@ -109,28 +109,36 @@ export function NewsPage() {
     setIsDialogOpen(true);
   };
 
-  const handleDelete = async (id: number) => {
-    setDeleteNewsId(id);
+  const handleDelete = async (newsItem: News) => {
+    setDeleteNews(newsItem);
   };
 
   const handleDeleteConfirm = async () => {
-    if (!deleteNewsId) return;
+    if (!deleteNews) return;
     try {
-      await newsApi.delete(deleteNewsId);
+      await newsApi.delete(deleteNews.id);
       await fetchData();
       toast.success("Noticia eliminada correctamente");
     } catch (err) {
       console.error("Error deleting news:", err);
-      toast.error("No se pudo eliminar la noticia");
+      const status = (err as { response?: { status?: number } })?.response
+        ?.status;
+      if (status === 404) {
+        setNews((prev) => prev.filter((item) => item.id !== deleteNews.id));
+        await fetchData();
+        toast.error("La noticia ya no existe. Lista actualizada.");
+      } else {
+        toast.error("No se pudo eliminar la noticia");
+      }
     } finally {
-      setDeleteNewsId(null);
+      setDeleteNews(null);
     }
   };
 
   const handleSubmit = async (data: CreateNewsDTO) => {
     try {
       if (editingNews) {
-        await newsApi.update(editingNews.id, data);
+        await newsApi.update(editingNews.slug, data);
         toast.success("Noticia actualizada correctamente");
       } else {
         await newsApi.create(data);
@@ -222,8 +230,8 @@ export function NewsPage() {
       />
 
       <AlertDialog
-        open={deleteNewsId !== null}
-        onOpenChange={() => setDeleteNewsId(null)}
+        open={deleteNews !== null}
+        onOpenChange={() => setDeleteNews(null)}
       >
         <AlertDialogContent>
           <AlertDialogHeader>
