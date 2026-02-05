@@ -31,6 +31,7 @@ export const ROUTES = {
   ROUTES_HIKING: "/dashboard/routes",
   FESTES: "/dashboard/festes",
   NEWS: "/dashboard/news",
+  SCRAPER: "/dashboard/scraper",
 } as const;
 
 /**
@@ -204,6 +205,7 @@ export const API_ENDPOINTS = {
   NEWS: {
     LIST: "/news/",
     DETAIL: (id: string) => `/news/${id}/`,
+    DELETE_BY_ID: (id: string) => `/news/by-id/${id}/`,
   },
 } as const;
 

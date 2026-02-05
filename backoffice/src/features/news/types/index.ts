@@ -3,6 +3,9 @@
  */
 import { MediaItem } from "@/features/media/types";
 
+/**
+ * Frontend News type - uses frontend field names
+ */
 export type News = {
   id: number;
   slug: string;
@@ -24,6 +27,34 @@ export type News = {
       title: string;
       excerpt?: string;
       content?: string;
+    };
+  };
+};
+
+/**
+ * Backend API response type - uses backend field names
+ */
+export type NewsApiResponse = {
+  id: number;
+  slug: string;
+  title: string;
+  summary?: string;
+  body?: string;
+  is_published: boolean;
+  is_featured?: boolean;
+  published_at?: string | null;
+  category?: number | null;
+  category_slug?: string;
+  category_name?: string;
+  featured_media?: MediaItem | null;
+  attachments?: MediaItem[];
+  fecha_creacion?: string;
+  fecha_modificacion?: string;
+  translations?: {
+    [lang: string]: {
+      title: string;
+      summary?: string;
+      body?: string;
     };
   };
 };
