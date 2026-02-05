@@ -22,6 +22,7 @@ import {
   Route,
   PartyPopper,
   Newspaper,
+  Download,
 } from "lucide-react";
 import { ROUTES } from "@/lib/config/constants";
 
@@ -37,6 +38,7 @@ const panelNavigation: NavItem[] = [
 
 const contentNavigation: NavItem[] = [
   { name: "Noticias", href: ROUTES.NEWS, icon: Newspaper },
+  { name: "Scraper", href: ROUTES.SCRAPER, icon: Download },
   { name: "Eventos", href: ROUTES.EVENTS, icon: FileText },
   { name: "Lugares", href: ROUTES.PLACES, icon: MapPin },
   { name: "Rutas", href: ROUTES.ROUTES_HIKING, icon: Route },

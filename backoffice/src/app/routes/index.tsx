@@ -24,6 +24,7 @@ import { SendNotificationPage } from "@/features/notifications/pages/SendNotific
 import { RoutesPage } from "@/features/routes/pages/RoutesPage";
 import { FestesPage } from "@/features/festes/pages/FestesPage";
 import { NewsPage } from "@/features/news/pages/NewsPage";
+import { ScrapedNewsPage } from "@/features/scraper/pages/ScrapedNewsPage";
 
 /**
  * Application routing configuration
@@ -138,6 +139,10 @@ export const router = createBrowserRouter([
       {
         path: "news",
         element: <NewsPage />,
+      },
+      {
+        path: "scraper",
+        element: <ScrapedNewsPage />,
       },
     ],
   },
