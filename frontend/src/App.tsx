@@ -22,7 +22,7 @@ import { DateSelector } from "@/features/agenda/components/DateSelector";
 import LoginPage from "@/pages/LoginPage";
 import RegisterPage from "@/pages/RegisterPage";
 import PasswordResetPage from "@/pages/PasswordResetPage";
-import NewsDetailPage from "@/pages/NewsDetailPage";
+import { NewsDetailPage } from "@/features/news/pages/NewsDetailPage";
 import { EventDetailPage } from "@/features/agenda/pages/EventDetailPage";
 import { AgendaPage } from "@/features/agenda/pages/AgendaPage";
 import { PlacesPage } from "@/features/places/pages/PlacesPage";

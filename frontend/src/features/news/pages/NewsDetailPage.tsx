@@ -1,25 +1,29 @@
-import { useEffect, useState } from "react";
+/**
+ * NewsDetailPage - Detail view for a specific news item.
+ *
+ * Refactored to use useQuery for consistency with other pages.
+ * Moved from src/pages/ to src/features/news/pages/ for modular architecture.
+ */
 import { useParams, Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, ChevronRight } from "lucide-react";
 import { getNewsItem } from "@/features/news/api";
-import type { NewsItem } from "@/features/news/types";
 import { formatDateTime } from "@/features/agenda/dateUtils";
 
-export default function NewsDetailPage() {
+export function NewsDetailPage() {
   const { slug } = useParams<{ slug: string }>();
-  const [news, setNews] = useState<NewsItem | null>(null);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (slug) {
-      setLoading(true);
-      getNewsItem(slug)
-        .then(setNews)
-        .finally(() => setLoading(false));
-    }
-  }, [slug]);
+  const {
+    data: news,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["news", "detail", slug],
+    queryFn: () => getNewsItem(slug!),
+    enabled: !!slug,
+  });
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-white">
         {/* Header provided by MainLayout */}
@@ -30,7 +34,7 @@ export default function NewsDetailPage() {
     );
   }
 
-  if (!news) {
+  if (error || !news) {
     return (
       <div className="min-h-screen bg-white">
         {/* Header provided by MainLayout */}
@@ -143,3 +147,5 @@ export default function NewsDetailPage() {
     </div>
   );
 }
+
+export default NewsDetailPage;
