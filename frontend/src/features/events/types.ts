@@ -51,10 +51,22 @@ export interface Event {
   // Details
   is_published: boolean;
   is_featured: boolean;
+  is_outdoor: boolean;
   is_free: boolean;
   price: string | null;
   price_text: string;
   points_value: number;
+
+  // Weather
+  weather_forecast: {
+    datetime: string;
+    tempmax: number;
+    tempmin: number;
+    precip_prob?: number;
+    weather_code?: number;
+    icon?: string;
+    conditions?: string;
+  } | null;
 
   // Media
   featured_media: ImageFile | null;
@@ -68,6 +80,8 @@ export interface Event {
   // User specific
   is_favorited?: boolean;
   favorites_count?: number;
+  occurrences_count: number;
+  event_status: "upcoming" | "ongoing" | "finished";
 }
 
 export interface EventListResponse {

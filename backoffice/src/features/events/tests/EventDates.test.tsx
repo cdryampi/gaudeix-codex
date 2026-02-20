@@ -66,4 +66,34 @@ describe("EventDialog Logic", () => {
       expect(screen.getByText(/2026/)).toBeInTheDocument();
     });
   });
+
+  test("prevents overlapping sessions", async () => {
+    const { container } = render(
+      <EventDialog
+        open={true}
+        onOpenChange={mockOnOpenChange}
+        onSubmit={mockOnSubmit}
+      />,
+    );
+
+    const datesTab = screen.getByRole("button", { name: /fechas/i });
+    fireEvent.click(datesTab);
+
+    const startInput = container.querySelector('input[type="datetime-local"]');
+    if (!startInput) throw new Error("Start date input not found");
+
+    // Add first session
+    fireEvent.change(startInput, { target: { value: "2026-02-01T10:00" } });
+    const addButton = screen.getByRole("button", { name: /registrar fecha/i });
+    fireEvent.click(addButton);
+
+    // Attempt to add overlapping session
+    fireEvent.change(startInput, { target: { value: "2026-02-01T10:30" } });
+    fireEvent.click(addButton);
+
+    // Should show error toast (mocked or checked via behavior)
+    // Since we use sonner, we can check if the session was NOT added
+    const rows = container.querySelectorAll("tbody tr");
+    expect(rows.length).toBe(1);
+  });
 });

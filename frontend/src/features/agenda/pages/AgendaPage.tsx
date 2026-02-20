@@ -1,5 +1,6 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "react-router-dom";
 
 import { AgendaFilters } from "@/features/agenda/components/AgendaFilters";
 import { EventDayGroup } from "@/features/agenda/components/EventDayGroup";
@@ -7,6 +8,7 @@ import {
   filterEvents,
   groupEventsByDay,
   sortEventsByDate,
+  getRangeParams,
   DateRangeFilter,
 } from "@/features/agenda/utils";
 import { getEvents } from "@/features/events/api";
@@ -14,18 +16,36 @@ import { Event } from "@/features/events/types";
 import { EventCard } from "@/features/agenda/components/EventCard";
 
 export function AgendaPage() {
-  const [category, setCategory] = useState<string>("all");
-  const [range, setRange] = useState<DateRangeFilter>("month");
-  const [query, setQuery] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const category = searchParams.get("category") || "all";
+  const range = (searchParams.get("range") as DateRangeFilter) || "month";
+  const query = searchParams.get("q") || "";
 
   const {
     data: eventsData,
     isLoading: loading,
     error,
   } = useQuery({
-    queryKey: ["events", { is_published: true }],
-    queryFn: () => getEvents({ is_published: true }),
+    queryKey: ["events", { is_published: true, range }],
+    queryFn: () =>
+      getEvents({
+        is_published: true,
+        ...getRangeParams(range),
+      }),
   });
+
+  const setFilters = (next: {
+    category: string;
+    range: DateRangeFilter;
+    query: string;
+  }) => {
+    const params = new URLSearchParams();
+    if (next.category !== "all") params.set("category", next.category);
+    if (next.range !== "month") params.set("range", next.range);
+    if (next.query) params.set("q", next.query);
+    setSearchParams(params);
+  };
 
   const events = useMemo(() => {
     if (!eventsData) return [];
@@ -75,9 +95,7 @@ export function AgendaPage() {
             range={range}
             query={query}
             onChange={(next) => {
-              setCategory(next.category);
-              setRange(next.range);
-              setQuery(next.query);
+              setFilters(next);
             }}
           />
         </div>
@@ -138,10 +156,18 @@ export function AgendaPage() {
                 ))}
               </div>
             ) : (
-              <div className="py-48 text-center border-4 border-dashed border-white/10 rounded-[4rem]">
+              <div className="py-48 text-center border-4 border-dashed border-white/10 rounded-[4rem] flex flex-col items-center gap-12">
                 <span className="text-4xl md:text-6xl font-black uppercase tracking-tighter text-white/10">
                   Sin eventos para esta selección
                 </span>
+                <button
+                  onClick={() =>
+                    setFilters({ category: "all", range: "month", query: "" })
+                  }
+                  className="px-10 py-4 rounded-full bg-accent text-slate-950 font-black uppercase tracking-widest hover:scale-105 transition-transform"
+                >
+                  Limpiar filtros
+                </button>
               </div>
             )}
           </div>

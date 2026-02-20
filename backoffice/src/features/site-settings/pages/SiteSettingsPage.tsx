@@ -15,6 +15,7 @@ import {
   Image as ImageIcon,
   LayoutPanelTop,
   BellRing,
+  CloudSun,
 } from "lucide-react";
 import { siteSettingsApi } from "../api/siteSettings";
 import { staticPagesApi } from "@/features/static-pages/api/staticPages";
@@ -59,6 +60,7 @@ function mapDefaults() {
     default_metatitle: "",
     default_metadescription: "",
     default_og_image_id: null as number | null,
+    google_weather_api_key: "",
     alert_enabled: false,
     alert_message: "",
     alert_type: "info" as "info" | "success" | "warning" | "danger",
@@ -584,6 +586,23 @@ export function SiteSettingsPage() {
                       }
                     />
                   </div>
+                </div>
+              </section>
+
+              {/* CLIMA */}
+              <section className="space-y-4">
+                <div className="flex items-center gap-2 border-b pb-2">
+                  <CloudSun className="h-5 w-5 text-primary" />
+                  <h3 className="text-lg font-medium">
+                    Servicios Meteorológicos
+                  </h3>
+                </div>
+                <div className="p-4 rounded-lg border bg-muted/20">
+                  <p className="text-sm text-muted-foreground flex items-center gap-2">
+                    <CloudSun className="h-4 w-4" />
+                    El sistema utiliza actualmente <b>Open-Meteo</b> (gratuito)
+                    para obtener el pronóstico de Cabrera de Mar.
+                  </p>
                 </div>
               </section>
 

@@ -67,7 +67,9 @@ class EventSerializer(TranslatableModelSerializer):
     is_favorited = serializers.SerializerMethodField()
     favorites_count = serializers.IntegerField(read_only=True)
     occurrences_count = serializers.IntegerField(read_only=True)
+    event_status = serializers.SerializerMethodField()
     image_url = serializers.SerializerMethodField()
+    weather_forecast = serializers.SerializerMethodField()
 
     class Meta:
         model = Event
@@ -87,6 +89,7 @@ class EventSerializer(TranslatableModelSerializer):
             "points_value",
             "venue_name",
             "location_text",
+            "is_outdoor",
             "is_featured",
             "is_free",
             "price",
@@ -103,7 +106,9 @@ class EventSerializer(TranslatableModelSerializer):
             "is_favorited",
             "favorites_count",
             "occurrences_count",
+            "event_status",
             "image_url",
+            "weather_forecast",
             "translations",
             "dates",
         ]
@@ -123,10 +128,63 @@ class EventSerializer(TranslatableModelSerializer):
             "featured_media",
             "attachments",
             "image_url",
+            "weather_forecast",
         ]
 
     def get_is_future(self, obj: Event) -> bool:
         return obj.is_future()
+
+    def get_event_status(self, obj: Event) -> str:
+        """
+        Returns the status of the event based on its sessions.
+        - upcoming: has future sessions.
+        - ongoing: has a session currently happening.
+        - finished: all sessions are in the past.
+        """
+        from django.utils import timezone
+
+        now = timezone.now()
+        dates = obj.dates.all()
+
+        if not dates:
+            return "upcoming"
+
+        has_future = any(d.start_at > now for d in dates)
+        if has_future:
+            return "upcoming"
+
+        has_ongoing = any(
+            d.start_at <= now and (d.end_at is None or d.end_at >= now) for d in dates
+        )
+        if has_ongoing:
+            return "ongoing"
+
+        return "finished"
+
+    def get_weather_forecast(self, obj: Event):
+        """
+        Returns the weather forecast for the event's start date
+        if it's an outdoor event and within 7-10 days.
+        """
+        if not obj.is_outdoor or not obj.start_at:
+            return None
+
+        from site_settings.models_weather import MunicipalityWeather
+        from django.utils import timezone
+
+        weather = MunicipalityWeather.objects.order_by("-updated_at").first()
+        if not weather:
+            return None
+
+        event_date_str = obj.start_at.strftime("%Y-%m-%d")
+        days = weather.forecast_data.get("days", [])
+
+        # Find matching day in forecast
+        for day in days:
+            if day.get("datetime") == event_date_str:
+                return day
+
+        return None
 
     def get_is_favorited(self, obj: Event) -> bool:
         if hasattr(obj, "is_favorited"):

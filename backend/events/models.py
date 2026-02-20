@@ -81,12 +81,17 @@ class Event(ContentBase, TranslatableModel):
 
     # Placeholder for future place model integration.
     location_text = models.CharField(
-        _("Location (text)"),
         max_length=255,
         blank=True,
         help_text=_(
             "Free text location. TODO: replace with Place relation when available."
         ),
+    )
+
+    is_outdoor = models.BooleanField(
+        _("Is outdoor"),
+        default=False,
+        help_text=_("Mark if the event takes place outdoors to show weather info."),
     )
 
     is_featured = models.BooleanField(_("Is featured"), default=False)
@@ -244,6 +249,30 @@ class EventDate(models.Model):
         if self.end_at and self.end_at < self.start_at:
             raise ValidationError(
                 {"end_at": _("End date cannot be before start date.")}
+            )
+
+        # Check for overlapping sessions for the same event
+        # Overlap logic: (start1 < end2) AND (end1 > start2)
+        # We treat null end_at as equal to start_at (point in time)
+        start = self.start_at
+        end = self.end_at or self.start_at
+
+        overlaps = EventDate.objects.filter(
+            event=self.event,
+            start_at__lt=end,
+        ).filter(
+            models.Q(end_at__gt=start)
+            | models.Q(end_at__isnull=True, start_at__gt=start)
+        )
+
+        if self.pk:
+            overlaps = overlaps.exclude(pk=self.pk)
+
+        if overlaps.exists():
+            raise ValidationError(
+                _(
+                    "This session overlaps with another existing session for the same event."
+                )
             )
 
 

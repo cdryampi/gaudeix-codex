@@ -8,6 +8,7 @@ from solo.models import SingletonModel
 from media_files.models import ImageFile, DocumentFile, VideoFile
 from static_pages.models import StaticPage
 from core.models import Category
+from .models_weather import MunicipalityWeather
 
 
 class SiteSettings(SingletonModel):
@@ -94,6 +95,14 @@ class SiteSettings(SingletonModel):
 
     captcha_site_key = models.CharField(
         max_length=200, verbose_name=_("Captcha site key"), blank=True, default=""
+    )
+
+    google_weather_api_key = models.CharField(
+        max_length=200,
+        verbose_name=_("Google Weather API Key"),
+        blank=True,
+        default="",
+        help_text=_("API Key per a la integració amb Google Cloud Weather API."),
     )
 
     # Header/Footer (beta)
@@ -251,6 +260,33 @@ class SiteSettings(SingletonModel):
             return False
 
         return True
+
+    def save(self, *args, **kwargs):
+        # Trigger weather update if API Key is changed
+        is_new = self.pk is None
+        old_key = None
+        if not is_new:
+            try:
+                old_key = SiteSettings.objects.get(pk=self.pk).google_weather_api_key
+            except SiteSettings.DoesNotExist:
+                pass
+
+        super().save(*args, **kwargs)
+
+        if self.google_weather_api_key and self.google_weather_api_key != old_key:
+            from .services import WeatherService
+
+            try:
+                WeatherService.update_forecast()
+            except Exception:
+                pass
+
+    class Meta:
+        verbose_name = _("Site Settings")
+        verbose_name_plural = _("Site Settings")
+
+    def __str__(self):
+        return self.site_name or "Site Settings"
 
 
 class MenuItem(models.Model):

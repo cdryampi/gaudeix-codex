@@ -2,6 +2,7 @@ import { Phone, Mail, Globe, AlertTriangle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { getSiteSettings } from "@/features/site-settings/api";
 import { SocialMediaBar } from "@/features/social/components/SocialMediaBar";
+import { WeatherWidget } from "./WeatherWidget";
 
 interface SiteTopbarProps {
   isTransparent?: boolean;
@@ -25,7 +26,7 @@ export const SiteTopbar = ({ isTransparent }: SiteTopbarProps) => {
     >
       <div className="container mx-auto px-8 flex items-center justify-between gap-6">
         {/* LEFT: Contact Info */}
-        <div className="hidden md:flex items-center gap-6">
+        <div className="hidden lg:flex items-center gap-6 shrink-0">
           {settings?.phone && (
             <a
               href={`tel:${settings.phone}`}
@@ -46,9 +47,9 @@ export const SiteTopbar = ({ isTransparent }: SiteTopbarProps) => {
           )}
         </div>
 
-        {/* CENTER: The Alert (The Star) */}
-        {hasAlert ? (
-          <div className="flex-1 flex justify-center overflow-hidden">
+        {/* CENTER: Weather or Alert */}
+        <div className="flex-1 flex justify-center overflow-hidden">
+          {hasAlert ? (
             <div className="flex items-center gap-3 animate-in slide-in-from-top duration-700">
               <div className="flex h-6 w-6 items-center justify-center rounded-full bg-accent text-slate-900">
                 <AlertTriangle className="h-3 w-3" />
@@ -65,13 +66,13 @@ export const SiteTopbar = ({ isTransparent }: SiteTopbarProps) => {
                 </a>
               )}
             </div>
-          </div>
-        ) : (
-          <div className="flex-1" />
-        )}
+          ) : (
+            <WeatherWidget weather={settings?.current_weather} />
+          )}
+        </div>
 
         {/* RIGHT: Language & Social */}
-        <div className="flex items-center gap-8">
+        <div className="flex items-center gap-8 shrink-0">
           <SocialMediaBar scrolled={true} />
           <div className="flex items-center gap-3 border-l border-white/10 pl-8">
             <button className="text-[9px] font-black text-white">ES</button>

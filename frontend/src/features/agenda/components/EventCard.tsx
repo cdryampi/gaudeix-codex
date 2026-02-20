@@ -1,5 +1,11 @@
 import { useMemo } from "react";
-import { MapPin, Clock, ArrowRight } from "lucide-react";
+import {
+  MapPin,
+  Clock,
+  ArrowRight,
+  Calendar,
+  CheckCircle2,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import { Event } from "@/features/events/types";
 import {
@@ -14,7 +20,7 @@ export function EventCard({ event }: { event: Event }) {
   // Resolve image URL from featured_media object or helper
   const imageUrl =
     event.image_url ||
-    event.featured_media?.medium ||
+    event.featured_media?.variant_medium ||
     event.featured_media?.file ||
     "/placeholder-event.jpg";
 
@@ -48,6 +54,30 @@ export function EventCard({ event }: { event: Event }) {
         <h3 className="mb-8 text-3xl font-black leading-[1.1] tracking-tighter uppercase line-clamp-3">
           {event.title}
         </h3>
+
+        {event.occurrences_count > 1 && (
+          <div
+            className="mb-6 flex items-center gap-3 rounded-2xl bg-puerto-rico-50 px-5 py-3 text-[10px] font-black uppercase tracking-widest text-primary"
+            data-testid="event-multidate"
+          >
+            <Calendar className="h-4 w-4" />
+            <span>+{event.occurrences_count - 1} fechas más</span>
+          </div>
+        )}
+
+        {event.event_status === "ongoing" && (
+          <div className="mb-6 flex items-center gap-3 rounded-2xl bg-amber-50 px-5 py-3 text-[10px] font-black uppercase tracking-widest text-amber-600">
+            <Clock className="h-4 w-4" />
+            <span>En curso ahora</span>
+          </div>
+        )}
+
+        {event.event_status === "finished" && (
+          <div className="mb-6 flex items-center gap-3 rounded-2xl bg-slate-100 px-5 py-3 text-[10px] font-black uppercase tracking-widest text-slate-400">
+            <CheckCircle2 className="h-4 w-4" />
+            <span>Finalizado</span>
+          </div>
+        )}
 
         <div className="mt-auto space-y-4 border-t border-slate-100 pt-8">
           <div className="flex items-center gap-4 text-sm font-bold text-slate-500">

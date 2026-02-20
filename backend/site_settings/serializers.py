@@ -46,6 +46,8 @@ class SiteSettingsSerializer(serializers.ModelSerializer):
         write_only=True, required=False, allow_null=True
     )
 
+    current_weather = serializers.SerializerMethodField()
+
     class Meta:
         model = SiteSettings
         fields = [
@@ -72,6 +74,7 @@ class SiteSettingsSerializer(serializers.ModelSerializer):
             "longitude",
             "analytics_id",
             "captcha_site_key",
+            "google_weather_api_key",
             "show_language_switcher",
             "show_social_footer",
             "privacy_page",
@@ -98,9 +101,35 @@ class SiteSettingsSerializer(serializers.ModelSerializer):
             "alert_start_at",
             "alert_end_at",
             "is_alert_active",
+            "current_weather",
         ]
 
-        read_only_fields = ["id"]
+        read_only_fields = ["id", "current_weather"]
+
+    def get_current_weather(self, obj):
+        """
+        Returns the weather for today from MunicipalityWeather.
+        """
+        from .models_weather import MunicipalityWeather
+        from django.utils import timezone
+
+        weather = MunicipalityWeather.objects.order_by("-updated_at").first()
+        if not weather:
+            return None
+
+        today = timezone.now().strftime("%Y-%m-%d")
+        days = weather.forecast_data.get("days", [])
+
+        for day in days:
+            if day.get("datetime") == today:
+                return {
+                    "tempmax": day.get("tempmax"),
+                    "tempmin": day.get("tempmin"),
+                    "weather_code": day.get("weather_code"),
+                    "precip_prob": day.get("precip_prob"),
+                    "datetime": day.get("datetime"),
+                }
+        return None
 
     def update(self, instance, validated_data):
         # Map write-only ids to FK fields

@@ -1,6 +1,46 @@
-import { Event } from "@/features/events/types";
+import { Event, EventDate } from "@/features/events/types";
 
 export type DateRangeFilter = "today" | "week" | "month" | "all" | string;
+
+export function getNextSession(dates: EventDate[]): EventDate | null {
+  const now = new Date().getTime();
+  return (
+    dates
+      .filter((d) => new Date(d.start_at).getTime() >= now)
+      .sort(
+        (a, b) =>
+          new Date(a.start_at).getTime() - new Date(b.start_at).getTime(),
+      )[0] || null
+  );
+}
+
+export function getRangeParams(
+  range: DateRangeFilter,
+  now = new Date(),
+): { start_from?: string; start_to?: string } {
+  if (range === "all") return {};
+
+  if (/^\d{4}-\d{2}-\d{2}$/.test(range)) {
+    const d = new Date(range);
+    return {
+      start_from: startOfDay(d).toISOString(),
+      start_to: endOfDay(d).toISOString(),
+    };
+  }
+
+  const start = startOfDay(now);
+  const end =
+    range === "today"
+      ? endOfDay(now)
+      : range === "week"
+        ? endOfDay(addDays(now, 7))
+        : endOfDay(addMonths(now, 1));
+
+  return {
+    start_from: start.toISOString(),
+    start_to: end.toISOString(),
+  };
+}
 
 function startOfDay(date: Date) {
   const d = new Date(date);

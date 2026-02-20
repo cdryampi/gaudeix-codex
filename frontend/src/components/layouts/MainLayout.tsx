@@ -4,15 +4,10 @@ import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteTopbar } from "@/components/site/SiteTopbar";
 import { useLocation } from "react-router-dom";
 import { apiGet } from "@/lib/api";
+import { SiteSettings } from "@/features/site-settings/types";
 
 interface MainLayoutProps {
   children: ReactNode;
-}
-
-interface SiteSettings {
-  site_name: string;
-  tagline: string;
-  is_alert_active?: boolean;
 }
 
 export function MainLayout({ children }: MainLayoutProps) {

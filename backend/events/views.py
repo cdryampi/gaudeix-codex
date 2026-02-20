@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 import logging
+from datetime import datetime, time, timedelta
 
 from django.conf import settings
 from django.utils import timezone
-from django.utils.dateparse import parse_datetime
+from django.utils.dateparse import parse_date, parse_datetime
 from django.db.models import Count, Exists, OuterRef, Q
 from rest_framework import viewsets, status
+from rest_framework.exceptions import ValidationError
 
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -51,6 +53,38 @@ class EventViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = self.queryset
         params = self.request.query_params
+        current_tz = timezone.get_current_timezone()
+
+        upcoming = self._parse_bool(params.get("upcoming"))
+        has_future_sessions = self._parse_bool(params.get("has_future_sessions"))
+        date_filter = self._parse_date(params.get("date"))
+        start_from = self._parse_datetime(params.get("start_from"), bound="start")
+        start_to = self._parse_datetime(params.get("start_to"), bound="end")
+
+        if upcoming and any([start_from, start_to, date_filter]):
+            raise ValidationError(
+                {
+                    "detail": (
+                        "The 'upcoming' filter cannot be combined with "
+                        "'start_from', 'start_to', or 'date'."
+                    )
+                }
+            )
+
+        if date_filter and (start_from or start_to):
+            raise ValidationError(
+                {
+                    "detail": (
+                        "The 'date' filter cannot be combined with "
+                        "'start_from' or 'start_to'."
+                    )
+                }
+            )
+
+        if start_from and start_to and start_from > start_to:
+            raise ValidationError(
+                {"detail": "'start_from' must be less than or equal to 'start_to'."}
+            )
 
         is_published = params.get("is_published")
         if is_published is not None:
@@ -83,9 +117,18 @@ class EventViewSet(viewsets.ModelViewSet):
             else:
                 queryset = queryset.filter(category__slug=category_param)
 
+        category_slug = params.get("category_slug")
+        if category_slug:
+            queryset = queryset.filter(category__slug=category_slug)
+
         tag_param = params.get("tag")
         if tag_param:
             queryset = queryset.filter(tags__slug=tag_param)
+
+        tag_slug = params.get("tag_slug")
+        if tag_slug:
+            queryset = queryset.filter(tags__slug=tag_slug)
+
         tags_param = params.get("tags")
         if tags_param:
             slugs = [s.strip() for s in tags_param.split(",") if s.strip()]
@@ -103,17 +146,27 @@ class EventViewSet(viewsets.ModelViewSet):
                 | Q(slug__icontains=search)
             ).distinct()
 
-        start_from = self._parse_datetime(params.get("start_from"))
-        start_to = self._parse_datetime(params.get("start_to"))
-
         if start_from or start_to:
-            date_filter = Q()
+            date_range_filter = Q()
             if start_from:
-                date_filter &= Q(dates__start_at__gte=start_from)
+                date_range_filter &= Q(dates__start_at__gte=start_from)
             if start_to:
-                date_filter &= Q(dates__start_at__lte=start_to)
+                date_range_filter &= Q(dates__start_at__lte=start_to)
 
-            queryset = queryset.filter(date_filter).distinct()
+            queryset = queryset.filter(date_range_filter).distinct()
+
+        if date_filter:
+            day_start = timezone.make_aware(
+                datetime.combine(date_filter, time.min), current_tz
+            )
+            day_end = day_start + timedelta(days=1)
+            queryset = queryset.filter(
+                dates__start_at__gte=day_start,
+                dates__start_at__lt=day_end,
+            ).distinct()
+
+        if has_future_sessions:
+            queryset = queryset.filter(dates__start_at__gte=timezone.now()).distinct()
 
         # Keep original filters for backward compatibility or simple cached field queries
         # start_from = self._parse_datetime(params.get("start_from"))
@@ -138,20 +191,69 @@ class EventViewSet(viewsets.ModelViewSet):
                 )
             )
 
-        if params.get("upcoming", "").lower() in {"true", "1", "yes"}:
+        if upcoming:
             limit_param = params.get("limit")
             limit = int(limit_param) if limit_param and limit_param.isdigit() else None
             return get_upcoming_events(queryset=queryset, limit=limit)
 
         return queryset
 
-    def _parse_datetime(self, value):
+    def _parse_datetime(self, value, bound="start"):
         if not value:
             return None
+
+        raw_value = str(value).strip()
+        date_only = (
+            "T" not in raw_value and " " not in raw_value and ":" not in raw_value
+        )
+        if date_only:
+            parsed_date = parse_date(raw_value)
+            if parsed_date is None:
+                raise ValidationError(
+                    {"detail": f"Invalid datetime/date value: '{value}'"}
+                )
+
+            if bound == "end":
+                parsed = datetime.combine(parsed_date, time.max)
+            else:
+                parsed = datetime.combine(parsed_date, time.min)
+
+            return timezone.make_aware(parsed, timezone.get_current_timezone())
+
         parsed = parse_datetime(value)
-        if parsed and timezone.is_naive(parsed):
-            parsed = timezone.make_aware(parsed, timezone.get_default_timezone())
+        if parsed is None:
+            parsed_date = parse_date(value)
+            if parsed_date is None:
+                raise ValidationError(
+                    {"detail": f"Invalid datetime/date value: '{value}'"}
+                )
+
+            if bound == "end":
+                parsed = datetime.combine(parsed_date, time.max)
+            else:
+                parsed = datetime.combine(parsed_date, time.min)
+
+        if timezone.is_naive(parsed):
+            parsed = timezone.make_aware(parsed, timezone.get_current_timezone())
         return parsed
+
+    def _parse_date(self, value):
+        if not value:
+            return None
+
+        parsed = parse_date(value)
+        if parsed is None:
+            raise ValidationError(
+                {"detail": f"Invalid date value for 'date': '{value}'"}
+            )
+        return parsed
+
+    def _parse_bool(self, value):
+        if value is None:
+            return False
+
+        normalized = str(value).strip().lower()
+        return normalized in {"true", "1", "yes"}
 
     @action(
         detail=True,

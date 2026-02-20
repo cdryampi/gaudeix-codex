@@ -22,6 +22,8 @@ import {
   Image as ImageIcon,
   FileText,
   Upload,
+  CloudSun,
+  AlertTriangle,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -66,6 +68,7 @@ const emptyForm: CreateEventDTO = {
   is_published: true,
   venue_name: "",
   location_text: "",
+  is_outdoor: false,
   is_featured: false,
   is_free: true,
   price: null,
@@ -115,6 +118,7 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
         is_published: event.is_published,
         venue_name: event.venue_name || "",
         location_text: event.location_text || "",
+        is_outdoor: !!event.is_outdoor,
         is_featured: !!event.is_featured,
         is_free: event.is_free ?? true,
         price: event.price ?? null,
@@ -258,6 +262,19 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
       return;
     }
 
+    // Overlap detection
+    const hasOverlap = dates.some((d) => {
+      const dStart = new Date(d.start_at);
+      const dEnd = d.end_at ? new Date(d.end_at) : dStart;
+      const newEnd = end || start;
+      return start < dEnd && newEnd > dStart;
+    });
+
+    if (hasOverlap) {
+      toast.error("Esta sesión se solapa con una fecha ya existente");
+      return;
+    }
+
     const newDate: EventDate = {
       start_at: start.toISOString(),
       end_at: end ? end.toISOString() : null,
@@ -306,6 +323,18 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
 
   const handleRemoveDate = (index: number) => {
     setDates((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleRemovePastDates = () => {
+    const now = Date.now();
+    const future = dates.filter((d) => new Date(d.start_at).getTime() > now);
+    const removedCount = dates.length - future.length;
+    if (removedCount > 0) {
+      setDates(future);
+      toast.success(`Eliminadas ${removedCount} sesiones pasadas`);
+    } else {
+      toast.info("No hay sesiones pasadas para eliminar");
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -383,6 +412,27 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
     () => documents.filter((doc) => form.attachments_ids?.includes(doc.id)),
     [documents, form.attachments_ids],
   );
+
+  const checklist = useMemo(() => {
+    const items = [];
+    if (!form.featured_media_id)
+      items.push({ label: "Falta imagen destacada", type: "warning" });
+    if (!form.category_id)
+      items.push({ label: "Sin categoría asignada", type: "warning" });
+    if ((form.summary?.length || 0) < 20)
+      items.push({ label: "Resumen muy corto", type: "info" });
+
+    const futureSessions = dates.filter(
+      (d) => new Date(d.start_at).getTime() > Date.now(),
+    );
+    if (futureSessions.length === 0 && dates.length > 0) {
+      items.push({ label: "Todas las sesiones son pasadas", type: "error" });
+    } else if (dates.length === 0) {
+      items.push({ label: "No hay sesiones programadas", type: "error" });
+    }
+
+    return items;
+  }, [form, dates]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -555,7 +605,7 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
                 </div>
               </div>
 
-              <div className="grid gap-6 md:grid-cols-3 p-4 border border-border rounded-xl bg-muted/10">
+              <div className="grid gap-6 md:grid-cols-4 p-4 border border-border rounded-xl bg-muted/10">
                 {/* Publicado */}
                 <div className="flex flex-col gap-1.5">
                   <label className="inline-flex items-center cursor-pointer">
@@ -576,7 +626,7 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
                     </span>
                   </label>
                   <p className="text-[10px] text-muted-foreground leading-tight pl-12">
-                    Visible para todos los usuarios en la web.
+                    Visible para todos los usuarios.
                   </p>
                 </div>
 
@@ -600,7 +650,32 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
                     </span>
                   </label>
                   <p className="text-[10px] text-muted-foreground leading-tight pl-12">
-                    Aparecerá en posiciones prioritarias de la home.
+                    Prioridad en la home.
+                  </p>
+                </div>
+
+                {/* Al aire libre */}
+                <div className="flex flex-col gap-1.5">
+                  <label className="inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      className="sr-only peer"
+                      checked={!!form.is_outdoor}
+                      onChange={(e) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          is_outdoor: e.target.checked,
+                        }))
+                      }
+                    />
+                    <div className="relative w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-100 dark:peer-focus:ring-primary-900 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-primary-600"></div>
+                    <span className="select-none ms-3 text-sm font-medium text-gray-900 dark:text-gray-100 flex items-center gap-1.5">
+                      <CloudSun className="h-3.5 w-3.5 text-primary-500" />
+                      Exterior
+                    </span>
+                  </label>
+                  <p className="text-[10px] text-muted-foreground leading-tight pl-12">
+                    Muestra el clima municipal.
                   </p>
                 </div>
 
@@ -626,7 +701,7 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
                     </span>
                   </label>
                   <p className="text-[10px] text-muted-foreground leading-tight pl-12">
-                    Sin coste de entrada. Oculta campos de precio.
+                    Sin coste de entrada.
                   </p>
                 </div>
               </div>
@@ -745,6 +820,33 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
                           }
                         />
                       </div>
+
+                      {checklist.length > 0 && (
+                        <div className="mt-8 p-4 rounded-xl border border-amber-100 bg-amber-50/30 space-y-3">
+                          <p className="text-[10px] font-black uppercase tracking-widest text-amber-600 flex items-center gap-2">
+                            <AlertTriangle className="h-3.5 w-3.5" />
+                            Calidad Editorial
+                          </p>
+                          <div className="flex flex-wrap gap-x-6 gap-y-2">
+                            {checklist.map((item, i) => (
+                              <div
+                                key={i}
+                                className="flex items-center gap-2 text-xs font-medium text-amber-700/80"
+                              >
+                                <div
+                                  className={cn(
+                                    "h-1.5 w-1.5 rounded-full",
+                                    item.type === "error"
+                                      ? "bg-rose-500"
+                                      : "bg-amber-400",
+                                  )}
+                                />
+                                {item.label}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </TabsContent>
                   );
                 })}
@@ -896,9 +998,20 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
 
             <TabsContent value="recurrence" className="space-y-6 pt-4">
               <div className="rounded-xl border border-primary/10 bg-primary/5 p-4 space-y-4 shadow-sm">
-                <h4 className="text-sm font-bold uppercase tracking-wider text-primary-700 dark:text-primary-400">
-                  Añadir nueva sesión
-                </h4>
+                <div className="flex items-center justify-between">
+                  <h4 className="text-sm font-bold uppercase tracking-wider text-primary-700 dark:text-primary-400">
+                    Añadir nueva sesión
+                  </h4>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleRemovePastDates}
+                    className="h-7 text-[10px] uppercase font-bold border-rose-200 text-rose-600 hover:bg-rose-50"
+                  >
+                    <Trash2 className="mr-1.5 h-3 w-3" /> Limpiar pasadas
+                  </Button>
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label className="text-xs font-semibold">Inicio</Label>

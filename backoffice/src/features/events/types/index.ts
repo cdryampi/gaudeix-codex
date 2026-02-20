@@ -18,6 +18,7 @@ export type Event = {
   is_published: boolean;
   venue_name?: string;
   location_text?: string;
+  is_outdoor?: boolean;
   is_featured?: boolean;
   is_free?: boolean;
   price?: string | number | null;
@@ -40,6 +41,9 @@ export type Event = {
   };
   dates?: EventDate[];
   occurrences_count?: number;
+  event_status?: "upcoming" | "ongoing" | "finished";
+  is_favorited?: boolean;
+  favorites_count?: number;
 };
 
 export type CreateEventDTO = {
@@ -51,6 +55,7 @@ export type CreateEventDTO = {
   is_published?: boolean;
   venue_name?: string;
   location_text?: string;
+  is_outdoor?: boolean;
   is_featured?: boolean;
   is_free?: boolean;
   price?: string | number | null;

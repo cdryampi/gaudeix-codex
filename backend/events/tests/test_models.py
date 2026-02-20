@@ -1,4 +1,5 @@
 import os
+from datetime import datetime, time
 from pathlib import Path
 
 import pytest
@@ -184,3 +185,88 @@ def test_past_event_fallback(events_singleton):
 
     # Should be the latest past date (past2)
     assert event.start_at == past2
+
+
+def test_event_date_overlap_raises_error(events_singleton):
+    """Test that overlapping sessions for the same event are rejected."""
+    event = Event.objects.create(title="Overlap Test")
+    start = timezone.now() + timezone.timedelta(days=1)
+    end = start + timezone.timedelta(hours=2)
+
+    # Create first session
+    EventDate.objects.create(event=event, start_at=start, end_at=end)
+
+    # Attempt to create overlapping session (starts during first)
+    overlap_start = start + timezone.timedelta(hours=1)
+    overlap_end = overlap_start + timezone.timedelta(hours=1)
+    date_obj = EventDate(event=event, start_at=overlap_start, end_at=overlap_end)
+
+    with pytest.raises(ValidationError):
+        date_obj.clean()
+
+    # Attempt to create overlapping session (ends during first)
+    overlap_start2 = start - timezone.timedelta(hours=1)
+    overlap_end2 = start + timezone.timedelta(minutes=30)
+    date_obj2 = EventDate(event=event, start_at=overlap_start2, end_at=overlap_end2)
+
+    with pytest.raises(ValidationError):
+        date_obj2.clean()
+
+    # Attempt to create overlapping session (encompasses first)
+    overlap_start3 = start - timezone.timedelta(hours=1)
+    overlap_end3 = end + timezone.timedelta(hours=1)
+    date_obj3 = EventDate(event=event, start_at=overlap_start3, end_at=overlap_end3)
+
+    with pytest.raises(ValidationError):
+        date_obj3.clean()
+
+
+def test_same_day_sessions_keep_earliest_start_cached(events_singleton):
+    tz = timezone.get_current_timezone()
+    target_day = (
+        timezone.localtime(timezone.now(), tz) + timezone.timedelta(days=4)
+    ).date()
+    day_start = timezone.make_aware(datetime.combine(target_day, time.min), tz)
+
+    event = Event.objects.create(title="Same Day Cache")
+    first_session = EventDate.objects.create(
+        event=event,
+        start_at=day_start + timezone.timedelta(hours=9),
+        end_at=day_start + timezone.timedelta(hours=10),
+    )
+    second_session = EventDate.objects.create(
+        event=event,
+        start_at=day_start + timezone.timedelta(hours=17),
+        end_at=day_start + timezone.timedelta(hours=18),
+    )
+
+    event.refresh_from_db()
+    assert event.start_at == first_session.start_at
+
+    first_session.delete()
+    event.refresh_from_db()
+    assert event.start_at == second_session.start_at
+
+
+def test_event_date_allows_touching_sessions_without_overlap(events_singleton):
+    event = Event.objects.create(title="Touching Sessions")
+    start = timezone.now().replace(microsecond=0) + timezone.timedelta(days=2)
+    middle = start + timezone.timedelta(hours=2)
+    end = middle + timezone.timedelta(hours=2)
+
+    EventDate.objects.create(event=event, start_at=start, end_at=middle)
+
+    non_overlapping = EventDate(event=event, start_at=middle, end_at=end)
+    non_overlapping.clean()
+
+
+def test_event_date_overlap_rejects_exact_duplicate_interval(events_singleton):
+    event = Event.objects.create(title="Duplicate Interval")
+    start = timezone.now().replace(microsecond=0) + timezone.timedelta(days=2)
+    end = start + timezone.timedelta(hours=3)
+
+    EventDate.objects.create(event=event, start_at=start, end_at=end)
+
+    duplicate = EventDate(event=event, start_at=start, end_at=end)
+    with pytest.raises(ValidationError):
+        duplicate.clean()

@@ -1,4 +1,5 @@
 import { useParams, Link } from "react-router-dom";
+import { useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   ArrowLeft,
@@ -12,11 +13,13 @@ import {
   ChevronRight,
   Coins,
   CheckCircle2,
+  CloudSun,
 } from "lucide-react";
 import toast from "react-hot-toast";
 
 import { getEventBySlug, getEvents } from "@/features/events/api";
 import { formatDateTime, formatTime } from "@/features/agenda/dateUtils";
+import { getNextSession } from "@/features/agenda/utils";
 import { useAuthStore } from "@/features/auth/store";
 import { apiPost, apiDelete } from "@/lib/api";
 import { EventCard } from "@/features/agenda/components/EventCard";
@@ -118,6 +121,16 @@ export function EventDetailPage() {
     window.open(googleUrl, "_blank");
   };
 
+  const mapUrl = useMemo(() => {
+    if (!event) return "";
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${event.venue_name} ${event.location_text}`)}`;
+  }, [event]);
+
+  const nextSession = useMemo(() => {
+    if (!event?.dates) return null;
+    return getNextSession(event.dates);
+  }, [event?.dates]);
+
   if (loading) return <EventDetailSkeleton />;
 
   if (error || !event) {
@@ -139,7 +152,6 @@ export function EventDetailPage() {
     event.featured_media?.variant_large ||
     event.featured_media?.file ||
     "/placeholder-event.jpg";
-  const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${event.venue_name} ${event.location_text}`)}`;
 
   return (
     <main className="min-h-screen bg-white pb-24">
@@ -329,22 +341,40 @@ export function EventDetailPage() {
                   </p>
 
                   {event.dates.length > 1 && (
-                    <div className="mt-6 pt-6 border-t border-slate-100 space-y-4">
+                    <div
+                      className="mt-6 pt-6 border-t border-slate-100 space-y-4"
+                      data-testid="event-sessions-list"
+                    >
                       <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">
-                        Próximas sesiones
+                        Todas las sesiones
                       </p>
-                      {event.dates
-                        .filter((d) => d.start_at !== event.start_at)
-                        .slice(0, 3)
-                        .map((d) => (
+                      {event.dates.map((d) => {
+                        const isNext = d.id === nextSession?.id;
+                        const isPast =
+                          new Date(d.start_at).getTime() < new Date().getTime();
+                        return (
                           <div
                             key={d.id}
-                            className="flex items-center gap-3 text-sm font-bold text-slate-500"
+                            className={`flex items-center gap-3 text-sm font-bold ${
+                              isNext
+                                ? "text-primary"
+                                : isPast
+                                  ? "text-slate-300"
+                                  : "text-slate-500"
+                            }`}
                           >
-                            <ChevronRight className="h-4 w-4 text-primary" />
+                            <ChevronRight
+                              className={`h-4 w-4 ${isNext ? "text-primary" : "text-slate-300"}`}
+                            />
                             {formatDateTime(d.start_at)}
+                            {isNext && (
+                              <span className="text-[8px] px-2 py-0.5 rounded-full bg-puerto-rico-50">
+                                Próxima
+                              </span>
+                            )}
                           </div>
-                        ))}
+                        );
+                      })}
                     </div>
                   )}
                 </div>
@@ -408,6 +438,30 @@ export function EventDetailPage() {
                   </p>
                 </div>
               </div>
+
+              {/* Weather Forecast (Outdoor only) */}
+              {event.is_outdoor && event.weather_forecast && (
+                <div className="flex gap-8 p-6 rounded-[2rem] bg-amber-50/50 border border-amber-100">
+                  <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-white text-amber-500 shadow-sm">
+                    <CloudSun className="h-8 w-8" />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-amber-600 mb-1">
+                      Previsión Tiempo
+                    </p>
+                    <p className="text-xl font-black text-slate-900">
+                      {event.weather_forecast.tempmax}°C /{" "}
+                      {event.weather_forecast.tempmin}°C
+                    </p>
+                    <p className="text-[10px] font-bold text-amber-700/70 uppercase tracking-wider">
+                      {event.weather_forecast.conditions ||
+                        (event.weather_forecast.precip_prob !== undefined
+                          ? `${event.weather_forecast.precip_prob}% prob. lluvia`
+                          : "Actividad al exterior")}
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="mt-16 space-y-4">
