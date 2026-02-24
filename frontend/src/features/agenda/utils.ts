@@ -136,7 +136,10 @@ export function filterEvents(
       const filterCat = opts.category.toLowerCase();
       if (!cat.includes(filterCat)) return false;
     }
-    if (!withinRange(e.start_at, opts.range)) return false;
+    const hasDateInRange =
+      e.dates?.some((d) => withinRange(d.start_at, opts.range)) ??
+      withinRange(e.start_at, opts.range);
+    if (!hasDateInRange) return false;
     if (!matchesQuery(e, opts.query)) return false;
     return true;
   });
