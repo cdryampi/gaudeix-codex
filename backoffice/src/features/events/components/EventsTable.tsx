@@ -2,16 +2,17 @@ import { Event } from "../types";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { CalendarClock, Edit, MapPin, Trash2 } from "lucide-react";
+import { CalendarClock, Edit, Heart, MapPin, Trash2, Eye } from "lucide-react";
 import { MediaThumbnail } from "@/components/common/MediaThumbnail";
 
 type Props = {
   events: Event[];
   onEdit: (event: Event) => void;
   onDelete: (id: number) => void;
+  onPreview: (event: Event) => void;
 };
 
-export function EventsTable({ events, onEdit, onDelete }: Props) {
+export function EventsTable({ events, onEdit, onDelete, onPreview }: Props) {
   return (
     <div className="w-full overflow-hidden rounded-xl border border-border bg-card shadow-sm">
       <ScrollArea className="w-full">
@@ -22,6 +23,7 @@ export function EventsTable({ events, onEdit, onDelete }: Props) {
               <th>Fechas</th>
               <th>Ubicacion</th>
               <th>Estado</th>
+              <th>Favoritos</th>
               <th className="text-right">Acciones</th>
             </tr>
           </thead>
@@ -29,7 +31,7 @@ export function EventsTable({ events, onEdit, onDelete }: Props) {
             {events.length === 0 ? (
               <tr>
                 <td
-                  colSpan={5}
+                  colSpan={6}
                   className="p-6 text-center text-muted-foreground"
                 >
                   No hay eventos creados.
@@ -151,8 +153,24 @@ export function EventsTable({ events, onEdit, onDelete }: Props) {
                     )}
                   </td>
 
+                  <td className="px-5 py-4 align-middle">
+                    <div className="flex items-center gap-1 text-sm font-medium text-muted-foreground">
+                      <Heart className="h-4 w-4 text-rose-400" />
+                      <span>{event.favorites_count ?? 0}</span>
+                    </div>
+                  </td>
+
                   <td className="px-5 py-4 align-middle text-right">
                     <div className="flex justify-end gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-muted"
+                        onClick={() => onPreview(event)}
+                        aria-label={`Previsualizar ${event.title}`}
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Button>
                       <Button
                         variant="ghost"
                         size="icon"

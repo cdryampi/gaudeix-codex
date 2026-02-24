@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { LogIn, ChevronDown, Navigation, User } from "lucide-react";
+import { Heart } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 import { HEADER_NAV, type HeaderNavItem } from "@/data/headerNav";
@@ -110,26 +111,44 @@ export function SiteHeader({
           </Link>
 
           {isAuthenticated ? (
-            <div className="flex items-center gap-4">
-              <div
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl ${isTransparent ? "bg-white/10" : "bg-slate-50"}`}
+            <>
+              <Link
+                to="/mis-favoritos"
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all ${
+                  isTransparent
+                    ? "bg-white/10 text-white hover:bg-white/20"
+                    : "bg-rose-50 text-rose-500 hover:bg-rose-100"
+                }`}
+                title="Mis Favoritos"
               >
-                <User
-                  className={`h-4 w-4 ${isTransparent ? "text-white" : "text-primary"}`}
+                <Heart
+                  className={`h-4 w-4 ${isTransparent ? "text-white" : "text-rose-500"}`}
                 />
-                <span
-                  className={`text-[10px] font-black uppercase tracking-widest ${isTransparent ? "text-white" : "text-slate-900"}`}
-                >
-                  {user?.username}
+                <span className="hidden xl:inline text-[10px] font-black uppercase tracking-widest">
+                  Favoritos
                 </span>
+              </Link>
+              <div className="flex items-center gap-4">
+                <div
+                  className={`flex items-center gap-2 px-4 py-2 rounded-xl ${isTransparent ? "bg-white/10" : "bg-slate-50"}`}
+                >
+                  <User
+                    className={`h-4 w-4 ${isTransparent ? "text-white" : "text-primary"}`}
+                  />
+                  <span
+                    className={`text-[10px] font-black uppercase tracking-widest ${isTransparent ? "text-white" : "text-slate-900"}`}
+                  >
+                    {user?.username}
+                  </span>
+                </div>
+                <button
+                  onClick={() => logout()}
+                  className="h-11 px-6 rounded-xl bg-red-600 text-white text-[10px] font-black uppercase tracking-widest hover:bg-red-700 transition-colors shadow-lg shadow-red-600/20"
+                >
+                  SALIR
+                </button>
               </div>
-              <button
-                onClick={() => logout()}
-                className="h-11 px-6 rounded-xl bg-red-600 text-white text-[10px] font-black uppercase tracking-widest hover:bg-red-700 transition-colors shadow-lg shadow-red-600/20"
-              >
-                SALIR
-              </button>
-            </div>
+            </>
           ) : (
             <Link
               to="/login"

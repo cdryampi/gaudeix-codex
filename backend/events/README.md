@@ -69,6 +69,7 @@ Singleton que mantiene la categoría raíz para todos los eventos.
 - Escritura: `category_id` y `tag_ids` (write-only). Lectura: `category`, `category_slug`, `category_name`, `tags`, `image_url`.
 - Permisos: lectura pública; escritura autenticada.
 - **Compatibilidad**: La API mantiene los campos `created_at` y `updated_at` en las respuestas JSON
+- **Favoritos**: `GET /api/v1/events/favorites/` retorna la lista de eventos marcados como favoritos por el usuario autenticado. Soporta los mismos filtros y paginación que el listado general.
 
 ## Admin
 

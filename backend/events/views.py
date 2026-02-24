@@ -320,6 +320,25 @@ class EventViewSet(viewsets.ModelViewSet):
         UserFavoriteEvent.objects.filter(user=request.user, event=event).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @action(
+        detail=False,
+        methods=["get"],
+        permission_classes=[IsAuthenticated],
+        url_path="favorites",
+    )
+    def favorites(self, request):
+        """
+        Returns the paginated list of events favorited by the current user.
+        GET /api/v1/events/favorites/
+        """
+        queryset = self.get_queryset().filter(favorited_by__user=request.user)
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
     @action(detail=True, methods=["post"], permission_classes=[IsAuthenticated])
     def auto_translate(self, request, slug=None):
         """

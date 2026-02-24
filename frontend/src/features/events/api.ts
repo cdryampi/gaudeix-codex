@@ -1,4 +1,4 @@
-import { apiGet } from "@/lib/api";
+import { apiGet, apiPost, apiDelete } from "@/lib/api";
 import { Event, EventListResponse } from "./types";
 
 export const getEvents = async (
@@ -27,3 +27,34 @@ export const getFeaturedEvents = async (): Promise<Event[]> => {
   }
   return response.results;
 };
+
+export const getFavorites = async (token: string): Promise<Event[]> => {
+  const response = await apiGet<EventListResponse | Event[]>(
+    "/events/favorites/",
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    },
+  );
+  if (Array.isArray(response)) return response;
+  return response.results;
+};
+
+export const addFavorite = async (
+  slug: string,
+  token: string,
+): Promise<unknown> =>
+  apiPost(
+    `/events/${slug}/favorite/`,
+    {},
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    },
+  );
+
+export const removeFavorite = async (
+  slug: string,
+  token: string,
+): Promise<unknown> =>
+  apiDelete(`/events/${slug}/favorite/`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });

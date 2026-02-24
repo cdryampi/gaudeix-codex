@@ -31,6 +31,7 @@ import { RankingsPage } from "@/features/gamification/pages/RankingsPage";
 import { CategoriesPage } from "@/features/categories/pages/CategoriesPage";
 import { CategoryDetailPage } from "@/features/categories/pages/CategoryDetailPage";
 import { ComoLlegarPage } from "@/features/site-settings/pages/ComoLlegarPage";
+import { FavoritesPage } from "@/features/users/pages/FavoritesPage";
 import { VisitUsCTA } from "@/features/site-settings/components/VisitUsCTA";
 import { MainLayout } from "@/components/layouts/MainLayout";
 
@@ -308,6 +309,9 @@ export default function App() {
         <Route path="/rankings" element={<RankingsPage />} />
         <Route path="/como-llegar" element={<ComoLlegarPage />} />
         <Route path="/noticias/:slug" element={<NewsDetailPage />} />
+
+        {/* User Routes */}
+        <Route path="/mis-favoritos" element={<FavoritesPage />} />
 
         {/* Routes (hiking/cycling) */}
         <Route path="/rutas" element={<RoutesPage />} />

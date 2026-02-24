@@ -56,6 +56,17 @@ export const eventsApi = {
   delete: async (id: number) => {
     await apiClient.delete(API_ENDPOINTS.EVENTS.DETAIL(String(id)));
   },
+
+  getTopFavorites: async (limit = 5) => {
+    // Fetch events ordered by favorites_count descending
+    const response = await apiClient.get<any>(API_ENDPOINTS.EVENTS.LIST, {
+      params: { page_size: limit, ordering: "-favorites_count" },
+    });
+    const items = Array.isArray(response.data)
+      ? response.data
+      : (response.data.results ?? []);
+    return items.slice(0, limit).map(normalizeEvent);
+  },
 };
 
 function normalizeEvent(event: any): Event {
