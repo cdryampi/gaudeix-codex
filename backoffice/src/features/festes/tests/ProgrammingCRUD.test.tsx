@@ -104,7 +104,13 @@ describe("ProgramsPage", () => {
   });
 
   it("shows empty state when no programs", async () => {
-    vi.mocked(programsApi.getAll).mockResolvedValue([]);
+    vi.mocked(programsApi.getAll).mockResolvedValue({
+      count: 0,
+      next: null,
+      previous: null,
+      results: [],
+    });
+
     vi.mocked(festesApi.getAll).mockResolvedValue([mockFesta]);
 
     render(<ProgramsPage />);
@@ -115,7 +121,13 @@ describe("ProgramsPage", () => {
   });
 
   it("displays programs in table", async () => {
-    vi.mocked(programsApi.getAll).mockResolvedValue([mockProgram]);
+    vi.mocked(programsApi.getAll).mockResolvedValue({
+      count: 1,
+      next: null,
+      previous: null,
+      results: [mockProgram],
+    });
+
     vi.mocked(festesApi.getAll).mockResolvedValue([mockFesta]);
 
     render(<ProgramsPage />);
@@ -126,7 +138,13 @@ describe("ProgramsPage", () => {
   });
 
   it("displays festa name for program", async () => {
-    vi.mocked(programsApi.getAll).mockResolvedValue([mockProgram]);
+    vi.mocked(programsApi.getAll).mockResolvedValue({
+      count: 1,
+      next: null,
+      previous: null,
+      results: [mockProgram],
+    });
+
     vi.mocked(festesApi.getAll).mockResolvedValue([mockFesta]);
 
     render(<ProgramsPage />);
@@ -137,7 +155,13 @@ describe("ProgramsPage", () => {
   });
 
   it("shows published badge for published programs", async () => {
-    vi.mocked(programsApi.getAll).mockResolvedValue([mockProgram]);
+    vi.mocked(programsApi.getAll).mockResolvedValue({
+      count: 1,
+      next: null,
+      previous: null,
+      results: [mockProgram],
+    });
+
     vi.mocked(festesApi.getAll).mockResolvedValue([mockFesta]);
 
     render(<ProgramsPage />);
@@ -149,7 +173,13 @@ describe("ProgramsPage", () => {
 
   it("shows draft badge for unpublished programs", async () => {
     const draftProgram = { ...mockProgram, id: 2, slug: "dia-2", is_published: false, title: "Dia 2 - Borrador" };
-    vi.mocked(programsApi.getAll).mockResolvedValue([draftProgram]);
+    vi.mocked(programsApi.getAll).mockResolvedValue({
+      count: 1,
+      next: null,
+      previous: null,
+      results: [draftProgram],
+    });
+
     vi.mocked(festesApi.getAll).mockResolvedValue([mockFesta]);
 
     render(<ProgramsPage />);
@@ -160,7 +190,13 @@ describe("ProgramsPage", () => {
   });
 
   it("has new program button", async () => {
-    vi.mocked(programsApi.getAll).mockResolvedValue([mockProgram]);
+    vi.mocked(programsApi.getAll).mockResolvedValue({
+      count: 1,
+      next: null,
+      previous: null,
+      results: [mockProgram],
+    });
+
     vi.mocked(festesApi.getAll).mockResolvedValue([mockFesta]);
 
     render(<ProgramsPage />);
@@ -171,7 +207,13 @@ describe("ProgramsPage", () => {
   });
 
   it("has pagination info", async () => {
-    vi.mocked(programsApi.getAll).mockResolvedValue([mockProgram]);
+    vi.mocked(programsApi.getAll).mockResolvedValue({
+      count: 1,
+      next: null,
+      previous: null,
+      results: [mockProgram],
+    });
+
     vi.mocked(festesApi.getAll).mockResolvedValue([mockFesta]);
 
     render(<ProgramsPage />);
@@ -186,7 +228,23 @@ describe("ProgramsPage", () => {
       mockProgram,
       { ...mockProgram, id: 2, slug: "other", title: "Other Program" },
     ];
-    vi.mocked(programsApi.getAll).mockResolvedValue(programs);
+    vi.mocked(programsApi.getAll).mockImplementation(async (params) => {
+      if (params?.search === "Other") {
+        return {
+          count: 1,
+          next: null,
+          previous: null,
+          results: [{ ...mockProgram, id: 2, slug: "other", title: "Other Program" }],
+        };
+      }
+      return {
+        count: 2,
+        next: null,
+        previous: null,
+        results: programs,
+      };
+    });
+
     vi.mocked(festesApi.getAll).mockResolvedValue([mockFesta]);
 
     render(<ProgramsPage />);

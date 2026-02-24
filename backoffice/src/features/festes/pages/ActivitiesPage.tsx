@@ -111,8 +111,8 @@ export function ActivitiesPage() {
         venuesApi.getAll(),
       ]);
       setActivities(activitiesData.results || activitiesData);
-      setPrograms(programsData);
-      setVenues(venuesData);
+      setPrograms(programsData.results);
+      setVenues(venuesData.results);
     } catch (err) {
       console.error("Error fetching activities:", err);
       setError("Error al cargar las actividades.");
