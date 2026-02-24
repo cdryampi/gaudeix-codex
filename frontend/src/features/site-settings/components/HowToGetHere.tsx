@@ -28,13 +28,11 @@ export const HowToGetHere = () => {
     useState<google.maps.DirectionsResult | null>(null);
   const [travelMode, setTravelMode] = useState<string>("DRIVING");
 
-  const {
-    userLocation,
-    isLocating,
-    permissionStatus,
-    requestLocation,
-    checkPermission,
-  } = useLocationStore();
+  const userLocation = useLocationStore((state) => state.userLocation);
+  const isLocating = useLocationStore((state) => state.isLocating);
+  const permissionStatus = useLocationStore((state) => state.permissionStatus);
+  const requestLocation = useLocationStore((state) => state.requestLocation);
+  const checkPermission = useLocationStore((state) => state.checkPermission);
 
   const { data: settings, isLoading: settingsLoading } = useQuery({
     queryKey: ["site-settings"],

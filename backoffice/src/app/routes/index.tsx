@@ -23,7 +23,10 @@ import { LLMSettingsPage } from "@/features/llm-settings/pages/LLMSettingsPage";
 import { SendNotificationPage } from "@/features/notifications/pages/SendNotificationPage";
 import { RoutesPage } from "@/features/routes/pages/RoutesPage";
 import { FestesPage } from "@/features/festes/pages/FestesPage";
+import { ProgramsPage } from "@/features/festes/pages/ProgramsPage";
+import { VenuesPage } from "@/features/festes/pages/VenuesPage";
 import { NewsPage } from "@/features/news/pages/NewsPage";
+import { ActivitiesPage } from "@/features/festes/pages/ActivitiesPage";
 import { ScrapedNewsPage } from "@/features/scraper/pages/ScrapedNewsPage";
 
 /**
@@ -135,6 +138,18 @@ export const router = createBrowserRouter([
       {
         path: "festes",
         element: <FestesPage />,
+      },
+      {
+        path: "festes/programs",
+        element: <ProgramsPage />,
+      },
+      {
+        path: "festes/venues",
+        element: <VenuesPage />,
+      },
+      {
+        path: "festes/activities",
+        element: <ActivitiesPage />,
       },
       {
         path: "news",

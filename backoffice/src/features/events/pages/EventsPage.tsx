@@ -23,6 +23,8 @@ import { eventsApi } from "../api/events";
 import { categoriesApi } from "@/features/categories/api/categories";
 import { Category } from "@/features/categories/types";
 import { envConfig } from "@/lib/config/env";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { EventPreview } from "../components/EventPreview";
 
 export function EventsPage() {
   const [events, setEvents] = useState<Event[]>([]);
@@ -34,6 +36,7 @@ export function EventsPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | undefined>();
   const [deleteEventId, setDeleteEventId] = useState<number | null>(null);
+  const [previewEvent, setPreviewEvent] = useState<Event | null>(null);
 
   // Filter states
   const [search, setSearch] = useState("");
@@ -258,6 +261,7 @@ export function EventsPage() {
               events={paginated}
               onEdit={handleEdit}
               onDelete={handleDelete}
+              onPreview={setPreviewEvent}
             />
           )}
         </CardContent>
@@ -306,6 +310,15 @@ export function EventsPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <Dialog
+        open={previewEvent !== null}
+        onOpenChange={(open) => !open && setPreviewEvent(null)}
+      >
+        <DialogContent className="max-w-5xl p-0 overflow-hidden border-none bg-transparent shadow-none">
+          {previewEvent && <EventPreview event={previewEvent} />}
+        </DialogContent>
+      </Dialog>
     </PageContainer>
   );
 }

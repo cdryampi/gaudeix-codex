@@ -29,6 +29,11 @@ vi.mock("@/features/tags/api/tags", () => ({
   },
 }));
 
+// Mock EventPreview to avoid resolving @frontend alias in test environment
+vi.mock("../components/EventPreview", () => ({
+  EventPreview: () => null,
+}));
+
 describe("EventDialog Logic", () => {
   const mockOnSubmit = vi.fn();
   const mockOnOpenChange = vi.fn();

@@ -17,9 +17,10 @@
     "types": ["vite/client", "jest"],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@frontend/*": ["../frontend/src/*"]
     },
     "skipLibCheck": true
   },
-  "include": ["src"]
+  "include": ["src", "../frontend/src/features/agenda/components/EventDetailContent.tsx", "../frontend/src/features/agenda/dateUtils.ts", "../frontend/src/features/agenda/utils.ts", "../frontend/src/features/events/types.ts"]
 }

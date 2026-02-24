@@ -1,5 +1,5 @@
 /**
- * Types for the Festes feature.
+ * Types for the Festes feature including Program, Venue, and Activity entities.
  */
 import { MediaItem } from "@/features/media/types";
 import { Tag } from "@/features/tags/types";
@@ -102,3 +102,160 @@ export type CreateSponsorDTO = {
 };
 
 export type UpdateSponsorDTO = Partial<Omit<CreateSponsorDTO, "festa">>;
+
+// Program types
+export type ProgramStatus = "draft" | "published";
+
+export type Program = {
+  id: number;
+  slug: string;
+  festa: number;
+  festa_slug: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  status: ProgramStatus;
+  is_published: boolean;
+  order: number;
+  start_date: string | null;
+  end_date: string | null;
+  activities_count: number;
+  created_at: string;
+  updated_at: string;
+  translations?: {
+    [lang: string]: {
+      title: string;
+      subtitle: string;
+      description: string;
+    };
+  };
+};
+
+export type CreateProgramDTO = {
+  festa_id: number;
+  status: ProgramStatus;
+  order?: number;
+  start_date?: string | null;
+  end_date?: string | null;
+  translations: {
+    [lang: string]: {
+      title: string;
+      subtitle?: string;
+      description?: string;
+    };
+  };
+};
+
+export type UpdateProgramDTO = Partial<Omit<CreateProgramDTO, "festa_id">>;
+
+// Venue types
+export type Venue = {
+  id: number;
+  slug: string;
+  name: string;
+  description: string;
+  address: string;
+  postal_code: string | null;
+  city: string;
+  latitude: number | null;
+  longitude: number | null;
+  location: string; // computed from address/city
+  is_published: boolean;
+  is_accessible: boolean;
+  created_at: string;
+  updated_at: string;
+  translations?: {
+    [lang: string]: {
+      name: string;
+      description?: string;
+    };
+  };
+};
+
+export type CreateVenueDTO = {
+  address: string;
+  postal_code?: string | null;
+  city: string;
+  latitude?: number | null;
+  longitude?: number | null;
+  is_published?: boolean;
+  is_accessible?: boolean;
+  translations: {
+    [lang: string]: {
+      name: string;
+      description?: string;
+    };
+  };
+};
+
+export type UpdateVenueDTO = Partial<CreateVenueDTO>;
+
+// Activity types
+export type ActivityStatus = "draft" | "published";
+export type ActivityCategory = string; // slug-based taxonomy value
+
+export type Activity = {
+  id: number;
+  slug: string;
+  festa: number;
+  festa_slug: string;
+  program: number;
+  program_slug: string;
+  venue: number | null;
+  venue_slug: string | null;
+  venue_name: string; // empty string when venue is null
+  title: string;
+  summary: string;
+  description: string;
+  category: ActivityCategory;
+  location: string; // computed from venue/address
+  start_at: string;
+  end_at: string;
+  is_free: boolean;
+  price: number | null;
+  price_text: string;
+  ticket_url: string | null;
+  status: ActivityStatus;
+  is_published: boolean;
+  created_at: string;
+  updated_at: string;
+  translations?: {
+    [lang: string]: {
+      title: string;
+      summary?: string;
+      description?: string;
+    };
+  };
+};
+
+export type CreateActivityDTO = {
+  program_id: number;
+  venue_id?: number | null;
+  category: ActivityCategory;
+  start_at: string;
+  end_at: string;
+  is_free: boolean;
+  price?: number | null;
+  price_text?: string;
+  ticket_url?: string | null;
+  status: ActivityStatus;
+  translations: {
+    [lang: string]: {
+      title: string;
+      summary?: string;
+      description?: string;
+    };
+  };
+};
+
+export type UpdateActivityDTO = Partial<Omit<CreateActivityDTO, "program_id">>;
+
+// Query filter types
+export type ActivityQueryFilters = {
+  date_from?: string;
+  date_to?: string;
+  category?: string;
+  location?: string;
+  is_free?: boolean | string;
+  search?: string;
+};

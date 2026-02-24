@@ -24,6 +24,7 @@ import {
   Upload,
   CloudSun,
   AlertTriangle,
+  Eye,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -55,6 +56,8 @@ import { MediaItem } from "@/features/media/types";
 import { LANGUAGES } from "@/lib/config/constants";
 import { llmApi } from "../api/llm";
 import { TranslationDialog } from "./TranslationDialog";
+import { EventPreview } from "./EventPreview";
+import { mapFormToPreviewEvent } from "../utils/previewAdapter";
 import { cn } from "@/lib/utils";
 
 type LocalTranslations = {
@@ -105,6 +108,7 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
   const [newDateEnd, setNewDateEnd] = useState("");
 
   const [translationDialogOpen, setTranslationDialogOpen] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
 
   const imageInputRef = useRef<HTMLInputElement>(null);
   const docInputRef = useRef<HTMLInputElement>(null);
@@ -1128,6 +1132,13 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
           </Tabs>
 
           <div className="flex justify-end gap-2 pt-4 border-t">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setPreviewOpen(true)}
+            >
+              <Eye className="mr-2 h-4 w-4" /> Vista Preliminar
+            </Button>
             {event && (
               <Button
                 type="button"
@@ -1164,6 +1175,21 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
             }}
           />
         )}
+
+        <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
+          <DialogContent className="max-w-5xl p-0 overflow-hidden border-none bg-transparent shadow-none">
+            <EventPreview
+              event={mapFormToPreviewEvent(form, {
+                categories,
+                tags,
+                images,
+                documents,
+                activeLang,
+                dates,
+              })}
+            />
+          </DialogContent>
+        </Dialog>
       </DialogContent>
     </Dialog>
   );

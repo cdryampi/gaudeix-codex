@@ -218,3 +218,39 @@ La autenticación está configurada como placeholder. Para implementar autentica
 - [ ] Añadir loading states
 - [ ] Implementar paginación
 - [ ] Añadir filtros y búsqueda
+
+## Componentes Compartidos con el Frontend
+
+El Backoffice puede reutilizar componentes visuales del `frontend/` directamente, sin duplicar código. Este patrón garantiza **paridad visual 1:1** entre la vista pública y el panel administrativo.
+
+### ¿Cómo funciona?
+
+1. **Alias Vite** (`backoffice/vite.config.ts`): define `@frontend` apuntando a `../frontend/src`.
+2. **Alias TypeScript** (`backoffice/tsconfig.app.json`): añade `"@frontend/*": ["../frontend/src/*"]` para resolución de tipos en el IDE.
+3. **`include` en tsconfig**: lista explícitamente los archivos del frontend que se compilan junto con el backoffice.
+
+### Componentes actualmente compartidos
+
+| Componente | Ruta en Frontend | Usado en Backoffice |
+|---|---|---|
+| `EventDetailContent` | `src/features/agenda/components/EventDetailContent.tsx` | `EventPreview.tsx` — vista previa de eventos |
+
+### Ejemplo de importación
+
+```tsx
+// backoffice/src/features/events/components/EventPreview.tsx
+import { EventDetailContent } from "@frontend/features/agenda/components/EventDetailContent";
+```
+
+### Prop `isPreview`
+
+Todos los componentes compartidos aceptan la prop `isPreview?: boolean`. Cuando es `true`:
+- Se ocultan enlaces de navegación (`<Link>` a rutas del frontend).
+- Los botones interactivos (Favorito, Check-in, Compartir) muestran feedback de simulación.
+- Los hrefs externos (Google Maps, documentos) apuntan a `"#"` en lugar de URLs reales.
+
+### Reglas del patrón
+
+- ✅ **Añadir** archivos del frontend a `tsconfig.app.json > include` cuando se incorpore un nuevo componente compartido.
+- ✅ **Mantener** `isPreview` como prop en cualquier componente que contenga interacciones de usuario.
+- ❌ **Nunca** modificar el componente del frontend para añadir lógica exclusiva del backoffice — mantener la separación de responsabilidades.
