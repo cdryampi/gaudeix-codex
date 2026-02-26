@@ -16,8 +16,9 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
 from core.models import Category
-from festes.models import Festa, FestaCategorySingleton, Sponsor
-from media_files.models import ImageFile
+from festes.models import Festa, FestaCategorySingleton, Sponsor, Program, Activity, Venue, ActivityStatusChoices, ProgramStatusChoices, FestaEvent
+from media_files.models import ImageFile, DocumentFile
+from events.models import Event
 
 
 class Command(BaseCommand):
@@ -32,7 +33,8 @@ class Command(BaseCommand):
             root_category = self._ensure_root_category()
             self._clear_festes()
             images = self._ensure_media_files()
-            self._create_festes(root_category, images)
+            documents = self._ensure_document_files()
+            self._create_festes(root_category, images, documents)
 
     def _ensure_root_category(self) -> Category:
         try:
@@ -59,7 +61,7 @@ class Command(BaseCommand):
         Festa.objects.all().delete()
         self.stdout.write(self.style.SUCCESS(f"Removed {count} existing festes."))
 
-    def _create_festes(self, root_category: Category, images: dict[str, ImageFile]) -> None:
+    def _create_festes(self, root_category: Category, images: dict[str, ImageFile], documents: dict[str, DocumentFile]) -> None:
         festes_data = self._load_seed_festes()
 
         for data in festes_data:
@@ -77,6 +79,7 @@ class Command(BaseCommand):
 
             # Find matching image by slug
             featured_media = images.get(f"{slug}.png")
+            program_pdf = documents.get(f"programa-{slug}.pdf")
 
             festa = Festa.objects.create(
                 slug=slug,
@@ -93,21 +96,106 @@ class Command(BaseCommand):
                 is_featured=data.get("is_featured", False),
                 is_current=is_current,
                 featured_media=featured_media,
-                poster=featured_media,  # Also use as poster for seed
+                program_pdf=program_pdf,
             )
+
+            if featured_media:
+                festa.posters.add(featured_media)
+
+            # Add gallery images (any image starting with 'gallery_')
+            gallery_media = [img for name, img in images.items() if name.startswith("gallery_")]
+            if gallery_media:
+                festa.gallery.set(gallery_media)
 
             # Create sponsors
             for sponsor_data in data.get("sponsors", []):
+                tier = sponsor_data.get("tier", "collaborator")
+                logo = images.get(f"sponsor_{tier}.png")
+                
                 Sponsor.objects.create(
                     festa=festa,
                     name=sponsor_data["name"],
-                    tier=sponsor_data.get("tier", "collaborator"),
+                    tier=tier,
                     website=sponsor_data.get("website", ""),
                     order=sponsor_data.get("order", 0),
+                    logo=logo,
                 )
 
             self._apply_translations(festa, data.get("translations", {}))
+            
+            # Link to some random events to demonstrate the event selector
+            self._link_random_events(festa)
+
+            # Create a Program and Activities manually for each seeded Festa
+            self._create_sample_program_and_activities(festa)
+            
             self.stdout.write(self.style.SUCCESS(f"Created festa '{festa}'"))
+
+    def _link_random_events(self, festa: Festa) -> None:
+        # Get up to 15 random published events
+        random_events = Event.objects.filter(is_published=True).order_by('?')[:15]
+        for idx, event in enumerate(random_events):
+            FestaEvent.objects.create(
+                festa=festa,
+                event=event,
+                order=idx,
+            )
+
+    def _create_sample_program_and_activities(self, festa: Festa) -> None:
+        program = Program.objects.create(
+            festa=festa,
+            title=f"Programa Principal - {festa.title}",
+            status=ProgramStatusChoices.PUBLISHED,
+            order=1,
+        )
+        program.set_current_language("ca")
+        program.save()
+        
+        venue, _ = Venue.objects.get_or_create(
+            slug="placa-ajuntament-seed",
+            defaults={
+                "name": "Plaça de l'Ajuntament",
+                "address": "Plaça de l'Ajuntament, 1",
+                "city": "Cabrera de Mar",
+                "is_published": True,
+            }
+        )
+
+        event_link = Event.objects.filter(is_published=True).first()
+
+        title_val = "" if event_link else "Concert Inaugural"
+        summary_val = "" if event_link else "Gran concert de nit per començar les festes"
+
+        activity1 = Activity.objects.create(
+            program=program,
+            venue=venue,
+            title=title_val,
+            summary=summary_val,
+            category="music",
+            start_at=festa.start_date,
+            end_at=festa.start_date,
+            status=ActivityStatusChoices.PUBLISHED,
+            is_free=False,
+            price=15.00,
+            ticket_url="https://entrades.cabrerademar.cat/concert-festa-major",
+            event=event_link,  # Link to event if available! (Issue #63 test)
+        )
+        activity1.set_current_language("ca")
+        activity1.save()
+
+        activity2 = Activity.objects.create(
+            program=program,
+            venue=venue,
+            title="Cercavila de Gegants",
+            summary="Recorregut pels carrers del poble",
+            category="family",
+            start_at=festa.start_date,
+            end_at=festa.start_date,
+            status=ActivityStatusChoices.PUBLISHED,
+            is_free=True,
+        )
+        activity2.set_current_language("ca")
+        activity2.save()
 
     def _parse_date(self, date_str: str) -> date:
         """Parse ISO date string to date object."""
@@ -165,5 +253,29 @@ class Command(BaseCommand):
                 size_bytes=path.stat().st_size,
             )
         self.stdout.write(self.style.SUCCESS(f"Seeded ImageFile from {path}"))
+        return instance
+
+    @property
+    def sample_documents_dir(self) -> Path:
+        return Path(__file__).resolve().parent / "documents"
+
+    def _ensure_document_files(self) -> dict[str, DocumentFile]:
+        doc_map = {}
+        docs_dir = self.sample_documents_dir
+        if docs_dir.exists():
+            for doc_path in docs_dir.glob("*.pdf"):
+                if doc_path.is_file():
+                    doc_map[doc_path.name] = self._create_document_file(doc_path)
+        return doc_map
+
+    def _create_document_file(self, path: Path) -> DocumentFile:
+        with path.open("rb") as source:
+            instance = DocumentFile.objects.create(
+                file=File(source, name=path.name),
+                original_name=path.name,
+                mime_type="application/pdf",
+                size_bytes=path.stat().st_size,
+            )
+        self.stdout.write(self.style.SUCCESS(f"Seeded DocumentFile from {path}"))
         return instance
 

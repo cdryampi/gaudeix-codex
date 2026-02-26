@@ -1,7 +1,7 @@
 /**
  * Festa create/edit dialog component.
  */
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import {
   Dialog,
   DialogContent,
@@ -15,6 +15,13 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { LANGUAGES } from "@/lib/config/constants";
 import { CreateFestaDTO, Festa } from "../types";
+import { mediaApi } from "@/features/media/api/media";
+import { MediaItem } from "@/features/media/types";
+import { eventsApi } from "@/features/events/api/events";
+import { Event } from "@/features/events/types";
+import { ArrowUp, ArrowDown, Trash2 } from "lucide-react";
+import { ImageSelector } from "@/features/media/components/ImageSelector";
+import { toast } from "sonner";
 
 type LocalTranslations = {
   [lang: string]: {
@@ -52,6 +59,34 @@ export function FestaDialog({ open, onOpenChange, onSubmit, festa }: Props) {
   const [form, setForm] = useState<CreateFestaDTO>(emptyForm);
   const [activeLang, setActiveLang] = useState("ca");
   const [translations, setTranslations] = useState<LocalTranslations>({});
+  const [images, setImages] = useState<MediaItem[]>([]);
+  const [documents, setDocuments] = useState<MediaItem[]>([]);
+  const [allEvents, setAllEvents] = useState<Event[]>([]);
+
+  const docInputRef = useRef<HTMLInputElement>(null);
+
+  const [isFeaturedMediaSelectorOpen, setIsFeaturedMediaSelectorOpen] =
+    useState(false);
+  const [isPosterSelectorOpen, setIsPosterSelectorOpen] = useState(false);
+  const [isGallerySelectorOpen, setIsGallerySelectorOpen] = useState(false);
+
+  useEffect(() => {
+    const loadMedia = async () => {
+      try {
+        const [imgs, docs, evts] = await Promise.all([
+          mediaApi.listImages(),
+          mediaApi.listDocuments(),
+          eventsApi.getAll(),
+        ]);
+        setImages(imgs);
+        setDocuments(docs);
+        setAllEvents(evts);
+      } catch (err) {
+        console.error("Error loading data", err);
+      }
+    };
+    if (open) loadMedia();
+  }, [open]);
 
   useEffect(() => {
     if (festa) {
@@ -69,8 +104,10 @@ export function FestaDialog({ open, onOpenChange, onSubmit, festa }: Props) {
         is_current: festa.is_current,
         category_id: festa.category ?? null,
         featured_media_id: festa.featured_media?.id ?? null,
-        poster_id: festa.poster?.id ?? null,
+        poster_ids: festa.posters?.map((img) => img.id) || [],
         program_pdf_id: festa.program_pdf?.id ?? null,
+        gallery_ids: festa.gallery?.map((img) => img.id) || [],
+        event_ids: festa.events?.map((e) => e.id) || [],
       });
       setTranslations(festa.translations || {});
     } else {
@@ -135,6 +172,57 @@ export function FestaDialog({ open, onOpenChange, onSubmit, festa }: Props) {
         ? translationsPayload
         : undefined,
     });
+  };
+
+  const handleUploadDoc = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const uploaded = await mediaApi.upload(file);
+      if (uploaded.type === "document") {
+        setDocuments((prev) => [uploaded, ...prev]);
+        setForm((prev) => ({ ...prev, program_pdf_id: uploaded.id }));
+        toast.success("Documento subido correctamente");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Error al subir el documento");
+    } finally {
+      if (docInputRef.current) docInputRef.current.value = "";
+    }
+  };
+
+  const selectedPosters = useMemo(() => {
+    return (form.poster_ids || [])
+      .map((id) => images.find((i) => i.id === id))
+      .filter(Boolean) as MediaItem[];
+  }, [form.poster_ids, images]);
+
+  const selectedGallery = useMemo(() => {
+    const ids = form.gallery_ids || [];
+    return ids
+      .map((id) => images.find((img) => img.id === id))
+      .filter((img): img is MediaItem => !!img);
+  }, [images, form.gallery_ids]);
+
+  const selectedEvents = useMemo(() => {
+    return (form.event_ids || [])
+      .map((id) => allEvents.find((e) => e.id === id))
+      .filter((e): e is Event => !!e);
+  }, [allEvents, form.event_ids]);
+
+  const handleMoveEvent = (index: number, direction: "up" | "down") => {
+    const list = [...(form.event_ids || [])];
+    if (direction === "up" && index > 0) {
+      const temp = list[index];
+      list[index] = list[index - 1];
+      list[index - 1] = temp;
+    } else if (direction === "down" && index < list.length - 1) {
+      const temp = list[index];
+      list[index] = list[index + 1];
+      list[index + 1] = temp;
+    }
+    setForm((prev) => ({ ...prev, event_ids: list }));
   };
 
   return (
@@ -355,7 +443,408 @@ export function FestaDialog({ open, onOpenChange, onSubmit, festa }: Props) {
             })}
           </Tabs>
 
-          <div className="flex justify-end gap-2 pt-4 border-t">
+          {/* Main Media (Featured & Poster) */}
+          <div className="grid gap-6 md:grid-cols-2 mt-4">
+            {/* Featured Media */}
+            <div className="space-y-3 rounded-lg border border-border/60 bg-muted/20 p-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-foreground">
+                    Imagen Principal
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Banner o destacada
+                  </p>
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsFeaturedMediaSelectorOpen(true)}
+                >
+                  Seleccionar
+                </Button>
+              </div>
+              {form.featured_media_id &&
+                images.find((img) => img.id === form.featured_media_id) && (
+                  <div className="flex items-center gap-3 rounded-md bg-background/60 p-2">
+                    <img
+                      src={
+                        images.find((img) => img.id === form.featured_media_id)
+                          ?.thumbnail_url ||
+                        images.find((img) => img.id === form.featured_media_id)
+                          ?.variant_thumbnail ||
+                        images.find((img) => img.id === form.featured_media_id)
+                          ?.file
+                      }
+                      alt="Featured media"
+                      className="h-10 w-10 rounded object-cover ring-1 ring-border"
+                    />
+                    <p className="text-xs text-foreground truncate max-w-[150px]">
+                      {
+                        images.find((img) => img.id === form.featured_media_id)
+                          ?.original_name
+                      }
+                    </p>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="ml-auto text-rose-600 h-8 px-2"
+                      onClick={() =>
+                        setForm((prev) => ({
+                          ...prev,
+                          featured_media_id: null,
+                        }))
+                      }
+                    >
+                      X
+                    </Button>
+                  </div>
+                )}
+            </div>
+
+            {/* Poster */}
+            <div className="space-y-3 rounded-lg border border-border/60 bg-muted/20 p-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-foreground">
+                    Cartel
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Cartel oficial
+                  </p>
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsPosterSelectorOpen(true)}
+                >
+                  Seleccionar
+                </Button>
+              </div>
+              {selectedPosters.length > 0 && (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2">
+                  {selectedPosters.map((img: MediaItem) => (
+                    <div
+                      key={img.id}
+                      className="relative group rounded-md overflow-hidden aspect-[1/1.414] border shadow-sm"
+                    >
+                      <img
+                        src={
+                          img.thumbnail_url || img.variant_thumbnail || img.file
+                        }
+                        alt="Poster page"
+                        className="h-full w-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="sm"
+                          className="h-8 rounded-full px-3 text-xs"
+                          onClick={() =>
+                            setForm((prev) => ({
+                              ...prev,
+                              poster_ids: (prev.poster_ids || []).filter(
+                                (id) => id !== img.id,
+                              ),
+                            }))
+                          }
+                        >
+                          Quitar
+                        </Button>
+                      </div>
+                      <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 to-transparent p-2 text-[10px] text-white truncate">
+                        {img.original_name}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Program PDF */}
+          <div className="space-y-3 rounded-lg border border-border/60 bg-muted/20 p-3 mt-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-semibold text-foreground">
+                  Programa PDF
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Documento descargable
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <input
+                  type="file"
+                  accept=".pdf"
+                  ref={docInputRef}
+                  onChange={handleUploadDoc}
+                  className="hidden"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => docInputRef.current?.click()}
+                >
+                  Subir PDF
+                </Button>
+              </div>
+            </div>
+            <select
+              value={form.program_pdf_id ?? ""}
+              onChange={(e) =>
+                setForm((prev) => ({
+                  ...prev,
+                  program_pdf_id: e.target.value
+                    ? Number(e.target.value)
+                    : null,
+                }))
+              }
+              className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+            >
+              <option value="">Sin documento PDF...</option>
+              {documents.map((doc) => (
+                <option key={doc.id} value={doc.id}>
+                  {doc.original_name}
+                </option>
+              ))}
+            </select>
+            {form.program_pdf_id &&
+              documents.find((doc) => doc.id === form.program_pdf_id) && (
+                <div className="flex items-center justify-between rounded-md bg-background/60 px-2 py-1 text-sm">
+                  <span>
+                    {
+                      documents.find((doc) => doc.id === form.program_pdf_id)
+                        ?.original_name
+                    }
+                  </span>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="ghost"
+                    className="text-rose-600 h-8 px-2"
+                    onClick={() =>
+                      setForm((prev) => ({ ...prev, program_pdf_id: null }))
+                    }
+                  >
+                    Quitar
+                  </Button>
+                </div>
+              )}
+          </div>
+
+          {/* Gallery Images */}
+          <div className="space-y-3 rounded-lg border border-border/60 bg-muted/20 p-3 mt-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-semibold text-foreground">
+                  Galería de Imágenes
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Fotos generales de la festa
+                </p>
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setIsGallerySelectorOpen(true)}
+              >
+                Añadir Imagen
+              </Button>
+            </div>
+
+            {selectedGallery.length > 0 && (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2">
+                {selectedGallery.map((img: MediaItem) => (
+                  <div
+                    key={img.id}
+                    className="relative group rounded-md overflow-hidden aspect-square border ring-1 ring-border"
+                  >
+                    <img
+                      src={
+                        img.thumbnail_url || img.variant_thumbnail || img.file
+                      }
+                      alt="Gallery image"
+                      className="h-full w-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="sm"
+                        className="h-8 rounded-full px-3 text-xs"
+                        onClick={() =>
+                          setForm((prev) => ({
+                            ...prev,
+                            gallery_ids: (prev.gallery_ids || []).filter(
+                              (id) => id !== img.id,
+                            ),
+                          }))
+                        }
+                      >
+                        Eliminar
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Linked Events */}
+          <div className="space-y-3 rounded-lg border border-border/60 bg-muted/20 p-3 mt-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-semibold text-foreground">
+                  Eventos de la Festa
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Eventos ordenados de la agenda vinculados
+                </p>
+              </div>
+            </div>
+
+            {/* Selector */}
+            <div className="flex gap-2 items-center mt-2">
+              <select
+                className="flex-1 h-10 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+                onChange={(e) => {
+                  const val = Number(e.target.value);
+                  if (val && !(form.event_ids || []).includes(val)) {
+                    setForm((prev) => ({
+                      ...prev,
+                      event_ids: [...(prev.event_ids || []), val],
+                    }));
+                  }
+                  e.target.value = "";
+                }}
+                value=""
+              >
+                <option value="" disabled>
+                  Selecciona un evento para añadir...
+                </option>
+                {allEvents
+                  .filter((e) => !(form.event_ids || []).includes(e.id))
+                  .map((e) => (
+                    <option key={e.id} value={e.id}>
+                      {e.title}{" "}
+                      {e.start_at
+                        ? `(${new Date(e.start_at).toLocaleDateString("es-ES")})`
+                        : "(Sin fecha)"}
+                    </option>
+                  ))}
+              </select>
+            </div>
+
+            {/* List */}
+            {selectedEvents.length > 0 && (
+              <div className="space-y-2 mt-3">
+                {selectedEvents.map((evt, idx) => (
+                  <div
+                    key={evt.id}
+                    className="flex items-center justify-between bg-background border px-3 py-2 rounded-md shadow-sm"
+                  >
+                    <div className="flex flex-col">
+                      <span className="text-sm font-medium">{evt.title}</span>
+                      <span className="text-xs text-muted-foreground">
+                        Posición: {idx + 1}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        disabled={idx === 0}
+                        onClick={() => handleMoveEvent(idx, "up")}
+                      >
+                        <ArrowUp className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        disabled={idx === selectedEvents.length - 1}
+                        onClick={() => handleMoveEvent(idx, "down")}
+                      >
+                        <ArrowDown className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-rose-500 hover:text-rose-600 hover:bg-rose-50"
+                        onClick={() =>
+                          setForm((prev) => ({
+                            ...prev,
+                            event_ids: (prev.event_ids || []).filter(
+                              (id) => id !== evt.id,
+                            ),
+                          }))
+                        }
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Modals for Image Selectors */}
+          <ImageSelector
+            open={isFeaturedMediaSelectorOpen}
+            onOpenChange={setIsFeaturedMediaSelectorOpen}
+            onSelect={(item) => {
+              setImages((prev) =>
+                prev.some((i) => i.id === item.id) ? prev : [item, ...prev],
+              );
+              setForm((prev) => ({ ...prev, featured_media_id: item.id }));
+            }}
+          />
+          <ImageSelector
+            open={isPosterSelectorOpen}
+            onOpenChange={setIsPosterSelectorOpen}
+            onSelect={(item) => {
+              setImages((prev) =>
+                prev.some((i) => i.id === item.id) ? prev : [item, ...prev],
+              );
+              setForm((prev) => ({
+                ...prev,
+                poster_ids: [
+                  ...(prev.poster_ids || []).filter((id) => id !== item.id),
+                  item.id,
+                ],
+              }));
+            }}
+          />
+          <ImageSelector
+            open={isGallerySelectorOpen}
+            onOpenChange={setIsGallerySelectorOpen}
+            onSelect={(item) => {
+              setImages((prev) =>
+                prev.some((i) => i.id === item.id) ? prev : [item, ...prev],
+              );
+              setForm((prev) => ({
+                ...prev,
+                gallery_ids: [
+                  ...(prev.gallery_ids || []).filter((id) => id !== item.id),
+                  item.id,
+                ],
+              }));
+            }}
+          />
+
+          <div className="flex justify-end gap-2 pt-4 border-t mt-4">
             <Button type="submit">
               {festa ? "Guardar cambios" : "Crear festa"}
             </Button>

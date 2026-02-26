@@ -19,8 +19,9 @@ from media_files.serializers import (  # pyright: ignore[reportImplicitRelativeI
     ImageFileSerializer,
 )
 from events.serializers import EventSerializer  # pyright: ignore[reportImplicitRelativeImport]
+from events.models import Event  # pyright: ignore[reportImplicitRelativeImport]
 
-from .models import Activity, Festa, Program, Sponsor, Venue
+from .models import Activity, Festa, Program, Sponsor, Venue, FestaEvent
 
 
 class FestaTranslationSerializer(serializers.Serializer):
@@ -105,11 +106,11 @@ class FestaSerializer(TranslatableModelSerializer):
         write_only=True,
     )
 
-    # Poster
-    poster = ImageFileSerializer(read_only=True)
-    poster_id = serializers.PrimaryKeyRelatedField(
+    # Posters
+    posters = ImageFileSerializer(many=True, read_only=True)
+    poster_ids = serializers.PrimaryKeyRelatedField(
         queryset=ImageFile.objects.all(),
-        allow_null=True,
+        many=True,
         required=False,
         write_only=True,
     )
@@ -136,7 +137,13 @@ class FestaSerializer(TranslatableModelSerializer):
     sponsors = SponsorSerializer(many=True, read_only=True)
 
     # Events
+    events = serializers.SerializerMethodField()
     events_count = serializers.SerializerMethodField()
+    event_ids = serializers.ListField(
+        child=serializers.IntegerField(),
+        write_only=True,
+        required=False,
+    )
 
     # Computed fields
     image_url = serializers.SerializerMethodField()
@@ -166,13 +173,15 @@ class FestaSerializer(TranslatableModelSerializer):
             "tag_ids",
             "featured_media",
             "featured_media_id",
-            "poster",
-            "poster_id",
+            "posters",
+            "poster_ids",
             "program_pdf",
             "program_pdf_id",
             "gallery",
             "gallery_ids",
             "sponsors",
+            "events",
+            "event_ids",
             "events_count",
             "image_url",
             "duration_days",
@@ -193,10 +202,10 @@ class FestaSerializer(TranslatableModelSerializer):
         return ""
 
     def get_image_url(self, obj) -> str:
-        # Prefer poster, fallback to featured_media
-        if obj.poster and obj.poster.file:
-            return obj.poster.file.url
-        if obj.featured_media and obj.featured_media.file:
+        first_poster = obj.posters.first()
+        if first_poster and getattr(first_poster, "file", None):
+            return first_poster.file.url
+        if obj.featured_media and getattr(obj.featured_media, "file", None):
             return obj.featured_media.file.url
         return ""
 
@@ -206,18 +215,22 @@ class FestaSerializer(TranslatableModelSerializer):
     def get_events_count(self, obj) -> int:
         return obj.events.count()
 
+    def get_events(self, obj):
+        ordered_events = obj.events.order_by("festaevent__order")
+        return EventSerializer(ordered_events, many=True, context=self.context).data
+
     def create(self, validated_data):
         """Handle M2M fields on create."""
         tag_ids = validated_data.pop("tag_ids", [])
         gallery_ids = validated_data.pop("gallery_ids", [])
+        poster_ids = validated_data.pop("poster_ids", [])
+        event_ids = validated_data.pop("event_ids", None)
 
         # Handle write-only FK fields
         if "category_id" in validated_data:
             validated_data["category"] = validated_data.pop("category_id")
         if "featured_media_id" in validated_data:
             validated_data["featured_media"] = validated_data.pop("featured_media_id")
-        if "poster_id" in validated_data:
-            validated_data["poster"] = validated_data.pop("poster_id")
         if "program_pdf_id" in validated_data:
             validated_data["program_pdf"] = validated_data.pop("program_pdf_id")
 
@@ -227,6 +240,15 @@ class FestaSerializer(TranslatableModelSerializer):
             festa.tags.set(tag_ids)
         if gallery_ids:
             festa.gallery.set(gallery_ids)
+        if poster_ids:
+            festa.posters.set(poster_ids)
+
+        if event_ids is not None:
+            festa_events = [
+                FestaEvent(festa=festa, event_id=e_id, order=idx)
+                for idx, e_id in enumerate(event_ids)
+            ]
+            FestaEvent.objects.bulk_create(festa_events)
 
         return festa
 
@@ -234,14 +256,14 @@ class FestaSerializer(TranslatableModelSerializer):
         """Handle M2M fields on update."""
         tag_ids = validated_data.pop("tag_ids", None)
         gallery_ids = validated_data.pop("gallery_ids", None)
+        poster_ids = validated_data.pop("poster_ids", None)
+        event_ids = validated_data.pop("event_ids", None)
 
         # Handle write-only FK fields
         if "category_id" in validated_data:
             validated_data["category"] = validated_data.pop("category_id")
         if "featured_media_id" in validated_data:
             validated_data["featured_media"] = validated_data.pop("featured_media_id")
-        if "poster_id" in validated_data:
-            validated_data["poster"] = validated_data.pop("poster_id")
         if "program_pdf_id" in validated_data:
             validated_data["program_pdf"] = validated_data.pop("program_pdf_id")
 
@@ -251,6 +273,16 @@ class FestaSerializer(TranslatableModelSerializer):
             instance.tags.set(tag_ids)
         if gallery_ids is not None:
             instance.gallery.set(gallery_ids)
+        if poster_ids is not None:
+            instance.posters.set(poster_ids)
+
+        if event_ids is not None:
+            instance.festaevent_set.all().delete()
+            festa_events = [
+                FestaEvent(festa=instance, event_id=e_id, order=idx)
+                for idx, e_id in enumerate(event_ids)
+            ]
+            FestaEvent.objects.bulk_create(festa_events)
 
         return instance
 
@@ -387,7 +419,7 @@ class ProgramSerializer(TranslatableModelSerializer):
 class ActivityTranslationSerializer(serializers.Serializer):
     """Serializer for Activity translated fields."""
 
-    title = serializers.CharField(max_length=200)
+    title = serializers.CharField(required=False, allow_blank=True, max_length=200)
     summary = serializers.CharField(required=False, allow_blank=True, max_length=280)
     description = serializers.CharField(required=False, allow_blank=True)
 
@@ -400,6 +432,10 @@ class ActivitySerializer(TranslatableModelSerializer):
         serializer_class=ActivityTranslationSerializer,
         required=False,
     )
+
+    title = serializers.CharField(required=False, allow_blank=True, max_length=200)
+    summary = serializers.CharField(required=False, allow_blank=True, max_length=280)
+    description = serializers.CharField(required=False, allow_blank=True)
 
     festa = serializers.SerializerMethodField()
     festa_slug = serializers.SerializerMethodField()
@@ -420,6 +456,12 @@ class ActivitySerializer(TranslatableModelSerializer):
     venue_slug = serializers.SerializerMethodField()
     venue_name = serializers.SerializerMethodField()
     location = serializers.SerializerMethodField()
+    event = serializers.PrimaryKeyRelatedField(
+        queryset=Event.objects.all(),
+        allow_null=True,
+        required=False,
+        write_only=True,
+    )
     is_published = serializers.ReadOnlyField()
 
     class Meta:
@@ -436,6 +478,7 @@ class ActivitySerializer(TranslatableModelSerializer):
             "venue_id",
             "venue_slug",
             "venue_name",
+            "event",
             "title",
             "summary",
             "description",
@@ -491,7 +534,102 @@ class ActivitySerializer(TranslatableModelSerializer):
     def get_location(self, obj) -> str:
         return obj.venue.location if obj.venue_id else ""
 
+    def _activity_supports_event(self) -> bool:
+        try:
+            Activity._meta.get_field("event")
+            return True
+        except Exception:
+            return False
+
+    def _serialize_event_summary(self, event_obj):
+        if not event_obj:
+            return None
+        return {
+            "id": event_obj.id,
+            "slug": event_obj.slug,
+            "title": event_obj.safe_translation_getter("title", any_language=True)
+            or "",
+            "summary": event_obj.safe_translation_getter("summary", any_language=True)
+            or "",
+            "start_at": event_obj.start_at,
+            "end_at": event_obj.end_at,
+        }
+
+    def _is_blank_value(self, value) -> bool:
+        if value is None:
+            return True
+        if isinstance(value, str):
+            return value.strip() == ""
+        return False
+
+    def _get_event_translation_value(
+        self,
+        event_obj,
+        field_name: str,
+        language_code: str | None = None,
+    ) -> str:
+        return (
+            event_obj.safe_translation_getter(
+                field_name,
+                language_code=language_code,
+                any_language=True,
+            )
+            or ""
+        )
+
+    def _apply_event_mirror_defaults(self, validated_data, instance=None):
+        if "event" in validated_data:
+            event_obj = validated_data.get("event")
+        else:
+            event_obj = (
+                getattr(instance, "event", None) if instance is not None else None
+            )
+
+        if not event_obj:
+            return
+
+        mirrored_fields = ("title", "summary", "description")
+
+        for field_name in mirrored_fields:
+            should_check_field = instance is None or field_name in validated_data
+            if not should_check_field:
+                continue
+            if self._is_blank_value(validated_data.get(field_name)):
+                inherited = self._get_event_translation_value(event_obj, field_name)
+                if inherited:
+                    validated_data[field_name] = inherited
+
+        translations = validated_data.get("translations")
+        if not isinstance(translations, dict):
+            return
+
+        for language_code, language_values in translations.items():
+            if not isinstance(language_values, dict):
+                continue
+            for field_name in mirrored_fields:
+                should_check_field = instance is None or field_name in language_values
+                if not should_check_field:
+                    continue
+                if self._is_blank_value(language_values.get(field_name)):
+                    inherited = self._get_event_translation_value(
+                        event_obj,
+                        field_name,
+                        language_code=language_code,
+                    )
+                    if inherited:
+                        language_values[field_name] = inherited
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["event"] = self._serialize_event_summary(getattr(instance, "event", None))
+        return data
+
     def create(self, validated_data):
+        self._apply_event_mirror_defaults(validated_data)
+
+        if not self._activity_supports_event():
+            validated_data.pop("event", None)
+
         program = validated_data.pop("program_id", None)
         venue = validated_data.pop("venue_id", None)
         if program is not None:
@@ -500,6 +638,11 @@ class ActivitySerializer(TranslatableModelSerializer):
         return super().create(validated_data)
 
     def update(self, instance, validated_data):
+        self._apply_event_mirror_defaults(validated_data, instance=instance)
+
+        if not self._activity_supports_event():
+            validated_data.pop("event", None)
+
         program = validated_data.pop("program_id", None)
         venue = validated_data.pop("venue_id", serializers.empty)
         if program is not None:

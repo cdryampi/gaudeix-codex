@@ -20,7 +20,15 @@ import { Label } from "@/components/ui/label";
 import { Pagination } from "@/components/ui/pagination";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Plus, Pencil, Trash2, Upload, EyeOff } from "lucide-react";
+import {
+  Plus,
+  Pencil,
+  Trash2,
+  Upload,
+  EyeOff,
+  Link as LinkIcon,
+  ExternalLink,
+} from "lucide-react";
 import { toast } from "sonner";
 import { ActivityDialog } from "../components/ActivityDialog";
 import { ProgrammingDashboard } from "../components/ProgrammingDashboard";
@@ -37,7 +45,9 @@ export function ActivitiesPage() {
   const [error, setError] = useState<string | null>(null);
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingActivity, setEditingActivity] = useState<Activity | undefined>();
+  const [editingActivity, setEditingActivity] = useState<
+    Activity | undefined
+  >();
   const [deleteSlug, setDeleteSlug] = useState<string | null>(null);
 
   const [search, setSearch] = useState("");
@@ -46,9 +56,16 @@ export function ActivitiesPage() {
   const [dateTo, setDateTo] = useState("");
   const [programSlug, setProgramSlug] = useState("");
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
-  const [bulkAction, setBulkAction] = useState<"publish" | "unpublish" | null>(null);
+  const [bulkAction, setBulkAction] = useState<"publish" | "unpublish" | null>(
+    null,
+  );
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+
+  const getActivityEventId = (activity: Activity): number | null => {
+    if (!activity.event) return null;
+    return activity.event.id;
+  };
 
   const programsById = useMemo(() => {
     return new Map(programs.map((program) => [program.id, program]));
@@ -73,7 +90,8 @@ export function ActivitiesPage() {
       if (search) {
         const programTitle = programsById.get(activity.program)?.title || "";
         const venueName = activity.venue_name || "";
-        const text = `${activity.title} ${activity.summary} ${activity.description} ${activity.slug} ${programTitle} ${venueName}`.toLowerCase();
+        const text =
+          `${activity.title} ${activity.summary} ${activity.description} ${activity.slug} ${programTitle} ${venueName}`.toLowerCase();
         return text.includes(search.toLowerCase());
       }
 
@@ -88,7 +106,8 @@ export function ActivitiesPage() {
   }, [filtered, page, pageSize]);
 
   const allPaginatedSelected =
-    paginated.length > 0 && paginated.every((activity) => selectedIds.includes(activity.id));
+    paginated.length > 0 &&
+    paginated.every((activity) => selectedIds.includes(activity.id));
 
   useEffect(() => {
     const filteredIds = new Set(filtered.map((activity) => activity.id));
@@ -196,7 +215,9 @@ export function ActivitiesPage() {
       return;
     }
 
-    const selectedActivities = activities.filter((activity) => selectedIds.includes(activity.id));
+    const selectedActivities = activities.filter((activity) =>
+      selectedIds.includes(activity.id),
+    );
     if (selectedActivities.length === 0) {
       setBulkAction(null);
       return;
@@ -223,7 +244,9 @@ export function ActivitiesPage() {
       await fetchData();
     } catch (err) {
       console.error("Error applying bulk action on activities:", err);
-      toast.error("No se pudieron actualizar todas las actividades seleccionadas");
+      toast.error(
+        "No se pudieron actualizar todas las actividades seleccionadas",
+      );
     } finally {
       setBulkAction(null);
     }
@@ -379,7 +402,9 @@ export function ActivitiesPage() {
                     <th className="w-10 px-3">
                       <Checkbox
                         checked={allPaginatedSelected}
-                        onChange={(event) => handleToggleSelectAllPaginated(event.target.checked)}
+                        onChange={(event) =>
+                          handleToggleSelectAllPaginated(event.target.checked)
+                        }
                         aria-label="Seleccionar actividades de la pagina"
                       />
                     </th>
@@ -404,19 +429,39 @@ export function ActivitiesPage() {
                     </tr>
                   ) : (
                     paginated.map((activity) => (
-                      <tr key={activity.id} className="transition-colors hover:bg-muted/30">
+                      <tr
+                        key={activity.id}
+                        className="transition-colors hover:bg-muted/30"
+                      >
                         <td className="px-3 py-4">
                           <Checkbox
                             checked={selectedIds.includes(activity.id)}
                             onChange={(event) =>
-                              handleToggleSelectRow(activity.id, event.target.checked)
+                              handleToggleSelectRow(
+                                activity.id,
+                                event.target.checked,
+                              )
                             }
                             aria-label={`Seleccionar ${activity.title}`}
                           />
                         </td>
                         <td className="px-5 py-4">
-                          <p className="font-semibold">{activity.title}</p>
-                          <p className="text-xs text-muted-foreground">{activity.slug}</p>
+                          <div className="flex items-center gap-2">
+                            <p className="font-semibold">{activity.title}</p>
+                            {activity.event && (
+                              <Badge
+                                variant="secondary"
+                                className="inline-flex items-center gap-1 px-2 py-0 text-[10px]"
+                                title="Actividad vinculada a evento de agenda"
+                              >
+                                <LinkIcon className="h-3 w-3" />
+                                Vinculada
+                              </Badge>
+                            )}
+                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            {activity.slug}
+                          </p>
                           {activity.category && (
                             <Badge variant="outline" className="mt-1 text-xs">
                               {activity.category}
@@ -424,19 +469,25 @@ export function ActivitiesPage() {
                           )}
                         </td>
                         <td className="px-5 py-4">
-                          {programsById.get(activity.program)?.title || activity.program_slug}
+                          {programsById.get(activity.program)?.title ||
+                            activity.program_slug}
                         </td>
                         <td className="px-5 py-4">
                           {activity.venue_name || "-"}
                         </td>
                         <td className="px-5 py-4">
                           <span className="whitespace-nowrap">
-                            {activity.start_at ? new Date(activity.start_at).toLocaleString("es-ES", {
-                              day: "2-digit",
-                              month: "2-digit",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            }) : "-"}
+                            {activity.start_at
+                              ? new Date(activity.start_at).toLocaleString(
+                                  "es-ES",
+                                  {
+                                    day: "2-digit",
+                                    month: "2-digit",
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                  },
+                                )
+                              : "-"}
                           </span>
                         </td>
                         <td className="px-5 py-4">
@@ -461,6 +512,24 @@ export function ActivitiesPage() {
                         </td>
                         <td className="px-5 py-4 text-right">
                           <div className="flex justify-end gap-1">
+                            {activity.event && getActivityEventId(activity) && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-blue-600 hover:text-blue-800 hover:bg-blue-50"
+                                onClick={() =>
+                                  window.open(
+                                    "/dashboard/events",
+                                    "_blank",
+                                    "noopener,noreferrer",
+                                  )
+                                }
+                                aria-label={`Ver evento vinculado de ${activity.title}`}
+                                title="Ver evento en agenda"
+                              >
+                                <ExternalLink className="h-4 w-4" />
+                              </Button>
+                            )}
                             <Button
                               variant="ghost"
                               size="icon"
@@ -496,7 +565,11 @@ export function ActivitiesPage() {
           Página {page} de {totalPages} • {filtered.length} resultados
         </span>
         <div className="w-full md:w-auto">
-          <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+          />
         </div>
       </div>
 
@@ -509,7 +582,10 @@ export function ActivitiesPage() {
         venues={venues}
       />
 
-      <AlertDialog open={deleteSlug !== null} onOpenChange={() => setDeleteSlug(null)}>
+      <AlertDialog
+        open={deleteSlug !== null}
+        onOpenChange={() => setDeleteSlug(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>¿Eliminar actividad?</AlertDialogTitle>
@@ -529,7 +605,10 @@ export function ActivitiesPage() {
         </AlertDialogContent>
       </AlertDialog>
 
-      <AlertDialog open={bulkAction !== null} onOpenChange={() => setBulkAction(null)}>
+      <AlertDialog
+        open={bulkAction !== null}
+        onOpenChange={() => setBulkAction(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
@@ -538,14 +617,16 @@ export function ActivitiesPage() {
                 : "¿Despublicar actividades seleccionadas?"}
             </AlertDialogTitle>
             <AlertDialogDescription>
-              Se actualizaran {selectedIds.length} actividades. Esta accion requiere confirmacion
-              explicita para evitar cambios accidentales.
+              Se actualizaran {selectedIds.length} actividades. Esta accion
+              requiere confirmacion explicita para evitar cambios accidentales.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
             <AlertDialogAction onClick={handleBulkConfirm}>
-              {bulkAction === "publish" ? "Confirmar publicacion" : "Confirmar despublicacion"}
+              {bulkAction === "publish"
+                ? "Confirmar publicacion"
+                : "Confirmar despublicacion"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -1,6 +1,6 @@
 /**
  * ActivityDetailPage - Detailed view for a single activity within a festival program.
- * 
+ *
  * Features:
  * - Detailed activity information display
  * - SEO: dynamic title and meta description
@@ -112,7 +112,10 @@ export const ActivityDetailPage = () => {
       activity.summary ||
       activity.description ||
       "Activitat de la programacio de festes.";
-    const plainText = base.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+    const plainText = base
+      .replace(/<[^>]*>/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
     return plainText.slice(0, 160);
   }, [activity]);
 
@@ -178,14 +181,14 @@ export const ActivityDetailPage = () => {
           availability: "https://schema.org/InStock",
         }
       : activity.ticket_url
-      ? {
-          "@type": "Offer",
-          price: activity.price?.toString() || "",
-          priceCurrency: "EUR",
-          url: activity.ticket_url,
-          availability: "https://schema.org/InStock",
-        }
-      : undefined,
+        ? {
+            "@type": "Offer",
+            price: activity.price?.toString() || "",
+            priceCurrency: "EUR",
+            url: activity.ticket_url,
+            availability: "https://schema.org/InStock",
+          }
+        : undefined,
     organizer: {
       "@type": "Organization",
       name: "Ajuntament de Cabrera de Mar",
@@ -221,10 +224,7 @@ export const ActivityDetailPage = () => {
               Inici
             </Link>
             <ChevronRight className="h-3 w-3" />
-            <Link
-              to="/festes"
-              className="hover:text-white transition-colors"
-            >
+            <Link to="/festes" className="hover:text-white transition-colors">
               Festes
             </Link>
             <ChevronRight className="h-3 w-3" />
@@ -242,7 +242,10 @@ export const ActivityDetailPage = () => {
               Programació
             </Link>
             <ChevronRight className="h-3 w-3" />
-            <span className="text-accent truncate max-w-[200px]" aria-current="page">
+            <span
+              className="text-accent truncate max-w-[200px]"
+              aria-current="page"
+            >
               {activity.title}
             </span>
           </nav>
@@ -273,7 +276,9 @@ export const ActivityDetailPage = () => {
                     : "bg-white/20 text-white backdrop-blur-md"
                 }`}
               >
-                {activity.is_free ? "Gratis" : activity.price_text || `${activity.price} €`}
+                {activity.is_free
+                  ? "Gratis"
+                  : activity.price_text || `${activity.price} €`}
               </span>
               <span
                 className={`rounded-full px-4 py-2 text-[10px] font-black uppercase tracking-widest shadow-lg ${
@@ -380,7 +385,9 @@ export const ActivityDetailPage = () => {
                 </h2>
                 <div
                   className="prose prose-lg max-w-none text-slate-600"
-                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(activity.description) }}
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(activity.description),
+                  }}
                 />
               </div>
             )}
@@ -395,7 +402,9 @@ export const ActivityDetailPage = () => {
                   <div className="flex items-start gap-4">
                     <MapPin className="h-6 w-6 text-primary mt-1" />
                     <div>
-                      <p className="font-bold text-slate-900">{activity.venue_name}</p>
+                      <p className="font-bold text-slate-900">
+                        {activity.venue_name}
+                      </p>
                       <p className="text-slate-500">{activity.location}</p>
                     </div>
                   </div>
@@ -409,93 +418,181 @@ export const ActivityDetailPage = () => {
               </h2>
               <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                  <dt className="text-[10px] font-black uppercase tracking-widest text-slate-400">ID</dt>
-                  <dd className="mt-2 text-sm font-bold text-slate-900">{activity.id}</dd>
+                  <dt className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                    ID
+                  </dt>
+                  <dd className="mt-2 text-sm font-bold text-slate-900">
+                    {activity.id}
+                  </dd>
                 </div>
                 <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                  <dt className="text-[10px] font-black uppercase tracking-widest text-slate-400">Slug</dt>
-                  <dd className="mt-2 text-sm font-bold text-slate-900 break-all">{activity.slug}</dd>
+                  <dt className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                    Slug
+                  </dt>
+                  <dd className="mt-2 text-sm font-bold text-slate-900 break-all">
+                    {activity.slug}
+                  </dd>
                 </div>
                 <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                  <dt className="text-[10px] font-black uppercase tracking-widest text-slate-400">Festa ID</dt>
-                  <dd className="mt-2 text-sm font-bold text-slate-900 break-all">{activity.festa}</dd>
+                  <dt className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                    Festa ID
+                  </dt>
+                  <dd className="mt-2 text-sm font-bold text-slate-900 break-all">
+                    {activity.festa}
+                  </dd>
                 </div>
                 <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                  <dt className="text-[10px] font-black uppercase tracking-widest text-slate-400">Festa</dt>
-                  <dd className="mt-2 text-sm font-bold text-slate-900 break-all">{activity.festa_slug}</dd>
+                  <dt className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                    Festa
+                  </dt>
+                  <dd className="mt-2 text-sm font-bold text-slate-900 break-all">
+                    {activity.festa_slug}
+                  </dd>
                 </div>
                 <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                  <dt className="text-[10px] font-black uppercase tracking-widest text-slate-400">Programa ID</dt>
-                  <dd className="mt-2 text-sm font-bold text-slate-900 break-all">{activity.program}</dd>
+                  <dt className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                    Programa ID
+                  </dt>
+                  <dd className="mt-2 text-sm font-bold text-slate-900 break-all">
+                    {activity.program}
+                  </dd>
                 </div>
                 <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                  <dt className="text-[10px] font-black uppercase tracking-widest text-slate-400">Programa</dt>
-                  <dd className="mt-2 text-sm font-bold text-slate-900 break-all">{activity.program_slug}</dd>
+                  <dt className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                    Programa
+                  </dt>
+                  <dd className="mt-2 text-sm font-bold text-slate-900 break-all">
+                    {activity.program_slug}
+                  </dd>
                 </div>
                 <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                  <dt className="text-[10px] font-black uppercase tracking-widest text-slate-400">Venue ID</dt>
-                  <dd className="mt-2 text-sm font-bold text-slate-900 break-all">{activity.venue ?? "-"}</dd>
+                  <dt className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                    Venue ID
+                  </dt>
+                  <dd className="mt-2 text-sm font-bold text-slate-900 break-all">
+                    {activity.venue ?? "-"}
+                  </dd>
                 </div>
                 <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                  <dt className="text-[10px] font-black uppercase tracking-widest text-slate-400">Venue slug</dt>
-                  <dd className="mt-2 text-sm font-bold text-slate-900 break-all">{activity.venue_slug || "-"}</dd>
+                  <dt className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                    Venue slug
+                  </dt>
+                  <dd className="mt-2 text-sm font-bold text-slate-900 break-all">
+                    {activity.venue_slug || "-"}
+                  </dd>
                 </div>
                 <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                  <dt className="text-[10px] font-black uppercase tracking-widest text-slate-400">Venue</dt>
-                  <dd className="mt-2 text-sm font-bold text-slate-900 break-all">{activity.venue_name || "-"}</dd>
+                  <dt className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                    Venue
+                  </dt>
+                  <dd className="mt-2 text-sm font-bold text-slate-900 break-all">
+                    {activity.venue_name || "-"}
+                  </dd>
                 </div>
                 <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                  <dt className="text-[10px] font-black uppercase tracking-widest text-slate-400">Categoria</dt>
-                  <dd className="mt-2 text-sm font-bold text-slate-900 break-all">{activity.category || "-"}</dd>
+                  <dt className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                    Categoria
+                  </dt>
+                  <dd className="mt-2 text-sm font-bold text-slate-900 break-all">
+                    {activity.category || "-"}
+                  </dd>
                 </div>
                 <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                  <dt className="text-[10px] font-black uppercase tracking-widest text-slate-400">Ubicacio</dt>
-                  <dd className="mt-2 text-sm font-bold text-slate-900 break-all">{activity.location || "-"}</dd>
+                  <dt className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                    Ubicacio
+                  </dt>
+                  <dd className="mt-2 text-sm font-bold text-slate-900 break-all">
+                    {activity.location || "-"}
+                  </dd>
                 </div>
                 <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                  <dt className="text-[10px] font-black uppercase tracking-widest text-slate-400">Inici</dt>
-                  <dd className="mt-2 text-sm font-bold text-slate-900 break-all">{formatDateTime(activity.start_at)}</dd>
+                  <dt className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                    Inici
+                  </dt>
+                  <dd className="mt-2 text-sm font-bold text-slate-900 break-all">
+                    {formatDateTime(activity.start_at)}
+                  </dd>
                 </div>
                 <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                  <dt className="text-[10px] font-black uppercase tracking-widest text-slate-400">Fi</dt>
-                  <dd className="mt-2 text-sm font-bold text-slate-900 break-all">{activity.end_at ? formatDateTime(activity.end_at) : "-"}</dd>
+                  <dt className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                    Fi
+                  </dt>
+                  <dd className="mt-2 text-sm font-bold text-slate-900 break-all">
+                    {activity.end_at ? formatDateTime(activity.end_at) : "-"}
+                  </dd>
                 </div>
                 <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                  <dt className="text-[10px] font-black uppercase tracking-widest text-slate-400">Gratuita</dt>
-                  <dd className="mt-2 text-sm font-bold text-slate-900">{activity.is_free ? "Si" : "No"}</dd>
+                  <dt className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                    Gratuita
+                  </dt>
+                  <dd className="mt-2 text-sm font-bold text-slate-900">
+                    {activity.is_free ? "Si" : "No"}
+                  </dd>
                 </div>
                 <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                  <dt className="text-[10px] font-black uppercase tracking-widest text-slate-400">Preu numeric</dt>
-                  <dd className="mt-2 text-sm font-bold text-slate-900">{activity.price ?? "-"}</dd>
+                  <dt className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                    Preu numeric
+                  </dt>
+                  <dd className="mt-2 text-sm font-bold text-slate-900">
+                    {activity.price ?? "-"}
+                  </dd>
                 </div>
                 <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                  <dt className="text-[10px] font-black uppercase tracking-widest text-slate-400">Text preu</dt>
-                  <dd className="mt-2 text-sm font-bold text-slate-900 break-all">{activity.price_text || "-"}</dd>
+                  <dt className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                    Text preu
+                  </dt>
+                  <dd className="mt-2 text-sm font-bold text-slate-900 break-all">
+                    {activity.price_text || "-"}
+                  </dd>
                 </div>
                 <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                  <dt className="text-[10px] font-black uppercase tracking-widest text-slate-400">URL tickets</dt>
-                  <dd className="mt-2 text-sm font-bold text-slate-900 break-all">{activity.ticket_url || "-"}</dd>
+                  <dt className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                    URL tickets
+                  </dt>
+                  <dd className="mt-2 text-sm font-bold text-slate-900 break-all">
+                    {activity.ticket_url || "-"}
+                  </dd>
                 </div>
                 <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                  <dt className="text-[10px] font-black uppercase tracking-widest text-slate-400">Estat</dt>
-                  <dd className="mt-2 text-sm font-bold text-slate-900">{activity.status}</dd>
+                  <dt className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                    Estat
+                  </dt>
+                  <dd className="mt-2 text-sm font-bold text-slate-900">
+                    {activity.status}
+                  </dd>
                 </div>
                 <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                  <dt className="text-[10px] font-black uppercase tracking-widest text-slate-400">Publicada</dt>
-                  <dd className="mt-2 text-sm font-bold text-slate-900">{activity.is_published ? "Si" : "No"}</dd>
+                  <dt className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                    Publicada
+                  </dt>
+                  <dd className="mt-2 text-sm font-bold text-slate-900">
+                    {activity.is_published ? "Si" : "No"}
+                  </dd>
                 </div>
                 <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                  <dt className="text-[10px] font-black uppercase tracking-widest text-slate-400">Creada</dt>
-                  <dd className="mt-2 text-sm font-bold text-slate-900">{formatDate(activity.created_at)}</dd>
+                  <dt className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                    Creada
+                  </dt>
+                  <dd className="mt-2 text-sm font-bold text-slate-900">
+                    {formatDate(activity.created_at)}
+                  </dd>
                 </div>
                 <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                  <dt className="text-[10px] font-black uppercase tracking-widest text-slate-400">Actualitzada</dt>
-                  <dd className="mt-2 text-sm font-bold text-slate-900">{formatDate(activity.updated_at)}</dd>
+                  <dt className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                    Actualitzada
+                  </dt>
+                  <dd className="mt-2 text-sm font-bold text-slate-900">
+                    {formatDate(activity.updated_at)}
+                  </dd>
                 </div>
                 <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4 sm:col-span-2">
-                  <dt className="text-[10px] font-black uppercase tracking-widest text-slate-400">Traduccions</dt>
+                  <dt className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                    Traduccions
+                  </dt>
                   <dd className="mt-2 text-sm font-bold text-slate-900 break-all">
-                    {activity.translations ? Object.keys(activity.translations).join(", ") || "-" : "-"}
+                    {activity.translations
+                      ? Object.keys(activity.translations).join(", ") || "-"
+                      : "-"}
                   </dd>
                 </div>
               </dl>
@@ -514,6 +611,18 @@ export const ActivityDetailPage = () => {
                 <Ticket className="h-5 w-5" />
                 Comprar Entrades
               </button>
+            )}
+
+            {/* Link to Master Event */}
+            {activity.event && (
+              <Link
+                to={`/agenda/${activity.event.slug}`}
+                className="flex items-center justify-center gap-3 w-full h-14 rounded-2xl border-2 border-primary text-primary text-xs font-black uppercase tracking-widest hover:bg-primary/5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                aria-label={`Veure a l'agenda: ${activity.event.title}`}
+              >
+                <CalendarDays className="h-4 w-4" />
+                Veure a l'Agenda
+              </Link>
             )}
 
             {/* iCal Download */}

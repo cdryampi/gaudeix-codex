@@ -45,7 +45,7 @@ export function EventDetailPage() {
     mutationFn: () => {
       const authHeaders = accessToken
         ? { Authorization: `Bearer ${accessToken}` }
-        : {};
+        : undefined;
       if (event?.is_favorited) {
         return apiDelete(`/events/${slug}/favorite/`, { headers: authHeaders });
       }
@@ -88,7 +88,7 @@ export function EventDetailPage() {
     mutationFn: () => {
       const authHeaders = accessToken
         ? { Authorization: `Bearer ${accessToken}` }
-        : {};
+        : undefined;
       return apiPost(`/events/${slug}/checkin/`, {}, { headers: authHeaders });
     },
     onSuccess: (data: any) => {
@@ -160,12 +160,12 @@ export function EventDetailPage() {
         isCheckinPending={checkinMutation.isPending}
         onFavorite={() =>
           isAuthenticated
-            ? favoriteMutation.mutate()
+            ? favoriteMutation.mutate(undefined)
             : toast.error("Inicia sesión para guardar favoritos")
         }
         onCheckin={() =>
           isAuthenticated
-            ? checkinMutation.mutate()
+            ? checkinMutation.mutate(undefined)
             : toast.error("Inicia sesión para realizar check-in")
         }
         onShare={handleShare}

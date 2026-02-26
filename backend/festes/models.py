@@ -70,13 +70,12 @@ class Festa(TranslatableModel, ContentBase):
         related_name="featured_in_festes",
         verbose_name="Cartell / Imatge destacada",
     )
-    poster = models.ForeignKey(
+    posters = models.ManyToManyField(
         "media_files.ImageFile",
-        null=True,
         blank=True,
-        on_delete=models.SET_NULL,
         related_name="posters_festes",
-        verbose_name="Cartell oficial",
+        verbose_name="Cartells oficials",
+        help_text="Un o més cartells de la festa.",
     )
     program_pdf = models.ForeignKey(
         "media_files.DocumentFile",
@@ -93,9 +92,10 @@ class Festa(TranslatableModel, ContentBase):
         verbose_name="Galeria d'imatges",
     )
 
-    # Relation with events
+    # Relation with events (ordered through FestaEvent)
     events = models.ManyToManyField(
         "events.Event",
+        through="FestaEvent",
         blank=True,
         related_name="part_of_festa",
         verbose_name="Esdeveniments",
@@ -498,6 +498,14 @@ class Activity(TranslatableModel):
         related_name="activities",
         verbose_name="Venue",
     )
+    event = models.ForeignKey(
+        'events.Event',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='festes_activities',
+        verbose_name=_("Esdeveniment vinculat"),
+    )
 
     category = models.CharField(max_length=100, verbose_name="Categoria")
     start_at = models.DateTimeField(
@@ -647,3 +655,27 @@ class Activity(TranslatableModel):
     def is_published(self) -> bool:
         """Derived from status field for API compatibility."""
         return self.status == ActivityStatusChoices.PUBLISHED
+
+class FestaEvent(models.Model):
+    """
+    Through model to connect Festa and Event with an explicit order.
+    On delete cascade is used because these are just link records.
+    Deleting a Festa will delete these links, but not the actual Events.
+    """
+    festa = models.ForeignKey(Festa, on_delete=models.CASCADE)
+    event = models.ForeignKey("events.Event", on_delete=models.CASCADE)
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        verbose_name = "Event de Festa"
+        verbose_name_plural = "Events de Festa"
+        ordering = ["order"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["festa", "event"],
+                name="unique_festa_event_link",
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.festa.title} -> {self.event.title} (Order: {self.order})"

@@ -17,7 +17,15 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
-from .models import Activity, ActivityStatusChoices, Festa, Program, ProgramStatusChoices, Sponsor, Venue
+from .models import (
+    Activity,
+    ActivityStatusChoices,
+    Festa,
+    Program,
+    ProgramStatusChoices,
+    Sponsor,
+    Venue,
+)
 from .permissions import IsAdminOrReadOnly
 from .adapters import (
     activity_to_vevent,
@@ -94,8 +102,8 @@ class FestaViewSet(viewsets.ModelViewSet):
 
     queryset = (  # type: ignore[attr-defined]
         Festa.objects.all()
-        .select_related("category", "featured_media", "poster", "program_pdf")
-        .prefetch_related("tags", "gallery", "sponsors", "events")
+        .select_related("category", "featured_media", "program_pdf")
+        .prefetch_related("tags", "gallery", "posters", "sponsors", "events")
     )
     serializer_class = FestaSerializer
     lookup_field = "slug"
@@ -495,7 +503,7 @@ class ActivityViewSet(viewsets.ModelViewSet):
     """API endpoints for scheduled activities inside festa programs."""
 
     queryset = Activity.objects.all().select_related(  # type: ignore[attr-defined]
-        "program", "program__festa", "venue"
+        "program", "program__festa", "venue", "event"
     )
     serializer_class = ActivitySerializer
     lookup_field = "slug"
@@ -510,6 +518,13 @@ class ActivityViewSet(viewsets.ModelViewSet):
         is_valid, reason = validate_ticket_url(ticket_url)
         if not is_valid:
             raise ValidationError({"ticket_url": reason})
+
+    def _activity_supports_event(self) -> bool:
+        try:
+            Activity._meta.get_field("event")
+            return True
+        except Exception:
+            return False
 
     def perform_create(self, serializer):
         self._validate_ticket_url_value(serializer.validated_data.get("ticket_url"))
@@ -560,6 +575,10 @@ class ActivityViewSet(viewsets.ModelViewSet):
         is_free = _normalize_bool_param(_get_str_param(params, "is_free"))
         if is_free is not None:
             queryset = queryset.filter(is_free=is_free)
+
+        has_event = _normalize_bool_param(_get_str_param(params, "has_event"))
+        if has_event is not None and self._activity_supports_event():
+            queryset = queryset.filter(event__isnull=not has_event)
 
         date_from = _parse_datetime_boundary(
             "date_from", _get_str_param(params, "date_from")

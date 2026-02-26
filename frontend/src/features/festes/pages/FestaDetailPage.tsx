@@ -8,7 +8,6 @@ import {
   ArrowLeft,
   CalendarDays,
   Download,
-  FileText,
   Image,
   PartyPopper,
   Star,
@@ -92,10 +91,10 @@ export const FestaDetailPage = () => {
       <section className="relative min-h-[70vh] overflow-hidden">
         <img
           src={
-            festa.poster?.variant_large ||
-            festa.poster?.file ||
             festa.featured_media?.variant_large ||
             festa.featured_media?.file ||
+            festa.posters?.[0]?.variant_large ||
+            festa.posters?.[0]?.file ||
             festa.image_url ||
             "/placeholder-festa.jpg"
           }
@@ -203,6 +202,50 @@ export const FestaDetailPage = () => {
                   className="prose prose-lg max-w-none text-slate-600"
                   dangerouslySetInnerHTML={{ __html: festa.program_text }}
                 />
+              </div>
+            )}
+
+            {/* Official Posters (Carousel) */}
+            {festa.posters && festa.posters.length > 0 && (
+              <div className="bg-slate-50 p-6 md:p-8 rounded-3xl border border-slate-100">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="p-3 bg-primary/10 rounded-2xl">
+                    <Image className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <h2 className="text-sm font-black uppercase tracking-widest text-slate-900">
+                      Carteles Oficiales
+                    </h2>
+                    <p className="text-xs text-slate-500 font-medium mt-1">
+                      Desliza para ver los carteles de la festa
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex overflow-x-auto gap-4 pb-6 snap-x snap-mandatory flex-nowrap hide-scrollbar">
+                  {festa.posters.map((img, index) => (
+                    <a
+                      key={img.id}
+                      href={img.variant_large || img.file}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="snap-center shrink-0 w-[85%] md:w-[60%] lg:w-[45%] flex flex-col group"
+                    >
+                      <div className="relative aspect-[1/1.414] rounded-2xl overflow-hidden bg-white shadow-md border border-slate-200">
+                        <img
+                          src={img.variant_medium || img.file}
+                          alt={`Cartel ${index + 1}`}
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          loading="lazy"
+                        />
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+                      </div>
+                      <p className="text-center text-xs font-bold text-slate-500 mt-4 uppercase tracking-widest">
+                        Cartel {index + 1} de {festa.posters.length}
+                      </p>
+                    </a>
+                  ))}
+                </div>
               </div>
             )}
 

@@ -31,6 +31,17 @@ class SponsorInline(admin.TabularInline):
     ordering = ("tier", "order")
 
 
+class FestaEventInline(admin.TabularInline):
+    """Inline admin for ordered festa events."""
+    
+    model = Festa.events.through
+    extra = 1
+    autocomplete_fields = ["event"]
+    verbose_name = "Esdeveniment vinculat"
+    verbose_name_plural = "Esdeveniments vinculats"
+    ordering = ["order"]
+
+
 @admin.register(Festa)
 class FestaAdmin(TranslatableAdmin):
     """Admin for Festa model."""
@@ -60,8 +71,8 @@ class FestaAdmin(TranslatableAdmin):
         "creado_por",
         "modificado_por",
     )
-    inlines = [SponsorInline]
-    filter_horizontal = ("tags", "gallery", "events")
+    inlines = [SponsorInline, FestaEventInline]
+    filter_horizontal = ("tags", "gallery", "posters")
 
     fieldsets = (
         (
@@ -94,7 +105,7 @@ class FestaAdmin(TranslatableAdmin):
             {
                 "fields": (
                     "featured_media",
-                    "poster",
+                    "posters",
                     "program_pdf",
                     "gallery",
                 ),
@@ -104,7 +115,7 @@ class FestaAdmin(TranslatableAdmin):
         (
             "Events",
             {
-                "fields": ("events", "tags"),
+                "fields": ("tags",),
                 "classes": ("collapse",),
             },
         ),

@@ -76,10 +76,10 @@ export const SiteTopbar = ({ isTransparent }: SiteTopbarProps) => {
           <SocialMediaBar scrolled={true} />
           <div className="flex items-center gap-3 border-l border-white/10 pl-8">
             <button className="text-[9px] font-black text-white">ES</button>
-            <button className="text-[9px] font-black text-white/40 hover:text-white transition-colors">
+            <button className="text-[9px] font-black text-white/80 hover:text-white transition-colors">
               CA
             </button>
-            <button className="text-[9px] font-black text-white/40 hover:text-white transition-colors">
+            <button className="text-[9px] font-black text-white/80 hover:text-white transition-colors">
               EN
             </button>
           </div>

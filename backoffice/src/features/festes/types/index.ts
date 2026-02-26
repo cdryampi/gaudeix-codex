@@ -40,9 +40,10 @@ export type Festa = {
   category_name?: string;
   tags?: Tag[];
   featured_media?: MediaItem | null;
-  poster?: MediaItem | null;
+  posters?: MediaItem[];
   program_pdf?: MediaItem | null;
   gallery?: MediaItem[];
+
   sponsors?: Sponsor[];
   events?: Event[];
   events_count?: number;
@@ -76,9 +77,11 @@ export type CreateFestaDTO = {
   category_id?: number | null;
   tag_ids?: number[];
   featured_media_id?: number | null;
-  poster_id?: number | null;
+  poster_ids?: number[];
   program_pdf_id?: number | null;
   gallery_ids?: number[];
+  event_ids?: number[];
+
   translations?: {
     [lang: string]: {
       title: string;
@@ -204,6 +207,14 @@ export type Activity = {
   venue: number | null;
   venue_slug: string | null;
   venue_name: string; // empty string when venue is null
+  event?: {
+    id: number;
+    slug: string;
+    title: string;
+    summary: string;
+    start_at: string;
+    end_at: string | null;
+  } | null;
   title: string;
   summary: string;
   description: string;
@@ -231,6 +242,7 @@ export type Activity = {
 export type CreateActivityDTO = {
   program_id: number;
   venue_id?: number | null;
+  event?: number | null;
   category: ActivityCategory;
   start_at: string;
   end_at: string;

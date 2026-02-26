@@ -4,6 +4,15 @@ export interface EventDate {
   end_at: string | null;
 }
 
+export interface FestesActivityReference {
+  id: number;
+  slug: string;
+  title?: string;
+  summary?: string;
+  festa_slug?: string;
+  program_slug?: string;
+}
+
 export interface Tag {
   id: number;
   name: string;
@@ -82,6 +91,9 @@ export interface Event {
   favorites_count?: number;
   occurrences_count: number;
   event_status: "upcoming" | "ongoing" | "finished";
+
+  // Optional linkage with festes programming
+  festes_activities?: FestesActivityReference[];
 }
 
 export interface EventListResponse {

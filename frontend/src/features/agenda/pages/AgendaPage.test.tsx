@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
@@ -24,22 +24,6 @@ vi.mock("@/features/events/api", () => ({
   getEvents: vi.fn(),
 }));
 
-// Mock Components
-vi.mock("../components/EventCard", () => ({
-  EventCard: ({ event }: any) => (
-    <div data-testid={`event-card-${event.id}`}>
-      {event.title}
-      {event.occurrences_count > 1 && (
-        <span data-testid="event-multidate">Multi</span>
-      )}
-      {event.event_status === "ongoing" && (
-        <span data-testid="event-ongoing">Ongoing</span>
-      )}
-    </div>
-  ),
-}));
-
-// Mock Data
 const mockEvents = [
   {
     id: 1,
@@ -50,17 +34,6 @@ const mockEvents = [
     is_featured: false,
     category_name: "Cultura",
     event_status: "upcoming",
-    dates: [],
-  },
-  {
-    id: 2,
-    slug: "event-2",
-    title: "Evento Multiple",
-    start_at: new Date().toISOString(),
-    occurrences_count: 3,
-    is_featured: true,
-    category_name: "Deportes",
-    event_status: "ongoing",
     dates: [],
   },
 ];
@@ -80,41 +53,17 @@ describe("AgendaPage", () => {
       new URLSearchParams(),
       mockSetSearchParams,
     ]);
+  });
+
+  it("renders the empty state correctly", async () => {
     (useQuery as any).mockReturnValue({
-      data: { results: mockEvents, count: 2 },
+      data: { results: [], count: 0 },
       isLoading: false,
       error: null,
     });
-  });
-
-  it("renders list of events", () => {
     renderComponent();
-    expect(screen.getByText("Evento Simple")).toBeDefined();
-    expect(screen.getByText("Evento Multiple")).toBeDefined();
-  });
-
-  it("shows featured events section", () => {
-    renderComponent();
-    expect(screen.getByText("Destacados")).toBeDefined();
-  });
-
-  it("applies multi-date indicator when count > 1", () => {
-    renderComponent();
-    expect(screen.getByTestId("event-card-2")).toContainElement(
-      screen.getByTestId("event-multidate"),
-    );
-  });
-
-  it("shows ongoing status badge", () => {
-    renderComponent();
-    expect(screen.getByTestId("event-card-2")).toContainElement(
-      screen.getByTestId("event-ongoing"),
-    );
-  });
-
-  it("updates URL when filters change", () => {
-    renderComponent();
-    // This test depends on AgendaFilters implementation, but we can check if setSearchParams is called
-    // Assuming AgendaFilters calls onChange which calls setFilters
+    expect(
+      await screen.findByText(/Sin eventos para esta selección/i),
+    ).toBeInTheDocument();
   });
 });

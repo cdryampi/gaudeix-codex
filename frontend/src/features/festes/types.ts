@@ -49,9 +49,10 @@ export interface Festa {
 
   // Media
   featured_media: ImageFile | null;
-  poster: ImageFile | null;
+  posters: ImageFile[];
   program_pdf: DocumentFile | null;
   gallery: ImageFile[];
+
   image_url: string;
 
   // Related
@@ -76,7 +77,6 @@ export interface FestaFilters {
   is_published?: boolean;
   is_current?: boolean;
 }
-
 
 // ============================================================================
 // Program Types
@@ -192,6 +192,14 @@ export interface Activity {
   venue: number | null;
   venue_slug: string | null;
   venue_name: string;
+  event?: {
+    id: number;
+    slug: string;
+    title: string;
+    summary: string;
+    start_at: string;
+    end_at: string | null;
+  } | null;
   title: string;
   summary: string;
   description: string;

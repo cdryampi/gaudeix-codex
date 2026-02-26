@@ -21,6 +21,7 @@ from festes.models import (  # pyright: ignore[reportImplicitRelativeImport]
     ProgramStatusChoices,
     Venue,
 )
+from events.models import Event  # pyright: ignore[reportImplicitRelativeImport]
 
 pytestmark = pytest.mark.django_db
 
@@ -62,6 +63,19 @@ def program(festa: Festa) -> Program:
         title="Programa Principal",
         status=ProgramStatusChoices.PUBLISHED,
         order=1,
+    )
+
+
+@pytest.fixture
+def test_event(festes_category: Category) -> Event:
+    return Event.objects.create(
+        title="Event Original",
+        summary="Aquest es el resum original",
+        description="Descripcio original",
+        category=festes_category,
+        start_at=timezone.now(),
+        end_at=timezone.now() + timedelta(hours=2),
+        is_published=True,
     )
 
 
@@ -299,6 +313,297 @@ def test_activity_create_published_triggers_notification_gateway(
 
     assert response.status_code == status.HTTP_201_CREATED
     assert len(calls) == 1
+
+
+def test_activity_create_mirrors_event_data(
+    admin_api_client: APIClient,
+    program: Program,
+    venue: Venue,
+    test_event: Event,
+) -> None:
+    start = timezone.now() + timedelta(days=9)
+    response = admin_api_client.post(
+        reverse("activity-list"),
+        {
+            "program_id": program.id,
+            "venue_id": venue.id,
+            "event": test_event.id,
+            "title": "",  # Blank title should mirror event
+            "summary": "",  # Blank summary should mirror event
+            "category": "music",
+            "start_at": start.isoformat(),
+            "end_at": (start + timedelta(hours=1)).isoformat(),
+            "is_free": True,
+            "status": ActivityStatusChoices.PUBLISHED,
+        },
+        format="json",
+    )
+
+    assert response.status_code == status.HTTP_201_CREATED, response.data
+    assert response.data["title"] == test_event.title
+    assert response.data["summary"] == test_event.summary
+
+
+def test_activity_patch_mirrors_from_existing_event_link(
+    admin_api_client: APIClient,
+    program: Program,
+    venue: Venue,
+    test_event: Event,
+) -> None:
+    start = timezone.now() + timedelta(days=11)
+    linked = Activity.objects.create(
+        program=program,
+        venue=venue,
+        event=test_event,
+        title="Manual title",
+        summary="Manual summary",
+        category="music",
+        start_at=start,
+        end_at=start + timedelta(hours=1),
+        is_free=True,
+        status=ActivityStatusChoices.DRAFT,
+    )
+
+    response = admin_api_client.patch(
+        reverse("activity-detail", kwargs={"slug": linked.slug}),
+        {
+            "title": "",
+            "summary": "",
+        },
+        format="json",
+    )
+
+    assert response.status_code == status.HTTP_200_OK, response.data
+    assert response.data["event"]["id"] == test_event.id
+    assert response.data["title"] == test_event.title
+    assert response.data["summary"] == test_event.summary
+
+
+def test_activity_patch_without_event_keeps_link_for_later_mirror(
+    admin_api_client: APIClient,
+    program: Program,
+    venue: Venue,
+    test_event: Event,
+) -> None:
+    start = timezone.now() + timedelta(days=11)
+    linked = Activity.objects.create(
+        program=program,
+        venue=venue,
+        event=test_event,
+        title="Titol manual",
+        summary="Resum manual",
+        category="music",
+        start_at=start,
+        end_at=start + timedelta(hours=1),
+        is_free=True,
+        status=ActivityStatusChoices.DRAFT,
+    )
+
+    preserve_response = admin_api_client.patch(
+        reverse("activity-detail", kwargs={"slug": linked.slug}),
+        {"category": "culture"},
+        format="json",
+    )
+    assert preserve_response.status_code == status.HTTP_200_OK, preserve_response.data
+    assert preserve_response.data["event"]["id"] == test_event.id
+
+    mirror_response = admin_api_client.patch(
+        reverse("activity-detail", kwargs={"slug": linked.slug}),
+        {"title": "", "summary": ""},
+        format="json",
+    )
+    assert mirror_response.status_code == status.HTTP_200_OK, mirror_response.data
+    assert mirror_response.data["event"]["id"] == test_event.id
+    assert mirror_response.data["title"] == test_event.title
+    assert mirror_response.data["summary"] == test_event.summary
+
+
+def test_activity_patch_allows_explicit_event_unlink(
+    admin_api_client: APIClient,
+    program: Program,
+    venue: Venue,
+    test_event: Event,
+) -> None:
+    start = timezone.now() + timedelta(days=12)
+    linked = Activity.objects.create(
+        program=program,
+        venue=venue,
+        event=test_event,
+        title="Title before unlink",
+        summary="Summary before unlink",
+        category="music",
+        start_at=start,
+        end_at=start + timedelta(hours=1),
+        is_free=True,
+        status=ActivityStatusChoices.DRAFT,
+    )
+
+    response = admin_api_client.patch(
+        reverse("activity-detail", kwargs={"slug": linked.slug}),
+        {
+            "event": None,
+            "title": "Title after unlink",
+            "summary": "Summary after unlink",
+        },
+        format="json",
+    )
+
+    assert response.status_code == status.HTTP_200_OK, response.data
+    assert response.data["event"] is None
+
+    linked.refresh_from_db()
+    assert linked.event_id is None
+
+
+def test_activities_filter_by_has_event(
+    anon_client: APIClient,
+    program: Program,
+    venue: Venue,
+    test_event: Event,
+) -> None:
+    start = timezone.now() + timedelta(days=13)
+    with_event = Activity.objects.create(
+        program=program,
+        venue=venue,
+        event=test_event,
+        title="Amb event",
+        category="music",
+        start_at=start,
+        end_at=start + timedelta(hours=1),
+        is_free=True,
+        status=ActivityStatusChoices.PUBLISHED,
+    )
+    without_event = Activity.objects.create(
+        program=program,
+        venue=venue,
+        title="Sense event",
+        category="music",
+        start_at=start + timedelta(days=1),
+        end_at=start + timedelta(days=1, hours=1),
+        is_free=True,
+        status=ActivityStatusChoices.PUBLISHED,
+    )
+
+    response_with = anon_client.get(reverse("activity-list"), {"has_event": "true"})
+    assert response_with.status_code == status.HTTP_200_OK
+    slugs_with = {item["slug"] for item in response_with.data["results"]}
+    assert with_event.slug in slugs_with
+    assert without_event.slug not in slugs_with
+
+    response_without = anon_client.get(reverse("activity-list"), {"has_event": "false"})
+    assert response_without.status_code == status.HTTP_200_OK
+    slugs_without = {item["slug"] for item in response_without.data["results"]}
+    assert without_event.slug in slugs_without
+    assert with_event.slug not in slugs_without
+
+
+def test_activity_detail_returns_event_null_after_event_is_deleted(
+    anon_client: APIClient,
+    program: Program,
+    venue: Venue,
+    test_event: Event,
+) -> None:
+    start = timezone.now() + timedelta(days=14)
+    linked = Activity.objects.create(
+        program=program,
+        venue=venue,
+        event=test_event,
+        title="Activitat amb event esborrat",
+        category="music",
+        start_at=start,
+        end_at=start + timedelta(hours=1),
+        is_free=True,
+        status=ActivityStatusChoices.PUBLISHED,
+    )
+
+    slug = linked.slug
+    test_event.delete()
+    linked.refresh_from_db()
+    assert linked.event_id is None
+
+    response = anon_client.get(reverse("activity-detail", kwargs={"slug": slug}))
+    assert response.status_code == status.HTTP_200_OK
+    assert response.data["event"] is None
+
+
+def test_activities_filter_unlinked_includes_unlink_and_deleted_event(
+    anon_client: APIClient,
+    admin_api_client: APIClient,
+    program: Program,
+    venue: Venue,
+    test_event: Event,
+) -> None:
+    start = timezone.now() + timedelta(days=15)
+    keep_linked = Activity.objects.create(
+        program=program,
+        venue=venue,
+        event=test_event,
+        title="Mantiene vinculo",
+        category="music",
+        start_at=start,
+        end_at=start + timedelta(hours=1),
+        is_free=True,
+        status=ActivityStatusChoices.PUBLISHED,
+    )
+    explicitly_unlinked = Activity.objects.create(
+        program=program,
+        venue=venue,
+        event=test_event,
+        title="Se desvincula por API",
+        category="music",
+        start_at=start + timedelta(days=1),
+        end_at=start + timedelta(days=1, hours=1),
+        is_free=True,
+        status=ActivityStatusChoices.PUBLISHED,
+    )
+    to_be_deleted_event = Event.objects.create(
+        title="Event temporal",
+        summary="Event per provar set null",
+        description="Event que sera esborrat",
+        category=program.festa.category,
+        start_at=timezone.now(),
+        end_at=timezone.now() + timedelta(hours=2),
+        is_published=True,
+    )
+    unlinked_by_delete = Activity.objects.create(
+        program=program,
+        venue=venue,
+        event=to_be_deleted_event,
+        title="Queda orfe en borrar event",
+        category="music",
+        start_at=start + timedelta(days=2),
+        end_at=start + timedelta(days=2, hours=1),
+        is_free=True,
+        status=ActivityStatusChoices.PUBLISHED,
+    )
+
+    unlink_response = admin_api_client.patch(
+        reverse("activity-detail", kwargs={"slug": explicitly_unlinked.slug}),
+        {"event": None},
+        format="json",
+    )
+    assert unlink_response.status_code == status.HTTP_200_OK
+    assert unlink_response.data["event"] is None
+
+    to_be_deleted_event.delete()
+    unlinked_by_delete.refresh_from_db()
+    assert unlinked_by_delete.event_id is None
+
+    response_unlinked = anon_client.get(
+        reverse("activity-list"), {"has_event": "false"}
+    )
+    assert response_unlinked.status_code == status.HTTP_200_OK
+    unlinked_slugs = {item["slug"] for item in response_unlinked.data["results"]}
+    assert explicitly_unlinked.slug in unlinked_slugs
+    assert unlinked_by_delete.slug in unlinked_slugs
+    assert keep_linked.slug not in unlinked_slugs
+
+    response_linked = anon_client.get(reverse("activity-list"), {"has_event": "true"})
+    assert response_linked.status_code == status.HTTP_200_OK
+    linked_slugs = {item["slug"] for item in response_linked.data["results"]}
+    assert keep_linked.slug in linked_slugs
+    assert explicitly_unlinked.slug not in linked_slugs
+    assert unlinked_by_delete.slug not in linked_slugs
 
 
 def test_activity_patch_from_draft_to_published_triggers_notification_once(

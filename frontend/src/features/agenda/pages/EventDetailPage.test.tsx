@@ -33,6 +33,7 @@ const mockEvent = {
     { id: 101, start_at: new Date(Date.now() - 100000).toISOString() }, // Past
     { id: 102, start_at: new Date(Date.now() + 100000).toISOString() }, // Future (Next)
   ],
+  festes_activities: [],
 };
 
 const renderComponent = () => {
@@ -77,5 +78,54 @@ describe("EventDetailPage", () => {
   it("highlights the next upcoming session", () => {
     renderComponent();
     expect(screen.getByText("Próxima")).toBeDefined();
+  });
+
+  it("shows neutral festes state when event is not linked", () => {
+    renderComponent();
+    expect(screen.getByText(/sin acto/i)).toBeDefined();
+  });
+
+  it("renders CTA to Festa Major when linked to an activity", () => {
+    const linkedEvent = {
+      ...mockEvent,
+      festes_activities: [
+        {
+          id: 1,
+          slug: "activity-1",
+          title: "Actividad 1",
+          festa_slug: "festa-1",
+        },
+      ],
+    };
+    (useQuery as any).mockImplementation(({ queryKey }: any) => {
+      if (queryKey[0] === "event") {
+        return { data: linkedEvent, isLoading: false, error: null };
+      }
+      return { data: { results: [] }, isLoading: false };
+    });
+
+    renderComponent();
+    const link = screen.getByRole("link", { name: /actividad 1/i });
+    expect(link).toBeTruthy();
+    expect(link.getAttribute("href")).toBe("/festes/activitats/activity-1");
+  });
+
+  it("renders CTA to Festa Major when linked to a festa only", () => {
+    const linkedEvent = {
+      ...mockEvent,
+      festes_activities: [
+        { id: 1, festa_slug: "festa-1" }, // No activity slug
+      ],
+    };
+    (useQuery as any).mockImplementation(({ queryKey }: any) => {
+      if (queryKey[0] === "event") {
+        return { data: linkedEvent, isLoading: false, error: null };
+      }
+      return { data: { results: [] }, isLoading: false };
+    });
+
+    renderComponent();
+    const link = screen.getByRole("link", { name: /acto de festa major/i });
+    expect(link.getAttribute("href")).toBe("/festes/festa-1");
   });
 });

@@ -39,8 +39,8 @@ export const FestaCard = ({ festa }: FestaCardProps) => {
       <div className="relative aspect-[3/4] w-full overflow-hidden">
         <img
           src={
-            festa.poster?.variant_medium ||
-            festa.poster?.file ||
+            festa.posters?.[0]?.variant_medium ||
+            festa.posters?.[0]?.file ||
             festa.featured_media?.variant_medium ||
             festa.featured_media?.file ||
             festa.image_url ||
