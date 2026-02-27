@@ -17,11 +17,13 @@
 ### Arrancar Servicios de Desarrollo
 
 **Windows (recomendado)**:
+
 ```bash
 start_dev.bat  # Arranca backend, frontend y backoffice automáticamente
 ```
 
 **Manual**:
+
 ```bash
 # Terminal 1 - Backend
 cd backend
@@ -38,6 +40,7 @@ npm run dev
 ```
 
 **URLs de acceso**:
+
 - Backend API: http://localhost:8000
 - Frontend: http://localhost:5173
 - Backoffice: http://localhost:5174
@@ -46,6 +49,7 @@ npm run dev
 ### Usuarios por Defecto
 
 Después de `python manage.py seed_users`:
+
 - **Admin**: Ver variables de entorno `ADMIN_USER` / `ADMIN_PASSWORD`
 - **Sistema**: Ver variables de entorno `SYSTEM_USER` / `SYSTEM_PASSWORD`
 - **Otros usuarios**: Consultar con el equipo o verificar en `.env` local
@@ -68,6 +72,7 @@ backend/
 ```
 
 **Patrón de archivos por app**:
+
 - `models.py` - Modelos Django ORM
 - `serializers.py` - DRF serializers (separados por acción: create/update/detail)
 - `views.py` - **Solo ViewSets**, no vistas basadas en funciones
@@ -95,6 +100,7 @@ def get_permissions(self):
 El app `media_files` es crítico para el CMS:
 
 **Características únicas**:
+
 - Generación automática de **3 variantes** de imágenes al subir:
   - `thumbnail`: 150px (miniatura)
   - `medium`: 600px (vista previa)
@@ -104,6 +110,7 @@ El app `media_files` es crítico para el CMS:
 - Validación: Max 10MB, formatos permitidos: `.jpg`, `.jpeg`, `.png`, `.webp`, `.gif`, `.pdf`, `.ics`, `.txt`, `.docx`, `.xlsx`
 
 **Endpoints**:
+
 ```
 POST   /api/v1/media/images/       # Upload con auto-generación de variantes
 GET    /api/v1/media/images/{id}/  # Detalle con URLs de todas las variantes
@@ -115,6 +122,7 @@ DELETE /api/v1/media/images/{id}/  # Elimina archivo + variantes
 El app `llm_translations` permite traducciones automáticas vía múltiples proveedores:
 
 **Proveedores soportados**:
+
 - OpenAI (`LLM_OPENAI_API_KEY`)
 - Google Gemini (`LLM_GEMINI_API_KEY`)
 - Anthropic (`LLM_ANTHROPIC_API_KEY`)
@@ -128,6 +136,7 @@ El app `llm_translations` permite traducciones automáticas vía múltiples prov
 ### Backend Django
 
 ✅ **Hacer**:
+
 - Usar `ModelViewSet` o `GenericViewSet` con mixins
 - Separar serializers por acción (create/update/detail)
 - Implementar `get_permissions()` para control granular
@@ -136,6 +145,7 @@ El app `llm_translations` permite traducciones automáticas vía múltiples prov
 - Tests con pytest y fixtures en `conftest.py`
 
 ❌ **Evitar**:
+
 - Vistas basadas en funciones (usar ViewSets)
 - Permisos globales (usar por acción)
 - Hardcodear secrets (usar env vars)
@@ -143,6 +153,7 @@ El app `llm_translations` permite traducciones automáticas vía múltiples prov
 ### Frontend/Backoffice React
 
 ✅ **Hacer**:
+
 - Importaciones con alias: `@/` (configurado en tsconfig)
 - Estructura por features: `src/features/[feature]/pages|components|api`
 - **Solo Lucide React** para iconos (ver `backoffice/UI_GUIDELINES.md`)
@@ -150,13 +161,16 @@ El app `llm_translations` permite traducciones automáticas vía múltiples prov
 - Variables de entorno con prefijo `VITE_`
 
 ❌ **Evitar**:
+
 - Otras librerías de iconos (FontAwesome, Heroicons, etc.)
 - Acceso directo a backend (siempre usar API)
 - Importaciones relativas largas (usar `@/`)
+- **Generar archivos `.js` compilados en `src/`**. Vite prioriza `.js` sobre `.tsx`, lo que causa que los cambios sean ignorados silenciosamente. Usa siempre ejecutables de TypeScript con `--noEmit`.
 
 ### Mobile (React Native + Expo)
 
 ✅ **Hacer**:
+
 - Importaciones con alias: `@/` para `src/` (configurado en tsconfig)
 - Estructura por features: `src/features/[feature]/pages|components|api`
 - NativeWind (Tailwind CSS) para estilos: `className="flex-1 bg-primary"`
@@ -166,6 +180,7 @@ El app `llm_translations` permite traducciones automáticas vía múltiples prov
 - Expo Secure Store para tokens/credenciales sensibles
 
 ❌ **Evitar**:
+
 - StyleSheet de React Native (usar NativeWind)
 - Acceso directo a backend (usar API client centralizado)
 - Hardcodear API URLs (usar env vars)
@@ -174,6 +189,7 @@ El app `llm_translations` permite traducciones automáticas vía múltiples prov
 ### Comandos Esenciales
 
 **Backend**:
+
 ```bash
 python manage.py migrate              # Aplicar migraciones
 python manage.py makemigrations --name descripcion  # Crear migración
@@ -185,6 +201,7 @@ black .                               # Formateo
 ```
 
 **Frontend/Backoffice**:
+
 ```bash
 npm run dev                           # Servidor desarrollo
 npm run build                         # Build producción
@@ -194,6 +211,7 @@ npx shadcn@latest add [componente]    # Agregar componente UI
 ```
 
 **Mobile**:
+
 ```bash
 cd mobile
 npm start                             # Iniciar Expo dev server
@@ -221,6 +239,7 @@ Variable `ENVIRONMENT` controla el profile:
 Ver documentación completa en `/docs/environment.md`. Las más importantes:
 
 **Backend**:
+
 ```bash
 ENVIRONMENT=local
 DJANGO_SECRET_KEY=django-insecure-...
@@ -229,11 +248,13 @@ DJANGO_ALLOWED_CORS_ORIGINS=http://localhost:5173,http://localhost:5174
 ```
 
 **Frontend/Backoffice** (prefijo `VITE_` obligatorio):
+
 ```bash
 VITE_API_BASE_URL=http://localhost:8000/api/v1
 ```
 
 **Mobile** (prefijo `EXPO_PUBLIC_` obligatorio):
+
 ```bash
 EXPO_PUBLIC_API_BASE_URL=http://localhost:8000/api/v1
 ```
@@ -330,6 +351,7 @@ Ver documentación completa en `/docs/deployment.md`:
 ## 📚 Documentación de Referencia
 
 **Archivos clave**:
+
 - `/docs/environment.md` - Variables de entorno completas
 - `/docs/deployment.md` - Guía de despliegue Docker/Dokploy
 - `/backend/[app]/README.md` - Documentación por app
@@ -337,9 +359,47 @@ Ver documentación completa en `/docs/deployment.md`:
 - `.vscode/tasks.json` - Tareas VS Code para auto-start
 - `.github/copilot-instructions.md` - Instrucciones detalladas para GitHub Copilot
 
+## 🪟 Reglas de Supervivencia en Windows (Anti-Errores Opencode)
+
+Para evitar que el modelo "la líe" o se quede bloqueado en este entorno:
+
+1.  **Rutas y Comandos**:
+    - Usa siempre **comillas dobles** para rutas con espacios.
+    - Evita `cd path && comando`. Usa el parámetro `workdir` de la herramienta `bash`.
+    - Si un comando falla con `ENOENT` o `uv_spawn`, intenta ejecutarlo desde la raíz del proyecto usando `--prefix` o rutas relativas completas.
+
+2.  **Persistencia Obligatoria**:
+    - **PROHIBIDO** decir "Tarea completada" sin haber usado la herramienta `Write` o `Edit`.
+    - Los subagentes a veces "simulan" el éxito en su memoria interna sin escribir en el disco. El Orquestador DEBE verificar la existencia del archivo con `ls` o `glob` inmediatamente después de una delegación.
+
+3.  **Gestión de Tests (Vitest/Jest)**:
+    - En Windows, Vitest puede fallar si no se especifica el `--root` o el `--config` correctamente desde la raíz.
+    - Patrón recomendado: `npm test --prefix backoffice -- ruta/al/test.test.ts`.
+
+4.  **Verificación de Evidencias**:
+    - Si una tarea de QA (Playwright/Screenshots) falla por el entorno, el agente debe reportar el error técnico pero validar la lógica mediante `Read` del código generado. No asumas éxito si no hay archivo de evidencia.
+
+5.  **Logs y Debugging**:
+    - Si te quedas "pillado", limpia el estado con `git status` para ver qué se ha escrito realmente y usa `todoread` para recalibrar el progreso.
+
+6.  **Limpieza Pre-Commit Obligatoria**:
+    - Antes de hacer cualquier `commit`, elimina archivos temporales y de debug generados por agentes o herramientas que no formen parte del cambio funcional.
+    - Incluye especialmente: logs ad-hoc (`*.log`, `*_out*.txt`), artefactos temporales (`tmp*`, `temp*`, `*.tmp`), y salidas de pruebas/manuales fuera de carpetas esperadas.
+    - Verifica con `git status` que sólo quedan archivos relevantes al alcance del ticket antes de confirmar el commit.
+7.  **Aislamiento de Errores de Lint**:
+    - Si el `checklist.py` falla en Lint, no intentes arreglar todo el monorepo.
+    - Ejecuta `npx eslint src` en la carpeta afectada y vuelca el resultado a un archivo (`npx eslint src > lint_errors.txt`).
+    - Filtra los resultados para asegurar que **tus** archivos modificados tienen 0 errores. Ignora errores en archivos no relacionados con tu ticket.
+8.  **Captura de Logs en Windows**:
+    - Para salidas de consola muy largas o con errores de encoding (UTF-16LE), usa `cmd /c "comando > log.txt"`. Esto permite leer el archivo posteriormente sin errores de piping.
+9.  **Higiene de Compilación en Backoffice**:
+    - Si los cambios en `.tsx` no se reflejan, es probable que haya archivos `.js` antiguos en `src/`.
+    - Usa `npm run clean:js` en `backoffice/` periódicamente para limpiar la carpeta de fuentes.
+
 ## ⚠️ Anti-Patrones Específicos de Codex
 
 ❌ **NO hacer**:
+
 1. Usar vistas basadas en funciones en nuevo código backend (solo ViewSets)
 2. Instalar librerías de iconos que no sean Lucide React
 3. Acceder a base de datos directamente desde frontend
@@ -347,6 +407,8 @@ Ver documentación completa en `/docs/deployment.md`:
 5. Modificar directorio `/chatGPT/` sin instrucción explícita
 6. Hacer cambios breaking en API sin versionado
 7. Saltarse tests (mínimo 80% cobertura backend)
+8. **Dejar archivos `.js` compilados al lado de `.tsx` en carpetas servidas por Vite.** Si Vite encuentra un `.js` y un `.tsx`, servirá el `.js` antiguo ignorando las actualizaciones.
+9. **Commitear archivos temporales/debug de agentes** (logs, outputs de prueba manual, dumps, artefactos transitorios) que no aportan valor al cambio.
 
 ## 🎨 Casos de Uso Comunes
 
@@ -366,7 +428,7 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
 class MiViewSet(viewsets.ModelViewSet):
     queryset = MiModelo.objects.all()
     serializer_class = MiSerializer
-    
+
     def get_permissions(self):
         if self.action == 'list':
             return [permissions.AllowAny()]
@@ -379,21 +441,17 @@ class MiViewSet(viewsets.ModelViewSet):
 
 ```typescript
 // backoffice/src/features/media/api/uploadImage.ts
-import axios from 'axios';
+import axios from "axios";
 
 export const uploadImage = async (file: File) => {
   const formData = new FormData();
-  formData.append('file', file);
-  formData.append('title', file.name);
-  
-  const response = await axios.post(
-    '/api/v1/media/images/',
-    formData,
-    {
-      headers: { 'Content-Type': 'multipart/form-data' }
-    }
-  );
-  
+  formData.append("file", file);
+  formData.append("title", file.name);
+
+  const response = await axios.post("/api/v1/media/images/", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+
   // Respuesta incluye: thumbnail, medium, large URLs
   return response.data;
 };
@@ -404,9 +462,13 @@ export const uploadImage = async (file: File) => {
 ```tsx
 // backoffice/src/features/dashboard/components/StatsCard.tsx
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { TrendingUp } from "lucide-react";  // ✅ Solo Lucide
+import { TrendingUp } from "lucide-react"; // ✅ Solo Lucide
 
-export function StatsCard({ title, value, trend }: {
+export function StatsCard({
+  title,
+  value,
+  trend,
+}: {
   title: string;
   value: string;
   trend: string;

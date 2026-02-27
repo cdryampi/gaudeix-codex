@@ -12,6 +12,7 @@ priority: P1
 ## 📋 PROJECT OVERVIEW
 
 **Gaudeix Codex** is a monorepo containing:
+
 - **Backend**: Django REST Framework + PostgreSQL
 - **Frontend**: React + Vite SPA
 - **Backoffice**: React Admin panel
@@ -52,12 +53,12 @@ gaudeix-codex/
 
 This is a **MOBILE-FIRST** project with supporting web interfaces.
 
-| Component | Type | Primary Agent | Stack |
-|-----------|------|---------------|-------|
-| **Mobile** (Priority 1) | React Native | `mobile-developer` | RN + Expo |
-| **Backend** | Django REST | `backend-specialist` | Django + PostgreSQL |
-| **Frontend** | React SPA | `frontend-specialist` | React + Vite + Tailwind v4 |
-| **Backoffice** | React Admin | `frontend-specialist` | React Admin |
+| Component               | Type         | Primary Agent         | Stack                      |
+| ----------------------- | ------------ | --------------------- | -------------------------- |
+| **Mobile** (Priority 1) | React Native | `mobile-developer`    | RN + Expo                  |
+| **Backend**             | Django REST  | `backend-specialist`  | Django + PostgreSQL        |
+| **Frontend**            | React SPA    | `frontend-specialist` | React + Vite + Tailwind v4 |
+| **Backoffice**          | React Admin  | `frontend-specialist` | React Admin                |
 
 🔴 **Mobile work = mobile-developer ONLY. Never use frontend-specialist for mobile.**
 
@@ -68,12 +69,14 @@ This is a **MOBILE-FIRST** project with supporting web interfaces.
 This project is **Spanish-first**.
 
 ### Communication
+
 - **User interface**: Spanish (UI labels, messages, content)
 - **User-facing docs**: Spanish (README.md visible to clients)
 - **Code & Comments**: English (variables, functions, technical comments)
 - **Internal docs**: English or Spanish based on audience
 
 ### Responses to User
+
 - **User speaks Spanish** → Respond in Spanish
 - **Code/logs** → Always English
 - **UI strings** → Always Spanish
@@ -83,6 +86,7 @@ This project is **Spanish-first**.
 ## 📱 MOBILE-SPECIFIC RULES
 
 ### Technology Stack
+
 - **Core**: React Native (Expo managed workflow recommended)
 - **Navigation**: React Navigation v6+
 - **State**: React Context + Hooks (or Redux if complex)
@@ -90,12 +94,14 @@ This project is **Spanish-first**.
 - **Styling**: StyleSheet or styled-components (NO Tailwind in Mobile)
 
 ### Design Principles
+
 - **Follow `@[skills/mobile-design]`** for all UI decisions
 - **Platform awareness**: Respect iOS/Android differences
 - **Performance**: Lazy loading, FlatList for lists
 - **Offline-first**: Handle connectivity issues gracefully
 
 ### Testing
+
 - **Unit**: Jest + React Native Testing Library
 - **E2E**: Detox (if configured)
 
@@ -104,12 +110,14 @@ This project is **Spanish-first**.
 ## 🖥️ BACKEND-SPECIFIC RULES
 
 ### Technology Stack
+
 - **Framework**: Django 4+ with Django REST Framework
 - **Database**: PostgreSQL 15+
 - **Auth**: JWT (django-rest-framework-simplejwt)
 - **Environment**: `.venv` in project root (all platforms)
 
 ### Django Conventions
+
 - **API Versioning**: `/api/v1/` namespace
 - **Serializers**: Always use ModelSerializers
 - **Permissions**: Class-based permissions (IsAuthenticated, etc.)
@@ -117,6 +125,7 @@ This project is **Spanish-first**.
 - **Migrations**: ALWAYS run `makemigrations` + `migrate`
 
 ### Critical Commands
+
 ```bash
 # Activate from project root
 .\.venv\Scripts\activate  # Windows
@@ -132,6 +141,7 @@ python manage.py runserver
 ## 🌐 FRONTEND-SPECIFIC RULES
 
 ### Technology Stack (Public Site)
+
 - **Framework**: React 18 + Vite
 - **Styling**: Tailwind CSS v4 + Flowbite React
 - **Routing**: React Router v6
@@ -139,28 +149,40 @@ python manage.py runserver
 - **Port**: `http://localhost:5173`
 
 ### Backoffice Stack
+
 - **Framework**: React Admin
 - **Auth**: JWT against Django API
 - **Port**: `http://localhost:5174`
 
 ### Design Rules
+
 - **Follow `@[skills/frontend-design]`** for web UI
 - **NO purple/violet colors** (global ban)
 - **NO template layouts** (custom designs only)
 - **Responsive**: Mobile-first approach
 - **SEO**: Follow `@[skills/seo-fundamentals]`
 
+### Vite & TypeScript Rules
+
+🔴 **CRITICAL**: Never generate or leave `.js` compiled files alongside `.tsx` files in the `src/` directory.
+
+- If you run `tsc`, **always** use `--noEmit` or ensure `outDir` is set to `dist/`.
+- **Why?** Vite resolves `.js` files before `.tsx`. If a compiled `.js` file is left in `src/`, Vite will serve the outdated `.js` file instead of the new `.tsx` file, burying your updates and causing silent caching bugs. If Vite refuses to load your updates, run `rm **/*.js` in your `src/` and clear the `node_modules/.vite` cache.
+
 ---
 
 ## 🔧 ENVIRONMENT VARIABLES
 
 ### Centralized `.env` Files (Root)
+
 - `.env_backend` → Backend configuration
 - `.env_backoffice` → Backoffice Vite config
 - `.env_frontend` → Frontend Vite config
 
 ### Module-Specific `.env`
+
 Each module has its own `.env` in its root:
+
 - `backend/.env`
 - `backoffice/.env.local`
 - `frontend/.env.local`
@@ -174,11 +196,13 @@ Each module has its own `.env` in its root:
 ### Starting Development (All Services)
 
 **Windows**:
+
 ```bash
 .\start_dev.bat
 ```
 
 **Manual**:
+
 ```bash
 # Terminal 1: Backend
 cd backend
@@ -197,18 +221,21 @@ npm run dev
 ### Running Tests
 
 **Backend**:
+
 ```bash
 cd backend
 pytest
 ```
 
 **Frontend/Backoffice**:
+
 ```bash
 cd frontend  # or backoffice
 npm test
 ```
 
 **Mobile**:
+
 ```bash
 cd mobile
 npm test
@@ -245,15 +272,15 @@ python .agent/scripts/verify_all.py . --url http://localhost:8000
 
 ## 🎭 AGENT ACTIVATION RULES
 
-| Task | Agent | Skills |
-|------|-------|--------|
-| Mobile UI/UX | `mobile-developer` | mobile-design |
-| Django API | `backend-specialist` | api-patterns, database-design, nodejs-best-practices |
-| Database Schema | `database-architect` | database-design, prisma-expert |
-| React Web UI | `frontend-specialist` | frontend-design, react-patterns, tailwind-patterns |
-| Security Audit | `security-auditor` | vulnerability-scanner, red-team-tactics |
-| Debugging | `debugger` | systematic-debugging |
-| Planning | `project-planner` | brainstorming, plan-writing, architecture |
+| Task            | Agent                 | Skills                                               |
+| --------------- | --------------------- | ---------------------------------------------------- |
+| Mobile UI/UX    | `mobile-developer`    | mobile-design                                        |
+| Django API      | `backend-specialist`  | api-patterns, database-design, nodejs-best-practices |
+| Database Schema | `database-architect`  | database-design, prisma-expert                       |
+| React Web UI    | `frontend-specialist` | frontend-design, react-patterns, tailwind-patterns   |
+| Security Audit  | `security-auditor`    | vulnerability-scanner, red-team-tactics              |
+| Debugging       | `debugger`            | systematic-debugging                                 |
+| Planning        | `project-planner`     | brainstorming, plan-writing, architecture            |
 
 ---
 
@@ -292,6 +319,7 @@ python .agent/scripts/verify_all.py . --url http://localhost:8000
 ## 🚨 PROHIBITED ACTIONS
 
 ❌ **NEVER**:
+
 - Mix mobile and frontend agents
 - Skip GEMINI.md reading on session start
 - Commit `.env` files
@@ -306,6 +334,7 @@ python .agent/scripts/verify_all.py . --url http://localhost:8000
 ## ✅ MANDATORY ACTIONS
 
 ✅ **ALWAYS**:
+
 - Read agent files before implementation
 - Activate virtual environment before backend work
 - Use correct module directory for commands
@@ -335,6 +364,7 @@ For new AI session:
 ## 📞 LEGACY REFERENCES
 
 For historical context, legacy documents exist:
+
 - `agents/` - Old subagent definitions (replaced by `.agent/agents/`)
 - `chatGPT/` - Old workflow guides
 - `AGENTS.md` - Old agent overview
