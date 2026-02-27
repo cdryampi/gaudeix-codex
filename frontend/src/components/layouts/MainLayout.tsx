@@ -2,6 +2,7 @@ import { ReactNode, useEffect, useState } from "react";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteTopbar } from "@/components/site/SiteTopbar";
+import { FestaAnnouncementBar } from "@/components/site/FestaAnnouncementBar";
 import { useLocation } from "react-router-dom";
 import { apiGet } from "@/lib/api";
 import { SiteSettings } from "@/features/site-settings/types";
@@ -45,9 +46,12 @@ export function MainLayout({ children }: MainLayoutProps) {
       {/* GLOBAL HEADER WRAPPER */}
       <div className="fixed top-0 z-[1000] w-full">
         <div
-          className={`transition-all duration-500 ease-in-out overflow-hidden ${scrolled ? "h-0 opacity-0" : "h-12 opacity-100"}`}
+          className={`transition-all duration-500 ease-in-out overflow-hidden ${scrolled ? "h-0 opacity-0" : "h-auto opacity-100"}`}
         >
-          <SiteTopbar isTransparent={isTransparent} />
+          <FestaAnnouncementBar />
+          <div className="h-12 overflow-hidden">
+            <SiteTopbar isTransparent={isTransparent} />
+          </div>
         </div>
         <SiteHeader
           siteName={settings?.site_name}

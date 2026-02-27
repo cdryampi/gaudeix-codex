@@ -4,7 +4,7 @@
  */
 
 import { Link } from "react-router-dom";
-import { ChevronRight, CalendarDays, Star, Users } from "lucide-react";
+import { ChevronRight, CalendarDays, Users } from "lucide-react";
 import { Festa } from "../types";
 
 interface FestaCardProps {
@@ -52,16 +52,6 @@ export const FestaCard = ({ festa }: FestaCardProps) => {
 
         {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-
-        {/* Current Badge */}
-        {festa.is_current && (
-          <div className="absolute top-4 left-4">
-            <div className="flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-[10px] font-black uppercase tracking-widest text-white shadow-lg">
-              <Star className="h-3 w-3" />
-              Festa Actual
-            </div>
-          </div>
-        )}
 
         {/* Year Badge */}
         <div className="absolute top-4 right-4">

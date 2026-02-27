@@ -7,17 +7,18 @@ import { useQuery } from "@tanstack/react-query";
 import {
   ArrowLeft,
   CalendarDays,
-  Download,
   Image,
   PartyPopper,
-  Star,
   Users,
   ChevronRight,
 } from "lucide-react";
 
 import { getFestaBySlug } from "../api";
 import { SponsorGrid } from "../components/SponsorGrid";
-import { EventCard } from "@/features/agenda/components/EventCard";
+import { ProgramTriptychSection } from "../components/ProgramTriptychSection";
+import { ProgramLeafletGallery } from "../components/ProgramLeafletGallery";
+import { ProgramAtAGlance } from "../components/ProgramAtAGlance";
+import { ProgramImageGallery } from "../components/ProgramImageGallery";
 
 export const FestaDetailPage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -86,9 +87,9 @@ export const FestaDetailPage = () => {
         : "";
 
   return (
-    <main className="min-h-screen bg-white">
-      {/* Hero Section with Poster */}
-      <section className="relative min-h-[70vh] overflow-hidden">
+    <main className="min-h-screen bg-white selection:bg-accent selection:text-slate-900">
+      {/* Hero Section with Poster - Editorial Style */}
+      <section className="relative min-h-[75vh] md:min-h-[85vh] overflow-hidden flex flex-col">
         <img
           src={
             festa.featured_media?.variant_large ||
@@ -99,231 +100,156 @@ export const FestaDetailPage = () => {
             "/placeholder-festa.jpg"
           }
           alt={festa.title}
-          className="absolute inset-0 h-full w-full object-cover"
+          className="absolute inset-0 h-full w-full object-cover scale-105"
         />
 
-        {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/60 to-slate-900/20" />
+        {/* Gradient Overlay for Readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/70 to-slate-900/20" />
+
+        <button
+          onClick={() => navigate(-1)}
+          className="absolute z-20 top-6 left-6 md:top-12 md:left-20 inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-white/60 hover:text-accent transition-colors backdrop-blur-md bg-black/20 px-4 py-2 rounded-full border border-white/10"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" />
+          Tornar
+        </button>
 
         {/* Content */}
-        <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-20">
-          <button
-            onClick={() => navigate(-1)}
-            className="absolute top-6 left-6 md:top-12 md:left-20 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/80 hover:text-white transition-colors"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Volver
-          </button>
-
+        <div className="relative z-10 flex flex-col justify-end flex-1 p-6 md:p-20 container mx-auto mb-20 md:mb-24">
           {/* Badges */}
-          <div className="flex flex-wrap gap-3 mb-6">
-            {festa.is_current && (
-              <div className="flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-[10px] font-black uppercase tracking-widest text-white shadow-lg">
-                <Star className="h-3 w-3" />
-                Festa Actual
-              </div>
-            )}
-            <div className="rounded-full bg-white/20 backdrop-blur-md px-4 py-2 text-sm font-black text-white">
+          <div className="flex flex-wrap gap-3 mb-8">
+            <div className="rounded-full bg-white/10 border border-white/20 backdrop-blur-md px-4 py-2 text-[10px] font-black uppercase tracking-widest text-white">
               {festa.year}
             </div>
+            {festa.category_name && (
+              <div className="rounded-full bg-white/10 border border-white/20 backdrop-blur-md px-4 py-2 text-[10px] font-black uppercase tracking-widest text-white">
+                {festa.category_name}
+              </div>
+            )}
           </div>
 
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-tight tracking-tight max-w-4xl">
+          <h1 className="text-[clamp(3rem,8vw,6rem)] font-black text-white leading-[0.9] tracking-tighter max-w-5xl uppercase drop-shadow-2xl">
             {festa.title}
           </h1>
 
           {festa.subtitle && (
-            <p className="text-xl md:text-2xl text-white/70 mt-4 max-w-2xl font-medium italic">
+            <p className="text-xl md:text-3xl text-white/80 mt-6 max-w-3xl font-medium leading-snug">
               {festa.subtitle}
             </p>
           )}
 
           {/* Meta Info */}
-          <div className="flex flex-wrap gap-6 mt-8">
+          <div className="flex flex-wrap items-center gap-8 mt-12 bg-black/30 backdrop-blur-sm p-6 rounded-3xl border border-white/10 w-fit">
             {dateRange && (
-              <div className="flex items-center gap-2 text-white/80">
-                <CalendarDays className="h-5 w-5" />
-                <span className="text-sm font-bold">{dateRange}</span>
+              <div className="flex items-center gap-3 text-white">
+                <div className="p-2.5 bg-white/10 rounded-xl">
+                  <CalendarDays className="h-5 w-5 text-accent" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50">
+                    Quan
+                  </span>
+                  <span className="text-sm font-bold">{dateRange}</span>
+                </div>
               </div>
             )}
+
+            {(festa.duration_days > 0 ||
+              (festa.events && festa.events.length > 0)) && (
+              <div className="w-px h-10 bg-white/10 hidden sm:block" />
+            )}
+
             {festa.duration_days > 0 && (
-              <div className="text-sm font-bold text-white/60">
-                {festa.duration_days} días de celebración
+              <div className="flex items-center gap-3 text-white">
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50">
+                    Duració
+                  </span>
+                  <span className="text-sm font-bold">
+                    {festa.duration_days} dies
+                  </span>
+                </div>
               </div>
             )}
+
             {festa.events && festa.events.length > 0 && (
-              <div className="flex items-center gap-2 text-white/60">
-                <Users className="h-4 w-4" />
-                <span className="text-sm font-bold">
-                  {festa.events.length} eventos
-                </span>
-              </div>
+              <>
+                <div className="w-px h-10 bg-white/10 hidden sm:block" />
+                <div className="flex items-center gap-3 text-white">
+                  <div className="p-2.5 bg-white/10 rounded-xl">
+                    <Users className="h-5 w-5 text-accent" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50">
+                      Agenda
+                    </span>
+                    <span className="text-sm font-bold">
+                      {festa.events.length} actes
+                    </span>
+                  </div>
+                </div>
+              </>
             )}
           </div>
         </div>
       </section>
 
-      {/* Summary Bar */}
-      {festa.summary && (
-        <section className="bg-primary py-8">
-          <div className="container mx-auto px-6">
-            <p className="text-xl md:text-2xl text-white/90 text-center font-medium max-w-4xl mx-auto">
-              {festa.summary}
-            </p>
-          </div>
-        </section>
-      )}
+      {/* At A Glance Section */}
+      <ProgramAtAGlance festa={festa} />
 
       {/* Content */}
-      <section className="container mx-auto px-6 py-20">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
+      <section className="container mx-auto px-6 py-12 md:py-20">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
           {/* Main Content */}
-          <div className="lg:col-span-2 space-y-16">
-            {/* Description */}
-            {festa.description && (
-              <div>
-                <h2 className="text-sm font-black uppercase tracking-widest text-primary mb-6">
-                  Sobre la Festa
-                </h2>
-                <div
-                  className="prose prose-lg max-w-none text-slate-600"
-                  dangerouslySetInnerHTML={{ __html: festa.description }}
-                />
-              </div>
-            )}
+          <div className="lg:col-span-8 space-y-20">
+            {/* Description and Program Text combined for editorial flow */}
+            {(festa.description || festa.program_text) && (
+              <div className="prose prose-lg md:prose-xl max-w-none prose-headings:font-black prose-headings:text-slate-900 prose-p:text-slate-600 prose-a:text-primary hover:prose-a:text-accent prose-strong:text-slate-900">
+                {festa.summary && (
+                  <p className="text-2xl text-slate-900 font-medium leading-relaxed mb-10 border-l-4 border-accent pl-6 py-2">
+                    {festa.summary}
+                  </p>
+                )}
 
-            {/* Program Text */}
-            {festa.program_text && (
-              <div>
-                <h2 className="text-sm font-black uppercase tracking-widest text-primary mb-6">
-                  Programa
-                </h2>
-                <div
-                  className="prose prose-lg max-w-none text-slate-600"
-                  dangerouslySetInnerHTML={{ __html: festa.program_text }}
-                />
-              </div>
-            )}
+                {festa.description && (
+                  <div
+                    dangerouslySetInnerHTML={{ __html: festa.description }}
+                  />
+                )}
 
-            {/* Official Posters (Carousel) */}
-            {festa.posters && festa.posters.length > 0 && (
-              <div className="bg-slate-50 p-6 md:p-8 rounded-3xl border border-slate-100">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="p-3 bg-primary/10 rounded-2xl">
-                    <Image className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <h2 className="text-sm font-black uppercase tracking-widest text-slate-900">
-                      Carteles Oficiales
+                {festa.program_text && (
+                  <div className="mt-12 bg-slate-50 p-8 md:p-12 rounded-[2rem] border border-slate-100">
+                    <h2 className="text-xs font-black uppercase tracking-[0.2em] text-primary mb-6 !mt-0">
+                      Notes del Programa
                     </h2>
-                    <p className="text-xs text-slate-500 font-medium mt-1">
-                      Desliza para ver los carteles de la festa
-                    </p>
+                    <div
+                      dangerouslySetInnerHTML={{ __html: festa.program_text }}
+                    />
                   </div>
-                </div>
-
-                <div className="flex overflow-x-auto gap-4 pb-6 snap-x snap-mandatory flex-nowrap hide-scrollbar">
-                  {festa.posters.map((img, index) => (
-                    <a
-                      key={img.id}
-                      href={img.variant_large || img.file}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="snap-center shrink-0 w-[85%] md:w-[60%] lg:w-[45%] flex flex-col group"
-                    >
-                      <div className="relative aspect-[1/1.414] rounded-2xl overflow-hidden bg-white shadow-md border border-slate-200">
-                        <img
-                          src={img.variant_medium || img.file}
-                          alt={`Cartel ${index + 1}`}
-                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                          loading="lazy"
-                        />
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
-                      </div>
-                      <p className="text-center text-xs font-bold text-slate-500 mt-4 uppercase tracking-widest">
-                        Cartel {index + 1} de {festa.posters.length}
-                      </p>
-                    </a>
-                  ))}
-                </div>
+                )}
               </div>
             )}
 
-            {/* Events */}
-            {festa.events && festa.events.length > 0 && (
-              <div>
-                <h2 className="text-sm font-black uppercase tracking-widest text-primary mb-6">
-                  Eventos ({festa.events.length})
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {festa.events.map((event) => (
-                    <EventCard key={event.id} event={event} />
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Gallery */}
-            {festa.gallery && festa.gallery.length > 0 && (
-              <div>
-                <h2 className="text-sm font-black uppercase tracking-widest text-primary mb-6">
-                  Galería ({festa.gallery.length} fotos)
-                </h2>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {festa.gallery.map((image) => (
-                    <a
-                      key={image.id}
-                      href={image.variant_large || image.file}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="group relative aspect-square rounded-2xl overflow-hidden bg-slate-100"
-                    >
-                      <img
-                        src={image.variant_medium || image.file}
-                        alt={image.title || "Foto de la festa"}
-                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                      />
-                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                        <Image className="h-8 w-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
-                      </div>
-                    </a>
-                  ))}
-                </div>
-              </div>
-            )}
+            {/* Program Triptych Section component injected here */}
+            {/* It's self-contained and styled appropriately */}
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-8">
-            {/* Quick Actions */}
-            {festa.program_pdf && (
-              <div className="p-8 rounded-3xl bg-slate-50 border border-slate-100">
-                <h3 className="text-sm font-black uppercase tracking-widest text-slate-900 mb-6">
-                  Programa Oficial
-                </h3>
-                <a
-                  href={festa.program_pdf.file}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center justify-center gap-3 w-full h-14 rounded-2xl bg-primary text-white text-xs font-black uppercase tracking-widest hover:bg-primary/90 transition-colors"
-                >
-                  <Download className="h-4 w-4" />
-                  Descargar PDF
-                </a>
-              </div>
-            )}
-
+          <div className="lg:col-span-4 space-y-8">
             {/* Tags */}
             {festa.tags && festa.tags.length > 0 && (
-              <div className="p-8 rounded-3xl bg-slate-50 border border-slate-100">
-                <h3 className="text-sm font-black uppercase tracking-widest text-slate-900 mb-6">
-                  Etiquetas
+              <div className="p-8 rounded-[2rem] bg-slate-50 border border-slate-100">
+                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-6">
+                  Categoria i Etiquetes
                 </h3>
                 <div className="flex flex-wrap gap-2">
+                  <span className="px-4 py-2 rounded-full bg-slate-900 text-[10px] font-black uppercase tracking-widest text-white">
+                    {festa.category_name}
+                  </span>
                   {festa.tags.map((tag) => (
                     <span
                       key={tag.id}
-                      className="px-4 py-2 rounded-full bg-white border border-slate-200 text-xs font-bold text-slate-600"
+                      className="px-4 py-2 rounded-full bg-white border border-slate-200 text-[10px] font-bold text-slate-600 uppercase tracking-wider"
                     >
                       {tag.name}
                     </span>
@@ -331,19 +257,83 @@ export const FestaDetailPage = () => {
                 </div>
               </div>
             )}
+
+            {/* Official Posters Mini-Gallery inside Sidebar */}
+            {festa.posters && festa.posters.length > 0 && (
+              <div className="p-8 rounded-[2rem] bg-slate-950 text-white overflow-hidden relative">
+                <div className="absolute top-0 right-0 p-8 opacity-10">
+                  <Image className="w-24 h-24" />
+                </div>
+                <div className="relative z-10">
+                  <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-6">
+                    Cartells Oficials
+                  </h3>
+                  <div className="flex gap-4 overflow-x-auto pb-4 snap-x hide-scrollbar">
+                    {festa.posters.map((img, index) => (
+                      <a
+                        key={img.id}
+                        href={img.variant_large || img.file}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="snap-start shrink-0 w-4/5 flex flex-col group"
+                      >
+                        <div className="aspect-[1/1.414] rounded-xl overflow-hidden shadow-lg">
+                          <img
+                            src={img.variant_medium || img.file}
+                            alt={`Cartel ${index + 1}`}
+                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          />
+                        </div>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </section>
 
+      {/* Tríptico Program Section */}
+      <ProgramTriptychSection festa={festa} />
+
+      {/* Leaflet Gallery for Events */}
+      <section className="bg-white py-24">
+        <div className="container mx-auto px-6">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+            <div>
+              <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-3">
+                Agenda
+              </h2>
+              <h3 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter">
+                Actes Destacats
+              </h3>
+            </div>
+            <Link
+              to="/festes/programacio"
+              className="inline-flex items-center gap-2 h-12 px-6 rounded-xl bg-slate-50 text-slate-900 border border-slate-200 text-xs font-black uppercase tracking-widest hover:border-slate-300 hover:bg-slate-100 transition-colors"
+            >
+              Veure tota l'agenda
+              <ChevronRight className="h-4 w-4" />
+            </Link>
+          </div>
+
+          <ProgramLeafletGallery festa={festa} />
+        </div>
+      </section>
+
+      {/* Gallery Section */}
+      <ProgramImageGallery images={festa.gallery} />
+
       {/* Sponsors Section */}
       {festa.sponsors && festa.sponsors.length > 0 && (
-        <section className="bg-slate-50 py-20">
+        <section className="bg-white py-24">
           <div className="container mx-auto px-6">
-            <h2 className="text-sm font-black uppercase tracking-widest text-primary mb-2 text-center">
-              Gracias a nuestros
+            <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2 text-center">
+              Amb el suport de
             </h2>
-            <h3 className="text-4xl md:text-5xl font-black text-slate-900 text-center mb-16">
-              Patrocinadores
+            <h3 className="text-3xl md:text-4xl font-black text-slate-900 text-center mb-16">
+              Patrocinadors oficials
             </h3>
             <SponsorGrid sponsors={festa.sponsors} />
           </div>
@@ -351,16 +341,17 @@ export const FestaDetailPage = () => {
       )}
 
       {/* Back to Festes CTA */}
-      <section className="bg-primary py-20">
-        <div className="container mx-auto px-6 text-center">
-          <h2 className="text-3xl md:text-4xl font-black text-white mb-8">
-            ¿Quieres ver más celebraciones?
+      <section className="bg-primary py-24 relative overflow-hidden">
+        <div className="absolute inset-0 bg-primary-dark/20" />
+        <div className="container mx-auto px-6 text-center relative z-10">
+          <h2 className="text-[clamp(2rem,5vw,4rem)] font-black text-white mb-10 tracking-tighter">
+            Descobreix més festes
           </h2>
           <Link
             to="/festes"
-            className="inline-flex items-center gap-3 h-16 px-12 rounded-[2rem] bg-accent text-slate-900 text-xs font-black uppercase tracking-[0.2em] hover:scale-105 transition-transform"
+            className="inline-flex items-center gap-3 h-16 px-12 rounded-2xl bg-accent text-slate-900 text-[10px] font-black uppercase tracking-[0.2em] hover:scale-105 hover:shadow-2xl hover:shadow-accent/20 transition-all"
           >
-            Ver todas las festes
+            Tornar al llistat principal
             <ChevronRight className="h-4 w-4" />
           </Link>
         </div>
