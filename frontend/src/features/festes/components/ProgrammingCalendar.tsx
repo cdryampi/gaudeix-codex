@@ -1,20 +1,20 @@
 /**
- * ProgrammingCalendar renders Festa activities grouped by day and time.
+ * ProgrammingCalendar renders Festa events grouped by day and time.
  */
 
 import { CalendarDays, Clock3, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
 
-import { Activity } from "../types";
+import { Event } from "@/features/events/types";
 
 interface ProgrammingCalendarProps {
-  activities: Activity[];
+  events: Event[];
 }
 
-type GroupedActivities = Array<{
+type GroupedEvents = Array<{
   dayKey: string;
   dayLabel: string;
-  items: Activity[];
+  items: Event[];
 }>;
 
 const dayLabelFormatter = new Intl.DateTimeFormat("ca-ES", {
@@ -35,20 +35,19 @@ const getDayKey = (date: Date) => {
   return `${year}-${month}-${day}`;
 };
 
-const groupActivitiesByDay = (activities: Activity[]): GroupedActivities => {
-  const map = new Map<string, Activity[]>();
+const groupEventsByDay = (events: Event[]): GroupedEvents => {
+  const map = new Map<string, Event[]>();
 
-  activities
+  events
     .slice()
     .sort(
-      (a, b) =>
-        new Date(a.start_at).getTime() - new Date(b.start_at).getTime(),
+      (a, b) => new Date(a.start_at).getTime() - new Date(b.start_at).getTime(),
     )
-    .forEach((activity) => {
-      const startAt = new Date(activity.start_at);
+    .forEach((event) => {
+      const startAt = new Date(event.start_at);
       const dayKey = getDayKey(startAt);
       const current = map.get(dayKey) || [];
-      current.push(activity);
+      current.push(event);
       map.set(dayKey, current);
     });
 
@@ -59,8 +58,8 @@ const groupActivitiesByDay = (activities: Activity[]): GroupedActivities => {
   }));
 };
 
-export const ProgrammingCalendar = ({ activities }: ProgrammingCalendarProps) => {
-  const grouped = groupActivitiesByDay(activities);
+export const ProgrammingCalendar = ({ events }: ProgrammingCalendarProps) => {
+  const grouped = groupEventsByDay(events);
 
   return (
     <div className="space-y-8">
@@ -72,27 +71,30 @@ export const ProgrammingCalendar = ({ activities }: ProgrammingCalendarProps) =>
                 {group.dayLabel}
               </h3>
               <span className="text-[10px] font-black uppercase tracking-[0.28em] text-accent">
-                {group.items.length} {group.items.length === 1 ? "activitat" : "activitats"}
+                {group.items.length}{" "}
+                {group.items.length === 1 ? "acte" : "actes"}
               </span>
             </div>
           </header>
 
           <div className="space-y-3">
-            {group.items.map((activity) => (
+            {group.items.map((event) => (
               <article
-                key={activity.id}
+                key={event.id}
                 className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 md:p-5"
               >
                 <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                   <div className="min-w-0 space-y-2">
                     <p className="inline-flex max-w-full items-center rounded-full bg-primary/15 px-2.5 py-1 text-[10px] font-black uppercase tracking-widest text-primary">
-                      {activity.category || "Activitat"}
+                      {event.category_name || "Event"}
                     </p>
                     <h4 className="text-lg font-black leading-tight text-white md:text-xl">
-                      {activity.title}
+                      {event.title}
                     </h4>
-                    {activity.summary && (
-                      <p className="text-sm font-medium text-slate-300">{activity.summary}</p>
+                    {event.summary && (
+                      <p className="text-sm font-medium text-slate-300">
+                        {event.summary}
+                      </p>
                     )}
                   </div>
 
@@ -101,7 +103,7 @@ export const ProgrammingCalendar = ({ activities }: ProgrammingCalendarProps) =>
                       Inici
                     </p>
                     <p className="text-lg font-black text-accent">
-                      {timeFormatter.format(new Date(activity.start_at))}
+                      {timeFormatter.format(new Date(event.start_at))}
                     </p>
                   </div>
                 </div>
@@ -109,26 +111,32 @@ export const ProgrammingCalendar = ({ activities }: ProgrammingCalendarProps) =>
                 <div className="mt-4 grid gap-2 text-xs font-semibold text-slate-300 md:grid-cols-3">
                   <p className="flex items-center gap-2">
                     <Clock3 className="h-3.5 w-3.5 text-accent" />
-                    Fins a {timeFormatter.format(new Date(activity.end_at))}
+                    {event.end_at
+                      ? `Fins a ${timeFormatter.format(new Date(event.end_at))}`
+                      : "Sense hora de fi"}
                   </p>
                   <p className="flex items-center gap-2 md:col-span-2">
                     <MapPin className="h-3.5 w-3.5 text-accent" />
-                    {activity.location || activity.venue_name || "Ubicacio per confirmar"}
+                    {event.venue_name ||
+                      event.location_text ||
+                      "Ubicacio per confirmar"}
                   </p>
                 </div>
 
                 <div className="mt-4 flex flex-wrap items-center gap-2">
                   <span
                     className={`rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-wider ${
-                      activity.is_free
+                      event.is_free
                         ? "bg-emerald-500/20 text-emerald-300"
                         : "bg-amber-500/20 text-amber-300"
                     }`}
                   >
-                    {activity.is_free ? "Gratuita" : activity.price_text || "De pagament"}
+                    {event.is_free
+                      ? "Gratuit"
+                      : event.price_text || "De pagament"}
                   </span>
                   <Link
-                    to={`/festes/activitats/${activity.slug}`}
+                    to={`/agenda/${event.slug}`}
                     className="inline-flex items-center gap-1 rounded-full border border-white/20 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-white/90 transition-colors hover:bg-white/10"
                   >
                     <CalendarDays className="h-3 w-3" />

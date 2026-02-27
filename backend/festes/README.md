@@ -1,107 +1,78 @@
-# Festes App - Módulo de Programación (MVP)
+﻿# Festes App - Programacion MVP
 
-Este módulo gestiona la programación estructurada de las Festes Majors y eventos especiales, permitiendo organizar actividades en programas y ubicarlas en sedes (venues).
+Este modulo gestiona Festes Majors y eventos especiales sobre un modelo simple:
+`Festa` como contenedor, `Program` para bloques editoriales, `Venue` para recintos,
+`Sponsor` para patrocinadores y vinculos directos `FestaEvent` con `events.Event`.
 
-## Arquitectura de Datos
+## Arquitectura de datos
 
-El módulo se basa en tres entidades principales que complementan al modelo `Festa` original:
+Entidades principales:
 
-1.  **Venue**: Sedes físicas con geolocalización y datos de accesibilidad.
-2.  **Program**: Agrupaciones lógicas de actividades dentro de una fiesta (ej: "Programa Infantil", "Actes Oficials").
-3.  **Activity**: Actividades individuales programadas con horario, precio y ubicación.
+1. `Festa`: evento marco (fechas, contenido, media, estado y relaciones).
+2. `Program`: secciones del programa dentro de una festa.
+3. `Venue`: sedes fisicas con direccion, accesibilidad y coordenadas.
+4. `Sponsor`: patrocinadores por festa.
+5. `FestaEvent`: tabla intermedia ordenada entre `Festa` y `events.Event`.
 
-### Relaciones
+Relaciones:
+
 - `Festa` 1:N `Program`
-- `Program` 1:N `Activity`
-- `Venue` 1:N `Activity`
+- `Festa` 1:N `Sponsor`
+- `Festa` N:M `Event` (via `FestaEvent`)
 
-## API Endpoints
+## API endpoints
 
-Todos los endpoints están versionados bajo `/api/v1/`.
+Todos los endpoints estan versionados bajo `/api/v1/`.
 
 ### Festes
-- `GET /api/v1/festes/`: Listado de fiestas.
-- `GET /api/v1/festes/{slug}/`: Detalle de una fiesta.
-- `GET /api/v1/festes/current/`: Obtiene la fiesta marcada como actual.
-- `POST /api/v1/festes/{slug}/auto_translate/`: Traducción automática vía LLM (Admin).
+
+- `GET /api/v1/festes/`: listado de festes.
+- `GET /api/v1/festes/{slug}/`: detalle de festa.
+- `GET /api/v1/festes/current/`: festa marcada como actual y publicada.
+- `POST /api/v1/festes/{slug}/auto_translate/`: traduccion automatica (admin).
 
 ### Programas
-- `GET /api/v1/programs/`: Listado paginado de programas.
-  - Filtros: `festa` (slug o ID), `status` (draft/published), `search`.
-- `GET /api/v1/programs/{slug}/`: Detalle de un programa.
 
-### Venues (Sedes)
-- `GET /api/v1/venues/`: Listado paginado de sedes.
+- `GET /api/v1/programs/`: listado paginado.
+  - Filtros: `festa` (slug o id), `status`, `is_published`, `search`, `ordering`.
+- `GET /api/v1/programs/{slug}/`: detalle.
+
+### Venues
+
+- `GET /api/v1/venues/`: listado paginado.
   - Filtros: `is_published`, `is_accessible`, `city`, `search`.
-- `GET /api/v1/venues/{slug}/`: Detalle de una sede.
+- `GET /api/v1/venues/{slug}/`: detalle.
 
-### Actividades
-- `GET /api/v1/activities/`: Listado paginado de actividades.
-  - Filtros: `program`, `festa`, `category`, `is_free`, `date_from`, `date_to`, `location`, `search`.
-  - Ordenación: `start_at`, `title`, `created_at` (y sus inversos).
-- `GET /api/v1/activities/{slug}/`: Detalle de una actividad.
-- `GET /api/v1/activities/{slug}/ical/`: Exportación en formato iCalendar (.ics).
+### Sponsors
 
-## Contratos de Datos (JSON)
-
-### Activity (Lectura Pública)
-```json
-{
-  "id": 203,
-  "slug": "concert-jove-2026-07-12-2200",
-  "festa_slug": "festa-major-2026",
-  "program_slug": "programa-principal",
-  "venue_slug": "placa-major",
-  "venue_name": "Plaça Major",
-  "title": "Concert jove",
-  "summary": "Concert de nit amb grups locals",
-  "category": "music",
-  "location": "Plaça Major, Cabrera de Mar",
-  "start_at": "2026-07-12T22:00:00Z",
-  "end_at": "2026-07-12T23:59:00Z",
-  "is_free": true,
-  "price": null,
-  "status": "published",
-  "is_published": true
-}
-```
-
-## Reglas de Negocio y Guardas
-
-### Publicación de Actividades
-Para que una actividad pueda marcarse como `published`, debe cumplir:
-1. Tener una sede (`venue`) asignada.
-2. La sede asignada debe estar publicada (`is_published=true`).
-3. Tener definidas fechas de inicio (`start_at`) y fin (`end_at`).
-4. La fecha de fin no puede ser anterior a la de inicio.
-
-### Precios
-- Si `is_free` es `true`, el campo `price` debe ser `null` o `0`.
-- Si `is_free` es `false`, el campo `price` es obligatorio y debe ser mayor que `0`.
-
-## Integraciones y Adaptadores
-
-El módulo utiliza un patrón de adaptadores (`adapters.py`) para desacoplar integraciones externas:
-
-- **iCalendar**: Generación de archivos `.ics` para actividades.
-- **Notificaciones**: Disparo automático de notificaciones push cuando una actividad pasa a estado `published`.
-- **Validación de Tickets**: Verificación de seguridad en URLs de venta de entradas.
-- **Mapas**: Generación de enlaces dinámicos a Google Maps/Apple Maps basados en coordenadas.
+- `GET /api/v1/sponsors/`: listado.
+  - Filtros: `festa` (slug o id), `tier`.
+- `GET /api/v1/sponsors/{id}/`: detalle.
 
 ## Permisos
 
-- **Lectura**: Pública (`AllowAny`) para todos los endpoints de listado y detalle.
-- **Escritura**: Restringida a administradores (`IsAdminOrReadOnly`). Requiere autenticación JWT y atributo `is_staff=true`.
+- Lectura (`list`, `retrieve`): publica (`AllowAny`).
+- Escritura (`create`, `update`, `destroy`): solo administracion (`IsAdminOrReadOnly`).
 
-## Desarrollo y Tests
+## Integraciones
 
-### Ejecutar Tests
+`adapters.py` mantiene utilidades desacopladas para:
+
+- formateo iCal,
+- enlaces de mapas,
+- validacion basica de URLs,
+- gateway de notificaciones.
+
+## Desarrollo y tests
+
+Ejecutar tests de la app:
+
 ```bash
-python manage.py test festes.tests.test_programming_api
+python manage.py test festes.tests
 ```
 
-### Seeds
-Para poblar datos de prueba:
+Cargar datos de ejemplo:
+
 ```bash
 python manage.py seed_festes
 ```

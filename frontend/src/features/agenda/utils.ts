@@ -114,14 +114,8 @@ export function withinRange(
 export function matchesQuery(event: Event, query: string) {
   const q = query.trim().toLowerCase();
   if (!q) return true;
-  const festesHaystack = (event.festes_activities || [])
-    .map(
-      (activity) =>
-        `${activity.title || ""} ${activity.summary || ""} ${activity.festa_slug || ""} ${activity.program_slug || ""}`,
-    )
-    .join(" ");
   const haystack =
-    `${event.title} ${event.venue_name} ${event.location_text} ${festesHaystack}`.toLowerCase();
+    `${event.title} ${event.venue_name} ${event.location_text}`.toLowerCase();
   return haystack.includes(q);
 }
 

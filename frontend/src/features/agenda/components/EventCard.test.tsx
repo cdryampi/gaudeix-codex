@@ -29,21 +29,4 @@ describe("EventCard", () => {
     expect(screen.getByText("Evento Test")).toBeInTheDocument();
     expect(screen.queryByText("Acto de Festa Major")).not.toBeInTheDocument();
   });
-
-  it("renders Sparkles badge when linked to Festes", () => {
-    const linkedEvent = {
-      ...mockEvent,
-      festes_activities: [{ id: 1, title: "Acto Festa" }],
-    };
-
-    render(
-      <MemoryRouter>
-        <EventCard event={linkedEvent as any} />
-      </MemoryRouter>,
-    );
-
-    expect(screen.getByText("Acto de Festa Major")).toBeInTheDocument();
-    const link = screen.getByText("Acto de Festa Major").closest("a");
-    expect(link?.getAttribute("href")).toBe("/festes/programacio");
-  });
 });

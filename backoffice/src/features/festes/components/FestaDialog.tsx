@@ -21,6 +21,7 @@ import { eventsApi } from "@/features/events/api/events";
 import { Event } from "@/features/events/types";
 import { ArrowUp, ArrowDown, Trash2 } from "lucide-react";
 import { ImageSelector } from "@/features/media/components/ImageSelector";
+import { SponsorManager } from "./SponsorManager";
 import { toast } from "sonner";
 
 type LocalTranslations = {
@@ -115,7 +116,7 @@ export function FestaDialog({ open, onOpenChange, onSubmit, festa }: Props) {
       setTranslations({});
       setActiveLang("ca");
     }
-  }, [festa?.id, open]);
+  }, [festa, open]);
 
   const getContent = (lang: string) => {
     if (lang === "ca") {
@@ -799,6 +800,13 @@ export function FestaDialog({ open, onOpenChange, onSubmit, festa }: Props) {
               </div>
             )}
           </div>
+
+          {/* Sponsors Management (Only in Edit mode) */}
+          {festa && (
+            <div className="space-y-3 rounded-lg border border-border/60 bg-muted/20 p-4 mt-4">
+              <SponsorManager festaId={festa.id} />
+            </div>
+          )}
 
           {/* Modals for Image Selectors */}
           <ImageSelector

@@ -105,7 +105,6 @@ export interface Program {
   order: number;
   start_date: string | null;
   end_date: string | null;
-  activities_count: number;
   created_at: string;
   updated_at: string;
   translations?: ProgramTranslations;
@@ -166,76 +165,4 @@ export interface VenueFilters {
   is_accessible?: boolean | string;
   city?: string;
   search?: string;
-}
-
-// ============================================================================
-// Activity Types
-// ============================================================================
-
-export type ActivityStatus = "draft" | "published" | "cancelled";
-
-export interface ActivityTranslations {
-  [languageCode: string]: {
-    title: string;
-    summary?: string;
-    description?: string;
-  };
-}
-
-export interface Activity {
-  id: number;
-  slug: string;
-  festa: number;
-  festa_slug: string;
-  program: number;
-  program_slug: string;
-  venue: number | null;
-  venue_slug: string | null;
-  venue_name: string;
-  event?: {
-    id: number;
-    slug: string;
-    title: string;
-    summary: string;
-    start_at: string;
-    end_at: string | null;
-  } | null;
-  title: string;
-  summary: string;
-  description: string;
-  category: string;
-  location: string;
-  start_at: string;
-  end_at: string;
-  is_free: boolean;
-  price: number | null;
-  price_text: string;
-  ticket_url: string | null;
-  status: ActivityStatus;
-  is_published: boolean;
-  created_at: string;
-  updated_at: string;
-  translations?: ActivityTranslations;
-}
-
-export interface ActivityListResponse {
-  count: number;
-  next: string | null;
-  previous: string | null;
-  results: Activity[];
-}
-
-export interface ActivityFilters {
-  festa?: number | string;
-  program?: number | string;
-  venue?: number | string;
-  date_from?: string;
-  date_to?: string;
-  category?: string;
-  location?: string;
-  is_free?: boolean | string;
-  search?: string;
-  is_published?: boolean | string;
-  status?: ActivityStatus;
-  ordering?: string;
 }

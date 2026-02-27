@@ -106,7 +106,7 @@ export const ProgrammingFilters = ({
         </span>
         <input
           type="text"
-          placeholder="Buscar actividad, lugar o programa"
+          placeholder="Buscar evento, lugar o programa"
           value={value.query}
           onChange={(e) => onChange({ ...value, query: e.target.value })}
           className="h-12 w-full rounded-xl border border-white/10 bg-white/10 px-4 text-sm font-semibold text-white placeholder:text-white/40 outline-none transition-all focus:border-accent"

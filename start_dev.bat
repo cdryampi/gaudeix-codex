@@ -1,6 +1,9 @@
 @echo off
 echo Starting Gaudeix Codex Development Environment...
 
+REM Increase Node.js memory limit to 8GB
+SET NODE_OPTIONS=--max-old-space-size=8192
+
 REM Check for .venv_win
 if not exist "backend\.venv_win" (
     echo [ERROR] Virtual environment 'backend\.venv_win' not found.

@@ -66,7 +66,6 @@ function normalizeFesta(festa: Festa): Festa {
     ...festa,
     gallery: festa.gallery || [],
     featured_media: festa.featured_media ?? null,
-    poster: festa.poster ?? null,
     program_pdf: festa.program_pdf ?? null,
     tags: festa.tags || [],
     sponsors: festa.sponsors || [],

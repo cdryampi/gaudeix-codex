@@ -1,4 +1,4 @@
-"""Permission tests for festes programming endpoints."""
+﻿"""Permission tests for festes programming endpoints without Activity."""
 
 # pyright: reportAttributeAccessIssue=false, reportMissingImports=false
 
@@ -13,13 +13,7 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from core.models import Category  # pyright: ignore[reportImplicitRelativeImport]
-from festes.models import (  # pyright: ignore[reportImplicitRelativeImport]
-    Activity,
-    ActivityStatusChoices,
-    Festa,
-    Program,
-    Venue,
-)
+from festes.models import Festa, Program, Sponsor, Venue  # pyright: ignore[reportImplicitRelativeImport]
 
 pytestmark = pytest.mark.django_db
 
@@ -77,30 +71,24 @@ def venue() -> Venue:
 
 
 @pytest.fixture
-def activity(program: Program, venue: Venue) -> Activity:
-    start = timezone.now() + timedelta(days=2)
-    return Activity.objects.create(
-        program=program,
-        venue=venue,
-        title="Activity Permissions",
-        category="music",
-        start_at=start,
-        end_at=start + timedelta(hours=1),
-        status=ActivityStatusChoices.PUBLISHED,
-        is_free=True,
+def sponsor(festa: Festa) -> Sponsor:
+    return Sponsor.objects.create(
+        festa=festa,
+        name="Sponsor Permissions",
+        tier="collaborator",
     )
 
 
 @pytest.mark.parametrize(
     "url_name",
-    ["program-list", "venue-list", "activity-list"],
+    ["program-list", "venue-list", "sponsor-list"],
 )
 def test_anonymous_can_read_programming_lists(
     anon_client: APIClient,
     url_name: str,
     program: Program,
     venue: Venue,
-    activity: Activity,
+    sponsor: Sponsor,
 ) -> None:
     response = anon_client.get(reverse(url_name))
     assert response.status_code == status.HTTP_200_OK
@@ -118,20 +106,18 @@ def test_anonymous_can_read_programming_lists(
         ),
         (
             "venue-list",
-            lambda fixture: {
+            lambda _fixture: {
                 "name": "Anon Venue",
                 "address": "A",
                 "city": "B",
             },
         ),
         (
-            "activity-list",
+            "sponsor-list",
             lambda fixture: {
-                "program_id": fixture["program"].id,
-                "title": "Anon Activity",
-                "category": "music",
-                "status": ActivityStatusChoices.DRAFT,
-                "is_free": True,
+                "festa_id": fixture["festa"].id,
+                "name": "Anon Sponsor",
+                "tier": "gold",
             },
         ),
     ],
@@ -141,9 +127,8 @@ def test_anonymous_write_is_blocked(
     url_name: str,
     payload,
     festa: Festa,
-    program: Program,
 ) -> None:
-    fixture = {"festa": festa, "program": program}
+    fixture = {"festa": festa}
     response = anon_client.post(reverse(url_name), payload(fixture), format="json")
     assert response.status_code in {
         status.HTTP_401_UNAUTHORIZED,
@@ -163,20 +148,18 @@ def test_anonymous_write_is_blocked(
         ),
         (
             "venue-list",
-            lambda fixture: {
+            lambda _fixture: {
                 "name": "User Venue",
                 "address": "A",
                 "city": "B",
             },
         ),
         (
-            "activity-list",
+            "sponsor-list",
             lambda fixture: {
-                "program_id": fixture["program"].id,
-                "title": "User Activity",
-                "category": "music",
-                "status": ActivityStatusChoices.DRAFT,
-                "is_free": True,
+                "festa_id": fixture["festa"].id,
+                "name": "User Sponsor",
+                "tier": "silver",
             },
         ),
     ],
@@ -186,14 +169,13 @@ def test_non_admin_write_is_blocked(
     url_name: str,
     payload,
     festa: Festa,
-    program: Program,
 ) -> None:
-    fixture = {"festa": festa, "program": program}
+    fixture = {"festa": festa}
     response = auth_api_client.post(reverse(url_name), payload(fixture), format="json")
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
-def test_admin_can_update_program_venue_and_create_activity(
+def test_admin_can_update_program_venue_and_create_sponsor(
     admin_api_client: APIClient,
     festa: Festa,
     program: Program,
@@ -213,34 +195,29 @@ def test_admin_can_update_program_venue_and_create_activity(
     )
     assert venue_response.status_code == status.HTTP_200_OK
 
-    start = timezone.now() + timedelta(days=7)
-    activity_response = admin_api_client.post(
-        reverse("activity-list"),
+    sponsor_response = admin_api_client.post(
+        reverse("sponsor-list"),
         {
-            "program_id": program.id,
-            "venue_id": venue.id,
-            "title": "Admin Activity",
-            "category": "music",
-            "start_at": start.isoformat(),
-            "end_at": (start + timedelta(hours=2)).isoformat(),
-            "status": ActivityStatusChoices.PUBLISHED,
-            "is_free": True,
+            "festa_id": festa.id,
+            "name": "Admin Sponsor",
+            "tier": "gold",
+            "website": "https://example.org",
         },
         format="json",
     )
-    assert activity_response.status_code == status.HTTP_201_CREATED
+    assert sponsor_response.status_code == status.HTTP_201_CREATED
 
 
 def test_anonymous_cannot_patch_or_delete_programming_resources(
     anon_client: APIClient,
     program: Program,
     venue: Venue,
-    activity: Activity,
+    sponsor: Sponsor,
 ) -> None:
     for url in [
         reverse("program-detail", kwargs={"slug": program.slug}),
         reverse("venue-detail", kwargs={"slug": venue.slug}),
-        reverse("activity-detail", kwargs={"slug": activity.slug}),
+        reverse("sponsor-detail", kwargs={"pk": sponsor.pk}),
     ]:
         patch_response = anon_client.patch(url, {}, format="json")
         delete_response = anon_client.delete(url)

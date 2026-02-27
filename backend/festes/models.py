@@ -1,7 +1,7 @@
-"""Models for the festes app.
+﻿"""Models for the festes app.
 
-This module defines Festa, Sponsor, Venue, Program, and Activity models for
-Festes Majors and special events that group multiple Events.
+This module defines Festa, Sponsor, Venue and Program models for Festes
+Majors and special events that group multiple Events.
 """
 
 from __future__ import annotations
@@ -34,16 +34,16 @@ def _get_any_translation_value(instance: TranslatableModel, field_name: str) -> 
 
 class Festa(TranslatableModel, ContentBase):
     """
-    Festa Major o evento especial que agrupa múltiples eventos.
+    Festa Major o evento especial que agrupa mÃºltiples eventos.
 
     Ejemplo: "Festa Major de Cabrera 2025" con conciertos, actos, etc.
     """
 
     translations = TranslatedFields(
-        title=models.CharField(max_length=200, verbose_name="Títol"),
-        subtitle=models.CharField(max_length=300, blank=True, verbose_name="Subtítol"),
+        title=models.CharField(max_length=200, verbose_name="TÃ­tol"),
+        subtitle=models.CharField(max_length=300, blank=True, verbose_name="SubtÃ­tol"),
         summary=models.TextField(blank=True, verbose_name="Resum"),
-        description=models.TextField(blank=True, verbose_name="Descripció"),
+        description=models.TextField(blank=True, verbose_name="DescripciÃ³"),
         program_text=models.TextField(blank=True, verbose_name="Programa (text)"),
     )
 
@@ -75,7 +75,7 @@ class Festa(TranslatableModel, ContentBase):
         blank=True,
         related_name="posters_festes",
         verbose_name="Cartells oficials",
-        help_text="Un o més cartells de la festa.",
+        help_text="Un o mÃ©s cartells de la festa.",
     )
     program_pdf = models.ForeignKey(
         "media_files.DocumentFile",
@@ -106,7 +106,7 @@ class Festa(TranslatableModel, ContentBase):
     is_featured = models.BooleanField(default=False, verbose_name="Destacada")
     is_current = models.BooleanField(
         default=False,
-        verbose_name="És la festa actual",
+        verbose_name="Ã‰s la festa actual",
         help_text="Marca la festa que es mostra per defecte",
     )
 
@@ -162,11 +162,11 @@ class Festa(TranslatableModel, ContentBase):
 class SponsorTierChoices(models.TextChoices):
     """Sponsor tier levels."""
 
-    PLATINUM = "platinum", "Platí"
+    PLATINUM = "platinum", "PlatÃ­"
     GOLD = "gold", "Or"
     SILVER = "silver", "Plata"
     BRONZE = "bronze", "Bronze"
-    COLLABORATOR = "collaborator", "Col·laborador"
+    COLLABORATOR = "collaborator", "ColÂ·laborador"
 
 
 class Sponsor(models.Model):
@@ -206,7 +206,7 @@ class Sponsor(models.Model):
 
 
 class FestaCategorySingleton(models.Model):
-    """Singleton para la categoría raíz de festes."""
+    """Singleton para la categorÃ­a raÃ­z de festes."""
 
     category = models.OneToOneField(
         Category,
@@ -224,12 +224,12 @@ class FestaCategorySingleton(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self) -> str:
-        return f"Festes → {self.category}"
+        return f"Festes â†’ {self.category}"
 
 
 class Venue(TranslatableModel):
     """
-    Venue (location) for festes activities.
+    Venue (location) for festa events.
 
     Fields from contract:
     - name (translated), description (translated)
@@ -241,11 +241,11 @@ class Venue(TranslatableModel):
 
     translations = TranslatedFields(
         name=models.CharField(max_length=200, verbose_name="Nom"),
-        description=models.TextField(blank=True, verbose_name="Descripció"),
+        description=models.TextField(blank=True, verbose_name="DescripciÃ³"),
     )
 
     # Address fields
-    address = models.CharField(max_length=255, verbose_name="Adreça")
+    address = models.CharField(max_length=255, verbose_name="AdreÃ§a")
     postal_code = models.CharField(
         max_length=20,
         blank=True,
@@ -272,7 +272,7 @@ class Venue(TranslatableModel):
     is_accessible = models.BooleanField(
         default=False,
         verbose_name="Accessible",
-        help_text="Indicar si la ubicació és accessible per a mobilitat reduïda",
+        help_text="Indicar si la ubicaciÃ³ Ã©s accessible per a mobilitat reduÃ¯da",
     )
 
     # Unique slug
@@ -280,10 +280,10 @@ class Venue(TranslatableModel):
 
     # Audit timestamps
     fecha_creacion = models.DateTimeField(
-        auto_now_add=True, verbose_name="Data creació"
+        auto_now_add=True, verbose_name="Data creaciÃ³"
     )
     fecha_modificacion = models.DateTimeField(
-        auto_now=True, verbose_name="Data modificació"
+        auto_now=True, verbose_name="Data modificaciÃ³"
     )
 
     class Meta:
@@ -370,9 +370,9 @@ class Program(TranslatableModel):
     """
 
     translations = TranslatedFields(
-        title=models.CharField(max_length=200, verbose_name="Títol"),
-        subtitle=models.CharField(max_length=300, blank=True, verbose_name="Subtítol"),
-        description=models.TextField(blank=True, verbose_name="Descripció"),
+        title=models.CharField(max_length=200, verbose_name="TÃ­tol"),
+        subtitle=models.CharField(max_length=300, blank=True, verbose_name="SubtÃ­tol"),
+        description=models.TextField(blank=True, verbose_name="DescripciÃ³"),
     )
 
     # Foreign key to Festa
@@ -409,10 +409,10 @@ class Program(TranslatableModel):
 
     # Audit timestamps
     fecha_creacion = models.DateTimeField(
-        auto_now_add=True, verbose_name="Data creació"
+        auto_now_add=True, verbose_name="Data creaciÃ³"
     )
     fecha_modificacion = models.DateTimeField(
-        auto_now=True, verbose_name="Data modificació"
+        auto_now=True, verbose_name="Data modificaciÃ³"
     )
 
     class Meta:
@@ -462,199 +462,6 @@ class Program(TranslatableModel):
         """Derived from status field for API compatibility."""
         return self.status == ProgramStatusChoices.PUBLISHED
 
-    @property
-    def activities_count(self) -> int:
-        """Return total activities linked to this program."""
-        return self.activities.count()
-
-
-class ActivityStatusChoices(models.TextChoices):
-    """Status choices for Activity."""
-
-    DRAFT = "draft", "Borrador"
-    PUBLISHED = "published", "Publicada"
-
-
-class Activity(TranslatableModel):
-    """Scheduled activity inside a Program and optionally linked to a Venue."""
-
-    translations = TranslatedFields(
-        title=models.CharField(max_length=200, verbose_name="Títol"),
-        summary=models.CharField(max_length=280, blank=True, verbose_name="Resum"),
-        description=models.TextField(blank=True, verbose_name="Descripció"),
-    )
-
-    program = models.ForeignKey(
-        Program,
-        on_delete=models.CASCADE,
-        related_name="activities",
-        verbose_name="Programa",
-    )
-    venue = models.ForeignKey(
-        Venue,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="activities",
-        verbose_name="Venue",
-    )
-    event = models.ForeignKey(
-        'events.Event',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name='festes_activities',
-        verbose_name=_("Esdeveniment vinculat"),
-    )
-
-    category = models.CharField(max_length=100, verbose_name="Categoria")
-    start_at = models.DateTimeField(
-        null=True,
-        blank=True,
-        verbose_name="Inici",
-    )
-    end_at = models.DateTimeField(
-        null=True,
-        blank=True,
-        verbose_name="Fi",
-    )
-
-    is_free = models.BooleanField(default=True, verbose_name="Gratis")
-    price = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        null=True,
-        blank=True,
-        verbose_name="Preu",
-        help_text="Preu indicatiu de l'activitat. Null quan és gratuïta.",
-    )
-    price_text = models.CharField(
-        max_length=120,
-        blank=True,
-        default="",
-        verbose_name="Text del preu",
-    )
-    ticket_url = models.URLField(
-        null=True,
-        blank=True,
-        verbose_name="URL tickets",
-    )
-
-    status = models.CharField(
-        max_length=20,
-        choices=ActivityStatusChoices.choices,
-        default=ActivityStatusChoices.DRAFT,
-        verbose_name="Estat",
-    )
-    slug = models.SlugField(max_length=160, unique=True, verbose_name="Slug")
-
-    fecha_creacion = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name="Data creació",
-    )
-    fecha_modificacion = models.DateTimeField(
-        auto_now=True,
-        verbose_name="Data modificació",
-    )
-
-    class Meta:
-        verbose_name = "Activity"
-        verbose_name_plural = "Activities"
-        ordering = ("start_at", "id")
-        indexes = [
-            models.Index(fields=["program", "start_at"]),
-            models.Index(fields=["category"]),
-            models.Index(fields=["status", "start_at"]),
-            models.Index(fields=["slug"]),
-        ]
-
-    def __str__(self) -> str:
-        title = self.safe_translation_getter("title", any_language=True)
-        return f"{title}" if title else (self.slug or _("Activity"))
-
-    def clean(self):
-        """Business validations for temporal range, pricing and publication."""
-        super().clean()
-
-        if self.start_at and self.end_at and self.end_at < self.start_at:
-            raise ValidationError(
-                {"end_at": _("End date cannot be before start date.")}
-            )
-
-        if self.is_free and self.price not in (None, 0):
-            raise ValidationError(
-                {"price": _("Price must be null or zero when activity is free.")}
-            )
-
-        if not self.is_free:
-            if self.price is None:
-                raise ValidationError(
-                    {"price": _("Price is required when activity is not free.")}
-                )
-            if self.price <= 0:
-                raise ValidationError(
-                    {"price": _("Price must be greater than zero when not free.")}
-                )
-
-        if self.status == ActivityStatusChoices.PUBLISHED:
-            if not self.venue:
-                raise ValidationError(
-                    {"venue": _("Published activities require a venue.")}
-                )
-            if not self.venue.is_published:
-                raise ValidationError(
-                    {"venue": _("Published activities require a published venue.")}
-                )
-            if not self.start_at or not self.end_at:
-                raise ValidationError(
-                    _("Published activities require start and end date/time."),
-                )
-
-    def save(self, *args, **kwargs):
-        """Auto-generate slug and validate business rules before saving."""
-        if not self.slug:
-            self.slug = self._generate_unique_slug()
-
-        self.full_clean()
-        super().save(*args, **kwargs)
-
-    def _generate_unique_slug(self) -> str:
-        """Generate a unique slug based on title and start datetime."""
-        if self.pk:
-            base_title = (
-                self.safe_translation_getter("title", any_language=True) or "activity"
-            )
-        else:
-            base_title = getattr(self, "title", None) or "activity"
-
-        program_slug = self.program.slug if self.program_id else "program"
-        start_suffix = (
-            self.start_at.strftime("%Y%m%d%H%M") if self.start_at else "draft"
-        )
-        base_slug = slugify(f"{program_slug}-{base_title}-{start_suffix}") or "activity"
-        slug_candidate = base_slug
-        counter = 2
-
-        while Activity.objects.filter(slug=slug_candidate).exclude(pk=self.pk).exists():
-            slug_candidate = f"{base_slug}-{counter}"
-            counter += 1
-
-        return slug_candidate
-
-    @property
-    def created_at(self):
-        """Alias for fecha_creacion for API compatibility."""
-        return self.fecha_creacion
-
-    @property
-    def updated_at(self):
-        """Alias for fecha_modificacion for API compatibility."""
-        return self.fecha_modificacion
-
-    @property
-    def is_published(self) -> bool:
-        """Derived from status field for API compatibility."""
-        return self.status == ActivityStatusChoices.PUBLISHED
 
 class FestaEvent(models.Model):
     """
@@ -678,4 +485,8 @@ class FestaEvent(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.festa.title} -> {self.event.title} (Order: {self.order})"
+        festa_title = self.festa.safe_translation_getter("title", any_language=True)
+        event_title = getattr(self.event, "title", str(self.event_id))
+        return f"{festa_title} -> {event_title} (Order: {self.order})"
+
+

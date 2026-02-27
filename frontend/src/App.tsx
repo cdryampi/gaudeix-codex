@@ -43,8 +43,6 @@ import { RouteDetailPage } from "@/features/routes/pages/RouteDetailPage";
 import { FestesPage } from "@/features/festes/pages/FestesPage";
 import { FestaDetailPage } from "@/features/festes/pages/FestaDetailPage";
 import { ProgrammingPage } from "@/features/festes/pages/ProgrammingPage";
-import { ActivityDetailPage } from "@/features/festes/pages/ActivityDetailPage";
-import { HomeProgrammingBlock } from "@/features/festes/components/HomeProgrammingBlock";
 
 // News
 import { NewsPage } from "@/features/news/pages/NewsPage";
@@ -227,9 +225,6 @@ function HomePage() {
         </div>
       </section>
 
-      {/* SECTION 4: PROGRAMACION FESTES */}
-      <HomeProgrammingBlock />
-
       {/* SECTION 5: NOTICIAS */}
       <section id="noticias">
         <div className="min-h-screen flex flex-col justify-center px-6 md:px-20 py-24 bg-white">
@@ -326,10 +321,6 @@ export default function App() {
         {/* Festes (festivals) */}
         <Route path="/festes" element={<FestesPage />} />
         <Route path="/festes/programacio" element={<ProgrammingPage />} />
-        <Route
-          path="/festes/activitats/:slug"
-          element={<ActivityDetailPage />}
-        />
         <Route path="/festes/:slug" element={<FestaDetailPage />} />
 
         {/* News */}

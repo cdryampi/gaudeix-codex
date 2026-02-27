@@ -48,7 +48,7 @@ const mockFesta: Festa = {
   category_name: "Festes",
   tags: [],
   featured_media: null,
-  poster: null,
+  posters: [],
   program_pdf: null,
   gallery: [],
   sponsors: [],
@@ -71,7 +71,6 @@ const mockProgram: Program = {
   order: 1,
   start_date: "2024-06-15",
   end_date: "2024-06-16",
-  activities_count: 5,
   created_at: "2024-01-01T00:00:00Z",
   updated_at: "2024-01-01T00:00:00Z",
 };
@@ -83,7 +82,7 @@ describe("ProgramsPage", () => {
 
   it("shows loading state initially", async () => {
     vi.mocked(programsApi.getAll).mockImplementation(
-      () => new Promise(() => {})
+      () => new Promise(() => {}),
     );
     vi.mocked(festesApi.getAll).mockResolvedValue([mockFesta]);
 
@@ -99,7 +98,9 @@ describe("ProgramsPage", () => {
     render(<ProgramsPage />);
 
     await waitFor(() => {
-      expect(screen.getByText("Error al cargar los programas.")).toBeInTheDocument();
+      expect(
+        screen.getByText("Error al cargar los programas."),
+      ).toBeInTheDocument();
     });
   });
 
@@ -172,7 +173,13 @@ describe("ProgramsPage", () => {
   });
 
   it("shows draft badge for unpublished programs", async () => {
-    const draftProgram = { ...mockProgram, id: 2, slug: "dia-2", is_published: false, title: "Dia 2 - Borrador" };
+    const draftProgram = {
+      ...mockProgram,
+      id: 2,
+      slug: "dia-2",
+      is_published: false,
+      title: "Dia 2 - Borrador",
+    };
     vi.mocked(programsApi.getAll).mockResolvedValue({
       count: 1,
       next: null,
@@ -202,7 +209,9 @@ describe("ProgramsPage", () => {
     render(<ProgramsPage />);
 
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: /Nuevo programa/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: /Nuevo programa/i }),
+      ).toBeInTheDocument();
     });
   });
 
@@ -234,7 +243,9 @@ describe("ProgramsPage", () => {
           count: 1,
           next: null,
           previous: null,
-          results: [{ ...mockProgram, id: 2, slug: "other", title: "Other Program" }],
+          results: [
+            { ...mockProgram, id: 2, slug: "other", title: "Other Program" },
+          ],
         };
       }
       return {

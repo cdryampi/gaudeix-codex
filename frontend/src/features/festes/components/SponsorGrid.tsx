@@ -39,7 +39,7 @@ export const SponsorGrid = ({ sponsors }: SponsorGridProps) => {
   }
 
   return (
-    <div className="space-y-12">
+    <div className="flex flex-wrap justify-center items-end gap-x-12 gap-y-8">
       {TIER_ORDER.map((tier) => {
         const tierSponsors = sponsorsByTier[tier];
         if (!tierSponsors || tierSponsors.length === 0) return null;
@@ -48,32 +48,19 @@ export const SponsorGrid = ({ sponsors }: SponsorGridProps) => {
         const logoSize = TIER_LOGO_SIZES[config.size];
 
         return (
-          <div key={tier}>
-            {/* Tier Header */}
-            <div className="flex items-center gap-4 mb-6">
-              <div
-                className={`px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest ${config.bgColor} ${config.textColor} border ${config.borderColor}`}
-              >
-                {config.label}
-              </div>
-              <div className="flex-1 h-px bg-slate-100" />
-            </div>
-
-            {/* Sponsors Grid */}
-            <div
-              className={`flex flex-wrap justify-center gap-6 ${
-                config.size === "xl" || config.size === "lg" ? "gap-8" : "gap-4"
-              }`}
-            >
-              {tierSponsors.map((sponsor) => (
-                <SponsorLogo
-                  key={sponsor.id}
-                  sponsor={sponsor}
-                  logoSize={logoSize}
-                  tierConfig={config}
-                />
-              ))}
-            </div>
+          <div
+            key={tier}
+            className="flex flex-wrap justify-center items-center gap-6"
+          >
+            {/* Sponsors Grid without massive headers */}
+            {tierSponsors.map((sponsor) => (
+              <SponsorLogo
+                key={sponsor.id}
+                sponsor={sponsor}
+                logoSize={logoSize}
+                tierConfig={config}
+              />
+            ))}
           </div>
         );
       })}

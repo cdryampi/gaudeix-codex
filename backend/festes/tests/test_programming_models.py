@@ -1,4 +1,4 @@
-"""Comprehensive model tests for festes programming entities."""
+﻿"""Model tests for festes programming entities without Activity."""
 
 # pyright: reportMissingImports=false
 
@@ -6,15 +6,16 @@ from __future__ import annotations
 
 from datetime import timedelta
 
-import pytest  # type: ignore
+import pytest
 from django.core.exceptions import ValidationError
+from django.db import IntegrityError
 from django.utils import timezone
 
 from core.models import Category  # pyright: ignore[reportImplicitRelativeImport]
+from events.models import Event  # pyright: ignore[reportImplicitRelativeImport]
 from festes.models import (  # pyright: ignore[reportImplicitRelativeImport]
-    Activity,
-    ActivityStatusChoices,
     Festa,
+    FestaEvent,
     Program,
     ProgramStatusChoices,
     Venue,
@@ -54,22 +55,7 @@ def program(festa: Festa) -> Program:
     )
 
 
-@pytest.fixture
-def venue() -> Venue:
-    return Venue.objects.create(
-        name="Placa Major",
-        address="Placa Major, 1",
-        city="Cabrera de Mar",
-        latitude=41.52,
-        longitude=2.39,
-        is_published=True,
-        is_accessible=True,
-    )
-
-
-def test_program_generates_unique_slug_and_publication_state(
-    festa: Festa,
-) -> None:
+def test_program_generates_unique_slug_and_publication_state(festa: Festa) -> None:
     first = Program.objects.create(festa=festa, title="Nit Jove")
     second = Program.objects.create(festa=festa, title="Nit Jove")
 
@@ -78,20 +64,7 @@ def test_program_generates_unique_slug_and_publication_state(
     assert first.is_published is False
 
 
-def test_program_computed_properties(program: Program, venue: Venue) -> None:
-    start = timezone.now() + timedelta(days=1)
-    Activity.objects.create(
-        program=program,
-        venue=venue,
-        title="Concert",
-        category="music",
-        start_at=start,
-        end_at=start + timedelta(hours=2),
-        status=ActivityStatusChoices.PUBLISHED,
-    )
-
-    program.refresh_from_db()
-    assert program.activities_count == 1
+def test_program_timestamp_aliases(program: Program) -> None:
     assert program.created_at is not None
     assert program.updated_at is not None
 
@@ -143,30 +116,22 @@ def test_venue_requires_coordinate_pair() -> None:
         )
 
 
-def test_activity_generates_unique_slug_and_aliases(
-    program: Program, venue: Venue
+def test_festa_event_requires_unique_festa_event_pair(
+    festa: Festa,
+    festes_category: Category,
 ) -> None:
-    start = timezone.now() + timedelta(days=4)
-    first = Activity.objects.create(
-        program=program,
-        venue=venue,
-        title="Sardanes",
-        category="tradition",
+    start = timezone.now()
+    event = Event.objects.create(
+        title="Concert",
+        summary="Resumen",
+        description="Descripcion",
+        category=festes_category,
         start_at=start,
-        end_at=start + timedelta(hours=1),
-        status=ActivityStatusChoices.PUBLISHED,
-    )
-    second = Activity.objects.create(
-        program=program,
-        venue=venue,
-        title="Sardanes",
-        category="tradition",
-        start_at=start,
-        end_at=start + timedelta(hours=1),
-        status=ActivityStatusChoices.PUBLISHED,
+        end_at=start + timedelta(hours=2),
+        is_published=True,
     )
 
-    assert first.slug != second.slug
-    assert first.is_published is True
-    assert first.created_at is not None
-    assert first.updated_at is not None
+    FestaEvent.objects.create(festa=festa, event=event, order=0)
+
+    with pytest.raises(IntegrityError):
+        FestaEvent.objects.create(festa=festa, event=event, order=1)

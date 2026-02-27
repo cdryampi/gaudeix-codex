@@ -131,11 +131,6 @@ export const QUERY_KEYS = {
     LIST: ["venues", "list"],
     DETAIL: (slug: string) => ["venues", "detail", slug],
   },
-  ACTIVITIES: {
-    LIST: ["activities", "list"],
-    DETAIL: (slug: string) => ["activities", "detail", slug],
-    BY_PROGRAM: (programSlug: string) => ["activities", "by-program", programSlug],
-  },
   NEWS: {
     LIST: ["news", "list"],
     DETAIL: (id: string) => ["news", "detail", id],
@@ -215,16 +210,11 @@ export const API_ENDPOINTS = {
   PROGRAMS: {
     LIST: "/programs/",
     DETAIL: (slug: string) => `/programs/${slug}/`,
-    BY_FESTA: (festaSlug: string) => `/programs/?festa=${festaSlug}/`,
+    BY_FESTA: (festaSlug: string) => `/programs/?festa=${festaSlug}`,
   },
   VENUES: {
     LIST: "/venues/",
     DETAIL: (slug: string) => `/venues/${slug}/`,
-  },
-  ACTIVITIES: {
-    LIST: "/activities/",
-    DETAIL: (slug: string) => `/activities/${slug}/`,
-    BY_PROGRAM: (programSlug: string) => `/activities/?program=${programSlug}/`,
   },
   SPONSORS: {
     LIST: "/sponsors/",

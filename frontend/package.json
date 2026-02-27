@@ -4,10 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
+    "dev": "cross-env NODE_OPTIONS=--max-old-space-size=8192 vite",
+    "build": "cross-env NODE_OPTIONS=--max-old-space-size=8192 tsc -b && cross-env NODE_OPTIONS=--max-old-space-size=8192 vite build",
     "preview": "vite preview",
-    "test": "vitest",
+    "test": "cross-env NODE_OPTIONS=--max-old-space-size=8192 vitest",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
@@ -26,9 +26,11 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hot-toast": "^2.6.0",
+    "react-photo-album": "^3.5.1",
     "react-router-dom": "^7.12.0",
     "tailwind-merge": "^3.4.0",
     "tailwindcss-animate": "^1.0.7",
+    "yet-another-react-lightbox": "^3.29.1",
     "zustand": "^5.0.10"
   },
   "devDependencies": {

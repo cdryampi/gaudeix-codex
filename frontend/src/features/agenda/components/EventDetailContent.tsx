@@ -11,9 +11,8 @@ import {
   Coins,
   CheckCircle2,
   CloudSun,
-  Sparkles,
 } from "lucide-react";
-import { Event, FestesActivityReference } from "../../events/types";
+import { Event } from "../../events/types";
 import { formatDateTime, formatTime } from "../dateUtils";
 import { getNextSession } from "../utils";
 
@@ -42,14 +41,6 @@ export function EventDetailContent({
 }: EventDetailContentProps) {
   const nextSession = getNextSession(event.dates || []);
   const startDate = new Date(event.start_at);
-  const festesActivities = event.festes_activities ?? [];
-
-  const festesTarget = (activity: FestesActivityReference) =>
-    activity.slug
-      ? `/festes/activitats/${activity.slug}`
-      : activity.festa_slug
-        ? `/festes/${activity.festa_slug}`
-        : "/festes/programacio";
 
   const imageUrl =
     event.image_url ||
@@ -141,25 +132,6 @@ export function EventDetailContent({
                   #{tag.name}
                 </span>
               ))}
-              {festesActivities.length > 0 && (
-                <div className="flex flex-wrap gap-3">
-                  {festesActivities.map((activity) => (
-                    <Link
-                      key={activity.id}
-                      to={festesTarget(activity)}
-                      className="inline-flex items-center gap-2 rounded-full border border-accent/50 bg-accent/15 px-5 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-accent transition-colors hover:bg-accent hover:text-slate-950"
-                    >
-                      <Sparkles className="h-4 w-4" />
-                      {activity.title || "Acto de Festa Major"}
-                    </Link>
-                  ))}
-                </div>
-              )}
-              {festesActivities.length === 0 && (
-                <span className="rounded-full border border-white/20 bg-white/5 px-5 py-2 text-[10px] font-bold uppercase tracking-wider text-white/70">
-                  Sin acto de festa vinculado
-                </span>
-              )}
             </div>
 
             <h1 className="text-6xl font-black uppercase leading-[0.9] tracking-tighter text-white md:text-8xl lg:text-9xl max-w-5xl">

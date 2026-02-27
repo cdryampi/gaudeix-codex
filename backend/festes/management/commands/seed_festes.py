@@ -1,4 +1,4 @@
-"""
+﻿"""
 Seed example festes with translations, sponsors, and media files.
 
 Usage: python manage.py seed_festes
@@ -16,7 +16,14 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
 from core.models import Category
-from festes.models import Festa, FestaCategorySingleton, Sponsor, Program, Activity, Venue, ActivityStatusChoices, ProgramStatusChoices, FestaEvent
+from festes.models import (
+    Festa,
+    FestaCategorySingleton,
+    FestaEvent,
+    Program,
+    ProgramStatusChoices,
+    Sponsor,
+)
 from media_files.models import ImageFile, DocumentFile
 from events.models import Event
 
@@ -126,8 +133,8 @@ class Command(BaseCommand):
             # Link to some random events to demonstrate the event selector
             self._link_random_events(festa)
 
-            # Create a Program and Activities manually for each seeded Festa
-            self._create_sample_program_and_activities(festa)
+            # Create a sample Program for each seeded Festa.
+            self._create_sample_program(festa)
             
             self.stdout.write(self.style.SUCCESS(f"Created festa '{festa}'"))
 
@@ -141,7 +148,7 @@ class Command(BaseCommand):
                 order=idx,
             )
 
-    def _create_sample_program_and_activities(self, festa: Festa) -> None:
+    def _create_sample_program(self, festa: Festa) -> None:
         program = Program.objects.create(
             festa=festa,
             title=f"Programa Principal - {festa.title}",
@@ -150,53 +157,6 @@ class Command(BaseCommand):
         )
         program.set_current_language("ca")
         program.save()
-        
-        venue, _ = Venue.objects.get_or_create(
-            slug="placa-ajuntament-seed",
-            defaults={
-                "name": "Plaça de l'Ajuntament",
-                "address": "Plaça de l'Ajuntament, 1",
-                "city": "Cabrera de Mar",
-                "is_published": True,
-            }
-        )
-
-        event_link = Event.objects.filter(is_published=True).first()
-
-        title_val = "" if event_link else "Concert Inaugural"
-        summary_val = "" if event_link else "Gran concert de nit per començar les festes"
-
-        activity1 = Activity.objects.create(
-            program=program,
-            venue=venue,
-            title=title_val,
-            summary=summary_val,
-            category="music",
-            start_at=festa.start_date,
-            end_at=festa.start_date,
-            status=ActivityStatusChoices.PUBLISHED,
-            is_free=False,
-            price=15.00,
-            ticket_url="https://entrades.cabrerademar.cat/concert-festa-major",
-            event=event_link,  # Link to event if available! (Issue #63 test)
-        )
-        activity1.set_current_language("ca")
-        activity1.save()
-
-        activity2 = Activity.objects.create(
-            program=program,
-            venue=venue,
-            title="Cercavila de Gegants",
-            summary="Recorregut pels carrers del poble",
-            category="family",
-            start_at=festa.start_date,
-            end_at=festa.start_date,
-            status=ActivityStatusChoices.PUBLISHED,
-            is_free=True,
-        )
-        activity2.set_current_language("ca")
-        activity2.save()
-
     def _parse_date(self, date_str: str) -> date:
         """Parse ISO date string to date object."""
         return date.fromisoformat(date_str)
@@ -278,4 +238,5 @@ class Command(BaseCommand):
             )
         self.stdout.write(self.style.SUCCESS(f"Seeded DocumentFile from {path}"))
         return instance
+
 

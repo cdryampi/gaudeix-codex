@@ -4,11 +4,11 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
+    "dev": "cross-env NODE_OPTIONS=--max-old-space-size=8192 vite",
+    "build": "cross-env NODE_OPTIONS=--max-old-space-size=8192 tsc -b && cross-env NODE_OPTIONS=--max-old-space-size=8192 vite build",
     "preview": "vite preview",
-    "test": "vitest run",
-    "test:watch": "vitest",
+    "test": "cross-env NODE_OPTIONS=--max-old-space-size=8192 vitest run",
+    "test:watch": "cross-env NODE_OPTIONS=--max-old-space-size=8192 vitest",
     "type-check": "tsc --noEmit",
     "clean:js": "rimraf --glob src/**/*.js src/**/*.js.map"
   },

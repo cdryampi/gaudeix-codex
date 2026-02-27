@@ -5,7 +5,6 @@ import {
   ArrowRight,
   Calendar,
   CheckCircle2,
-  Sparkles,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Event } from "@/features/events/types";
@@ -17,8 +16,6 @@ import {
 
 export function EventCard({ event }: { event: Event }) {
   const startDate = useMemo(() => new Date(event.start_at), [event.start_at]);
-  const firstFestesActivity = event.festes_activities?.[0];
-  const festesTarget = "/festes/programacio";
 
   // Resolve image URL from featured_media object or helper
   const imageUrl =
@@ -54,15 +51,6 @@ export function EventCard({ event }: { event: Event }) {
         <span className="mb-3 text-[10px] font-black uppercase tracking-[0.3em] text-primary">
           {event.category_name || "Evento"}
         </span>
-        {firstFestesActivity && (
-          <Link
-            to={festesTarget}
-            className="mb-5 inline-flex w-fit items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-4 py-2 text-[10px] font-black uppercase tracking-widest text-primary transition-colors hover:bg-primary hover:text-white"
-          >
-            <Sparkles className="h-3.5 w-3.5" />
-            Acto de Festa Major
-          </Link>
-        )}
         <h3 className="mb-8 text-3xl font-black leading-[1.1] tracking-tighter uppercase line-clamp-3">
           {event.title}
         </h3>

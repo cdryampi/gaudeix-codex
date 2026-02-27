@@ -9,8 +9,8 @@ import { AppProviders } from "@/app/providers/AppProviders";
  */
 function customRender(
   ui: ReactElement,
-  options?: Omit<RenderOptions, "wrapper">
-) {
+  options?: Omit<RenderOptions, "wrapper">,
+): ReturnType<typeof render> {
   return render(ui, {
     wrapper: ({ children }) => (
       <BrowserRouter>

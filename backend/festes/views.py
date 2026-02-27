@@ -1,4 +1,4 @@
-"""Views for the festes app."""
+﻿"""Views for the festes app."""
 
 # pyright: reportAttributeAccessIssue=false, reportIncompatibleMethodOverride=false, reportOperatorIssue=false
 
@@ -7,19 +7,14 @@ from __future__ import annotations
 import logging
 
 from django.conf import settings
-from django.http import HttpResponse
 from django.db.models import Q
-from django.utils.dateparse import parse_date, parse_datetime
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
-from rest_framework.exceptions import ValidationError
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
 from .models import (
-    Activity,
-    ActivityStatusChoices,
     Festa,
     Program,
     ProgramStatusChoices,
@@ -27,15 +22,7 @@ from .models import (
     Venue,
 )
 from .permissions import IsAdminOrReadOnly
-from .adapters import (
-    activity_to_vevent,
-    notification_gateway,
-    validate_ticket_url,
-    venue_map_links,
-    wrap_vcalendar,
-)
 from .serializers import (
-    ActivitySerializer,
     FestaDetailSerializer,
     FestaSerializer,
     ProgramSerializer,
@@ -67,34 +54,12 @@ def _get_str_param(params, key: str) -> str | None:
     return value if isinstance(value, str) else None
 
 
-def _parse_datetime_boundary(param_name: str, raw_value: str | None):
-    if not raw_value:
-        return None
-
-    parsed_date = parse_date(raw_value)
-    if parsed_date is not None and "T" not in raw_value and " " not in raw_value:
-        return parsed_date
-
-    parsed_datetime = parse_datetime(raw_value)
-    if parsed_datetime is not None:
-        return parsed_datetime
-
-    raise ValidationError(
-        {
-            param_name: (
-                f"Invalid value '{raw_value}'. Use ISO date (YYYY-MM-DD) or "
-                "ISO-8601 datetime."
-            )
-        }
-    )
-
-
 class FestaProgrammingPagination(PageNumberPagination):
     """Standard page-number pagination for programming endpoints."""
 
-    page_size = 20
+    page_size = 50
     page_size_query_param = "page_size"
-    max_page_size = 100
+    max_page_size = 1000
 
 
 class FestaViewSet(viewsets.ModelViewSet):
@@ -458,7 +423,7 @@ class ProgramViewSet(viewsets.ModelViewSet):
 
 
 class VenueViewSet(viewsets.ModelViewSet):
-    """API endpoints for venues used by festa activities."""
+    """API endpoints for venues used by festa events."""
 
     queryset = Venue.objects.all()  # type: ignore[attr-defined]
     serializer_class = VenueSerializer
@@ -499,189 +464,3 @@ class VenueViewSet(viewsets.ModelViewSet):
         return queryset
 
 
-class ActivityViewSet(viewsets.ModelViewSet):
-    """API endpoints for scheduled activities inside festa programs."""
-
-    queryset = Activity.objects.all().select_related(  # type: ignore[attr-defined]
-        "program", "program__festa", "venue", "event"
-    )
-    serializer_class = ActivitySerializer
-    lookup_field = "slug"
-    pagination_class = FestaProgrammingPagination
-
-    def get_permissions(self):
-        if self.action in ["list", "retrieve", "ical"]:
-            return [AllowAny()]
-        return [IsAdminOrReadOnly()]
-
-    def _validate_ticket_url_value(self, ticket_url: str | None) -> None:
-        is_valid, reason = validate_ticket_url(ticket_url)
-        if not is_valid:
-            raise ValidationError({"ticket_url": reason})
-
-    def _activity_supports_event(self) -> bool:
-        try:
-            Activity._meta.get_field("event")
-            return True
-        except Exception:
-            return False
-
-    def perform_create(self, serializer):
-        self._validate_ticket_url_value(serializer.validated_data.get("ticket_url"))
-        instance = serializer.save()
-        if instance.status == ActivityStatusChoices.PUBLISHED:
-            notification_gateway.notify_activity_published(instance)
-
-    def perform_update(self, serializer):
-        old_status = serializer.instance.status
-        ticket_url = serializer.validated_data.get(
-            "ticket_url",
-            serializer.instance.ticket_url,
-        )
-        self._validate_ticket_url_value(ticket_url)
-        instance = serializer.save()
-        if (
-            old_status != ActivityStatusChoices.PUBLISHED
-            and instance.status == ActivityStatusChoices.PUBLISHED
-        ):
-            notification_gateway.notify_activity_published(instance)
-
-    def get_queryset(self):
-        queryset = self.queryset
-        params = self.request.query_params
-
-        program_param = _get_str_param(params, "program")
-        if program_param:
-            if program_param.isdigit():
-                queryset = queryset.filter(program_id=int(program_param))
-            else:
-                queryset = queryset.filter(program__slug=program_param)
-
-        festa_param = _get_str_param(params, "festa")
-        if festa_param:
-            if festa_param.isdigit():
-                queryset = queryset.filter(program__festa_id=int(festa_param))
-            else:
-                queryset = queryset.filter(program__festa__slug=festa_param)
-
-        category = _get_str_param(params, "category")
-        if category:
-            queryset = queryset.filter(category=category)
-
-        status_param = _get_str_param(params, "status")
-        if status_param:
-            queryset = queryset.filter(status=status_param)
-
-        is_free = _normalize_bool_param(_get_str_param(params, "is_free"))
-        if is_free is not None:
-            queryset = queryset.filter(is_free=is_free)
-
-        has_event = _normalize_bool_param(_get_str_param(params, "has_event"))
-        if has_event is not None and self._activity_supports_event():
-            queryset = queryset.filter(event__isnull=not has_event)
-
-        date_from = _parse_datetime_boundary(
-            "date_from", _get_str_param(params, "date_from")
-        )
-        date_to = _parse_datetime_boundary("date_to", _get_str_param(params, "date_to"))
-
-        if date_from and date_to and date_from > date_to:
-            raise ValidationError(
-                {"date_range": "date_from must be less than or equal to date_to."}
-            )
-
-        if date_from:
-            if hasattr(date_from, "hour"):
-                queryset = queryset.filter(start_at__gte=date_from)
-            else:
-                queryset = queryset.filter(start_at__date__gte=date_from)
-
-        if date_to:
-            if hasattr(date_to, "hour"):
-                queryset = queryset.filter(start_at__lte=date_to)
-            else:
-                queryset = queryset.filter(start_at__date__lte=date_to)
-
-        location = _get_str_param(params, "location")
-        if location:
-            queryset = queryset.filter(
-                Q(venue__translations__name__icontains=location)
-                | Q(venue__address__icontains=location)
-                | Q(venue__city__icontains=location)
-            ).distinct()
-
-        search = _get_str_param(params, "search") or _get_str_param(params, "q")
-        if search:
-            queryset = queryset.filter(
-                Q(translations__title__icontains=search)
-                | Q(translations__summary__icontains=search)
-                | Q(translations__description__icontains=search)
-                | Q(slug__icontains=search)
-            ).distinct()
-
-        ordering_param = _get_str_param(params, "ordering")
-        allowed_ordering = {
-            "start_at": "start_at",
-            "-start_at": "-start_at",
-            "title": "translations__title",
-            "-title": "-translations__title",
-            "created_at": "fecha_creacion",
-            "-created_at": "-fecha_creacion",
-        }
-        if ordering_param in allowed_ordering:
-            queryset = queryset.order_by(allowed_ordering[ordering_param], "id")
-        else:
-            queryset = queryset.order_by("start_at", "id")
-
-        return queryset
-
-    @action(detail=True, methods=["get"], permission_classes=[AllowAny])
-    def ical(self, request, slug=None):
-        """Export a single activity as an iCal file."""
-        activity = self.get_object()
-
-        if not activity.start_at:
-            raise ValidationError(
-                {"start_at": "Activity requires start_at to generate iCal export."}
-            )
-
-        title = (
-            activity.safe_translation_getter("title", any_language=True)
-            or activity.slug
-        )
-        summary = activity.safe_translation_getter("summary", any_language=True) or ""
-        description = (
-            activity.safe_translation_getter("description", any_language=True) or ""
-        )
-
-        location = activity.venue.location if activity.venue_id else ""
-        map_links = (
-            venue_map_links(activity.venue.latitude, activity.venue.longitude)
-            if activity.venue_id
-            else {}
-        )
-
-        event_url = ""
-        if activity.ticket_url:
-            is_valid, _ = validate_ticket_url(activity.ticket_url)
-            if is_valid:
-                event_url = activity.ticket_url
-        if not event_url:
-            event_url = map_links.get("google_maps", "")
-
-        vevent = activity_to_vevent(
-            uid=f"activity-{activity.slug}@gaudeix.local",
-            title=title,
-            start_at=activity.start_at,
-            end_at=activity.end_at,
-            summary=summary,
-            description=description,
-            location=location,
-            url=event_url,
-            category=activity.category,
-        )
-        calendar = wrap_vcalendar([vevent], cal_name="Festes - Activitats")
-
-        response = HttpResponse(calendar, content_type="text/calendar; charset=utf-8")
-        response["Content-Disposition"] = f'attachment; filename="{activity.slug}.ics"'
-        return response

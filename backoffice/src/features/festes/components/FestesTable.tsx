@@ -147,8 +147,8 @@ export function FestesTable({ festes, onEdit, onDelete }: Props) {
 
 function FestaThumbnail({ festa }: { festa: Festa }) {
   const src =
-    festa.poster?.thumbnail_url ||
-    festa.poster?.file ||
+    festa.posters?.[0]?.thumbnail_url ||
+    festa.posters?.[0]?.file ||
     festa.featured_media?.thumbnail_url ||
     festa.featured_media?.file ||
     festa.image_url ||

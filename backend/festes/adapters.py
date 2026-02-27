@@ -52,7 +52,7 @@ def activity_to_vevent(
     url: str = "",
     category: str = "",
 ) -> str:
-    """Return a single VEVENT block for an Activity.
+    """Return a single VEVENT block for a festa event.
 
     The result is a standalone text block (no surrounding VCALENDAR) so
     callers can batch multiple events into one calendar file.
@@ -60,7 +60,7 @@ def activity_to_vevent(
     Parameters
     ----------
     uid:
-        Globally unique identifier for this event (use ``activity.slug``).
+        Globally unique identifier for this event (for example ``event.slug``).
     title:
         Human-readable title (maps to SUMMARY).
     start_at:
@@ -76,7 +76,7 @@ def activity_to_vevent(
     url:
         Public URL for the event.
     category:
-        Activity category label.
+        Event category label.
 
     Returns
     -------
@@ -225,13 +225,13 @@ class NotificationGateway:
     ``notifications.utils``; in tests they can be replaced by a mock.
     """
 
-    def notify_activity_published(self, activity: Any) -> None:
-        """Send a notification when an activity is published.
+    def notify_festa_event_published(self, activity: Any) -> None:
+        """Send a notification when a festa event is published.
 
         Parameters
         ----------
         activity:
-            An ``Activity`` model instance.
+            A festa event-like object.
         """
         title = getattr(activity, "title", "Activity")
         try:
@@ -253,6 +253,10 @@ class NotificationGateway:
             )
         except Exception:
             logger.exception("Failed to send notification for activity '%s'", title)
+
+    def notify_activity_published(self, activity: Any) -> None:
+        """Backward-compatible wrapper for legacy callers."""
+        self.notify_festa_event_published(activity)
 
     def notify_program_published(self, program: Any) -> None:
         """Send a notification when a program is published.

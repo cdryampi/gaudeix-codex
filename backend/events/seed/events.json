@@ -45,12 +45,24 @@
       },
       "extra_dates": [
         {
-          "start_offset": { "days": 8, "hours": 9 },
-          "end_offset": { "days": 8, "hours": 14 }
+          "start_offset": {
+            "days": 8,
+            "hours": 9
+          },
+          "end_offset": {
+            "days": 8,
+            "hours": 14
+          }
         },
         {
-          "start_offset": { "days": 15, "hours": 9 },
-          "end_offset": { "days": 15, "hours": 14 }
+          "start_offset": {
+            "days": 15,
+            "hours": 9
+          },
+          "end_offset": {
+            "days": 15,
+            "hours": 14
+          }
         }
       ],
       "is_published": true,
@@ -176,8 +188,14 @@
       },
       "extra_dates": [
         {
-          "start_offset": { "days": 26, "hours": 21 },
-          "end_offset": { "days": 26, "hours": 23 }
+          "start_offset": {
+            "days": 26,
+            "hours": 21
+          },
+          "end_offset": {
+            "days": 26,
+            "hours": 23
+          }
         }
       ],
       "is_published": true,
@@ -332,12 +350,24 @@
       },
       "extra_dates": [
         {
-          "start_offset": { "days": 9, "hours": 17 },
-          "end_offset": { "days": 9, "hours": 18 }
+          "start_offset": {
+            "days": 9,
+            "hours": 17
+          },
+          "end_offset": {
+            "days": 9,
+            "hours": 18
+          }
         },
         {
-          "start_offset": { "days": 16, "hours": 17 },
-          "end_offset": { "days": 16, "hours": 18 }
+          "start_offset": {
+            "days": 16,
+            "hours": 17
+          },
+          "end_offset": {
+            "days": 16,
+            "hours": 18
+          }
         }
       ],
       "is_published": true,
@@ -495,8 +525,14 @@
       },
       "extra_dates": [
         {
-          "start_offset": { "days": 19, "hours": 18 },
-          "end_offset": { "days": 19, "hours": 20 }
+          "start_offset": {
+            "days": 19,
+            "hours": 18
+          },
+          "end_offset": {
+            "days": 19,
+            "hours": 20
+          }
         }
       ],
       "is_published": true,
@@ -566,12 +602,24 @@
       },
       "extra_dates": [
         {
-          "start_offset": { "days": 29, "hours": 19 },
-          "end_offset": { "days": 29, "hours": 21 }
+          "start_offset": {
+            "days": 29,
+            "hours": 19
+          },
+          "end_offset": {
+            "days": 29,
+            "hours": 21
+          }
         },
         {
-          "start_offset": { "days": 36, "hours": 19 },
-          "end_offset": { "days": 36, "hours": 21 }
+          "start_offset": {
+            "days": 36,
+            "hours": 19
+          },
+          "end_offset": {
+            "days": 36,
+            "hours": 21
+          }
         }
       ],
       "is_published": true,
@@ -677,6 +725,1137 @@
           "title": "Cine al Aire Libre",
           "summary": "Pelicula bajo las estrellas en la playa.",
           "description": "Trae tu silla y disfruta del cine con los pies en la arena."
+        }
+      }
+    },
+    {
+      "slug": "esports-extra-1",
+      "category_slug": "esports",
+      "start_offset": {
+        "days": 15,
+        "hours": 21
+      },
+      "end_offset": {
+        "days": 16,
+        "hours": 23
+      },
+      "is_published": true,
+      "venue_name": "Diversos Espais",
+      "location_text": "Cabrera de Mar",
+      "featured_image_filename": "event_sports_race.png",
+      "points_value": 10,
+      "translations": {
+        "ca": {
+          "title": "Cursa Popular 1",
+          "summary": "Gran esdeveniment",
+          "description": "No to perdis. Aquest es un esdeveniment creat per omplir les llistes."
+        },
+        "es": {
+          "title": "Cursa Popular 1",
+          "summary": "Gran evento",
+          "description": "No te lo pierdas. Este es un evento creado para llenar las listas."
+        }
+      }
+    },
+    {
+      "slug": "cultura-extra-2",
+      "category_slug": "cultura",
+      "start_offset": {
+        "days": 20,
+        "hours": 21
+      },
+      "end_offset": {
+        "days": 20,
+        "hours": 22
+      },
+      "is_published": true,
+      "venue_name": "Diversos Espais",
+      "location_text": "Cabrera de Mar",
+      "featured_image_filename": "event_cultural_dance.png",
+      "points_value": 10,
+      "translations": {
+        "ca": {
+          "title": "Ball Tradicional 2",
+          "summary": "Gran esdeveniment",
+          "description": "No to perdis. Aquest es un esdeveniment creat per omplir les llistes."
+        },
+        "es": {
+          "title": "Ball Tradicional 2",
+          "summary": "Gran evento",
+          "description": "No te lo pierdas. Este es un evento creado para llenar las listas."
+        }
+      }
+    },
+    {
+      "slug": "cultura-extra-3",
+      "category_slug": "cultura",
+      "start_offset": {
+        "days": 28,
+        "hours": 13
+      },
+      "end_offset": {
+        "days": 30,
+        "hours": 14
+      },
+      "is_published": true,
+      "venue_name": "Diversos Espais",
+      "location_text": "Cabrera de Mar",
+      "featured_image_filename": "event_cultural_dance.png",
+      "points_value": 40,
+      "translations": {
+        "ca": {
+          "title": "Ball Tradicional 3",
+          "summary": "Gran esdeveniment",
+          "description": "No to perdis. Aquest es un esdeveniment creat per omplir les llistes."
+        },
+        "es": {
+          "title": "Ball Tradicional 3",
+          "summary": "Gran evento",
+          "description": "No te lo pierdas. Este es un evento creado para llenar las listas."
+        }
+      }
+    },
+    {
+      "slug": "fires-i-mercats-extra-4",
+      "category_slug": "fires-i-mercats",
+      "start_offset": {
+        "days": 37,
+        "hours": 11
+      },
+      "end_offset": {
+        "days": 39,
+        "hours": 15
+      },
+      "is_published": true,
+      "venue_name": "Diversos Espais",
+      "location_text": "Cabrera de Mar",
+      "featured_image_filename": "event_food_market.png",
+      "points_value": 30,
+      "translations": {
+        "ca": {
+          "title": "Fira Gastronomica 4",
+          "summary": "Gran esdeveniment",
+          "description": "No to perdis. Aquest es un esdeveniment creat per omplir les llistes."
+        },
+        "es": {
+          "title": "Fira Gastronomica 4",
+          "summary": "Gran evento",
+          "description": "No te lo pierdas. Este es un evento creado para llenar las listas."
+        }
+      }
+    },
+    {
+      "slug": "musica-extra-5",
+      "category_slug": "musica",
+      "start_offset": {
+        "days": 49,
+        "hours": 10
+      },
+      "end_offset": {
+        "days": 51,
+        "hours": 14
+      },
+      "is_published": true,
+      "venue_name": "Diversos Espais",
+      "location_text": "Cabrera de Mar",
+      "featured_image_filename": "event_concert_night.png",
+      "points_value": 10,
+      "translations": {
+        "ca": {
+          "title": "Concert de Nit 5",
+          "summary": "Gran esdeveniment",
+          "description": "No to perdis. Aquest es un esdeveniment creat per omplir les llistes."
+        },
+        "es": {
+          "title": "Concert de Nit 5",
+          "summary": "Gran evento",
+          "description": "No te lo pierdas. Este es un evento creado para llenar las listas."
+        }
+      }
+    },
+    {
+      "slug": "fires-i-mercats-extra-6",
+      "category_slug": "fires-i-mercats",
+      "start_offset": {
+        "days": 16,
+        "hours": 17
+      },
+      "end_offset": {
+        "days": 32,
+        "hours": 21
+      },
+      "is_published": true,
+      "venue_name": "Diversos Espais",
+      "location_text": "Cabrera de Mar",
+      "featured_image_filename": "event_food_market.png",
+      "points_value": 30,
+      "translations": {
+        "ca": {
+          "title": "Fira Gastronomica 6",
+          "summary": "Gran esdeveniment",
+          "description": "No to perdis. Aquest es un esdeveniment creat per omplir les llistes."
+        },
+        "es": {
+          "title": "Fira Gastronomica 6",
+          "summary": "Gran evento",
+          "description": "No te lo pierdas. Este es un evento creado para llenar las listas."
+        }
+      }
+    },
+    {
+      "slug": "infantil-extra-7",
+      "category_slug": "infantil",
+      "start_offset": {
+        "days": 59,
+        "hours": 14
+      },
+      "end_offset": {
+        "days": 60,
+        "hours": 18
+      },
+      "is_published": true,
+      "venue_name": "Diversos Espais",
+      "location_text": "Cabrera de Mar",
+      "featured_image_filename": "event_kids_activity.png",
+      "points_value": 40,
+      "translations": {
+        "ca": {
+          "title": "Activitats Infantils 7",
+          "summary": "Gran esdeveniment",
+          "description": "No to perdis. Aquest es un esdeveniment creat per omplir les llistes."
+        },
+        "es": {
+          "title": "Activitats Infantiles 7",
+          "summary": "Gran evento",
+          "description": "No te lo pierdas. Este es un evento creado para llenar las listas."
+        }
+      }
+    },
+    {
+      "slug": "infantil-extra-8",
+      "category_slug": "infantil",
+      "start_offset": {
+        "days": 12,
+        "hours": 19
+      },
+      "end_offset": {
+        "days": 12,
+        "hours": 20
+      },
+      "is_published": true,
+      "venue_name": "Diversos Espais",
+      "location_text": "Cabrera de Mar",
+      "featured_image_filename": "event_kids_activity.png",
+      "points_value": 40,
+      "translations": {
+        "ca": {
+          "title": "Activitats Infantils 8",
+          "summary": "Gran esdeveniment",
+          "description": "No to perdis. Aquest es un esdeveniment creat per omplir les llistes."
+        },
+        "es": {
+          "title": "Activitats Infantiles 8",
+          "summary": "Gran evento",
+          "description": "No te lo pierdas. Este es un evento creado para llenar las listas."
+        }
+      }
+    },
+    {
+      "slug": "esports-extra-9",
+      "category_slug": "esports",
+      "start_offset": {
+        "days": 37,
+        "hours": 17
+      },
+      "end_offset": {
+        "days": 37,
+        "hours": 20
+      },
+      "is_published": true,
+      "venue_name": "Diversos Espais",
+      "location_text": "Cabrera de Mar",
+      "featured_image_filename": "event_sports_race.png",
+      "points_value": 20,
+      "translations": {
+        "ca": {
+          "title": "Cursa Popular 9",
+          "summary": "Gran esdeveniment",
+          "description": "No to perdis. Aquest es un esdeveniment creat per omplir les llistes."
+        },
+        "es": {
+          "title": "Cursa Popular 9",
+          "summary": "Gran evento",
+          "description": "No te lo pierdas. Este es un evento creado para llenar las listas."
+        }
+      }
+    },
+    {
+      "slug": "musica-extra-10",
+      "category_slug": "musica",
+      "start_offset": {
+        "days": 23,
+        "hours": 18
+      },
+      "end_offset": {
+        "days": 37,
+        "hours": 19
+      },
+      "is_published": true,
+      "venue_name": "Diversos Espais",
+      "location_text": "Cabrera de Mar",
+      "featured_image_filename": "event_concert_night.png",
+      "points_value": 20,
+      "translations": {
+        "ca": {
+          "title": "Concert de Nit 10",
+          "summary": "Gran esdeveniment",
+          "description": "No to perdis. Aquest es un esdeveniment creat per omplir les llistes."
+        },
+        "es": {
+          "title": "Concert de Nit 10",
+          "summary": "Gran evento",
+          "description": "No te lo pierdas. Este es un evento creado para llenar las listas."
+        }
+      }
+    },
+    {
+      "slug": "musica-extra-11",
+      "category_slug": "musica",
+      "start_offset": {
+        "days": 19,
+        "hours": 15
+      },
+      "end_offset": {
+        "days": 30,
+        "hours": 14
+      },
+      "is_published": true,
+      "venue_name": "Diversos Espais",
+      "location_text": "Cabrera de Mar",
+      "featured_image_filename": "event_concert_night.png",
+      "points_value": 10,
+      "translations": {
+        "ca": {
+          "title": "Concert de Nit 11",
+          "summary": "Gran esdeveniment",
+          "description": "No to perdis. Aquest es un esdeveniment creat per omplir les llistes."
+        },
+        "es": {
+          "title": "Concert de Nit 11",
+          "summary": "Gran evento",
+          "description": "No te lo pierdas. Este es un evento creado para llenar las listas."
+        }
+      }
+    },
+    {
+      "slug": "infantil-extra-12",
+      "category_slug": "infantil",
+      "start_offset": {
+        "days": 25,
+        "hours": 10
+      },
+      "end_offset": {
+        "days": 60,
+        "hours": 23
+      },
+      "is_published": true,
+      "venue_name": "Diversos Espais",
+      "location_text": "Cabrera de Mar",
+      "featured_image_filename": "event_kids_activity.png",
+      "points_value": 50,
+      "translations": {
+        "ca": {
+          "title": "Activitats Infantils 12",
+          "summary": "Gran esdeveniment",
+          "description": "No to perdis. Aquest es un esdeveniment creat per omplir les llistes."
+        },
+        "es": {
+          "title": "Activitats Infantiles 12",
+          "summary": "Gran evento",
+          "description": "No te lo pierdas. Este es un evento creado para llenar las listas."
+        }
+      }
+    },
+    {
+      "slug": "infantil-extra-13",
+      "category_slug": "infantil",
+      "start_offset": {
+        "days": 1,
+        "hours": 17
+      },
+      "end_offset": {
+        "days": 1,
+        "hours": 20
+      },
+      "is_published": true,
+      "venue_name": "Diversos Espais",
+      "location_text": "Cabrera de Mar",
+      "featured_image_filename": "event_kids_activity.png",
+      "points_value": 10,
+      "translations": {
+        "ca": {
+          "title": "Activitats Infantils 13",
+          "summary": "Gran esdeveniment",
+          "description": "No to perdis. Aquest es un esdeveniment creat per omplir les llistes."
+        },
+        "es": {
+          "title": "Activitats Infantiles 13",
+          "summary": "Gran evento",
+          "description": "No te lo pierdas. Este es un evento creado para llenar las listas."
+        }
+      }
+    },
+    {
+      "slug": "cultura-extra-14",
+      "category_slug": "cultura",
+      "start_offset": {
+        "days": 7,
+        "hours": 12
+      },
+      "end_offset": {
+        "days": 27,
+        "hours": 23
+      },
+      "is_published": true,
+      "venue_name": "Diversos Espais",
+      "location_text": "Cabrera de Mar",
+      "featured_image_filename": "event_cultural_dance.png",
+      "points_value": 50,
+      "translations": {
+        "ca": {
+          "title": "Ball Tradicional 14",
+          "summary": "Gran esdeveniment",
+          "description": "No to perdis. Aquest es un esdeveniment creat per omplir les llistes."
+        },
+        "es": {
+          "title": "Ball Tradicional 14",
+          "summary": "Gran evento",
+          "description": "No te lo pierdas. Este es un evento creado para llenar las listas."
+        }
+      }
+    },
+    {
+      "slug": "esports-extra-15",
+      "category_slug": "esports",
+      "start_offset": {
+        "days": 38,
+        "hours": 10
+      },
+      "end_offset": {
+        "days": 45,
+        "hours": 21
+      },
+      "is_published": true,
+      "venue_name": "Diversos Espais",
+      "location_text": "Cabrera de Mar",
+      "featured_image_filename": "event_sports_race.png",
+      "points_value": 50,
+      "translations": {
+        "ca": {
+          "title": "Cursa Popular 15",
+          "summary": "Gran esdeveniment",
+          "description": "No to perdis. Aquest es un esdeveniment creat per omplir les llistes."
+        },
+        "es": {
+          "title": "Cursa Popular 15",
+          "summary": "Gran evento",
+          "description": "No te lo pierdas. Este es un evento creado para llenar las listas."
+        }
+      }
+    },
+    {
+      "slug": "fires-i-mercats-extra-16",
+      "category_slug": "fires-i-mercats",
+      "start_offset": {
+        "days": 12,
+        "hours": 18
+      },
+      "end_offset": {
+        "days": 47,
+        "hours": 11
+      },
+      "is_published": true,
+      "venue_name": "Diversos Espais",
+      "location_text": "Cabrera de Mar",
+      "featured_image_filename": "event_food_market.png",
+      "points_value": 40,
+      "translations": {
+        "ca": {
+          "title": "Fira Gastronomica 16",
+          "summary": "Gran esdeveniment",
+          "description": "No to perdis. Aquest es un esdeveniment creat per omplir les llistes."
+        },
+        "es": {
+          "title": "Fira Gastronomica 16",
+          "summary": "Gran evento",
+          "description": "No te lo pierdas. Este es un evento creado para llenar las listas."
+        }
+      }
+    },
+    {
+      "slug": "fires-i-mercats-extra-17",
+      "category_slug": "fires-i-mercats",
+      "start_offset": {
+        "days": 30,
+        "hours": 14
+      },
+      "end_offset": {
+        "days": 32,
+        "hours": 17
+      },
+      "is_published": true,
+      "venue_name": "Diversos Espais",
+      "location_text": "Cabrera de Mar",
+      "featured_image_filename": "event_food_market.png",
+      "points_value": 10,
+      "translations": {
+        "ca": {
+          "title": "Fira Gastronomica 17",
+          "summary": "Gran esdeveniment",
+          "description": "No to perdis. Aquest es un esdeveniment creat per omplir les llistes."
+        },
+        "es": {
+          "title": "Fira Gastronomica 17",
+          "summary": "Gran evento",
+          "description": "No te lo pierdas. Este es un evento creado para llenar las listas."
+        }
+      }
+    },
+    {
+      "slug": "infantil-extra-18",
+      "category_slug": "infantil",
+      "start_offset": {
+        "days": 48,
+        "hours": 13
+      },
+      "end_offset": {
+        "days": 54,
+        "hours": 11
+      },
+      "is_published": true,
+      "venue_name": "Diversos Espais",
+      "location_text": "Cabrera de Mar",
+      "featured_image_filename": "event_kids_activity.png",
+      "points_value": 50,
+      "translations": {
+        "ca": {
+          "title": "Activitats Infantils 18",
+          "summary": "Gran esdeveniment",
+          "description": "No to perdis. Aquest es un esdeveniment creat per omplir les llistes."
+        },
+        "es": {
+          "title": "Activitats Infantiles 18",
+          "summary": "Gran evento",
+          "description": "No te lo pierdas. Este es un evento creado para llenar las listas."
+        }
+      }
+    },
+    {
+      "slug": "fires-i-mercats-extra-19",
+      "category_slug": "fires-i-mercats",
+      "start_offset": {
+        "days": 18,
+        "hours": 18
+      },
+      "end_offset": {
+        "days": 19,
+        "hours": 19
+      },
+      "is_published": true,
+      "venue_name": "Diversos Espais",
+      "location_text": "Cabrera de Mar",
+      "featured_image_filename": "event_food_market.png",
+      "points_value": 10,
+      "translations": {
+        "ca": {
+          "title": "Fira Gastronomica 19",
+          "summary": "Gran esdeveniment",
+          "description": "No to perdis. Aquest es un esdeveniment creat per omplir les llistes."
+        },
+        "es": {
+          "title": "Fira Gastronomica 19",
+          "summary": "Gran evento",
+          "description": "No te lo pierdas. Este es un evento creado para llenar las listas."
+        }
+      }
+    },
+    {
+      "slug": "fires-i-mercats-extra-20",
+      "category_slug": "fires-i-mercats",
+      "start_offset": {
+        "days": 47,
+        "hours": 10
+      },
+      "end_offset": {
+        "days": 49,
+        "hours": 14
+      },
+      "is_published": true,
+      "venue_name": "Diversos Espais",
+      "location_text": "Cabrera de Mar",
+      "featured_image_filename": "event_food_market.png",
+      "points_value": 30,
+      "translations": {
+        "ca": {
+          "title": "Fira Gastronomica 20",
+          "summary": "Gran esdeveniment",
+          "description": "No to perdis. Aquest es un esdeveniment creat per omplir les llistes."
+        },
+        "es": {
+          "title": "Fira Gastronomica 20",
+          "summary": "Gran evento",
+          "description": "No te lo pierdas. Este es un evento creado para llenar las listas."
+        }
+      }
+    },
+    {
+      "slug": "infantil-extra-21",
+      "category_slug": "infantil",
+      "start_offset": {
+        "days": 12,
+        "hours": 16
+      },
+      "end_offset": {
+        "days": 13,
+        "hours": 17
+      },
+      "is_published": true,
+      "venue_name": "Diversos Espais",
+      "location_text": "Cabrera de Mar",
+      "featured_image_filename": "event_kids_activity.png",
+      "points_value": 30,
+      "translations": {
+        "ca": {
+          "title": "Activitats Infantils 21",
+          "summary": "Gran esdeveniment",
+          "description": "No to perdis. Aquest es un esdeveniment creat per omplir les llistes."
+        },
+        "es": {
+          "title": "Activitats Infantiles 21",
+          "summary": "Gran evento",
+          "description": "No te lo pierdas. Este es un evento creado para llenar las listas."
+        }
+      }
+    },
+    {
+      "slug": "musica-extra-22",
+      "category_slug": "musica",
+      "start_offset": {
+        "days": 50,
+        "hours": 12
+      },
+      "end_offset": {
+        "days": 51,
+        "hours": 14
+      },
+      "is_published": true,
+      "venue_name": "Diversos Espais",
+      "location_text": "Cabrera de Mar",
+      "featured_image_filename": "event_concert_night.png",
+      "points_value": 10,
+      "translations": {
+        "ca": {
+          "title": "Concert de Nit 22",
+          "summary": "Gran esdeveniment",
+          "description": "No to perdis. Aquest es un esdeveniment creat per omplir les llistes."
+        },
+        "es": {
+          "title": "Concert de Nit 22",
+          "summary": "Gran evento",
+          "description": "No te lo pierdas. Este es un evento creado para llenar las listas."
+        }
+      }
+    },
+    {
+      "slug": "esports-extra-23",
+      "category_slug": "esports",
+      "start_offset": {
+        "days": 19,
+        "hours": 13
+      },
+      "end_offset": {
+        "days": 49,
+        "hours": 21
+      },
+      "is_published": true,
+      "venue_name": "Diversos Espais",
+      "location_text": "Cabrera de Mar",
+      "featured_image_filename": "event_sports_race.png",
+      "points_value": 20,
+      "translations": {
+        "ca": {
+          "title": "Cursa Popular 23",
+          "summary": "Gran esdeveniment",
+          "description": "No to perdis. Aquest es un esdeveniment creat per omplir les llistes."
+        },
+        "es": {
+          "title": "Cursa Popular 23",
+          "summary": "Gran evento",
+          "description": "No te lo pierdas. Este es un evento creado para llenar las listas."
+        }
+      }
+    },
+    {
+      "slug": "musica-extra-24",
+      "category_slug": "musica",
+      "start_offset": {
+        "days": 52,
+        "hours": 12
+      },
+      "end_offset": {
+        "days": 52,
+        "hours": 13
+      },
+      "is_published": true,
+      "venue_name": "Diversos Espais",
+      "location_text": "Cabrera de Mar",
+      "featured_image_filename": "event_concert_night.png",
+      "points_value": 10,
+      "translations": {
+        "ca": {
+          "title": "Concert de Nit 24",
+          "summary": "Gran esdeveniment",
+          "description": "No to perdis. Aquest es un esdeveniment creat per omplir les llistes."
+        },
+        "es": {
+          "title": "Concert de Nit 24",
+          "summary": "Gran evento",
+          "description": "No te lo pierdas. Este es un evento creado para llenar las listas."
+        }
+      }
+    },
+    {
+      "slug": "fires-i-mercats-extra-25",
+      "category_slug": "fires-i-mercats",
+      "start_offset": {
+        "days": 32,
+        "hours": 21
+      },
+      "end_offset": {
+        "days": 34,
+        "hours": 23
+      },
+      "is_published": true,
+      "venue_name": "Diversos Espais",
+      "location_text": "Cabrera de Mar",
+      "featured_image_filename": "event_food_market.png",
+      "points_value": 10,
+      "translations": {
+        "ca": {
+          "title": "Fira Gastronomica 25",
+          "summary": "Gran esdeveniment",
+          "description": "No to perdis. Aquest es un esdeveniment creat per omplir les llistes."
+        },
+        "es": {
+          "title": "Fira Gastronomica 25",
+          "summary": "Gran evento",
+          "description": "No te lo pierdas. Este es un evento creado para llenar las listas."
+        }
+      }
+    },
+    {
+      "slug": "infantil-extra-26",
+      "category_slug": "infantil",
+      "start_offset": {
+        "days": 53,
+        "hours": 20
+      },
+      "end_offset": {
+        "days": 53,
+        "hours": 23
+      },
+      "is_published": true,
+      "venue_name": "Diversos Espais",
+      "location_text": "Cabrera de Mar",
+      "featured_image_filename": "event_kids_activity.png",
+      "points_value": 10,
+      "translations": {
+        "ca": {
+          "title": "Activitats Infantils 26",
+          "summary": "Gran esdeveniment",
+          "description": "No to perdis. Aquest es un esdeveniment creat per omplir les llistes."
+        },
+        "es": {
+          "title": "Activitats Infantiles 26",
+          "summary": "Gran evento",
+          "description": "No te lo pierdas. Este es un evento creado para llenar las listas."
+        }
+      }
+    },
+    {
+      "slug": "fires-i-mercats-extra-27",
+      "category_slug": "fires-i-mercats",
+      "start_offset": {
+        "days": 49,
+        "hours": 10
+      },
+      "end_offset": {
+        "days": 55,
+        "hours": 22
+      },
+      "is_published": true,
+      "venue_name": "Diversos Espais",
+      "location_text": "Cabrera de Mar",
+      "featured_image_filename": "event_food_market.png",
+      "points_value": 30,
+      "translations": {
+        "ca": {
+          "title": "Fira Gastronomica 27",
+          "summary": "Gran esdeveniment",
+          "description": "No to perdis. Aquest es un esdeveniment creat per omplir les llistes."
+        },
+        "es": {
+          "title": "Fira Gastronomica 27",
+          "summary": "Gran evento",
+          "description": "No te lo pierdas. Este es un evento creado para llenar las listas."
+        }
+      }
+    },
+    {
+      "slug": "fires-i-mercats-extra-28",
+      "category_slug": "fires-i-mercats",
+      "start_offset": {
+        "days": 26,
+        "hours": 20
+      },
+      "end_offset": {
+        "days": 41,
+        "hours": 21
+      },
+      "is_published": true,
+      "venue_name": "Diversos Espais",
+      "location_text": "Cabrera de Mar",
+      "featured_image_filename": "event_food_market.png",
+      "points_value": 20,
+      "translations": {
+        "ca": {
+          "title": "Fira Gastronomica 28",
+          "summary": "Gran esdeveniment",
+          "description": "No to perdis. Aquest es un esdeveniment creat per omplir les llistes."
+        },
+        "es": {
+          "title": "Fira Gastronomica 28",
+          "summary": "Gran evento",
+          "description": "No te lo pierdas. Este es un evento creado para llenar las listas."
+        }
+      }
+    },
+    {
+      "slug": "esports-extra-29",
+      "category_slug": "esports",
+      "start_offset": {
+        "days": 54,
+        "hours": 12
+      },
+      "end_offset": {
+        "days": 55,
+        "hours": 13
+      },
+      "is_published": true,
+      "venue_name": "Diversos Espais",
+      "location_text": "Cabrera de Mar",
+      "featured_image_filename": "event_sports_race.png",
+      "points_value": 40,
+      "translations": {
+        "ca": {
+          "title": "Cursa Popular 29",
+          "summary": "Gran esdeveniment",
+          "description": "No to perdis. Aquest es un esdeveniment creat per omplir les llistes."
+        },
+        "es": {
+          "title": "Cursa Popular 29",
+          "summary": "Gran evento",
+          "description": "No te lo pierdas. Este es un evento creado para llenar las listas."
+        }
+      }
+    },
+    {
+      "slug": "esports-extra-30",
+      "category_slug": "esports",
+      "start_offset": {
+        "days": 27,
+        "hours": 20
+      },
+      "end_offset": {
+        "days": 29,
+        "hours": 23
+      },
+      "is_published": true,
+      "venue_name": "Diversos Espais",
+      "location_text": "Cabrera de Mar",
+      "featured_image_filename": "event_sports_race.png",
+      "points_value": 50,
+      "translations": {
+        "ca": {
+          "title": "Cursa Popular 30",
+          "summary": "Gran esdeveniment",
+          "description": "No to perdis. Aquest es un esdeveniment creat per omplir les llistes."
+        },
+        "es": {
+          "title": "Cursa Popular 30",
+          "summary": "Gran evento",
+          "description": "No te lo pierdas. Este es un evento creado para llenar las listas."
+        }
+      }
+    },
+    {
+      "slug": "fires-i-mercats-extra-31",
+      "category_slug": "fires-i-mercats",
+      "start_offset": {
+        "days": 21,
+        "hours": 10
+      },
+      "end_offset": {
+        "days": 40,
+        "hours": 22
+      },
+      "is_published": true,
+      "venue_name": "Diversos Espais",
+      "location_text": "Cabrera de Mar",
+      "featured_image_filename": "event_food_market.png",
+      "points_value": 40,
+      "translations": {
+        "ca": {
+          "title": "Fira Gastronomica 31",
+          "summary": "Gran esdeveniment",
+          "description": "No to perdis. Aquest es un esdeveniment creat per omplir les llistes."
+        },
+        "es": {
+          "title": "Fira Gastronomica 31",
+          "summary": "Gran evento",
+          "description": "No te lo pierdas. Este es un evento creado para llenar las listas."
+        }
+      }
+    },
+    {
+      "slug": "infantil-extra-32",
+      "category_slug": "infantil",
+      "start_offset": {
+        "days": 38,
+        "hours": 20
+      },
+      "end_offset": {
+        "days": 38,
+        "hours": 21
+      },
+      "is_published": true,
+      "venue_name": "Diversos Espais",
+      "location_text": "Cabrera de Mar",
+      "featured_image_filename": "event_kids_activity.png",
+      "points_value": 50,
+      "translations": {
+        "ca": {
+          "title": "Activitats Infantils 32",
+          "summary": "Gran esdeveniment",
+          "description": "No to perdis. Aquest es un esdeveniment creat per omplir les llistes."
+        },
+        "es": {
+          "title": "Activitats Infantiles 32",
+          "summary": "Gran evento",
+          "description": "No te lo pierdas. Este es un evento creado para llenar las listas."
+        }
+      }
+    },
+    {
+      "slug": "musica-extra-33",
+      "category_slug": "musica",
+      "start_offset": {
+        "days": 29,
+        "hours": 10
+      },
+      "end_offset": {
+        "days": 29,
+        "hours": 12
+      },
+      "is_published": true,
+      "venue_name": "Diversos Espais",
+      "location_text": "Cabrera de Mar",
+      "featured_image_filename": "event_concert_night.png",
+      "points_value": 40,
+      "translations": {
+        "ca": {
+          "title": "Concert de Nit 33",
+          "summary": "Gran esdeveniment",
+          "description": "No to perdis. Aquest es un esdeveniment creat per omplir les llistes."
+        },
+        "es": {
+          "title": "Concert de Nit 33",
+          "summary": "Gran evento",
+          "description": "No te lo pierdas. Este es un evento creado para llenar las listas."
+        }
+      }
+    },
+    {
+      "slug": "fires-i-mercats-extra-34",
+      "category_slug": "fires-i-mercats",
+      "start_offset": {
+        "days": 17,
+        "hours": 10
+      },
+      "end_offset": {
+        "days": 18,
+        "hours": 13
+      },
+      "is_published": true,
+      "venue_name": "Diversos Espais",
+      "location_text": "Cabrera de Mar",
+      "featured_image_filename": "event_food_market.png",
+      "points_value": 20,
+      "translations": {
+        "ca": {
+          "title": "Fira Gastronomica 34",
+          "summary": "Gran esdeveniment",
+          "description": "No to perdis. Aquest es un esdeveniment creat per omplir les llistes."
+        },
+        "es": {
+          "title": "Fira Gastronomica 34",
+          "summary": "Gran evento",
+          "description": "No te lo pierdas. Este es un evento creado para llenar las listas."
+        }
+      }
+    },
+    {
+      "slug": "fires-i-mercats-extra-35",
+      "category_slug": "fires-i-mercats",
+      "start_offset": {
+        "days": 5,
+        "hours": 19
+      },
+      "end_offset": {
+        "days": 55,
+        "hours": 21
+      },
+      "is_published": true,
+      "venue_name": "Diversos Espais",
+      "location_text": "Cabrera de Mar",
+      "featured_image_filename": "event_food_market.png",
+      "points_value": 20,
+      "translations": {
+        "ca": {
+          "title": "Fira Gastronomica 35",
+          "summary": "Gran esdeveniment",
+          "description": "No to perdis. Aquest es un esdeveniment creat per omplir les llistes."
+        },
+        "es": {
+          "title": "Fira Gastronomica 35",
+          "summary": "Gran evento",
+          "description": "No te lo pierdas. Este es un evento creado para llenar las listas."
+        }
+      }
+    },
+    {
+      "slug": "cultura-extra-36",
+      "category_slug": "cultura",
+      "start_offset": {
+        "days": 54,
+        "hours": 19
+      },
+      "end_offset": {
+        "days": 54,
+        "hours": 21
+      },
+      "is_published": true,
+      "venue_name": "Diversos Espais",
+      "location_text": "Cabrera de Mar",
+      "featured_image_filename": "event_cultural_dance.png",
+      "points_value": 10,
+      "translations": {
+        "ca": {
+          "title": "Ball Tradicional 36",
+          "summary": "Gran esdeveniment",
+          "description": "No to perdis. Aquest es un esdeveniment creat per omplir les llistes."
+        },
+        "es": {
+          "title": "Ball Tradicional 36",
+          "summary": "Gran evento",
+          "description": "No te lo pierdas. Este es un evento creado para llenar las listas."
+        }
+      }
+    },
+    {
+      "slug": "fires-i-mercats-extra-37",
+      "category_slug": "fires-i-mercats",
+      "start_offset": {
+        "days": 36,
+        "hours": 15
+      },
+      "end_offset": {
+        "days": 37,
+        "hours": 19
+      },
+      "is_published": true,
+      "venue_name": "Diversos Espais",
+      "location_text": "Cabrera de Mar",
+      "featured_image_filename": "event_food_market.png",
+      "points_value": 40,
+      "translations": {
+        "ca": {
+          "title": "Fira Gastronomica 37",
+          "summary": "Gran esdeveniment",
+          "description": "No to perdis. Aquest es un esdeveniment creat per omplir les llistes."
+        },
+        "es": {
+          "title": "Fira Gastronomica 37",
+          "summary": "Gran evento",
+          "description": "No te lo pierdas. Este es un evento creado para llenar las listas."
+        }
+      }
+    },
+    {
+      "slug": "esports-extra-38",
+      "category_slug": "esports",
+      "start_offset": {
+        "days": 48,
+        "hours": 16
+      },
+      "end_offset": {
+        "days": 48,
+        "hours": 17
+      },
+      "is_published": true,
+      "venue_name": "Diversos Espais",
+      "location_text": "Cabrera de Mar",
+      "featured_image_filename": "event_sports_race.png",
+      "points_value": 10,
+      "translations": {
+        "ca": {
+          "title": "Cursa Popular 38",
+          "summary": "Gran esdeveniment",
+          "description": "No to perdis. Aquest es un esdeveniment creat per omplir les llistes."
+        },
+        "es": {
+          "title": "Cursa Popular 38",
+          "summary": "Gran evento",
+          "description": "No te lo pierdas. Este es un evento creado para llenar las listas."
+        }
+      }
+    },
+    {
+      "slug": "esports-extra-39",
+      "category_slug": "esports",
+      "start_offset": {
+        "days": 60,
+        "hours": 19
+      },
+      "end_offset": {
+        "days": 60,
+        "hours": 21
+      },
+      "is_published": true,
+      "venue_name": "Diversos Espais",
+      "location_text": "Cabrera de Mar",
+      "featured_image_filename": "event_sports_race.png",
+      "points_value": 10,
+      "translations": {
+        "ca": {
+          "title": "Cursa Popular 39",
+          "summary": "Gran esdeveniment",
+          "description": "No to perdis. Aquest es un esdeveniment creat per omplir les llistes."
+        },
+        "es": {
+          "title": "Cursa Popular 39",
+          "summary": "Gran evento",
+          "description": "No te lo pierdas. Este es un evento creado para llenar las listas."
         }
       }
     }
