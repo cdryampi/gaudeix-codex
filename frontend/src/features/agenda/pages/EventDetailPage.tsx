@@ -1,6 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import toast from "react-hot-toast";
+import { notifications as toast } from "@/lib/notifications";
 
 import { getEventBySlug, getEvents } from "@/features/events/api";
 import { useAuthStore } from "@/features/auth/store";

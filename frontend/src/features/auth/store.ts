@@ -7,7 +7,7 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import toast from "react-hot-toast";
+import { notifications as toast } from "@/lib/notifications";
 import type { AuthState } from "./types";
 import {
   login as apiLogin,

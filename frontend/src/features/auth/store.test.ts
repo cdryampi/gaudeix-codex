@@ -1,11 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import toast from "react-hot-toast";
+import { notifications as toast } from "@/lib/notifications";
 import { ApiRequestError } from "@/lib/api";
 import { useAuthStore } from "./store";
 import * as authApi from "./api";
 
-vi.mock("react-hot-toast", () => ({
-  default: {
+vi.mock("@/lib/notifications", () => ({
+  notifications: {
     error: vi.fn(),
   },
 }));
