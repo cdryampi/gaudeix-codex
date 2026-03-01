@@ -4,7 +4,7 @@
  * API calls for authentication: login, registration, password reset.
  */
 
-import { apiPost, apiGet } from "@/lib/api";
+import { apiPost, apiGet, ApiRequestError } from "@/lib/api";
 import type {
   User,
   LoginCredentials,
@@ -15,7 +15,9 @@ import type {
   ApiError,
 } from "./types";
 
-export async function login(credentials: LoginCredentials): Promise<LoginResponse> {
+export async function login(
+  credentials: LoginCredentials,
+): Promise<LoginResponse> {
   const response = await apiPost<LoginResponse>("/users/login/", credentials);
   return response;
 }
@@ -25,22 +27,38 @@ export async function register(data: RegisterData): Promise<User> {
   return response;
 }
 
-export async function getCurrentUser(): Promise<User> {
-  const response = await apiGet<User>("/users/me/");
+export async function getCurrentUser(accessToken: string): Promise<User> {
+  const response = await apiGet<User>("/users/me/", {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
   return response;
 }
 
-export async function requestPasswordReset(data: PasswordResetRequest): Promise<{ detail: string }> {
-  const response = await apiPost<{ detail: string }>("/users/password-reset/", data);
+export async function requestPasswordReset(
+  data: PasswordResetRequest,
+): Promise<{ detail: string }> {
+  const response = await apiPost<{ detail: string }>(
+    "/users/password-reset/",
+    data,
+  );
   return response;
 }
 
-export async function confirmPasswordReset(data: PasswordResetConfirm): Promise<{ detail: string }> {
-  const response = await apiPost<{ detail: string }>("/users/password-reset-confirm/", data);
+export async function confirmPasswordReset(
+  data: PasswordResetConfirm,
+): Promise<{ detail: string }> {
+  const response = await apiPost<{ detail: string }>(
+    "/users/password-reset-confirm/",
+    data,
+  );
   return response;
 }
 
 export function formatApiError(error: unknown): string {
+  if (error instanceof ApiRequestError && error.data) {
+    return formatApiError(error.data);
+  }
+
   if (error && typeof error === "object" && "detail" in error) {
     return String(error.detail);
   }

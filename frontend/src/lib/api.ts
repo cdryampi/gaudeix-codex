@@ -1,5 +1,31 @@
 const rawBaseUrl = import.meta.env.VITE_API_BASE_URL as string | undefined;
 
+type ApiRequestErrorOptions = {
+  method: string;
+  url: string;
+  status?: number;
+  isNetworkError?: boolean;
+  data?: unknown;
+};
+
+export class ApiRequestError extends Error {
+  readonly method: string;
+  readonly url: string;
+  readonly status?: number;
+  readonly isNetworkError: boolean;
+  readonly data?: unknown;
+
+  constructor(message: string, options: ApiRequestErrorOptions) {
+    super(message);
+    this.name = "ApiRequestError";
+    this.method = options.method;
+    this.url = options.url;
+    this.status = options.status;
+    this.isNetworkError = options.isNetworkError ?? false;
+    this.data = options.data;
+  }
+}
+
 function normalizeApiBaseUrl(value: string): string {
   const trimmed = value.replace(/\/+$/, "");
   if (trimmed.endsWith("/api")) return `${trimmed}/v1`;
@@ -10,23 +36,67 @@ export const API_BASE_URL = normalizeApiBaseUrl(
   rawBaseUrl || "http://localhost:8000/api/v1",
 );
 
-export async function apiGet<T>(path: string, init?: RequestInit): Promise<T> {
-  const url = `${API_BASE_URL}${path.startsWith("/") ? "" : "/"}${path}`;
+function getUrl(path: string): string {
+  return `${API_BASE_URL}${path.startsWith("/") ? "" : "/"}${path}`;
+}
 
-  const resp = await fetch(url, {
-    ...init,
-    headers: {
-      Accept: "application/json",
-      ...(init?.headers ?? {}),
-    },
-  });
+async function parseErrorBody(resp: Response): Promise<unknown> {
+  const text = await resp.text().catch(() => "");
+  if (!text) return undefined;
 
-  if (!resp.ok) {
-    const text = await resp.text().catch(() => "");
-    throw new Error(`GET ${url} failed (${resp.status}): ${text}`);
+  try {
+    return JSON.parse(text);
+  } catch {
+    return text;
+  }
+}
+
+async function requestJson<T>(
+  path: string,
+  method: string,
+  init?: RequestInit,
+  data?: unknown,
+): Promise<T> {
+  const url = getUrl(path);
+
+  let resp: Response;
+  try {
+    resp = await fetch(url, {
+      method,
+      ...init,
+      headers: {
+        Accept: "application/json",
+        ...(data !== undefined ? { "Content-Type": "application/json" } : {}),
+        ...(init?.headers ?? {}),
+      },
+      body: data !== undefined ? JSON.stringify(data) : undefined,
+    });
+  } catch (error) {
+    throw new ApiRequestError(`Network error on ${method} ${url}`, {
+      method,
+      url,
+      isNetworkError: true,
+      data: error,
+    });
   }
 
+  if (!resp.ok) {
+    const errorData = await parseErrorBody(resp);
+    throw new ApiRequestError(`${method} ${url} failed (${resp.status})`, {
+      method,
+      url,
+      status: resp.status,
+      data: errorData,
+    });
+  }
+
+  if (resp.status === 204) return {} as T;
+
   return (await resp.json()) as T;
+}
+
+export async function apiGet<T>(path: string, init?: RequestInit): Promise<T> {
+  return requestJson<T>(path, init?.method || "GET", init);
 }
 
 export async function apiPost<T>(
@@ -34,35 +104,7 @@ export async function apiPost<T>(
   data: unknown,
   init?: RequestInit,
 ): Promise<T> {
-  const url = `${API_BASE_URL}${path.startsWith("/") ? "" : "/"}${path}`;
-
-  const resp = await fetch(url, {
-    method: init?.method || "POST",
-    ...init,
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-      ...(init?.headers ?? {}),
-    },
-    body: data ? JSON.stringify(data) : undefined,
-  });
-
-  if (!resp.ok) {
-    const text = await resp.text().catch(() => "");
-    try {
-      const json = JSON.parse(text);
-      throw json;
-    } catch {
-      throw new Error(
-        `${init?.method || "POST"} ${url} failed (${resp.status}): ${text}`,
-      );
-    }
-  }
-
-  // Handle 204 No Content
-  if (resp.status === 204) return {} as T;
-
-  return (await resp.json()) as T;
+  return requestJson<T>(path, init?.method || "POST", init, data);
 }
 
 export async function apiDelete<T>(

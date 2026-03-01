@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Routes, Route, Navigate, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
@@ -34,6 +34,7 @@ import { ComoLlegarPage } from "@/features/site-settings/pages/ComoLlegarPage";
 import { FavoritesPage } from "@/features/users/pages/FavoritesPage";
 import { VisitUsCTA } from "@/features/site-settings/components/VisitUsCTA";
 import { MainLayout } from "@/components/layouts/MainLayout";
+import { useAuthStore } from "@/features/auth/store";
 
 // Routes (hiking/cycling)
 import { RoutesPage } from "@/features/routes/pages/RoutesPage";
@@ -296,9 +297,26 @@ function HomePage() {
   );
 }
 
+function SessionInitializer() {
+  const initializeSession = useAuthStore((state) => state.initializeSession);
+  const hasInitializedRef = useRef(false);
+
+  useEffect(() => {
+    if (hasInitializedRef.current) {
+      return;
+    }
+
+    hasInitializedRef.current = true;
+    void initializeSession();
+  }, [initializeSession]);
+
+  return null;
+}
+
 export default function App() {
   return (
     <MainLayout>
+      <SessionInitializer />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/agenda" element={<AgendaPage />} />
