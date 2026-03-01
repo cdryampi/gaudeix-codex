@@ -32,9 +32,30 @@ function normalizeApiBaseUrl(value: string): string {
   return trimmed;
 }
 
-export const API_BASE_URL = normalizeApiBaseUrl(
-  rawBaseUrl || "http://localhost:8000/api/v1",
-);
+export function getValidBaseUrl(url: string | undefined): string {
+  const fallbackUrl = "http://localhost:8000/api/v1";
+
+  if (!url) {
+    // eslint-disable-next-line no-console
+    console.error(
+      "VITE_API_BASE_URL is not defined. Falling back to default: " + fallbackUrl
+    );
+    return fallbackUrl;
+  }
+
+  try {
+    new URL(url);
+    return normalizeApiBaseUrl(url);
+  } catch {
+    // eslint-disable-next-line no-console
+    console.error(
+      `VITE_API_BASE_URL is invalid: "${url}". Falling back to default: ` + fallbackUrl
+    );
+    return fallbackUrl;
+  }
+}
+
+export const API_BASE_URL = getValidBaseUrl(rawBaseUrl);
 
 function getUrl(path: string): string {
   return `${API_BASE_URL}${path.startsWith("/") ? "" : "/"}${path}`;
