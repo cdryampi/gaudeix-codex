@@ -7,7 +7,7 @@
 import { useState } from "react";
 import { Alert } from "flowbite-react";
 import { Lock, Mail, User as UserIcon } from "lucide-react";
-import { toast } from "react-hot-toast";
+import { notifications as toast } from "@/lib/notifications";
 
 import { useAuthStore } from "../store";
 
