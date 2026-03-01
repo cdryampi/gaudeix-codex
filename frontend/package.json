@@ -8,7 +8,9 @@
     "build": "cross-env NODE_OPTIONS=--max-old-space-size=8192 tsc -b && cross-env NODE_OPTIONS=--max-old-space-size=8192 vite build",
     "preview": "vite preview",
     "test": "cross-env NODE_OPTIONS=--max-old-space-size=8192 vitest",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "lint": "eslint \"src\"",
+    "lint:fix": "eslint \"src\" --fix"
   },
   "dependencies": {
     "@fontsource/plus-jakarta-sans": "^5.2.8",
