@@ -201,6 +201,23 @@ Consulta la [guía de variables de entorno](docs/environment.md) para conocer lo
 
 ## 9. Cómo Contribuir (para humanos y para IA)
 
+### Checklist mínima de validación pre-merge
+
+Antes de solicitar un merge, ejecuta estos comandos en la raíz del repositorio según el stack modificado para evitar regresiones:
+
+- **Frontend** (type-check + tests):
+  ```bash
+  pnpm --filter frontend type-check && pnpm --filter frontend test -- --run
+  ```
+- **Backoffice** (type-check + tests + clean:js):
+  ```bash
+  pnpm --filter backoffice type-check && pnpm --filter backoffice test && pnpm --filter backoffice clean:js
+  ```
+- **Backend** (tests + lint/format):
+  ```bash
+  cd backend && python3 -m pytest && ruff check . && ruff format --check .
+  ```
+
 - Consulta primero `/docs` para entender alcance, prioridades, dependencias y reglas vigentes.
 - Revisa `/agents` para identificar subagentes relevantes y comprender sus responsabilidades.
 - Define estrategias y prompts claros antes de delegar, citando la documentación oficial y especificando criterios de aceptación.
