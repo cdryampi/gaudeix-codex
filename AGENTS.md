@@ -1,5 +1,10 @@
 # Instrucciones para Agentes AI - Gaudeix Codex
 
+## Entorno Cloud/Linux
+
+Si trabajas en Codex Web/Cloud, Jules o runners Linux, lee primero AGENTS_CLOUD.md.
+Ese documento complementa este archivo con setup, variables y comandos especificos para nube.
+
 ## 🎯 Contexto del Proyecto
 
 **Gaudeix Codex** es una plataforma municipal de gestión de contenidos (CMS) que está en **migración activa** de un monolito Django a arquitectura de microservicios desacoplados:
