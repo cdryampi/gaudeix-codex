@@ -4,6 +4,7 @@
 import { Route } from "../types";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty-state";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Edit, Trash2, Mountain, Bike, Users, Shuffle } from "lucide-react";
 import { MediaThumbnail } from "@/components/common/MediaThumbnail";
@@ -61,11 +62,12 @@ export function RoutesTable({ routes, onEdit, onDelete }: Props) {
           <tbody className="divide-y divide-border">
             {routes.length === 0 ? (
               <tr>
-                <td
-                  colSpan={7}
-                  className="p-6 text-center text-muted-foreground"
-                >
-                  No hay rutas creadas.
+                <td colSpan={7} className="p-0">
+                  <EmptyState
+                    title="No hay rutas"
+                    description="Actualmente no hay rutas creadas. Haz clic en 'Nueva ruta' para empezar."
+                    icon={Shuffle}
+                  />
                 </td>
               </tr>
             ) : (
