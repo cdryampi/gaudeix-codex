@@ -12,7 +12,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
 from .models import Route
-from .serializers import RouteSerializer, RouteDetailSerializer
+from .serializers import RouteSerializer, RouteDetailSerializer, RouteItinerarySerializer
 
 
 logger = logging.getLogger(__name__)
@@ -30,7 +30,7 @@ class RouteViewSet(viewsets.ModelViewSet):
     lookup_field = "slug"
 
     def get_permissions(self):
-        if self.action in ["list", "retrieve"]:
+        if self.action in ["list", "retrieve", "itinerary"]:
             return [AllowAny()]
         return [IsAuthenticated()]
 
@@ -42,6 +42,9 @@ class RouteViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = self.queryset
         params = self.request.query_params
+
+        if not self.request.user.is_authenticated:
+            queryset = queryset.filter(is_published=True)
 
         # Filter by published status
         is_published = params.get("is_published")
@@ -109,6 +112,18 @@ class RouteViewSet(viewsets.ModelViewSet):
             ).distinct()
 
         return queryset
+
+    @action(detail=True, methods=["get"], url_path="itinerary")
+    def itinerary(self, request, slug=None):
+        route = self.get_object()
+
+        if not route.is_published and not (
+            request.user.is_authenticated and request.user.is_staff
+        ):
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        serializer = RouteItinerarySerializer(route)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["post"], permission_classes=[IsAuthenticated])
     def auto_translate(self, request, slug=None):
