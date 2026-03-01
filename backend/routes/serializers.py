@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from decimal import Decimal
+
 from django.conf import settings
 from rest_framework import serializers
 from parler_rest.serializers import TranslatableModelSerializer, TranslatedFieldsField
@@ -237,3 +239,200 @@ class RouteDetailSerializer(RouteSerializer):
     """Serializer for Route detail view with additional fields."""
 
     pass
+
+
+class RouteItineraryWaypointSerializer(serializers.ModelSerializer):
+    """Waypoint payload used by route itinerary endpoint."""
+
+    place_id = serializers.IntegerField(source="place.id", read_only=True)
+    place_slug = serializers.CharField(source="place.slug", read_only=True)
+    place_title = serializers.SerializerMethodField()
+    lat = serializers.SerializerMethodField()
+    lng = serializers.SerializerMethodField()
+    distance_from_previous_km = serializers.SerializerMethodField()
+
+    class Meta:
+        model = RouteWaypoint
+        fields = [
+            "id",
+            "order",
+            "place_id",
+            "place_slug",
+            "place_title",
+            "lat",
+            "lng",
+            "instructions",
+            "distance_from_previous_km",
+        ]
+
+    def get_place_title(self, obj) -> str:
+        return obj.place.safe_translation_getter("title", any_language=True) or ""
+
+    def get_lat(self, obj):
+        if obj.place and obj.place.latitude is not None:
+            return float(obj.place.latitude)
+        return None
+
+    def get_lng(self, obj):
+        if obj.place and obj.place.longitude is not None:
+            return float(obj.place.longitude)
+        return None
+
+    def get_distance_from_previous_km(self, obj):
+        if obj.distance_from_previous_km is None:
+            return None
+        return float(obj.distance_from_previous_km)
+
+
+class RouteItinerarySerializer(serializers.Serializer):
+    """Stable itinerary response consumed by map/itinerary frontends."""
+
+    route = serializers.SerializerMethodField()
+    start = serializers.SerializerMethodField()
+    end = serializers.SerializerMethodField()
+    bounds = serializers.SerializerMethodField()
+    track_geojson = serializers.SerializerMethodField()
+    waypoints = serializers.SerializerMethodField()
+    segments = serializers.SerializerMethodField()
+    summary = serializers.SerializerMethodField()
+
+    def get_route(self, obj):
+        return {
+            "id": obj.id,
+            "slug": obj.slug,
+            "title": obj.safe_translation_getter("title", any_language=True) or "",
+            "route_type": obj.route_type,
+            "difficulty": obj.difficulty,
+            "is_circular": obj.is_circular,
+        }
+
+    def get_start(self, obj):
+        return self._point(obj.start_latitude, obj.start_longitude)
+
+    def get_end(self, obj):
+        return self._point(obj.end_latitude, obj.end_longitude)
+
+    def get_track_geojson(self, obj):
+        if isinstance(obj.track_geojson, dict):
+            return obj.track_geojson
+        return None
+
+    def get_waypoints(self, obj):
+        waypoints = obj.route_waypoints.select_related("place").order_by("order")
+        return RouteItineraryWaypointSerializer(waypoints, many=True).data
+
+    def get_segments(self, obj):
+        waypoints = list(obj.route_waypoints.order_by("order"))
+        segments = []
+        for index in range(1, len(waypoints)):
+            waypoint = waypoints[index]
+            segments.append(
+                {
+                    "from_order": waypoints[index - 1].order,
+                    "to_order": waypoint.order,
+                    "distance_km": self._to_float(waypoint.distance_from_previous_km),
+                    "duration_minutes": None,
+                }
+            )
+        return segments
+
+    def get_summary(self, obj):
+        return {
+            "distance_km": self._to_float(obj.distance_km),
+            "duration_minutes": obj.duration_minutes,
+            "elevation_gain": obj.elevation_gain,
+            "elevation_loss": obj.elevation_loss,
+            "waypoints_count": obj.route_waypoints.count(),
+        }
+
+    def get_bounds(self, obj):
+        coordinates = self._track_coordinates(obj.track_geojson)
+        if not coordinates:
+            coordinates = self._fallback_coordinates(obj)
+
+        if not coordinates:
+            return None
+
+        lats = [lat for lat, _ in coordinates]
+        lngs = [lng for _, lng in coordinates]
+        return {
+            "south": min(lats),
+            "west": min(lngs),
+            "north": max(lats),
+            "east": max(lngs),
+        }
+
+    def _fallback_coordinates(self, obj):
+        coordinates: list[tuple[float, float]] = []
+
+        for lat, lng in [
+            (obj.start_latitude, obj.start_longitude),
+            (obj.end_latitude, obj.end_longitude),
+        ]:
+            point = self._lat_lng_tuple(lat, lng)
+            if point:
+                coordinates.append(point)
+
+        for waypoint in obj.route_waypoints.select_related("place"):
+            place = waypoint.place
+            point = self._lat_lng_tuple(place.latitude, place.longitude)
+            if point:
+                coordinates.append(point)
+
+        return coordinates
+
+    def _track_coordinates(self, track_geojson):
+        if not isinstance(track_geojson, dict):
+            return []
+
+        geometry_type = track_geojson.get("type")
+        coordinates = track_geojson.get("coordinates")
+
+        if geometry_type == "LineString" and isinstance(coordinates, list):
+            return self._extract_line_coordinates(coordinates)
+
+        if geometry_type == "MultiLineString" and isinstance(coordinates, list):
+            points: list[tuple[float, float]] = []
+            for line in coordinates:
+                if isinstance(line, list):
+                    points.extend(self._extract_line_coordinates(line))
+            return points
+
+        return []
+
+    def _extract_line_coordinates(self, coordinates):
+        points: list[tuple[float, float]] = []
+        for coordinate in coordinates:
+            if not isinstance(coordinate, list) or len(coordinate) < 2:
+                continue
+            lng = self._safe_float(coordinate[0])
+            lat = self._safe_float(coordinate[1])
+            if lat is not None and lng is not None:
+                points.append((lat, lng))
+        return points
+
+    def _point(self, lat, lng):
+        point = self._lat_lng_tuple(lat, lng)
+        if not point:
+            return None
+        return {"lat": point[0], "lng": point[1]}
+
+    def _lat_lng_tuple(self, lat, lng):
+        lat_value = self._safe_float(lat)
+        lng_value = self._safe_float(lng)
+        if lat_value is None or lng_value is None:
+            return None
+        return lat_value, lng_value
+
+    def _to_float(self, value):
+        if isinstance(value, Decimal):
+            return float(value)
+        return value
+
+    def _safe_float(self, value):
+        try:
+            if value is None:
+                return None
+            return float(value)
+        except (TypeError, ValueError):
+            return None
