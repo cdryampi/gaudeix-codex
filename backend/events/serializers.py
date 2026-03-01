@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 from django.conf import settings
+from django.utils import timezone
 from rest_framework import serializers
 from parler_rest.serializers import TranslatableModelSerializer, TranslatedFieldsField
 
 from core.models import Category, Tag
+from site_settings.models_weather import MunicipalityWeather
 from core.serializers import TagSerializer
 from media_files.models import DocumentFile, ImageFile
 from media_files.serializers import DocumentFileSerializer, ImageFileSerializer
@@ -141,8 +143,6 @@ class EventSerializer(TranslatableModelSerializer):
         - ongoing: has a session currently happening.
         - finished: all sessions are in the past.
         """
-        from django.utils import timezone
-
         now = timezone.now()
         dates = obj.dates.all()
 
@@ -169,10 +169,10 @@ class EventSerializer(TranslatableModelSerializer):
         if not obj.is_outdoor or not obj.start_at:
             return None
 
-        from site_settings.models_weather import MunicipalityWeather
-        from django.utils import timezone
+        if not hasattr(self, "_cached_weather"):
+            self._cached_weather = MunicipalityWeather.objects.order_by("-updated_at").first()
 
-        weather = MunicipalityWeather.objects.order_by("-updated_at").first()
+        weather = self._cached_weather
         if not weather:
             return None
 
