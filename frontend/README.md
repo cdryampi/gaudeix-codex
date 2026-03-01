@@ -88,3 +88,17 @@ npm run test
 ```
 
 > ✳️ Agrega pruebas dentro de `src` utilizando el sufijo `.test.ts` o `.test.tsx`.
+
+## Análisis estático (Linting)
+
+Para analizar el código fuente en busca de errores de sintaxis y problemas de estilo, puedes usar:
+
+```bash
+npm run lint
+```
+
+Para intentar corregir automáticamente los problemas detectados, puedes usar:
+
+```bash
+npm run lint:fix
+```
