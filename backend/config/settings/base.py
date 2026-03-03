@@ -29,6 +29,7 @@ env = environ.Env(
     LLM_GROQ_API_KEY=(str, ""),
     LLM_LOCAL_API_URL=(str, "http://localhost:11434"),
     FCM_CREDENTIALS_FILE=(str, ""),
+    ASSET_LEGACY_DEPRECATION_RELEASE_WINDOW=(int, 2),
 )
 
 ENV_FILE = BASE_DIR / ".env"
@@ -242,3 +243,6 @@ LLM_LOCAL_API_URL = env("LLM_LOCAL_API_URL")
 # EXTERNAL SERVICES
 # ==============================================================================
 FCM_CREDENTIALS_FILE = env("FCM_CREDENTIALS_FILE")
+
+
+ASSET_LEGACY_DEPRECATION_RELEASE_WINDOW = env("ASSET_LEGACY_DEPRECATION_RELEASE_WINDOW")

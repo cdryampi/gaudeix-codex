@@ -116,6 +116,18 @@ Usuarios creados:
 - **Admin**: `ADMIN_USER` / `ADMIN_PASSWORD` (defaults: `admin` / `admin123`)
 - **System**: `SYSTEM_USER` / `SYSTEM_PASSWORD` (defaults: `system` / `system123`)
 
+## Deprecaciones de assets
+
+Para facilitar la retirada progresiva de rutas y respuestas legacy de media:
+
+- Ejecuta `python manage.py seed_audit_assets` para auditar:
+  - assets huérfanos,
+  - duplicados por `original_name` y por contenido (hash SHA-256),
+  - referencias a rutas legacy en campos de texto/JSON.
+- Cuando se active un fallback legacy en serialización se registrará en logs con nivel `WARNING`.
+- La ventana de deprecación por defecto es de **2 releases** antes de eliminar rutas antiguas.
+  - Se puede ajustar con `ASSET_LEGACY_DEPRECATION_RELEASE_WINDOW` en `.env`.
+
 ## Pruebas
 
 ```bash

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import logging
+
 from django.conf import settings
 from django.utils import timezone
 from rest_framework import serializers
@@ -12,6 +14,9 @@ from media_files.models import DocumentFile, ImageFile
 from media_files.serializers import DocumentFileSerializer, ImageFileSerializer
 
 from .models import Event, EventDate
+
+
+logger = logging.getLogger(__name__)
 
 
 class EventTranslationSerializer(serializers.Serializer):
@@ -212,14 +217,26 @@ class EventSerializer(TranslatableModelSerializer):
             return ""
         try:
             data = ImageFileSerializer(obj.featured_media, context=self.context).data
-            return (
+            primary_url = (
                 data.get("variant_large")
                 or data.get("variant_medium")
                 or data.get("file")
-                or data.get("thumbnail_url")
-                or data.get("variant_thumbnail")
-                or ""
             )
+            if primary_url:
+                return primary_url
+
+            legacy_url = data.get("thumbnail_url")
+            if legacy_url:
+                logger.warning(
+                    "Using legacy asset fallback 'thumbnail_url' for event %s (asset %s). "
+                    "Scheduled for removal after %s releases.",
+                    obj.id,
+                    obj.featured_media_id,
+                    settings.ASSET_LEGACY_DEPRECATION_RELEASE_WINDOW,
+                )
+                return legacy_url
+
+            return data.get("variant_thumbnail") or ""
         except Exception:
             return ""
 
