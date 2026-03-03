@@ -16,6 +16,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
 from core.models import Category
+from core.seed_utils import list_files_sorted
 from media_files.models import ImageFile
 from routes.models import Route, RouteCheckpoint, RouteCategorySingleton
 
@@ -179,9 +180,8 @@ class Command(BaseCommand):
         image_map = {}
         images_dir = self.sample_images_dir
         if images_dir.exists():
-            for image_path in images_dir.glob("*.png"):
-                if image_path.is_file():
-                    image_map[image_path.name] = self._create_image_file(image_path)
+            for image_path in list_files_sorted(images_dir, "*.png"):
+                image_map[image_path.name] = self._create_image_file(image_path)
         return image_map
 
     def _create_image_file(self, path: Path) -> ImageFile:

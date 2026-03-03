@@ -20,6 +20,7 @@ from django.utils import timezone
 
 from core.models import Category, Tag
 from events.models import Event, EventCategorySingleton, EventDate
+from core.seed_utils import list_files_sorted
 from media_files.models import DocumentFile, ImageFile
 
 
@@ -346,9 +347,7 @@ class Command(BaseCommand):
                 return candidate_path
 
         lower = filename.lower()
-        for path in media_dir.iterdir():
-            if not path.is_file():
-                continue
+        for path in list_files_sorted(media_dir):
             if path.name.lower() == lower:
                 return path
         return None
