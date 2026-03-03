@@ -19,6 +19,7 @@ from django.utils.dateparse import parse_datetime
 from django.utils import timezone
 
 from core.models import Category, Tag
+from core.seed_assets import resolve_seed_asset_dir
 from events.models import Event, EventCategorySingleton, EventDate
 from core.seed_utils import list_files_sorted
 from media_files.models import DocumentFile, ImageFile
@@ -257,10 +258,18 @@ class Command(BaseCommand):
         return timezone.get_current_timezone()
 
     def _resolve_media_dir(self, base_dir: str | None) -> Path | None:
-        if not base_dir:
-            return None
-        app_root = Path(__file__).resolve().parents[2]
-        return app_root / base_dir
+        if base_dir:
+            app_root = Path(__file__).resolve().parents[2]
+            legacy_path = app_root / base_dir
+        else:
+            legacy_path = Path(__file__).resolve().parent / "media"
+
+        return resolve_seed_asset_dir(
+            domain="events",
+            asset_type="images",
+            legacy_dir=legacy_path,
+            warning_writer=lambda msg: self.stdout.write(self.style.WARNING(msg)),
+        )
 
     def _resolve_datetime(
         self,

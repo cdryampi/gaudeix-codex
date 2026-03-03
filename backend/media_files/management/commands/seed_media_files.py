@@ -31,7 +31,12 @@ class Command(BaseCommand):
 
     @property
     def assets_root(self) -> Path:
-        return Path(__file__).resolve().parents[2] / "seed_assets"
+        return resolve_seed_asset_dir(
+            domain="media_files",
+            asset_type="images",
+            legacy_dir=Path(__file__).resolve().parents[2] / "seed_assets" / "images",
+            warning_writer=lambda msg: self.stdout.write(self.style.WARNING(msg)),
+        ).parent
 
     @property
     def seed_manifest_path(self) -> Path:

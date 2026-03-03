@@ -1,6 +1,6 @@
 {
   "timezone": "Europe/Madrid",
-  "media_base_dir": "management/commands/media",
+  "media_base_dir": "../seed_assets/events/images",
   "events": [
     {
       "slug": "cicle-orgue-avui",

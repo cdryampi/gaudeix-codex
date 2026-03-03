@@ -174,7 +174,12 @@ class Command(BaseCommand):
 
     @property
     def sample_images_dir(self) -> Path:
-        return Path(__file__).resolve().parent / "images"
+        return resolve_seed_asset_dir(
+            domain="routes",
+            asset_type="images",
+            legacy_dir=Path(__file__).resolve().parent / "images",
+            warning_writer=lambda msg: self.stdout.write(self.style.WARNING(msg)),
+        )
 
     def _ensure_media_files(self) -> dict[str, ImageFile]:
         image_map = {}
