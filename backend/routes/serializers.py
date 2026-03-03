@@ -13,7 +13,7 @@ from core.serializers import TagSerializer
 from media_files.models import DocumentFile, ImageFile
 from media_files.serializers import DocumentFileSerializer, ImageFileSerializer
 
-from .models import Route, RouteWaypoint
+from .models import Route, RouteWaypoint, RouteCheckpoint
 
 
 class RouteTranslationSerializer(serializers.Serializer):
@@ -46,6 +46,46 @@ class RouteWaypointSerializer(serializers.ModelSerializer):
 
     def get_place_title(self, obj) -> str:
         return obj.place.safe_translation_getter("title", any_language=True) or ""
+
+
+class RouteCheckpointSerializer(serializers.ModelSerializer):
+    """Serializer for RouteCheckpoint model (Roadmap)."""
+
+    lat = serializers.SerializerMethodField()
+    lng = serializers.SerializerMethodField()
+    image_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = RouteCheckpoint
+        fields = [
+            "id",
+            "order",
+            "title",
+            "description",
+            "image_url",
+            "lat",
+            "lng",
+            "is_active",
+        ]
+
+    def get_lat(self, obj):
+        if obj.latitude is not None:
+            return float(obj.latitude)
+        return None
+
+    def get_lng(self, obj):
+        if obj.longitude is not None:
+            return float(obj.longitude)
+        return None
+
+    def get_image_url(self, obj) -> str:
+        if obj.image and obj.image.file:
+            request = self.context.get('request')
+            url = obj.image.file.url
+            if request:
+                return request.build_absolute_uri(url)
+            return url
+        return ""
 
 
 class RouteSerializer(TranslatableModelSerializer):
@@ -119,6 +159,19 @@ class RouteSerializer(TranslatableModelSerializer):
     waypoints_list = RouteWaypointSerializer(
         source="route_waypoints", many=True, read_only=True
     )
+    waypoints_input = serializers.ListField(
+        child=serializers.DictField(),
+        required=False,
+        write_only=True
+    )
+    checkpoints_list = RouteCheckpointSerializer(
+        source="route_checkpoints", many=True, read_only=True
+    )
+    checkpoints_input = serializers.ListField(
+        child=serializers.DictField(),
+        required=False,
+        write_only=True
+    )
 
     class Meta:
         model = Route
@@ -147,6 +200,8 @@ class RouteSerializer(TranslatableModelSerializer):
             "is_circular",
             "is_published",
             "is_featured",
+            "ios_app_url",
+            "android_app_url",
             "tags",
             "tag_ids",
             "featured_media",
@@ -160,6 +215,9 @@ class RouteSerializer(TranslatableModelSerializer):
             "gallery_ids",
             "image_url",
             "waypoints_list",
+            "waypoints_input",
+            "checkpoints_list",
+            "checkpoints_input",
             "created_at",
             "updated_at",
             "translations",
@@ -178,7 +236,11 @@ class RouteSerializer(TranslatableModelSerializer):
 
     def get_image_url(self, obj) -> str:
         if obj.featured_media and obj.featured_media.file:
-            return obj.featured_media.file.url
+            request = self.context.get('request')
+            url = obj.featured_media.file.url
+            if request:
+                return request.build_absolute_uri(url)
+            return url
         return ""
 
     def get_duration_formatted(self, obj) -> str:
@@ -189,6 +251,8 @@ class RouteSerializer(TranslatableModelSerializer):
         tag_ids = validated_data.pop("tag_ids", [])
         attachments_ids = validated_data.pop("attachments_ids", [])
         gallery_ids = validated_data.pop("gallery_ids", [])
+        waypoints_input = validated_data.pop("waypoints_input", None)
+        checkpoints_input = validated_data.pop("checkpoints_input", None)
 
         # Handle write-only FK fields
         if "category_id" in validated_data:
@@ -207,6 +271,11 @@ class RouteSerializer(TranslatableModelSerializer):
         if gallery_ids:
             route.gallery.set(gallery_ids)
 
+        if waypoints_input is not None:
+            self._save_waypoints(route, waypoints_input)
+        if checkpoints_input is not None:
+            self._save_checkpoints(route, checkpoints_input)
+
         return route
 
     def update(self, instance, validated_data):
@@ -214,6 +283,8 @@ class RouteSerializer(TranslatableModelSerializer):
         tag_ids = validated_data.pop("tag_ids", None)
         attachments_ids = validated_data.pop("attachments_ids", None)
         gallery_ids = validated_data.pop("gallery_ids", None)
+        waypoints_input = validated_data.pop("waypoints_input", None)
+        checkpoints_input = validated_data.pop("checkpoints_input", None)
 
         # Handle write-only FK fields
         if "category_id" in validated_data:
@@ -232,7 +303,55 @@ class RouteSerializer(TranslatableModelSerializer):
         if gallery_ids is not None:
             instance.gallery.set(gallery_ids)
 
+        if waypoints_input is not None:
+            self._save_waypoints(instance, waypoints_input)
+        if checkpoints_input is not None:
+            self._save_checkpoints(instance, checkpoints_input)
+
         return instance
+
+    def _save_waypoints(self, route, waypoints_data):
+        # Clear existing waypoints completely to overwrite
+        RouteWaypoint.objects.filter(route=route).delete()
+        
+        objects_to_create = []
+        for index, item in enumerate(waypoints_data):
+            # Parse distance gracefully, or null
+            distance = item.get("distance_from_previous_km")
+            
+            # Create waypoint logic
+            objects_to_create.append(
+                RouteWaypoint(
+                    route=route,
+                    place_id=item["place_id"],
+                    order=item.get("order", index + 1),
+                    instructions=item.get("instructions", ""),
+                    distance_from_previous_km=distance,
+                )
+            )
+            
+        RouteWaypoint.objects.bulk_create(objects_to_create)
+
+    def _save_checkpoints(self, route, checkpoints_data):
+        """Clear and re-create route checkpoints."""
+        RouteCheckpoint.objects.filter(route=route).delete()
+        objects_to_create = []
+        for index, item in enumerate(checkpoints_data):
+            lat = item.get("latitude") or item.get("lat")
+            lng = item.get("longitude") or item.get("lng")
+            objects_to_create.append(
+                RouteCheckpoint(
+                    route=route,
+                    order=item.get("order", index + 1),
+                    title=item.get("title", ""),
+                    description=item.get("description", ""),
+                    latitude=lat,
+                    longitude=lng,
+                    is_active=item.get("is_active", True),
+                )
+            )
+        RouteCheckpoint.objects.bulk_create(objects_to_create)
+
 
 
 class RouteDetailSerializer(RouteSerializer):
@@ -283,7 +402,6 @@ class RouteItineraryWaypointSerializer(serializers.ModelSerializer):
             return None
         return float(obj.distance_from_previous_km)
 
-
 class RouteItinerarySerializer(serializers.Serializer):
     """Stable itinerary response consumed by map/itinerary frontends."""
 
@@ -293,6 +411,7 @@ class RouteItinerarySerializer(serializers.Serializer):
     bounds = serializers.SerializerMethodField()
     track_geojson = serializers.SerializerMethodField()
     waypoints = serializers.SerializerMethodField()
+    checkpoints = serializers.SerializerMethodField()
     segments = serializers.SerializerMethodField()
     summary = serializers.SerializerMethodField()
 
@@ -319,7 +438,11 @@ class RouteItinerarySerializer(serializers.Serializer):
 
     def get_waypoints(self, obj):
         waypoints = obj.route_waypoints.select_related("place").order_by("order")
-        return RouteItineraryWaypointSerializer(waypoints, many=True).data
+        return RouteItineraryWaypointSerializer(waypoints, many=True, context=self.context).data
+
+    def get_checkpoints(self, obj):
+        checkpoints = obj.route_checkpoints.filter(is_active=True).order_by("order")
+        return RouteCheckpointSerializer(checkpoints, many=True, context=self.context).data
 
     def get_segments(self, obj):
         waypoints = list(obj.route_waypoints.order_by("order"))
@@ -337,12 +460,17 @@ class RouteItinerarySerializer(serializers.Serializer):
         return segments
 
     def get_summary(self, obj):
+        # Calculate distance between checkpoints if route distance_km is not set
+        # But per issue, summary distance_km should fallback to None if not trivial, 
+        # so we will use the route distance_km directly
+        
         return {
             "distance_km": self._to_float(obj.distance_km),
             "duration_minutes": obj.duration_minutes,
             "elevation_gain": obj.elevation_gain,
             "elevation_loss": obj.elevation_loss,
             "waypoints_count": obj.route_waypoints.count(),
+            "checkpoints_count": obj.route_checkpoints.filter(is_active=True).count(),
         }
 
     def get_bounds(self, obj):
@@ -376,6 +504,11 @@ class RouteItinerarySerializer(serializers.Serializer):
         for waypoint in obj.route_waypoints.select_related("place"):
             place = waypoint.place
             point = self._lat_lng_tuple(place.latitude, place.longitude)
+            if point:
+                coordinates.append(point)
+
+        for checkpoint in obj.route_checkpoints.filter(is_active=True):
+            point = self._lat_lng_tuple(checkpoint.latitude, checkpoint.longitude)
             if point:
                 coordinates.append(point)
 

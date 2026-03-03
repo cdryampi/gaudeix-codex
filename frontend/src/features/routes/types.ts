@@ -18,6 +18,59 @@ export interface RouteWaypoint {
   distance_from_previous_km: number | null;
 }
 
+export interface RouteCheckpoint {
+  id: number;
+  order: number;
+  title: string;
+  description: string;
+  image_url: string;
+  lat: number | null;
+  lng: number | null;
+  is_active: boolean;
+}
+
+export interface RouteBounds {
+  south: number;
+  west: number;
+  north: number;
+  east: number;
+}
+
+export interface RouteSegment {
+  from_order: number;
+  to_order: number;
+  distance_km: number | null;
+  duration_minutes: number | null;
+}
+
+export interface RouteItinerarySummary {
+  distance_km: number | null;
+  duration_minutes: number | null;
+  elevation_gain: number | null;
+  elevation_loss: number | null;
+  waypoints_count: number;
+  checkpoints_count: number;
+}
+
+export interface RouteItineraryResponse {
+  route: {
+    id: number;
+    slug: string;
+    title: string;
+    route_type: RouteType;
+    difficulty: RouteDifficulty;
+    is_circular: boolean;
+  };
+  start: { lat: number; lng: number } | null;
+  end: { lat: number; lng: number } | null;
+  bounds: RouteBounds | null;
+  track_geojson: Record<string, unknown> | null; // GeoJSON Object
+  waypoints: RouteWaypoint[];
+  checkpoints: RouteCheckpoint[];
+  segments: RouteSegment[];
+  summary: RouteItinerarySummary;
+}
+
 export interface Route {
   id: number;
   slug: string;
@@ -51,6 +104,8 @@ export interface Route {
   category: number;
   category_slug: string;
   category_name: string;
+  ios_app_url?: string;
+  android_app_url?: string;
   tags: Tag[];
 
   // Media

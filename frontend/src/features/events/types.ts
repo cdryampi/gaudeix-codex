@@ -6,7 +6,7 @@ export interface EventDate {
 
 export interface Tag {
   id: number;
-  name: string;
+  nombre: string;
   slug: string;
 }
 

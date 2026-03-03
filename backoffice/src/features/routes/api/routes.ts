@@ -58,6 +58,13 @@ export const routesApi = {
     );
     return normalizeRoute(response.data);
   },
+
+  generateGpx: async (slug: string) => {
+    const response = await apiClient.post<Route>(
+      API_ENDPOINTS.ROUTES_HIKING.GENERATE_GPX(slug),
+    );
+    return normalizeRoute(response.data);
+  },
 };
 
 function normalizeRoute(route: Route): Route {

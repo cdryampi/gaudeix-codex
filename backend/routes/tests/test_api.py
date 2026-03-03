@@ -143,12 +143,15 @@ def test_itinerary_happy_path_returns_track_waypoints_segments_and_summary(
         }
     ]
 
+    assert response.data["checkpoints"] == []
+
     assert response.data["summary"] == {
         "distance_km": 12.4,
         "duration_minutes": 215,
         "elevation_gain": 430,
         "elevation_loss": 420,
         "waypoints_count": 2,
+        "checkpoints_count": 0,
     }
     assert response.data["bounds"] == {
         "south": 41.6205,
@@ -258,3 +261,93 @@ def test_public_list_and_retrieve_only_expose_published(routes_category):
 
     hidden_response = client.get(reverse("route-detail", kwargs={"slug": "private-route"}))
     assert hidden_response.status_code == status.HTTP_404_NOT_FOUND
+
+
+# =============================================================================
+# generate_gpx tests
+# =============================================================================
+
+
+def test_generate_gpx_creates_document_and_links_to_route(published_route):
+    """Staff user can generate GPX with start/end coordinates → 200 + gpx_file populated."""
+    staff_user = User.objects.create_user(
+        username="gpx-staff", password="secret", is_staff=True
+    )
+    client = APIClient()
+    client.force_authenticate(user=staff_user)
+
+    url = reverse("route-generate-gpx", kwargs={"slug": published_route.slug})
+    response = client.post(url)
+
+    assert response.status_code == status.HTTP_200_OK, response.data
+    assert response.data["gpx_file"] is not None
+    assert response.data["gpx_file"]["original_name"] == f"{published_route.slug}.gpx"
+
+    # Verify DB was updated
+    published_route.refresh_from_db()
+    assert published_route.gpx_file is not None
+
+
+def test_generate_gpx_returns_400_when_no_coordinates(routes_category):
+    """Route without any coordinates returns 400."""
+    route = Route.objects.create(
+        slug="no-coords-route",
+        title="No Coords",
+        category=routes_category,
+        route_type="walking",
+        difficulty="easy",
+        is_published=True,
+        # No start/end coordinates, no waypoints, no checkpoints
+    )
+    staff_user = User.objects.create_user(
+        username="gpx-staff-400", password="secret", is_staff=True
+    )
+    client = APIClient()
+    client.force_authenticate(user=staff_user)
+
+    url = reverse("route-generate-gpx", kwargs={"slug": route.slug})
+    response = client.post(url)
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert "error" in response.data
+
+
+def test_generate_gpx_requires_authentication(published_route):
+    """Anonymous users get 401 (not authenticated)."""
+    client = APIClient()
+    url = reverse("route-generate-gpx", kwargs={"slug": published_route.slug})
+    response = client.post(url)
+
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+
+def test_generate_gpx_is_visible_in_subsequent_list_calls(published_route):
+    """
+    GPX generated in one request must be visible in following list responses.
+
+    Regression guard for stale class-level queryset caching in RouteViewSet.
+    """
+    anon_client = APIClient()
+    initial_list = anon_client.get(reverse("route-list"))
+    assert initial_list.status_code == status.HTTP_200_OK
+    assert initial_list.data[0]["slug"] == published_route.slug
+    assert initial_list.data[0]["gpx_file"] is None
+
+    staff_user = User.objects.create_user(
+        username="gpx-staff-list", password="secret", is_staff=True
+    )
+    auth_client = APIClient()
+    auth_client.force_authenticate(user=staff_user)
+    generate_url = reverse("route-generate-gpx", kwargs={"slug": published_route.slug})
+    generate_response = auth_client.post(generate_url)
+    assert generate_response.status_code == status.HTTP_200_OK
+    assert generate_response.data["gpx_file"] is not None
+
+    refreshed_list = anon_client.get(reverse("route-list"))
+    assert refreshed_list.status_code == status.HTTP_200_OK
+    assert refreshed_list.data[0]["slug"] == published_route.slug
+    assert refreshed_list.data[0]["gpx_file"] is not None
+    assert (
+        refreshed_list.data[0]["gpx_file"]["id"]
+        == generate_response.data["gpx_file"]["id"]
+    )

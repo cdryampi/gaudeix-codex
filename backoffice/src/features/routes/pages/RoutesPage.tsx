@@ -39,6 +39,7 @@ export function RoutesPage() {
   const [status, setStatus] = useState<"all" | "published" | "draft">("all");
   const [routeType, setRouteType] = useState<RouteType | "">("");
   const [difficulty, setDifficulty] = useState<DifficultyLevel | "">("");
+  const [isCircular, setIsCircular] = useState<boolean | "">("");
 
   // Pagination
   const [page, setPage] = useState(1);
@@ -61,6 +62,9 @@ export function RoutesPage() {
       // Difficulty Filter
       if (difficulty && route.difficulty !== difficulty) return false;
 
+      // Circular Filter
+      if (isCircular !== "" && route.is_circular !== isCircular) return false;
+
       // Search Filter
       if (search) {
         const text =
@@ -70,7 +74,7 @@ export function RoutesPage() {
 
       return true;
     });
-  }, [routes, search, status, routeType, difficulty]);
+  }, [routes, search, status, routeType, difficulty, isCircular]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const paginated = useMemo(() => {
@@ -84,6 +88,12 @@ export function RoutesPage() {
       setError(null);
       const data = await routesApi.getAll();
       setRoutes(data);
+      // Sync editingRoute with fresh data so dialog gets updated gpx_file, etc.
+      setEditingRoute((prev) => {
+        if (!prev) return prev;
+        const fresh = data.find((r) => r.slug === prev.slug);
+        return fresh ?? prev;
+      });
     } catch (err) {
       console.error("Error fetching routes:", err);
       setError("Error al cargar las rutas.");
@@ -141,6 +151,17 @@ export function RoutesPage() {
     }
   };
 
+  const handleRouteGenerated = (updatedRoute: Route) => {
+    setRoutes((prev) =>
+      prev.map((route) =>
+        route.slug === updatedRoute.slug ? updatedRoute : route,
+      ),
+    );
+    setEditingRoute((prev) =>
+      prev?.slug === updatedRoute.slug ? updatedRoute : prev,
+    );
+  };
+
   return (
     <PageContainer>
       <PageHeader
@@ -178,6 +199,11 @@ export function RoutesPage() {
         difficulty={difficulty}
         onDifficulty={(v) => {
           setDifficulty(v);
+          setPage(1);
+        }}
+        isCircular={isCircular}
+        onIsCircular={(v) => {
+          setIsCircular(v);
           setPage(1);
         }}
       />
@@ -219,6 +245,7 @@ export function RoutesPage() {
         open={isDialogOpen}
         onOpenChange={setIsDialogOpen}
         onSubmit={handleSubmit}
+        onRouteGenerated={handleRouteGenerated}
         route={editingRoute}
       />
 

@@ -17,7 +17,19 @@ export type RouteWaypoint = {
   distance_from_previous_km?: number;
 };
 
+export type RouteCheckpoint = {
+  id: number;
+  order: number;
+  title: string;
+  description?: string;
+  image_url?: string;
+  lat?: number | null;
+  lng?: number | null;
+  is_active: boolean;
+};
+
 export type Route = {
+  is_featured: boolean | undefined;
   id: number;
   slug: string;
   title: string;
@@ -37,10 +49,11 @@ export type Route = {
   end_longitude?: number;
   is_circular: boolean;
   is_published: boolean;
-  is_featured?: boolean;
   category?: number | null;
   category_slug?: string;
   category_name?: string;
+  ios_app_url?: string;
+  android_app_url?: string;
   tags?: Tag[];
   featured_media?: MediaItem | null;
   gpx_file?: MediaItem | null;
@@ -48,6 +61,7 @@ export type Route = {
   gallery?: MediaItem[];
   image_url?: string;
   waypoints_list?: RouteWaypoint[];
+  checkpoints_list?: RouteCheckpoint[];
   track_geojson?: unknown;
   created_at?: string;
   updated_at?: string;
@@ -79,6 +93,8 @@ export type CreateRouteDTO = {
   is_circular?: boolean;
   is_published?: boolean;
   is_featured?: boolean;
+  ios_app_url?: string;
+  android_app_url?: string;
   category_id?: number | null;
   tag_ids?: number[];
   featured_media_id?: number | null;
@@ -86,6 +102,20 @@ export type CreateRouteDTO = {
   attachments_ids?: number[];
   gallery_ids?: number[];
   track_geojson?: unknown;
+  waypoints_input?: {
+    place_id: number;
+    order: number;
+    instructions?: string;
+    distance_from_previous_km?: number | null;
+  }[];
+  checkpoints_input?: {
+    order: number;
+    title: string;
+    description?: string;
+    latitude?: number | null;
+    longitude?: number | null;
+    is_active?: boolean;
+  }[];
   translations?: {
     [lang: string]: {
       title: string;

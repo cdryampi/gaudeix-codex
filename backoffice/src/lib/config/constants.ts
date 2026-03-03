@@ -200,6 +200,7 @@ export const API_ENDPOINTS = {
     LIST: "/routes/",
     DETAIL: (slug: string) => `/routes/${slug}/`,
     AUTO_TRANSLATE: (slug: string) => `/routes/${slug}/auto_translate/`,
+    GENERATE_GPX: (slug: string) => `/routes/${slug}/generate_gpx/`,
   },
   FESTES: {
     LIST: "/festes/",

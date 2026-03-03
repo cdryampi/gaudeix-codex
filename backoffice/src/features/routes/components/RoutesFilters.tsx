@@ -19,6 +19,8 @@ type Props = {
   onRouteType: (value: RouteType | "") => void;
   difficulty: DifficultyLevel | "";
   onDifficulty: (value: DifficultyLevel | "") => void;
+  isCircular: boolean | "";
+  onIsCircular: (value: boolean | "") => void;
 };
 
 const routeTypes = [
@@ -46,6 +48,8 @@ export function RoutesFilters({
   onRouteType,
   difficulty,
   onDifficulty,
+  isCircular,
+  onIsCircular,
 }: Props) {
   const statusTabs = [
     { value: "all", label: "Todos" },
@@ -53,11 +57,12 @@ export function RoutesFilters({
     { value: "draft", label: "Borradores" },
   ] as const;
 
-  const hasActiveFilters = routeType !== "" || difficulty !== "";
+  const hasActiveFilters = routeType !== "" || difficulty !== "" || isCircular !== "";
 
   const clearFilters = () => {
     onRouteType("");
     onDifficulty("");
+    onIsCircular("");
     onSearch("");
   };
 
@@ -127,6 +132,22 @@ export function RoutesFilters({
                 {level.label}
               </option>
             ))}
+          </select>
+        </div>
+
+        {/* Circular Dropdown */}
+        <div className="flex items-center gap-2">
+          <select
+            value={isCircular === "" ? "" : isCircular ? "true" : "false"}
+            onChange={(e) => {
+              const val = e.target.value;
+              onIsCircular(val === "" ? "" : val === "true");
+            }}
+            className="h-8 rounded-full border border-border bg-card px-3 text-xs font-medium transition-all hover:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
+          >
+            <option value="">Cualquier tipo de trayecto</option>
+            <option value="true">Circular</option>
+            <option value="false">Lineal</option>
           </select>
         </div>
 

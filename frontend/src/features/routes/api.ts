@@ -30,6 +30,14 @@ export const getRouteBySlug = async (slug: string): Promise<Route> => {
   return apiGet<Route>(`/routes/${slug}/`);
 };
 
+export const getRouteItinerary = async (
+  slug: string,
+): Promise<import("./types").RouteItineraryResponse> => {
+  return apiGet<import("./types").RouteItineraryResponse>(
+    `/routes/${slug}/itinerary/`,
+  );
+};
+
 export const getFeaturedRoutes = async (): Promise<Route[]> => {
   const params = new URLSearchParams({
     is_published: "true",

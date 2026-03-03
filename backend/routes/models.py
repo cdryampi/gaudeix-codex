@@ -126,6 +126,22 @@ class Route(TranslatableModel, ContentBase):
     )
     is_circular = models.BooleanField(default=False, verbose_name="Ruta circular")
 
+    # Guided App Integration
+    ios_app_url = models.URLField(
+        max_length=500,
+        null=True,
+        blank=True,
+        verbose_name="Enllaç iOS App",
+        help_text="URL a l\'App Store d'Apple (ex. Natura Local)",
+    )
+    android_app_url = models.URLField(
+        max_length=500,
+        null=True,
+        blank=True,
+        verbose_name="Enllaç Android App",
+        help_text="URL a Google Play Store (ex. Natura Local)",
+    )
+
     # GPS Track (GPX/KML file)
     gpx_file = models.ForeignKey(
         "media_files.DocumentFile",
@@ -260,6 +276,49 @@ class RouteWaypoint(models.Model):
     def __str__(self) -> str:
         place_name = self.place.safe_translation_getter("title", any_language=True)
         return f"{self.order}. {place_name}"
+
+
+class RouteCheckpoint(models.Model):
+    """Punto de control ligero de una ruta, para trazar el recorrido sin DB features pesadas."""
+
+    route = models.ForeignKey(
+        Route,
+        on_delete=models.CASCADE,
+        related_name="route_checkpoints",
+    )
+    order = models.PositiveIntegerField(default=0, verbose_name="Ordre")
+    title = models.CharField(max_length=200, verbose_name="Títol")
+    description = models.TextField(blank=True, verbose_name="Descripció")
+    image = models.ForeignKey(
+        "media_files.ImageFile",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="route_checkpoints",
+        verbose_name="Imatge",
+    )
+    latitude = models.DecimalField(
+        max_digits=9,
+        decimal_places=6,
+        validators=[MinValueValidator(-90), MaxValueValidator(90)],
+        verbose_name="Latitud",
+    )
+    longitude = models.DecimalField(
+        max_digits=9,
+        decimal_places=6,
+        validators=[MinValueValidator(-180), MaxValueValidator(180)],
+        verbose_name="Longitud",
+    )
+    is_active = models.BooleanField(default=True, verbose_name="Actiu")
+
+    class Meta:
+        ordering = ("order",)
+        unique_together = ("route", "order")
+        verbose_name = "Checkpoint de ruta"
+        verbose_name_plural = "Checkpoints de rutes"
+
+    def __str__(self) -> str:
+        return f"{self.order}. {self.title}"
 
 
 class RouteCategorySingleton(models.Model):

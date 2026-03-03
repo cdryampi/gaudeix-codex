@@ -18,7 +18,7 @@ MAX_FILE_SIZE_MB = 10  # Tamaño máximo de archivo en megabytes
 IMAGE_EXTENSIONS: set[str] = {".jpg", ".jpeg", ".png", ".webp", ".gif"}
 
 # Extensiones permitidas para documentos
-DOCUMENT_EXTENSIONS: set[str] = {".pdf", ".ics", ".txt", ".docx", ".xlsx"}
+DOCUMENT_EXTENSIONS: set[str] = {".pdf", ".ics", ".txt", ".docx", ".xlsx", ".gpx", ".kml"}
 
 # Extensiones permitidas para videos
 VIDEO_EXTENSIONS: set[str] = {".mp4", ".webm", ".mov"}

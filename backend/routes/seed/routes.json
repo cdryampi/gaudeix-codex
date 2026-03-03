@@ -18,6 +18,55 @@
     "summary": "Ruta costanera amb vistes espectaculars al Maresme.",
     "description": "Aquesta ruta segueix l'antic camí de ronda que connectava les torres de vigilància de la costa. Passareu per cales amagades, pinedes mediterrànies i gaudireu de vistes impressionants del mar. És una ruta ideal per fer en família o amb amics, amb zones d'ombra i àrees de descans.",
     "instructions": "Sortida des del Passeig Marítim. Seguiu les marques grogues i blanques del sender GR-92. Porteu aigua i protecció solar.",
+    "checkpoints": [
+      {
+        "order": 1,
+        "title": "Inicio: Passeig Marítim",
+        "description": "Punto de partida junto al paseo marítimo de Cabrera de Mar.",
+        "latitude": 41.5181,
+        "longitude": 2.3931,
+        "image": "cp_passeig.png"
+      },
+      {
+        "order": 2,
+        "title": "Cala d'en Trons",
+        "description": "Pequeña cala rocosa con aguas cristalinas, ideal para un descanso.",
+        "latitude": 41.5205,
+        "longitude": 2.387,
+        "image": "cp_cala.png"
+      },
+      {
+        "order": 3,
+        "title": "Torre de Guaita",
+        "description": "Antigua torre de vigilancia costera del siglo XVI con vistas panorámicas.",
+        "latitude": 41.524,
+        "longitude": 2.3815,
+        "image": "cp_torre.png"
+      },
+      {
+        "order": 4,
+        "title": "Pineda del Corredor",
+        "description": "Tramo sombreado entre pinos mediterráneos con aroma a resina.",
+        "latitude": 41.526,
+        "longitude": 2.378,
+        "image": "cp_pineda.png"
+      },
+      {
+        "order": 5,
+        "title": "Regreso al Passeig",
+        "description": "Bajada por el sendero litoral de vuelta al punto de inicio.",
+        "latitude": 41.521,
+        "longitude": 2.39,
+        "image": "cp_regreso.png"
+      }
+    ],
+    "tags": [
+      "ruta",
+      "caminada",
+      "familia",
+      "salut",
+      "cabrera-de-mar"
+    ],
     "translations": {
       "es": {
         "title": "Camino de Ronda de Cabrera de Mar",
@@ -37,7 +86,11 @@
         "description": "Cette route suit l'ancien chemin de ronde qui reliait les tours de guet de la côte. Vous passerez par des criques cachées, des pinèdes méditerranéennes et profiterez de vues impressionnantes sur la mer. C'est une route idéale pour les familles ou les groupes d'amis, avec des zones ombragées et des aires de repos.",
         "instructions": "Départ depuis la Promenade Maritime. Suivez les marques jaunes et blanches du sentier GR-92. Apportez de l'eau et une protection solaire."
       }
-    }
+    },
+    "gallery": [
+      "cp_pineda.png",
+      "cp_torre.png"
+    ]
   },
   {
     "slug": "ruta-dels-ibers",
@@ -58,6 +111,40 @@
     "summary": "Descobreix el passat ibèric de Cabrera amb visita al jaciment arqueològic.",
     "description": "Ruta guiada que us portarà a conèixer el poblat ibèric de Burriac i el seu entorn. Aprendreu sobre la vida quotidiana dels ibers, les seves tradicions i la importància estratègica d'aquest assentament. Inclou visita al centre d'interpretació i explicacions d'arqueòlegs professionals.",
     "instructions": "Recomanem reservar plaça amb antelació. Les visites guiades surten del Museu Municipal a les 10h i 17h. Durada aproximada: 1h 30min.",
+    "checkpoints": [
+      {
+        "order": 1,
+        "title": "Museu Municipal",
+        "description": "Punto de encuentro y salida de la visita guiada.",
+        "latitude": 41.5225,
+        "longitude": 2.3985,
+        "image": "cp_pineda.png"
+      },
+      {
+        "order": 2,
+        "title": "Camí antic de Burriac",
+        "description": "Sendero empedrado que asciende entre olivos centenarios.",
+        "latitude": 41.526,
+        "longitude": 2.402,
+        "image": "cp_cala.png"
+      },
+      {
+        "order": 3,
+        "title": "Poblat ibèric de Burriac",
+        "description": "Yacimiento arqueológico ibérico con restos de murallas y viviendas del siglo IV a.C.",
+        "latitude": 41.5295,
+        "longitude": 2.4055,
+        "image": "cp_pineda.png"
+      },
+      {
+        "order": 4,
+        "title": "Mirador de la Costa",
+        "description": "Punto panorámico desde las ruinas con vistas al litoral mediterráneo.",
+        "latitude": 41.528,
+        "longitude": 2.404,
+        "image": "cp_passeig.png"
+      }
+    ],
     "translations": {
       "es": {
         "title": "Ruta de los Íberos de Cabrera",
@@ -77,7 +164,11 @@
         "description": "Visite guidée qui vous emmènera découvrir le village ibérique de Burriac et ses environs. Vous apprendrez la vie quotidienne des Ibères, leurs traditions et l'importance stratégique de ce site. Comprend la visite du centre d'interprétation et des explications d'archéologues professionnels.",
         "instructions": "Nous recommandons de réserver à l'avance. Les visites guidées partent du Musée Municipal à 10h et 17h. Durée approximative: 1h 30min."
       }
-    }
+    },
+    "gallery": [
+      "cp_cala.png",
+      "cp_torre.png"
+    ]
   },
   {
     "slug": "ruta-btt-maresme",
@@ -98,6 +189,48 @@
     "summary": "Circuit de BTT per la serralada litoral amb trams tècnics.",
     "description": "Ruta de bicicleta de muntanya que recorre els camins i senders de la Serralada Litoral. Inclou pujades exigents, baixades tècniques i trams de single track. Passareu per fonts naturals, ermites i miradors amb vistes panoràmiques al mar i a l'interior.",
     "instructions": "Ruta per a ciclistes experimentats. Porteu casc, eines bàsiques i suficient aigua. Els mesos d'estiu es recomana sortir a primera hora del matí.",
+    "checkpoints": [
+      {
+        "order": 1,
+        "title": "Plaça de l'Ajuntament",
+        "description": "Punto de salida desde la plaza mayor de Cabrera de Mar.",
+        "latitude": 41.52,
+        "longitude": 2.39,
+        "image": "cp_cala.png"
+      },
+      {
+        "order": 2,
+        "title": "Font del Sot",
+        "description": "Fuente natural para rellenar bidones antes de la subida principal.",
+        "latitude": 41.531,
+        "longitude": 2.395,
+        "image": "cp_pineda.png"
+      },
+      {
+        "order": 3,
+        "title": "Coll de la Creu",
+        "description": "Punto más alto de la ruta con vistas a ambos lados de la sierra.",
+        "latitude": 41.542,
+        "longitude": 2.385,
+        "image": "cp_regreso.png"
+      },
+      {
+        "order": 4,
+        "title": "Ermita de Sant Miquel",
+        "description": "Ermita románica del siglo XII, zona de descanso con sombra.",
+        "latitude": 41.538,
+        "longitude": 2.375,
+        "image": "cp_regreso.png"
+      },
+      {
+        "order": 5,
+        "title": "Descenso el Toll",
+        "description": "Tramo técnico de single track con curvas y raíces.",
+        "latitude": 41.528,
+        "longitude": 2.382,
+        "image": "cp_cala.png"
+      }
+    ],
     "translations": {
       "es": {
         "title": "Ruta BTT Sierra del Maresme",
@@ -117,7 +250,11 @@
         "description": "Route de VTT qui parcourt les chemins et sentiers de la chaîne côtière. Elle comprend des montées exigeantes, des descentes techniques et des sections de single track. Vous passerez par des sources naturelles, des ermitages et des belvédères avec des vues panoramiques sur la mer et l'intérieur.",
         "instructions": "Route pour cyclistes expérimentés. Apportez un casque, des outils de base et suffisamment d'eau. En été, il est recommandé de partir tôt le matin."
       }
-    }
+    },
+    "gallery": [
+      "cp_passeig.png",
+      "cp_pineda.png"
+    ]
   },
   {
     "slug": "passeig-vinyaters",
@@ -138,6 +275,32 @@
     "summary": "Ruta entre vinyes amb degustació de vins locals.",
     "description": "Passeig relaxat entre les vinyes de la DO Alella. La ruta passa per tres cellers on podreu degustar els vins blancs característics de la zona, elaborats amb raïm pansa blanca. Una experiència perfecta per als amants del vi i la natura.",
     "instructions": "Les degustacions requereixen reserva prèvia als cellers. Recomanem no portar vehicle si penseu tastar vins.",
+    "checkpoints": [
+      {
+        "order": 1,
+        "title": "Celler Can Roda",
+        "description": "Primera bodega de la ruta, vinos blancos jóvenes y espumosos.",
+        "latitude": 41.515,
+        "longitude": 2.4,
+        "image": "cp_pineda.png"
+      },
+      {
+        "order": 2,
+        "title": "Vinyes del Turó",
+        "description": "Camino entre viñedos centenarios de uva pansa blanca.",
+        "latitude": 41.517,
+        "longitude": 2.404,
+        "image": "cp_torre.png"
+      },
+      {
+        "order": 3,
+        "title": "Celler Alella Vinícola",
+        "description": "Cooperativa vinícola fundada en 1906, degustación de reservas.",
+        "latitude": 41.5195,
+        "longitude": 2.408,
+        "image": "cp_pineda.png"
+      }
+    ],
     "translations": {
       "es": {
         "title": "Paseo de los Viñadores",
@@ -157,7 +320,11 @@
         "description": "Promenade détendue à travers les vignobles de l'appellation DO Alella. La route passe par trois caves où vous pourrez déguster les vins blancs caractéristiques de la région, élaborés avec du raisin pansa blanca. Une expérience parfaite pour les amateurs de vin et de nature.",
         "instructions": "Les dégustations nécessitent une réservation préalable dans les caves. Nous recommandons de ne pas prendre de véhicule si vous prévoyez de déguster des vins."
       }
-    }
+    },
+    "gallery": [
+      "cp_torre.png",
+      "cp_cala.png"
+    ]
   },
   {
     "slug": "volta-al-terme",
@@ -178,6 +345,48 @@
     "summary": "Recorregut complet pels límits del municipi amb diferents paisatges.",
     "description": "Ruta que circumval·la tot el terme municipal de Cabrera de Mar. Travessa paisatges molt diversos: platja, zones agrícoles, bosc mediterrani i serralada. És una manera excel·lent de conèixer la diversitat del territori i la seva riquesa natural i patrimonial.",
     "instructions": "Ruta llarga recomanada per a excursionistes amb experiència. Porteu menjar i aigua suficient. Es pot dividir en dues etapes.",
+    "checkpoints": [
+      {
+        "order": 1,
+        "title": "Inicio: Cabrera de Mar",
+        "description": "Ruta que comienza en los límites del municipio de Cabrera, rodeando campos y paisajes.",
+        "latitude": 41.5175,
+        "longitude": 2.395,
+        "image": "cp_passeig.png"
+      },
+      {
+        "order": 2,
+        "title": "Creu de Montcabrer",
+        "description": "Travesías cansadoras: multi-panorama (costa, playas agrícolas, bosque mediterráneo, serranía). Es un camino en el contexto del Corredor i Canals boscans.",
+        "latitude": 41.534,
+        "longitude": 2.41,
+        "image": "cp_regreso.png"
+      },
+      {
+        "order": 3,
+        "title": "Castell de Burriac",
+        "description": "Ruta larga recomendada para excursionistas. Período medieval, vigilancia costera para avistamiento de piratas.",
+        "latitude": 41.538,
+        "longitude": 2.415,
+        "image": "cp_torre.png"
+      },
+      {
+        "order": 4,
+        "title": "Ermita de Montserrat",
+        "description": "Pequeña ermita entre encinas con zona de picnic natural.",
+        "latitude": 41.53,
+        "longitude": 2.38,
+        "image": "cp_regreso.png"
+      },
+      {
+        "order": 5,
+        "title": "Zona agrícola del Pla",
+        "description": "Tramo llano entre campos de cultivo y masías históricas.",
+        "latitude": 41.52,
+        "longitude": 2.387,
+        "image": "cp_passeig.png"
+      }
+    ],
     "translations": {
       "es": {
         "title": "Vuelta al Término de Cabrera",
@@ -197,6 +406,10 @@
         "description": "Route qui fait le tour de tout le territoire municipal de Cabrera de Mar. Elle traverse des paysages très divers: plage, zones agricoles, forêt méditerranéenne et chaîne de montagnes. C'est une excellente façon de découvrir la diversité du territoire et sa richesse naturelle et patrimoniale.",
         "instructions": "Longue route recommandée pour les randonneurs expérimentés. Apportez suffisamment de nourriture et d'eau. Peut être divisée en deux étapes."
       }
-    }
+    },
+    "gallery": [
+      "cp_torre.png",
+      "cp_torre.png"
+    ]
   }
 ]

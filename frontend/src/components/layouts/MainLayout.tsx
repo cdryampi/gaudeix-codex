@@ -20,7 +20,9 @@ export function MainLayout({ children }: MainLayoutProps) {
     pathname === "/" ||
     pathname.startsWith("/agenda/") ||
     pathname.startsWith("/lugares/") ||
-    pathname.startsWith("/noticias/");
+    pathname.startsWith("/noticias/") ||
+    pathname.startsWith("/rutas/") ||
+    pathname.startsWith("/festes/");
   const isTransparent = isHeroPage && !scrolled;
 
   useEffect(() => {

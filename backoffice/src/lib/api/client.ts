@@ -13,12 +13,16 @@ const client = axios.create({
   xsrfHeaderName: "X-CSRFToken", // Django default
 });
 
-// Request Interceptor: Attach Token
+// Request Interceptor: Attach Token + Cache Bust
 client.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = authStorage.getAccessToken();
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
+    }
+    // Cache-bust GET requests to prevent stale API data
+    if (config.method === "get") {
+      config.params = { ...config.params, _t: Date.now() };
     }
     return config;
   },

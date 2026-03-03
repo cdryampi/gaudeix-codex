@@ -156,8 +156,8 @@ export const FestaDetailPage = () => {
 
             {(festa.duration_days > 0 ||
               (festa.events && festa.events.length > 0)) && (
-              <div className="w-px h-10 bg-white/10 hidden sm:block" />
-            )}
+                <div className="w-px h-10 bg-white/10 hidden sm:block" />
+              )}
 
             {festa.duration_days > 0 && (
               <div className="flex items-center gap-3 text-white">
@@ -251,7 +251,7 @@ export const FestaDetailPage = () => {
                       key={tag.id}
                       className="px-4 py-2 rounded-full bg-white border border-slate-200 text-[10px] font-bold text-slate-600 uppercase tracking-wider"
                     >
-                      {tag.name}
+                      {tag.nombre}
                     </span>
                   ))}
                 </div>

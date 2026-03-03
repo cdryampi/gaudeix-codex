@@ -17,7 +17,7 @@ from django.db import transaction
 
 from core.models import Category
 from media_files.models import ImageFile
-from routes.models import Route, RouteCategorySingleton
+from routes.models import Route, RouteCheckpoint, RouteCategorySingleton
 
 
 class Command(BaseCommand):
@@ -101,6 +101,26 @@ class Command(BaseCommand):
             )
 
             self._apply_translations(route, data.get("translations", {}))
+            self._create_checkpoints(route, data.get("checkpoints", []), images)
+
+            # Add tags
+            tag_slugs = data.get("tags", [])
+            for tag_slug in tag_slugs:
+                try:
+                    from core.models import Tag
+                    tag = Tag.objects.get(slug=tag_slug)
+                    route.tags.add(tag)
+                except Tag.DoesNotExist:
+                    self.stdout.write(self.style.WARNING(f"    Warning: Tag '{tag_slug}' not found for route '{route}'"))
+
+            # Add gallery images
+            gallery_filenames = data.get("gallery", [])
+            if gallery_filenames:
+                gallery_imgs = [images.get(name) for name in gallery_filenames if images.get(name)]
+                if gallery_imgs:
+                    route.gallery.add(*gallery_imgs)
+                    self.stdout.write(self.style.SUCCESS(f"  → Added {len(gallery_imgs)} gallery images for '{route}'"))
+
             self.stdout.write(self.style.SUCCESS(f"Created route '{route}'"))
 
     def _load_seed_routes(self) -> list[dict]:
@@ -130,6 +150,26 @@ class Command(BaseCommand):
             if "instructions" in values:
                 route.instructions = values["instructions"]
             route.save()
+
+    def _create_checkpoints(self, route: Route, checkpoints: list[dict], images: dict[str, ImageFile]) -> None:
+        for cp_data in checkpoints:
+            image_filename = cp_data.get("image")
+            checkpoint_image = images.get(image_filename) if image_filename else None
+
+            RouteCheckpoint.objects.create(
+                route=route,
+                order=cp_data["order"],
+                title=cp_data["title"],
+                description=cp_data.get("description", ""),
+                image=checkpoint_image,
+                latitude=Decimal(str(cp_data["latitude"])) if cp_data.get("latitude") else None,
+                longitude=Decimal(str(cp_data["longitude"])) if cp_data.get("longitude") else None,
+                is_active=True,
+            )
+        if checkpoints:
+            self.stdout.write(
+                self.style.SUCCESS(f"  → Created {len(checkpoints)} checkpoints for '{route}'")
+            )
 
     @property
     def sample_images_dir(self) -> Path:

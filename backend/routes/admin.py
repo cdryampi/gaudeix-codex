@@ -4,7 +4,7 @@ from django.contrib import admin
 from parler.admin import TranslatableAdmin
 from solo.admin import SingletonModelAdmin
 
-from .models import Route, RouteCategorySingleton, RouteWaypoint
+from .models import Route, RouteCategorySingleton, RouteWaypoint, RouteCheckpoint
 
 
 @admin.register(RouteCategorySingleton)
@@ -30,6 +30,15 @@ class RouteWaypointInline(admin.TabularInline):
     fields = ("order", "place", "instructions", "distance_from_previous_km")
     ordering = ("order",)
     autocomplete_fields = ["place"]
+
+
+class RouteCheckpointInline(admin.TabularInline):
+    """Inline admin for route checkpoints (roadmap)."""
+
+    model = RouteCheckpoint
+    extra = 1
+    fields = ("order", "title", "description", "image", "latitude", "longitude", "is_active")
+    ordering = ("order",)
 
 
 @admin.register(Route)
@@ -62,7 +71,7 @@ class RouteAdmin(TranslatableAdmin):
         "creado_por",
         "modificado_por",
     )
-    inlines = [RouteWaypointInline]
+    inlines = [RouteWaypointInline, RouteCheckpointInline]
     filter_horizontal = ("tags", "attachments", "gallery")
 
     fieldsets = (
@@ -115,6 +124,16 @@ class RouteAdmin(TranslatableAdmin):
             "GPS Track",
             {
                 "fields": ("gpx_file", "track_geojson"),
+                "classes": ("collapse",),
+            },
+        ),
+        (
+            "App Guiada",
+            {
+                "fields": (
+                    "ios_app_url",
+                    "android_app_url",
+                ),
                 "classes": ("collapse",),
             },
         ),

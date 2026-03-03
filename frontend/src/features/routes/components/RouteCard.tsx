@@ -103,7 +103,7 @@ export const RouteCard = ({
             <div className="flex items-center gap-2 text-slate-600">
               <Mountain className="h-4 w-4 text-primary/50" />
               <span className="text-xs font-bold">
-                {route.distance_km.toFixed(1)} km
+                {Number(route.distance_km).toFixed(1)} km
               </span>
             </div>
           )}

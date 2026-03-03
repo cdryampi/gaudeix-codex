@@ -39,6 +39,7 @@ import { useAuthStore } from "@/features/auth/store";
 // Routes (hiking/cycling)
 import { RoutesPage } from "@/features/routes/pages/RoutesPage";
 import { RouteDetailPage } from "@/features/routes/pages/RouteDetailPage";
+import { RoadmapPage } from "@/features/routes/pages/RoadmapPage";
 
 // Festes (festivals)
 import { FestesPage } from "@/features/festes/pages/FestesPage";
@@ -183,11 +184,10 @@ function HomePage() {
               <button
                 key={f.id}
                 onClick={() => setEventFilter(f.id as any)}
-                className={`h-12 px-8 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${
-                  eventFilter === f.id
+                className={`h-12 px-8 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${eventFilter === f.id
                     ? "bg-accent text-slate-900 shadow-lg"
                     : "bg-white/5 text-white/60 hover:bg-white/10"
-                }`}
+                  }`}
               >
                 {f.label}
               </button>
@@ -334,6 +334,7 @@ export default function App() {
 
         {/* Routes (hiking/cycling) */}
         <Route path="/rutas" element={<RoutesPage />} />
+        <Route path="/rutas/roadmap" element={<RoadmapPage />} />
         <Route path="/rutas/:slug" element={<RouteDetailPage />} />
 
         {/* Festes (festivals) */}
