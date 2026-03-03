@@ -1,4 +1,3 @@
-import type { ElementType } from "react";
 import { useEffect, useMemo, useState } from "react";
 import { PageContainer, PageHeader } from "@/components/common";
 import { Button } from "@/components/ui/button";
@@ -32,7 +31,9 @@ export function UsersPage() {
   const [deleteUserId, setDeleteUserId] = useState<number | null>(null);
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState<"all" | "admin" | "user">("all");
-  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
+  const [statusFilter, setStatusFilter] = useState<
+    "all" | "active" | "inactive"
+  >("all");
   const [page, setPage] = useState(1);
   const [pageSize] = useState(10);
 
@@ -55,14 +56,14 @@ export function UsersPage() {
         roleFilter === "all"
           ? true
           : roleFilter === "admin"
-          ? user.is_staff
-          : !user.is_staff;
+            ? user.is_staff
+            : !user.is_staff;
       const matchesStatus =
         statusFilter === "all"
           ? true
           : statusFilter === "active"
-          ? user.is_active
-          : !user.is_active;
+            ? user.is_active
+            : !user.is_active;
       return matchesQuery && matchesRole && matchesStatus;
     });
   }, [users, search, roleFilter, statusFilter]);
@@ -227,7 +228,9 @@ export function UsersPage() {
           <div className="grid grid-cols-2 gap-2 md:flex">
             <select
               value={roleFilter}
-              onChange={(e) => setRoleFilter(e.target.value as typeof roleFilter)}
+              onChange={(e) =>
+                setRoleFilter(e.target.value as typeof roleFilter)
+              }
               className="h-10 rounded-md border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
             >
               <option value="all">Todos los roles</option>
@@ -236,7 +239,9 @@ export function UsersPage() {
             </select>
             <select
               value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value as typeof statusFilter)}
+              onChange={(e) =>
+                setStatusFilter(e.target.value as typeof statusFilter)
+              }
               className="h-10 rounded-md border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
             >
               <option value="all">Todos los estados</option>
@@ -275,7 +280,11 @@ export function UsersPage() {
           Página {page} de {totalPages} • {filtered.length} resultados
         </span>
         <div className="w-full md:w-auto">
-          <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+          />
         </div>
       </div>
 

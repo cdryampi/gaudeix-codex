@@ -10,7 +10,6 @@ import {
   MessageSquare,
   Users,
   Image,
-  Calendar,
   Settings,
   FileStack,
   Video,

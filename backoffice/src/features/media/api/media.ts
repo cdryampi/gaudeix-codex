@@ -15,22 +15,22 @@ function isVideo(file: File) {
 
 export const mediaApi = {
   async listImages(): Promise<MediaItem[]> {
-    const res = await apiClient.get(IMAGE_ENDPOINT);
-    return (res.data as any[]).map((item) => ({
+    const res = await apiClient.get<MediaItem[]>(IMAGE_ENDPOINT);
+    return res.data.map((item) => ({
       ...item,
       type: "image",
     }));
   },
   async listDocuments(): Promise<MediaItem[]> {
-    const res = await apiClient.get(DOC_ENDPOINT);
-    return (res.data as any[]).map((item) => ({
+    const res = await apiClient.get<MediaItem[]>(DOC_ENDPOINT);
+    return res.data.map((item) => ({
       ...item,
       type: "document",
     }));
   },
   async listVideos(): Promise<MediaItem[]> {
-    const res = await apiClient.get(VIDEO_ENDPOINT);
-    return (res.data as any[]).map((item) => ({
+    const res = await apiClient.get<MediaItem[]>(VIDEO_ENDPOINT);
+    return res.data.map((item) => ({
       ...item,
       type: "video",
     }));

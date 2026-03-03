@@ -21,7 +21,7 @@ export function CategoriesPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Category | undefined>();
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(envConfig.events.pageSizeDefault);
+  const [pageSize] = useState(envConfig.events.pageSizeDefault);
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
@@ -120,9 +120,13 @@ export function CategoriesPage() {
       <Card className="border-border bg-card">
         <CardContent className="p-0">
           {loading ? (
-            <div className="flex h-40 items-center justify-center text-muted-foreground">Cargando...</div>
+            <div className="flex h-40 items-center justify-center text-muted-foreground">
+              Cargando...
+            </div>
           ) : error ? (
-            <div className="flex h-40 items-center justify-center text-destructive">{error}</div>
+            <div className="flex h-40 items-center justify-center text-destructive">
+              {error}
+            </div>
           ) : (
             <CategoriesTable
               categories={paginated}
@@ -141,7 +145,11 @@ export function CategoriesPage() {
           Página {page} de {totalPages} • {filtered.length} resultados
         </span>
         <div className="w-full md:w-auto">
-          <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+          />
         </div>
       </div>
 

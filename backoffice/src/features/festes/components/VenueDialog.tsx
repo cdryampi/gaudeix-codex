@@ -87,7 +87,7 @@ export function VenueDialog({ open, onOpenChange, onSubmit, venue }: Props) {
       setCoordinateError(null);
       setActiveLang("ca");
     }
-  }, [venue?.id, open]);
+  }, [venue, open]);
 
   const getTranslation = (lang: string) => {
     return translations[lang] || emptyBaseTranslation;
@@ -113,7 +113,10 @@ export function VenueDialog({ open, onOpenChange, onSubmit, venue }: Props) {
     return Number.isFinite(parsed) ? parsed : null;
   };
 
-  const validateCoordinates = (latitude: number | null, longitude: number | null) => {
+  const validateCoordinates = (
+    latitude: number | null,
+    longitude: number | null,
+  ) => {
     if (latitude !== null && (latitude < -90 || latitude > 90)) {
       return "La latitud debe estar entre -90 y 90.";
     }
@@ -171,7 +174,9 @@ export function VenueDialog({ open, onOpenChange, onSubmit, venue }: Props) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[860px] px-6 max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{venue ? "Editar espacio" : "Nuevo espacio"}</DialogTitle>
+          <DialogTitle>
+            {venue ? "Editar espacio" : "Nuevo espacio"}
+          </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -242,7 +247,10 @@ export function VenueDialog({ open, onOpenChange, onSubmit, venue }: Props) {
                 type="checkbox"
                 checked={form.is_published}
                 onChange={(e) =>
-                  setForm((prev) => ({ ...prev, is_published: e.target.checked }))
+                  setForm((prev) => ({
+                    ...prev,
+                    is_published: e.target.checked,
+                  }))
                 }
               />
               <span className="text-sm font-medium">Publicado</span>
@@ -253,7 +261,10 @@ export function VenueDialog({ open, onOpenChange, onSubmit, venue }: Props) {
                 type="checkbox"
                 checked={form.is_accessible}
                 onChange={(e) =>
-                  setForm((prev) => ({ ...prev, is_accessible: e.target.checked }))
+                  setForm((prev) => ({
+                    ...prev,
+                    is_accessible: e.target.checked,
+                  }))
                 }
               />
               <span className="text-sm font-medium">Accesible</span>
@@ -277,7 +288,11 @@ export function VenueDialog({ open, onOpenChange, onSubmit, venue }: Props) {
               const content = getTranslation(lang.code);
               const isBase = lang.code === "ca";
               return (
-                <TabsContent key={lang.code} value={lang.code} className="space-y-3 pt-4">
+                <TabsContent
+                  key={lang.code}
+                  value={lang.code}
+                  className="space-y-3 pt-4"
+                >
                   <div className="space-y-2">
                     <Label>Nombre {isBase ? "" : `(${lang.name})`}</Label>
                     <Input
@@ -309,7 +324,9 @@ export function VenueDialog({ open, onOpenChange, onSubmit, venue }: Props) {
           </Tabs>
 
           <div className="flex justify-end gap-2 pt-4 border-t">
-            <Button type="submit">{venue ? "Guardar cambios" : "Crear espacio"}</Button>
+            <Button type="submit">
+              {venue ? "Guardar cambios" : "Crear espacio"}
+            </Button>
           </div>
         </form>
       </DialogContent>

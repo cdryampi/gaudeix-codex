@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { StatCard } from "@/components/common/StatCard";
 import { dashboardApi, DashboardStats } from "../api";
-import { Card } from "flowbite-react";
+
 import { Link } from "react-router-dom";
 import { ROUTES } from "@/lib/config/constants";
 import { FavoritesKPI } from "../components/FavoritesKPI";
@@ -51,7 +51,14 @@ export function DashboardHome() {
     desc,
     color,
     ringColor,
-  }: any) => (
+  }: {
+    to: string;
+    icon: React.ComponentType<{ className?: string }>;
+    title: string;
+    desc: string;
+    color: string;
+    ringColor?: string;
+  }) => (
     <Link
       to={to}
       className={`group relative flex flex-col justify-between overflow-hidden rounded-xl border border-gray-100 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:ring-2 ${ringColor || "hover:ring-primary-500/20"} dark:border-gray-800 dark:bg-gray-800`}

@@ -30,7 +30,10 @@ export const authService = {
    * Login with username and password
    */
   async login(credentials: LoginCredentials): Promise<LoginResponse> {
-    const { data } = await client.post<LoginResponse>("/auth/login/", credentials);
+    const { data } = await client.post<LoginResponse>(
+      "/auth/login/",
+      credentials,
+    );
     return data;
   },
 
@@ -45,16 +48,19 @@ export const authService = {
    * Refresh access token
    */
   async refreshToken(refreshToken: string): Promise<RefreshResponse> {
-    const { data } = await client.post<RefreshResponse>("/auth/token/refresh/", {
-      refresh: refreshToken,
-    });
+    const { data } = await client.post<RefreshResponse>(
+      "/auth/token/refresh/",
+      {
+        refresh: refreshToken,
+      },
+    );
     return data;
   },
 
   /**
    * Get current user info
    */
-  async getCurrentUser(token?: string): Promise<User> {
+  async getCurrentUser(): Promise<User> {
     // Token is optional now as it might be handled by cookies/interceptor
     const { data } = await client.get<User>("/auth/user/");
     return data;
@@ -69,7 +75,10 @@ export const authService = {
     password: string;
     name?: string;
   }): Promise<LoginResponse> {
-    const { data: responseData } = await client.post<LoginResponse>("/auth/register/", data);
+    const { data: responseData } = await client.post<LoginResponse>(
+      "/auth/register/",
+      data,
+    );
     return responseData;
   },
 
@@ -91,4 +100,3 @@ export const authService = {
     await client.post("/auth/password/reset/confirm/", data);
   },
 };
-

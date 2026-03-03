@@ -53,7 +53,8 @@ export function SocialLinkDialog({
 
   useEffect(() => {
     if (link) {
-      const { id, ...rest } = link;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { id: _id, ...rest } = link;
       setFormData(rest);
     } else {
       setFormData(emptyForm);
@@ -61,7 +62,7 @@ export function SocialLinkDialog({
   }, [link, open]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value, type } = e.target;
     const parsedValue = type === "number" ? Number(value) : value;

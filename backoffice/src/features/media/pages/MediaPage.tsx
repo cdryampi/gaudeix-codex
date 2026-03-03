@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PageContainer, PageHeader } from "@/components/common";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -146,27 +146,9 @@ export function MediaPage() {
     return filtered.slice(start, start + pageSize);
   }, [filtered, page, pageSize]);
 
-  const fetchMedia = async () => {
-    try {
-      setLoading(true);
-      const [images, documents, videos] = await Promise.all([
-        mediaApi.listImages(),
-        mediaApi.listDocuments(),
-        mediaApi.listVideos(),
-      ]);
-      const merged = [...images, ...documents, ...videos];
-      setItems(merged);
-      setLinkedMap(await loadLinkedMap());
-      setError(null);
-    } catch (err) {
-      console.error("Error fetching media:", err);
-      setError("Error al cargar los archivos.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const loadLinkedMap = async (): Promise<Record<string, MediaLink[]>> => {
+  const loadLinkedMap = useCallback(async (): Promise<
+    Record<string, MediaLink[]>
+  > => {
     const [eventsResult, placesResult, pagesResult, settingsResult] =
       await Promise.allSettled([
         eventsApi.getAll(),
@@ -201,11 +183,31 @@ export function MediaPage() {
     if (settings) addSiteSettingsLinks(settings, addLink);
 
     return linked;
-  };
+  }, []);
+
+  const fetchMedia = useCallback(async () => {
+    try {
+      setLoading(true);
+      const [images, documents, videos] = await Promise.all([
+        mediaApi.listImages(),
+        mediaApi.listDocuments(),
+        mediaApi.listVideos(),
+      ]);
+      const merged = [...images, ...documents, ...videos];
+      setItems(merged);
+      setLinkedMap(await loadLinkedMap());
+      setError(null);
+    } catch (err) {
+      console.error("Error fetching media:", err);
+      setError("Error al cargar los archivos.");
+    } finally {
+      setLoading(false);
+    }
+  }, [loadLinkedMap]);
 
   useEffect(() => {
     fetchMedia();
-  }, []);
+  }, [fetchMedia]);
 
   const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];

@@ -40,9 +40,13 @@ export function LoginForm() {
     try {
       await login(values);
       navigate("/dashboard");
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      if (err.response?.status === 401) {
+      const status =
+        err instanceof Error && "response" in err
+          ? (err as { response?: { status?: number } }).response?.status
+          : undefined;
+      if (status === 401) {
         setError("Credenciales incorrectas. Verifica tu usuario y contraseña.");
       } else {
         setError("Error al conectar con el servidor. Inténtalo de nuevo.");
@@ -104,7 +108,12 @@ export function LoginForm() {
           )}
         </div>
 
-        <Button type="submit" className="w-full" disabled={isLoading} color="primary">
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={isLoading}
+          color="primary"
+        >
           {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           Iniciar Sesión
         </Button>

@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor } from "@/tests/test-utils";
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
 import { SocialLinksPage } from "../pages/SocialLinksPage";
 import { socialLinksApi } from "../api/socialLinks";
 
@@ -62,7 +62,7 @@ const MOCK_LINKS = [
 describe("SocialLinksPage CRUD", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    (socialLinksApi.getAll as any).mockResolvedValue(MOCK_LINKS);
+    (socialLinksApi.getAll as Mock).mockResolvedValue(MOCK_LINKS);
   });
 
   it("renders social links and fetches data", async () => {
@@ -80,7 +80,7 @@ describe("SocialLinksPage CRUD", () => {
   });
 
   it("deletes a social link", async () => {
-    (socialLinksApi.delete as any).mockResolvedValue({});
+    (socialLinksApi.delete as Mock).mockResolvedValue({});
 
     render(<SocialLinksPage />);
 

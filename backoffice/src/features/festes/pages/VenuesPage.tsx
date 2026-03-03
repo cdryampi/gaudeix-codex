@@ -1,7 +1,7 @@
 /**
  * Venues management page.
  */
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { PageContainer, PageHeader } from "@/components/common";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -42,12 +42,12 @@ export function VenuesPage() {
 
   const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
 
-      const params: Record<string, any> = {
+      const params: Record<string, string | number | boolean> = {
         page,
         page_size: pageSize,
       };
@@ -73,11 +73,11 @@ export function VenuesPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, pageSize, search, status]);
 
   useEffect(() => {
     fetchData();
-  }, [page, pageSize, search, status]);
+  }, [fetchData]);
 
   const handleCreate = () => {
     setEditingVenue(undefined);
@@ -218,14 +218,21 @@ export function VenuesPage() {
                     </tr>
                   ) : (
                     venues.map((venue) => (
-                      <tr key={venue.id} className="transition-colors hover:bg-muted/30">
+                      <tr
+                        key={venue.id}
+                        className="transition-colors hover:bg-muted/30"
+                      >
                         <td className="px-5 py-4">
                           <p className="font-semibold">{venue.name}</p>
-                          <p className="text-xs text-muted-foreground">{venue.slug}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {venue.slug}
+                          </p>
                         </td>
                         <td className="px-5 py-4">
                           <p>{venue.address}</p>
-                          <p className="text-xs text-muted-foreground">{venue.city}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {venue.city}
+                          </p>
                         </td>
                         <td className="px-5 py-4 text-xs">
                           {venue.latitude ?? "-"}, {venue.longitude ?? "-"}
@@ -289,7 +296,11 @@ export function VenuesPage() {
           Página {page} de {totalPages} • {totalCount} resultados
         </span>
         <div className="w-full md:w-auto">
-          <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+          />
         </div>
       </div>
 
@@ -300,7 +311,10 @@ export function VenuesPage() {
         venue={editingVenue}
       />
 
-      <AlertDialog open={deleteSlug !== null} onOpenChange={() => setDeleteSlug(null)}>
+      <AlertDialog
+        open={deleteSlug !== null}
+        onOpenChange={() => setDeleteSlug(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>¿Eliminar espacio?</AlertDialogTitle>

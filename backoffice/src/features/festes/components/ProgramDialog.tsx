@@ -92,7 +92,7 @@ export function ProgramDialog({
       setTranslations({ ca: emptyBaseTranslation });
       setActiveLang("ca");
     }
-  }, [program?.id, open, festes]);
+  }, [program, open, festes]);
 
   const getTranslation = (lang: string) => {
     return translations[lang] || emptyBaseTranslation;
@@ -150,7 +150,9 @@ export function ProgramDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[860px] px-6 max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{program ? "Editar programa" : "Nuevo programa"}</DialogTitle>
+          <DialogTitle>
+            {program ? "Editar programa" : "Nuevo programa"}
+          </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -202,7 +204,10 @@ export function ProgramDialog({
                 type="number"
                 value={form.order}
                 onChange={(e) =>
-                  setForm((prev) => ({ ...prev, order: Number(e.target.value) }))
+                  setForm((prev) => ({
+                    ...prev,
+                    order: Number(e.target.value),
+                  }))
                 }
               />
             </div>
@@ -241,13 +246,21 @@ export function ProgramDialog({
               const content = getTranslation(lang.code);
               const isBase = lang.code === "ca";
               return (
-                <TabsContent key={lang.code} value={lang.code} className="space-y-3 pt-4">
+                <TabsContent
+                  key={lang.code}
+                  value={lang.code}
+                  className="space-y-3 pt-4"
+                >
                   <div className="space-y-2">
                     <Label>Título {isBase ? "" : `(${lang.name})`}</Label>
                     <Input
                       value={content.title || ""}
                       onChange={(e) =>
-                        updateTranslatedField(lang.code, "title", e.target.value)
+                        updateTranslatedField(
+                          lang.code,
+                          "title",
+                          e.target.value,
+                        )
                       }
                       required={isBase}
                     />
@@ -258,7 +271,11 @@ export function ProgramDialog({
                     <Input
                       value={content.subtitle || ""}
                       onChange={(e) =>
-                        updateTranslatedField(lang.code, "subtitle", e.target.value)
+                        updateTranslatedField(
+                          lang.code,
+                          "subtitle",
+                          e.target.value,
+                        )
                       }
                     />
                   </div>
@@ -268,7 +285,11 @@ export function ProgramDialog({
                     <Textarea
                       value={content.description || ""}
                       onChange={(e) =>
-                        updateTranslatedField(lang.code, "description", e.target.value)
+                        updateTranslatedField(
+                          lang.code,
+                          "description",
+                          e.target.value,
+                        )
                       }
                       className="min-h-[100px]"
                     />
@@ -279,7 +300,9 @@ export function ProgramDialog({
           </Tabs>
 
           <div className="flex justify-end gap-2 pt-4 border-t">
-            <Button type="submit">{program ? "Guardar cambios" : "Crear programa"}</Button>
+            <Button type="submit">
+              {program ? "Guardar cambios" : "Crear programa"}
+            </Button>
           </div>
         </form>
       </DialogContent>

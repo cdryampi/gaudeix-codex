@@ -4,17 +4,26 @@ import { MenuItem, MenuItemPayload } from "../types/menuItems";
 
 export const menuItemsApi = {
   async list(params?: { location?: string; parent?: number | null }) {
-    const response = await apiClient.get<MenuItem[]>(API_ENDPOINTS.MENU_ITEMS.LIST, { params });
+    const response = await apiClient.get<MenuItem[]>(
+      API_ENDPOINTS.MENU_ITEMS.LIST,
+      { params },
+    );
     return response.data.map(normalize);
   },
 
   async create(payload: MenuItemPayload) {
-    const response = await apiClient.post<MenuItem>(API_ENDPOINTS.MENU_ITEMS.LIST, payload);
+    const response = await apiClient.post<MenuItem>(
+      API_ENDPOINTS.MENU_ITEMS.LIST,
+      payload,
+    );
     return normalize(response.data);
   },
 
   async update(id: number, payload: MenuItemPayload) {
-    const response = await apiClient.patch<MenuItem>(API_ENDPOINTS.MENU_ITEMS.DETAIL(String(id)), payload);
+    const response = await apiClient.patch<MenuItem>(
+      API_ENDPOINTS.MENU_ITEMS.DETAIL(String(id)),
+      payload,
+    );
     return normalize(response.data);
   },
 
@@ -34,7 +43,6 @@ function normalize(item: MenuItem): MenuItem {
     label: item.label || "",
     url: item.url || "",
     order: item.order ?? 0,
-    location: (item.location as any) || "header",
+    location: item.location || "header",
   };
 }
-

@@ -113,6 +113,12 @@ type CredentialsDraft = {
   local_api_url: string;
 };
 
+type ApiError = {
+  response?: {
+    data?: Record<string, string | string[]>;
+  };
+};
+
 export function LLMSettingsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -204,14 +210,15 @@ export function LLMSettingsPage() {
       setConfig(updated);
       setForm(toFormState(updated));
       toast.success("Configuración LLM guardada");
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
+      const data = (err as ApiError)?.response?.data;
       const msg =
-        err?.response?.data?.detail ||
-        err?.response?.data?.model_name?.[0] ||
-        err?.response?.data?.provider?.[0] ||
-        err?.response?.data?.api_key?.[0] ||
-        err?.response?.data?.local_api_url?.[0] ||
+        data?.detail ||
+        data?.model_name?.[0] ||
+        data?.provider?.[0] ||
+        data?.api_key?.[0] ||
+        data?.local_api_url?.[0] ||
         "No se pudo guardar la configuración LLM";
       toast.error(String(msg));
     } finally {
@@ -254,11 +261,12 @@ export function LLMSettingsPage() {
       toast.success(
         field === "local_api_url" ? "URL guardada" : "API key guardada",
       );
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
+      const data = (err as ApiError)?.response?.data;
       const msg =
-        err?.response?.data?.[field]?.[0] ||
-        err?.response?.data?.detail ||
+        data?.[field]?.[0] ||
+        data?.detail ||
         "No se pudo guardar la credencial";
       toast.error(String(msg));
     } finally {
@@ -278,12 +286,11 @@ export function LLMSettingsPage() {
       setForm(toFormState(updated));
       setCredentialsDraft((prev) => ({ ...prev, [field]: "" }));
       toast.success("Credencial borrada");
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
+      const data = (err as ApiError)?.response?.data;
       const msg =
-        err?.response?.data?.[field]?.[0] ||
-        err?.response?.data?.detail ||
-        "No se pudo borrar la credencial";
+        data?.[field]?.[0] || data?.detail || "No se pudo borrar la credencial";
       toast.error(String(msg));
     } finally {
       setSaving(false);

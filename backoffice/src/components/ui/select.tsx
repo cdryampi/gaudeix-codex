@@ -39,7 +39,7 @@ export const Select = ({
   const [open, setOpen] = useState(false);
   const labelMap = useRef(new Map<string, ReactNode>()).current;
   const rootRef = useRef<HTMLDivElement>(null);
-  const [_, forceUpdate] = useState(0); // Hack to force re-render when labels update
+  const [, forceUpdate] = useState(0); // Force re-render when labels update
 
   const value = controlledValue !== undefined ? controlledValue : internalValue;
 
@@ -108,7 +108,9 @@ export const SelectValue = forwardRef<
   if (!context) throw new Error("SelectValue must be used within Select");
 
   const selectedLabel =
-    context.value !== undefined && context.value !== null ? context.labelMap.get(context.value) : null;
+    context.value !== undefined && context.value !== null
+      ? context.labelMap.get(context.value)
+      : null;
 
   return (
     <span ref={ref} className="block truncate">
@@ -186,7 +188,9 @@ export const SelectItem = forwardRef<
         context.onValueChange?.(value);
       }}
       className={`relative flex w-full cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-700 dark:hover:text-white data-[disabled]:pointer-events-none data-[disabled]:opacity-50 ${
-        isSelected ? "font-medium text-gray-900 dark:text-white bg-gray-50 dark:bg-primary-900/30" : "text-gray-700 dark:text-gray-200"
+        isSelected
+          ? "font-medium text-gray-900 dark:text-white bg-gray-50 dark:bg-primary-900/30"
+          : "text-gray-700 dark:text-gray-200"
       } ${className || ""}`}
       {...props}
     >

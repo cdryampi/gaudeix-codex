@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Check, Film, Upload, Trash2, Play } from "lucide-react";
+import { Check, Film, Upload, Play } from "lucide-react";
 import {
   Dialog,
   DialogContent,

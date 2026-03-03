@@ -1,8 +1,14 @@
 /**
  * Tabs stub using Flowbite React
  */
-import { Tabs as FlowbiteTabs } from "flowbite-react";
-import { HTMLAttributes, forwardRef, useState, createContext, useContext } from "react";
+
+import {
+  HTMLAttributes,
+  forwardRef,
+  useState,
+  createContext,
+  useContext,
+} from "react";
 
 interface TabsContextValue {
   value: string;
@@ -18,30 +24,43 @@ export const Tabs = forwardRef<
     value?: string;
     onValueChange?: (value: string) => void;
   }
->(({ children, defaultValue = "", value: controlledValue, onValueChange, className, ...props }, ref) => {
-  const [internalValue, setInternalValue] = useState(defaultValue);
-  const value = controlledValue ?? internalValue;
-  const setValue = onValueChange ?? setInternalValue;
+>(
+  (
+    {
+      children,
+      defaultValue = "",
+      value: controlledValue,
+      onValueChange,
+      className,
+      ...props
+    },
+    ref,
+  ) => {
+    const [internalValue, setInternalValue] = useState(defaultValue);
+    const value = controlledValue ?? internalValue;
+    const setValue = onValueChange ?? setInternalValue;
 
-  return (
-    <TabsContext.Provider value={{ value, onValueChange: setValue }}>
-      <div ref={ref} className={className} {...props}>
-        {children}
-      </div>
-    </TabsContext.Provider>
-  );
-});
+    return (
+      <TabsContext.Provider value={{ value, onValueChange: setValue }}>
+        <div ref={ref} className={className} {...props}>
+          {children}
+        </div>
+      </TabsContext.Provider>
+    );
+  },
+);
 Tabs.displayName = "Tabs";
 
-export const TabsList = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={`inline-flex h-11 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800 p-1 text-gray-500 dark:text-gray-400 ${className || ""}`}
-      {...props}
-    />
-  )
-);
+export const TabsList = forwardRef<
+  HTMLDivElement,
+  HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={`inline-flex h-11 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800 p-1 text-gray-500 dark:text-gray-400 ${className || ""}`}
+    {...props}
+  />
+));
 TabsList.displayName = "TabsList";
 
 export const TabsTrigger = forwardRef<
@@ -56,8 +75,8 @@ export const TabsTrigger = forwardRef<
       ref={ref}
       type="button"
       className={`inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 ${
-        isActive 
-          ? "bg-white dark:bg-gray-700 text-primary-600 dark:text-primary-400 shadow-sm" 
+        isActive
+          ? "bg-white dark:bg-gray-700 text-primary-600 dark:text-primary-400 shadow-sm"
           : "text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200"
       } ${className || ""}`}
       onClick={(e) => {

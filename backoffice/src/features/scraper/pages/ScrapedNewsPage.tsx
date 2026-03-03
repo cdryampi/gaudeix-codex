@@ -136,7 +136,7 @@ export function ScrapedNewsPage() {
   };
 
   const pendingCount = items.filter((i) => i.status === "pending").length;
-  const isJobRunning = job?.status === "pending" || job?.status === "running";
+
   const isJobProcessing = Boolean(
     activeJobId &&
     (!job || job.status === "pending" || job.status === "running"),

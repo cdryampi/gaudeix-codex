@@ -1,13 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import {
-  Send,
-  Bell,
-  Smartphone,
-  Users,
-  CheckCircle,
-  AlertCircle,
-} from "lucide-react";
+import { Send, CheckCircle, AlertCircle } from "lucide-react";
 import { sendNotification, getNotificationHistory } from "../api";
 import { NotificationDraft } from "../types";
 
@@ -109,7 +102,9 @@ export const SendNotificationPage = () => {
                   onChange={(e) =>
                     setDraft({
                       ...draft,
-                      target_audience: e.target.value as any,
+                      target_audience: e.target.value as
+                        | "all"
+                        | "specific_users",
                     })
                   }
                   className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 outline-none"

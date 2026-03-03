@@ -4,7 +4,7 @@ import { Tag } from "@/features/tags/types";
 import { MediaItem } from "@/features/media/types";
 
 /**
- * Adapter to map the Backoffice Event Form data (CreateEventDTO) 
+ * Adapter to map the Backoffice Event Form data (CreateEventDTO)
  * to a full Event object compatible with the Frontend detail view.
  */
 export function mapFormToPreviewEvent(
@@ -16,7 +16,7 @@ export function mapFormToPreviewEvent(
     documents: MediaItem[];
     activeLang: string;
     dates: EventDate[];
-  }
+  },
 ): Event {
   const { categories, tags, images, documents, activeLang, dates } = options;
 
@@ -40,7 +40,7 @@ export function mapFormToPreviewEvent(
     .map((id) => {
       const tag = tags.find((t) => t.id === id);
       if (!tag) return null;
-      
+
       // Map translations if activeLang is not 'ca'
       let name = tag.nombre;
       if (activeLang !== "ca" && tag.translations?.[activeLang]) {
@@ -52,7 +52,7 @@ export function mapFormToPreviewEvent(
         name: name, // Frontend expects 'name'
       };
     })
-    .filter((t): t is any => t !== null);
+    .filter((t): t is Tag & { name: string } => t !== null);
 
   // 4. Resolve Featured Media
   const featuredMedia = images.find((img) => img.id === form.featured_media_id);
@@ -67,7 +67,7 @@ export function mapFormToPreviewEvent(
         title: doc.original_name, // Frontend expects 'title'
       };
     })
-    .filter((d): d is any => d !== null);
+    .filter((d): d is MediaItem & { title: string } => d !== null);
 
   // 6. Process Dates (ensure IDs for "Next Session" logic)
   const processedDates = dates.map((d, index) => ({
@@ -96,10 +96,12 @@ export function mapFormToPreviewEvent(
     category_name: category?.nombre,
     category_slug: category?.slug,
     tags: resolvedTags,
-    featured_media: featuredMedia ? {
-      ...featuredMedia,
-      variant_large: featuredMedia.variant_large || featuredMedia.file,
-    } : null,
+    featured_media: featuredMedia
+      ? {
+          ...featuredMedia,
+          variant_large: featuredMedia.variant_large || featuredMedia.file,
+        }
+      : null,
     attachments: attachments,
     dates: processedDates,
     start_at: firstSession?.start_at || new Date().toISOString(),

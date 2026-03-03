@@ -1,6 +1,6 @@
 import { Moon, Sun, Monitor } from "lucide-react";
 import { Button } from "flowbite-react";
-import { useTheme } from "@/app/providers/ThemeProvider";
+import { useTheme } from "@/app/providers/useTheme";
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();

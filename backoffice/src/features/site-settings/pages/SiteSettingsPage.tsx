@@ -126,7 +126,10 @@ export function SiteSettingsPage() {
     load();
   }, []);
 
-  const handleChange = (field: keyof FormState, value: any) => {
+  const handleChange = (
+    field: keyof FormState,
+    value: FormState[keyof FormState],
+  ) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -634,38 +637,46 @@ export function SiteSettingsPage() {
                     />
                   </label>
 
-                  {[
+                  {(
                     [
-                      "privacy_page_id",
-                      "Privacidad",
-                      optionsByTemplate.privacy,
-                    ],
-                    ["cookies_page_id", "Cookies", optionsByTemplate.cookies],
-                    [
-                      "legal_page_id",
-                      "Aviso Legal",
-                      optionsByTemplate.legal_notice,
-                    ],
-                    [
-                      "inclusion_page_id",
-                      "Inclusión",
-                      optionsByTemplate.inclusion,
-                    ],
-                  ].map(([field, label, opts]: any) => (
+                      [
+                        "privacy_page_id",
+                        "Privacidad",
+                        optionsByTemplate.privacy,
+                      ],
+                      ["cookies_page_id", "Cookies", optionsByTemplate.cookies],
+                      [
+                        "legal_page_id",
+                        "Aviso Legal",
+                        optionsByTemplate.legal_notice,
+                      ],
+                      [
+                        "inclusion_page_id",
+                        "Inclusión",
+                        optionsByTemplate.inclusion,
+                      ],
+                    ] as [
+                      keyof FormState,
+                      string,
+                      { id: number; label: string }[],
+                    ][]
+                  ).map(([field, label, opts]) => (
                     <div key={field} className="space-y-2">
                       <Label>{label}</Label>
                       <select
-                        value={(form as any)[field] ?? ""}
+                        value={
+                          (form[field] as string | number | undefined) ?? ""
+                        }
                         onChange={(e) =>
                           handleChange(
-                            field as keyof FormState,
+                            field,
                             e.target.value ? Number(e.target.value) : null,
                           )
                         }
                         className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                       >
                         <option value="">Seleccionar página...</option>
-                        {opts.map((opt: any) => (
+                        {opts.map((opt) => (
                           <option key={opt.id} value={opt.id}>
                             {opt.label}
                           </option>

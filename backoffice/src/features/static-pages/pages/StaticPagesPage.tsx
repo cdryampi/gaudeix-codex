@@ -8,7 +8,7 @@ import { Plus } from "lucide-react";
 import { toast } from "sonner";
 
 import { staticPagesApi } from "../api/staticPages";
-import { StaticPage, StaticPagePayload, StaticPageTemplate } from "../types";
+import { StaticPage, StaticPagePayload } from "../types";
 import { StaticPagesTable } from "../components/StaticPagesTable";
 import { StaticPageDialog } from "../components/StaticPageDialog";
 import { TEMPLATE_OPTIONS } from "../constants/templates";
@@ -32,8 +32,13 @@ export function StaticPagesPage() {
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
     return pages.filter((p) => {
-      const matchesSearch = `${p.slug} ${p.titulo} ${p.cuerpo ?? ""} ${p.template}`.toLowerCase().includes(q);
-      const matchesTemplate = templateFilter ? p.template === templateFilter : true;
+      const matchesSearch =
+        `${p.slug} ${p.titulo} ${p.cuerpo ?? ""} ${p.template}`
+          .toLowerCase()
+          .includes(q);
+      const matchesTemplate = templateFilter
+        ? p.template === templateFilter
+        : true;
       const matchesPublished =
         publishedFilter === ""
           ? true
@@ -92,9 +97,10 @@ export function StaticPagesPage() {
       setDialogOpen(false);
       setEditing(undefined);
       fetchPages();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      const detail = err?.response?.data?.template?.[0];
+      const apiError = err as { response?: { data?: { template?: string[] } } };
+      const detail = apiError?.response?.data?.template?.[0];
       toast.error("No se pudo guardar la página", { description: detail });
     }
   };
@@ -177,17 +183,23 @@ export function StaticPagesPage() {
         <TriangleAlert className="h-4 w-4" />
         <AlertTitle>Menús y estáticas son sensibles</AlertTitle>
         <AlertDescription className="text-sm">
-          Cada plantilla es única y se muestra en la web pública. Evita cambios innecesarios en slugs, plantillas o documentos
-          legales. Para crear nuevas páginas usa solo las plantillas predefinidas y revisa enlaces en el header/footer.
+          Cada plantilla es única y se muestra en la web pública. Evita cambios
+          innecesarios en slugs, plantillas o documentos legales. Para crear
+          nuevas páginas usa solo las plantillas predefinidas y revisa enlaces
+          en el header/footer.
         </AlertDescription>
       </Alert>
 
       <Card className="border-border bg-card">
         <CardContent className="p-0">
           {loading ? (
-            <div className="flex h-40 items-center justify-center text-muted-foreground">Cargando...</div>
+            <div className="flex h-40 items-center justify-center text-muted-foreground">
+              Cargando...
+            </div>
           ) : error ? (
-            <div className="flex h-40 items-center justify-center text-destructive">{error}</div>
+            <div className="flex h-40 items-center justify-center text-destructive">
+              {error}
+            </div>
           ) : (
             <StaticPagesTable
               pages={paginated}
@@ -206,7 +218,11 @@ export function StaticPagesPage() {
           Página {page} de {totalPages} • {filtered.length} resultados
         </span>
         <div className="w-full md:w-auto">
-          <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+          />
         </div>
       </div>
 

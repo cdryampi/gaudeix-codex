@@ -1,2 +1,2 @@
-// Re-export useAuth from AuthProvider for convenience
-export { useAuth } from "@/app/providers/AuthProvider";
+// Re-export useAuth from its dedicated module for convenience
+export { useAuth } from "@/app/providers/useAuth";

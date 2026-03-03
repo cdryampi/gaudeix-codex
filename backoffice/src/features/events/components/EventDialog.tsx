@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
+
 import { Button } from "@/components/ui/button";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import {
@@ -49,7 +49,7 @@ import { CreateEventDTO, Event, EventDate } from "../types";
 import { mediaApi } from "@/features/media/api/media";
 import { categoriesApi } from "@/features/categories/api/categories";
 import { tagsApi } from "@/features/tags/api/tags";
-import { eventsApi } from "../api/events";
+
 import { Category } from "@/features/categories/types";
 import { Tag } from "@/features/tags/types";
 import { MediaItem } from "@/features/media/types";
@@ -140,7 +140,7 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
       setDates([]);
       setActiveLang("ca");
     }
-  }, [event?.id, open]);
+  }, [event, open]);
 
   useEffect(() => {
     const loadOptions = async () => {
@@ -163,11 +163,11 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
     if (open) loadOptions();
   }, [open]);
 
-  const selectedTagIds = form.tag_ids ?? [];
   const selectedTags = useMemo(() => {
-    const selected = new Set(selectedTagIds);
+    const ids = form.tag_ids ?? [];
+    const selected = new Set(ids);
     return tags.filter((tag) => selected.has(tag.id));
-  }, [selectedTagIds, tags]);
+  }, [form.tag_ids, tags]);
 
   const sortedTags = useMemo(() => {
     return [...tags].sort((a, b) =>
@@ -1211,17 +1211,4 @@ function formatDateTime(iso: string, timeOnly = false) {
     hour: "2-digit",
     minute: "2-digit",
   });
-}
-
-function toIso(value: string) {
-  if (!value) return value;
-  return new Date(value).toISOString();
-}
-
-function toDatetimeLocal(iso: string) {
-  if (!iso) return "";
-  const date = new Date(iso);
-  const offset = date.getTimezoneOffset();
-  const adjusted = new Date(date.getTime() - offset * 60 * 1000);
-  return adjusted.toISOString().slice(0, 16);
 }

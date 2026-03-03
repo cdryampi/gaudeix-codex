@@ -18,15 +18,17 @@ export function ScrapeProgressBar() {
   const queryClient = useQueryClient();
   const { cancelJob } = useScraperMutations();
 
+  const jobStatus = job?.status;
+
   useEffect(() => {
     let intervalId: ReturnType<typeof setInterval>;
 
     if (
       activeJobId &&
-      (!job ||
-        (job.status !== "completed" &&
-          job.status !== "failed" &&
-          job.status !== "cancelled"))
+      (!jobStatus ||
+        (jobStatus !== "completed" &&
+          jobStatus !== "failed" &&
+          jobStatus !== "cancelled"))
     ) {
       checkStatus(); // Initial check
       intervalId = setInterval(() => {
@@ -37,7 +39,7 @@ export function ScrapeProgressBar() {
     return () => {
       if (intervalId) clearInterval(intervalId);
     };
-  }, [activeJobId, job?.status, checkStatus]);
+  }, [activeJobId, jobStatus, checkStatus]);
 
   // Refresh scraped news list when job completes
   useEffect(() => {

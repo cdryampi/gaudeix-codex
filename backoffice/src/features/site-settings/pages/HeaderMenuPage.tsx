@@ -4,8 +4,21 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { TriangleAlert, Plus } from "lucide-react";
 import { toast } from "sonner";
@@ -46,10 +59,16 @@ function defaults(): FormState {
 
 function getDisplayLabel(item: MenuItem): string {
   if (item.type === "category") {
-    return item.category?.nombre || (item.category_id ? `Categoría #${item.category_id}` : "Categoría");
+    return (
+      item.category?.nombre ||
+      (item.category_id ? `Categoría #${item.category_id}` : "Categoría")
+    );
   }
   if (item.type === "static_page") {
-    return item.static_page?.titulo || (item.static_page_id ? `Página #${item.static_page_id}` : "Página");
+    return (
+      item.static_page?.titulo ||
+      (item.static_page_id ? `Página #${item.static_page_id}` : "Página")
+    );
   }
   return item.label || item.url || "Link";
 }
@@ -63,7 +82,7 @@ function buildOrderedWithDepth(items: MenuItem[]): MenuItemWithDepth[] {
     byParent.set(key, bucket);
   }
   for (const siblings of byParent.values()) {
-    siblings.sort((a, b) => (a.order - b.order) || (a.id - b.id));
+    siblings.sort((a, b) => a.order - b.order || a.id - b.id);
   }
 
   const result: MenuItemWithDepth[] = [];
@@ -88,7 +107,7 @@ function buildOrderedWithDepth(items: MenuItem[]): MenuItemWithDepth[] {
   // Orphans fallback (should not happen normally)
   const orphans = items
     .filter((i) => !seen.has(i.id))
-    .sort((a, b) => (a.order - b.order) || (a.id - b.id));
+    .sort((a, b) => a.order - b.order || a.id - b.id);
   for (const orphan of orphans) {
     result.push({ item: orphan, depth: 0 });
   }
@@ -144,7 +163,9 @@ export function HeaderMenuPage() {
     const q = search.toLowerCase();
     return ordered.filter(({ item }) => {
       const label = getDisplayLabel(item);
-      return `${label} ${item.url || ""} ${item.type} ${item.order}`.toLowerCase().includes(q);
+      return `${label} ${item.url || ""} ${item.type} ${item.order}`
+        .toLowerCase()
+        .includes(q);
     });
   }, [ordered, search]);
 
@@ -177,7 +198,10 @@ export function HeaderMenuPage() {
     setDialogOpen(true);
   };
 
-  const handleChange = (field: keyof FormState, value: any) => {
+  const handleChange = <K extends keyof FormState>(
+    field: K,
+    value: FormState[K],
+  ) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -192,7 +216,8 @@ export function HeaderMenuPage() {
         label: form.label,
         url: form.url,
         category_id: form.type === "category" ? form.category_id : null,
-        static_page_id: form.type === "static_page" ? form.static_page_id : null,
+        static_page_id:
+          form.type === "static_page" ? form.static_page_id : null,
       };
 
       if (form.id) {
@@ -204,9 +229,17 @@ export function HeaderMenuPage() {
       }
       setDialogOpen(false);
       fetchAll();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      const detail = err?.response?.data?.type?.[0] || err?.response?.data?.url?.[0] || err?.response?.data?.label?.[0];
+      const apiError = err as {
+        response?: {
+          data?: { type?: string[]; url?: string[]; label?: string[] };
+        };
+      };
+      const detail =
+        apiError?.response?.data?.type?.[0] ||
+        apiError?.response?.data?.url?.[0] ||
+        apiError?.response?.data?.label?.[0];
       toast.error("No se pudo guardar el ítem", { description: detail });
     } finally {
       setSaving(false);
@@ -241,7 +274,8 @@ export function HeaderMenuPage() {
         <TriangleAlert className="h-4 w-4" />
         <AlertTitle>Menú sensible</AlertTitle>
         <AlertDescription className="text-sm">
-          Máximo 3 niveles (raíz → hijo → nieto). Evita ciclos y revisa en web tras guardar.
+          Máximo 3 niveles (raíz → hijo → nieto). Evita ciclos y revisa en web
+          tras guardar.
         </AlertDescription>
       </Alert>
 
@@ -257,9 +291,13 @@ export function HeaderMenuPage() {
       <Card className="border-border bg-card">
         <CardContent className="p-0">
           {loading ? (
-            <div className="flex h-40 items-center justify-center text-muted-foreground">Cargando...</div>
+            <div className="flex h-40 items-center justify-center text-muted-foreground">
+              Cargando...
+            </div>
           ) : error ? (
-            <div className="flex h-40 items-center justify-center text-destructive">{error}</div>
+            <div className="flex h-40 items-center justify-center text-destructive">
+              {error}
+            </div>
           ) : (
             <Table>
               <TableHeader>
@@ -275,13 +313,20 @@ export function HeaderMenuPage() {
                 {filtered.map(({ item, depth }) => {
                   const displayLabel = getDisplayLabel(item);
                   const parentLabel =
-                    item.parent == null ? "—" : labelById.get(item.parent) || `#${item.parent}`;
+                    item.parent == null
+                      ? "—"
+                      : labelById.get(item.parent) || `#${item.parent}`;
 
                   return (
                     <TableRow key={item.id}>
                       <TableCell className="font-medium">
-                        <div className="flex items-center gap-2" style={{ paddingLeft: depth * 12 }}>
-                          {depth > 0 ? <span className="text-muted-foreground">↳</span> : null}
+                        <div
+                          className="flex items-center gap-2"
+                          style={{ paddingLeft: depth * 12 }}
+                        >
+                          {depth > 0 ? (
+                            <span className="text-muted-foreground">↳</span>
+                          ) : null}
                           <span>{displayLabel}</span>
                         </div>
                       </TableCell>
@@ -290,10 +335,18 @@ export function HeaderMenuPage() {
                       <TableCell>{item.order}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
-                          <Button size="sm" variant="outline" onClick={() => openEdit(item)}>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => openEdit(item)}
+                          >
                             Editar
                           </Button>
-                          <Button size="sm" variant="destructive" onClick={() => handleDelete(item.id)}>
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={() => handleDelete(item.id)}
+                          >
                             Eliminar
                           </Button>
                         </div>
@@ -318,7 +371,9 @@ export function HeaderMenuPage() {
               <Label>Tipo</Label>
               <select
                 value={form.type}
-                onChange={(e) => handleChange("type", e.target.value as MenuItemType)}
+                onChange={(e) =>
+                  handleChange("type", e.target.value as MenuItemType)
+                }
                 className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
               >
                 <option value="category">Categoría</option>
@@ -331,7 +386,12 @@ export function HeaderMenuPage() {
               <Label>Padre (opcional)</Label>
               <select
                 value={form.parent ?? ""}
-                onChange={(e) => handleChange("parent", e.target.value ? Number(e.target.value) : null)}
+                onChange={(e) =>
+                  handleChange(
+                    "parent",
+                    e.target.value ? Number(e.target.value) : null,
+                  )
+                }
                 className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
               >
                 <option value="">Sin padre (nivel raíz)</option>
@@ -348,7 +408,12 @@ export function HeaderMenuPage() {
                 <Label>Categoría</Label>
                 <select
                   value={form.category_id ?? ""}
-                  onChange={(e) => handleChange("category_id", e.target.value ? Number(e.target.value) : null)}
+                  onChange={(e) =>
+                    handleChange(
+                      "category_id",
+                      e.target.value ? Number(e.target.value) : null,
+                    )
+                  }
                   className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
                 >
                   <option value="">Selecciona categoría</option>
@@ -366,7 +431,12 @@ export function HeaderMenuPage() {
                 <Label>Página estática</Label>
                 <select
                   value={form.static_page_id ?? ""}
-                  onChange={(e) => handleChange("static_page_id", e.target.value ? Number(e.target.value) : null)}
+                  onChange={(e) =>
+                    handleChange(
+                      "static_page_id",
+                      e.target.value ? Number(e.target.value) : null,
+                    )
+                  }
                   className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
                 >
                   <option value="">Selecciona página</option>
@@ -383,11 +453,18 @@ export function HeaderMenuPage() {
               <>
                 <div className="space-y-2 md:col-span-2">
                   <Label>Etiqueta</Label>
-                  <Input value={form.label} onChange={(e) => handleChange("label", e.target.value)} />
+                  <Input
+                    value={form.label}
+                    onChange={(e) => handleChange("label", e.target.value)}
+                  />
                 </div>
                 <div className="space-y-2 md:col-span-2">
                   <Label>URL</Label>
-                  <Input value={form.url} onChange={(e) => handleChange("url", e.target.value)} placeholder="https://..." />
+                  <Input
+                    value={form.url}
+                    onChange={(e) => handleChange("url", e.target.value)}
+                    placeholder="https://..."
+                  />
                 </div>
               </>
             )}
@@ -399,12 +476,18 @@ export function HeaderMenuPage() {
                 value={form.order}
                 onChange={(e) => handleChange("order", Number(e.target.value))}
               />
-              <p className="text-xs text-muted-foreground">Menor = más arriba dentro del mismo nivel.</p>
+              <p className="text-xs text-muted-foreground">
+                Menor = más arriba dentro del mismo nivel.
+              </p>
             </div>
           </div>
 
           <DialogFooter className="mt-4">
-            <Button variant="outline" onClick={() => setDialogOpen(false)} disabled={saving}>
+            <Button
+              variant="outline"
+              onClick={() => setDialogOpen(false)}
+              disabled={saving}
+            >
               Cancelar
             </Button>
             <Button onClick={handleSubmit} disabled={saving}>

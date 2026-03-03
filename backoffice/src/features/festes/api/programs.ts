@@ -13,7 +13,7 @@ export type PaginatedListResponse<T> = {
 };
 
 export const programsApi = {
-  getAll: async (params?: Record<string, any>) => {
+  getAll: async (params?: Record<string, string | number>) => {
     const response = await apiClient.get<PaginatedListResponse<Program>>(
       API_ENDPOINTS.PROGRAMS.LIST,
       { params },
@@ -28,7 +28,10 @@ export const programsApi = {
     return response.data;
   },
 
-  getByFesta: async (festaSlug: string, params?: Record<string, any>) => {
+  getByFesta: async (
+    festaSlug: string,
+    params?: Record<string, string | number>,
+  ) => {
     const response = await apiClient.get<PaginatedListResponse<Program>>(
       API_ENDPOINTS.PROGRAMS.BY_FESTA(festaSlug),
       { params },

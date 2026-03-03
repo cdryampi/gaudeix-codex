@@ -1,5 +1,5 @@
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../providers/AuthProvider";
+import { useAuth } from "../providers/useAuth";
 import { ROUTES } from "@/lib/config/constants";
 
 interface ProtectedRouteProps {

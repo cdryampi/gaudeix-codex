@@ -1,13 +1,10 @@
 /**
- * Sonner toast stub - using console for now
+ * Re-export Toaster from sonner with project defaults.
  */
-export function Toaster() {
-  return null;
-}
+import { Toaster as SonnerToaster } from "sonner";
 
-export const toast = {
-  success: (message: string) => console.log("Success:", message),
-  error: (message: string) => console.error("Error:", message),
-  info: (message: string) => console.info("Info:", message),
-  warning: (message: string) => console.warn("Warning:", message),
-};
+type ToasterProps = React.ComponentProps<typeof SonnerToaster>;
+
+export function Toaster(props: ToasterProps) {
+  return <SonnerToaster {...props} />;
+}

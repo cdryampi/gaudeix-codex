@@ -43,7 +43,7 @@ export function MediaFilters({
           <select
             id="type"
             value={typeFilter}
-            onChange={(e) => onTypeFilter(e.target.value as any)}
+            onChange={(e) => onTypeFilter(e.target.value as MediaType | "all")}
             className="h-9 rounded-lg border border-border bg-card px-3 text-sm transition-colors focus-visible:outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
           >
             <option value="all">Todos</option>

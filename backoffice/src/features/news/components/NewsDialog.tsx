@@ -86,7 +86,7 @@ export function NewsDialog({ open, onOpenChange, onSubmit, news }: Props) {
       setTranslations({});
       setActiveLang("ca");
     }
-  }, [news?.id, open]);
+  }, [news, open]);
 
   useEffect(() => {
     const loadOptions = async () => {

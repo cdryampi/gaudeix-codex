@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ThemeToggle } from "@/components/ThemeToggle";
+
 import { ROUTES } from "@/lib/config/constants";
 import {
   Activity,
@@ -18,7 +18,7 @@ import {
   ExternalLink,
   Sparkles,
   Zap,
-  ChevronRight
+  ChevronRight,
 } from "lucide-react";
 import { Header } from "@/components/Header";
 import { useHealthCheck } from "@/hooks/useHealthCheck";
@@ -50,7 +50,8 @@ export function LandingPage() {
                 Panel de Administración
               </h2>
               <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-                Gestiona tu contenido municipal de forma centralizada, eficiente y segura
+                Gestiona tu contenido municipal de forma centralizada, eficiente
+                y segura
               </p>
             </div>
           </div>
@@ -93,34 +94,42 @@ export function LandingPage() {
 
             {/* Backend Card */}
             <Card
-              className={`group relative overflow-hidden border-border/50 bg-card/50 backdrop-blur transition-all ${backendStatus === "online"
-                ? "hover:border-green-500/30 hover:shadow-lg hover:shadow-green-500/10"
-                : backendStatus === "checking"
-                  ? "hover:border-yellow-500/30 hover:shadow-lg hover:shadow-yellow-500/10"
-                  : "hover:border-red-500/30 hover:shadow-lg hover:shadow-red-500/10"
-                }`}
+              className={`group relative overflow-hidden border-border/50 bg-card/50 backdrop-blur transition-all ${
+                backendStatus === "online"
+                  ? "hover:border-green-500/30 hover:shadow-lg hover:shadow-green-500/10"
+                  : backendStatus === "checking"
+                    ? "hover:border-yellow-500/30 hover:shadow-lg hover:shadow-yellow-500/10"
+                    : "hover:border-red-500/30 hover:shadow-lg hover:shadow-red-500/10"
+              }`}
             >
-              <div className={`absolute inset-0 bg-gradient-to-br opacity-0 transition-opacity group-hover:opacity-100 ${backendStatus === "online"
-                ? "from-green-500/5"
-                : backendStatus === "checking"
-                  ? "from-yellow-500/5"
-                  : "from-red-500/5"
-                } to-transparent`} />
+              <div
+                className={`absolute inset-0 bg-gradient-to-br opacity-0 transition-opacity group-hover:opacity-100 ${
+                  backendStatus === "online"
+                    ? "from-green-500/5"
+                    : backendStatus === "checking"
+                      ? "from-yellow-500/5"
+                      : "from-red-500/5"
+                } to-transparent`}
+              />
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
-                  <div className={`rounded-lg p-2 ${backendStatus === "online"
-                    ? "bg-green-500/10"
-                    : backendStatus === "checking"
-                      ? "bg-yellow-500/10"
-                      : "bg-red-500/10"
-                    }`}>
-                    <Server
-                      className={`h-5 w-5 ${backendStatus === "online"
-                        ? "text-green-600 dark:text-green-400"
+                  <div
+                    className={`rounded-lg p-2 ${
+                      backendStatus === "online"
+                        ? "bg-green-500/10"
                         : backendStatus === "checking"
-                          ? "text-yellow-600 dark:text-yellow-400"
-                          : "text-red-600 dark:text-red-400"
-                        }`}
+                          ? "bg-yellow-500/10"
+                          : "bg-red-500/10"
+                    }`}
+                  >
+                    <Server
+                      className={`h-5 w-5 ${
+                        backendStatus === "online"
+                          ? "text-green-600 dark:text-green-400"
+                          : backendStatus === "checking"
+                            ? "text-yellow-600 dark:text-yellow-400"
+                            : "text-red-600 dark:text-red-400"
+                      }`}
                     />
                   </div>
                   {backendStatus === "checking" ? (
@@ -161,19 +170,25 @@ export function LandingPage() {
                 <div className="space-y-2 text-sm">
                   <div className="flex items-center justify-between">
                     <span className="text-muted-foreground">Django API</span>
-                    <span className={`font-medium ${backendStatus === "online"
-                      ? "text-green-600 dark:text-green-400"
-                      : "text-muted-foreground"
-                      }`}>
+                    <span
+                      className={`font-medium ${
+                        backendStatus === "online"
+                          ? "text-green-600 dark:text-green-400"
+                          : "text-muted-foreground"
+                      }`}
+                    >
                       {backendStatus === "online" ? "✓" : "✗"}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-muted-foreground">PostgreSQL</span>
-                    <span className={`font-medium ${dbStatus === "ok"
-                      ? "text-green-600 dark:text-green-400"
-                      : "text-muted-foreground"
-                      }`}>
+                    <span
+                      className={`font-medium ${
+                        dbStatus === "ok"
+                          ? "text-green-600 dark:text-green-400"
+                          : "text-muted-foreground"
+                      }`}
+                    >
                       {dbStatus === "ok" ? "✓" : "✗"}
                     </span>
                   </div>
@@ -236,7 +251,11 @@ export function LandingPage() {
               size="lg"
               className="group w-full sm:w-auto min-w-[240px] border-border/50 hover:border-primary/30 transition-all"
             >
-              <a href="http://localhost:5173" target="_blank" rel="noopener noreferrer">
+              <a
+                href="http://localhost:5173"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <ExternalLink className="mr-2 h-5 w-5" />
                 Ver Frontend Público
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />

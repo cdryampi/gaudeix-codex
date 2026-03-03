@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { useAuth } from "@/app/providers/AuthProvider";
+import { useAuth } from "@/app/providers/useAuth";
 import { ROUTES } from "@/lib/config/constants";
-import { LogIn, AlertCircle, ArrowRight, Lock } from "lucide-react";
+import { AlertCircle, ArrowRight, Lock } from "lucide-react";
 import { Alert } from "flowbite-react";
 
 const loginSchema = z.object({
@@ -72,7 +72,7 @@ export const LoginPage = () => {
       } else {
         const message = error instanceof Error ? error.message : null;
         setLoginError(
-          message ?? "Error al iniciar sesión. Verifica tus credenciales."
+          message ?? "Error al iniciar sesión. Verifica tus credenciales.",
         );
       }
     }
@@ -104,7 +104,12 @@ export const LoginPage = () => {
 
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="username" className="text-gray-700 dark:text-gray-300">Usuario o Email</Label>
+            <Label
+              htmlFor="username"
+              className="text-gray-700 dark:text-gray-300"
+            >
+              Usuario o Email
+            </Label>
             <Input
               id="username"
               name="username"
@@ -117,13 +122,20 @@ export const LoginPage = () => {
               className="bg-white"
             />
             {errors.username && (
-              <p className="text-sm text-red-500 font-medium">{errors.username}</p>
+              <p className="text-sm text-red-500 font-medium">
+                {errors.username}
+              </p>
             )}
           </div>
 
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <Label htmlFor="password" className="text-gray-700 dark:text-gray-300">Contraseña</Label>
+              <Label
+                htmlFor="password"
+                className="text-gray-700 dark:text-gray-300"
+              >
+                Contraseña
+              </Label>
               <Link
                 to="/reset-password"
                 className="text-xs font-medium text-primary-600 hover:text-primary-500 hover:underline dark:text-primary-400"
@@ -146,26 +158,28 @@ export const LoginPage = () => {
               <Lock className="absolute right-3 top-3 h-4 w-4 text-gray-400" />
             </div>
             {errors.password && (
-              <p className="text-sm text-red-500 font-medium">{errors.password}</p>
+              <p className="text-sm text-red-500 font-medium">
+                {errors.password}
+              </p>
             )}
           </div>
         </div>
 
         <div className="flex items-center space-x-2">
-           <Switch
-             id="remember"
-             checked={formData.remember}
-             onCheckedChange={handleRememberChange}
-           />
-           <Label htmlFor="remember" className="font-normal text-gray-600 dark:text-gray-400">Mantener sesión iniciada</Label>
+          <Switch
+            id="remember"
+            checked={formData.remember}
+            onCheckedChange={handleRememberChange}
+          />
+          <Label
+            htmlFor="remember"
+            className="font-normal text-gray-600 dark:text-gray-400"
+          >
+            Mantener sesión iniciada
+          </Label>
         </div>
 
-        <Button
-          type="submit"
-          className="w-full"
-          size="lg"
-          disabled={isLoading}
-        >
+        <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
           {isLoading ? (
             "Verificando..."
           ) : (
@@ -175,9 +189,14 @@ export const LoginPage = () => {
           )}
         </Button>
       </form>
-      
+
       <div className="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">
-        <p>¿No tienes acceso? <span className="text-primary-600 font-medium">Contacta al administrador</span></p>
+        <p>
+          ¿No tienes acceso?{" "}
+          <span className="text-primary-600 font-medium">
+            Contacta al administrador
+          </span>
+        </p>
       </div>
     </div>
   );

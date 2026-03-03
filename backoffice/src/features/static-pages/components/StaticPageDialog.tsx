@@ -1,5 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -7,7 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { LANGUAGES } from "@/lib/config/constants";
 import { StaticPage, StaticPagePayload, StaticPageTemplate } from "../types";
-import { TEMPLATE_OPTIONS, TEMPLATE_LABEL_MAP } from "../constants/templates";
+import { TEMPLATE_OPTIONS } from "../constants/templates";
 import { mediaApi } from "@/features/media/api/media";
 import { MediaItem } from "@/features/media/types";
 import { staticPagesApi } from "../api/staticPages";
@@ -38,7 +43,12 @@ const emptyForm: StaticPagePayload = {
   attachment_id: null,
 };
 
-export function StaticPageDialog({ open, onOpenChange, onSubmit, page }: Props) {
+export function StaticPageDialog({
+  open,
+  onOpenChange,
+  onSubmit,
+  page,
+}: Props) {
   const [form, setForm] = useState<StaticPagePayload>(emptyForm);
   const [activeLang, setActiveLang] = useState("ca");
   const [translations, setTranslations] = useState<LocalTranslations>({});
@@ -70,7 +80,10 @@ export function StaticPageDialog({ open, onOpenChange, onSubmit, page }: Props) 
   useEffect(() => {
     const loadOptions = async () => {
       try {
-        const [imgs, docs] = await Promise.all([mediaApi.listImages(), mediaApi.listDocuments()]);
+        const [imgs, docs] = await Promise.all([
+          mediaApi.listImages(),
+          mediaApi.listDocuments(),
+        ]);
         setImages(imgs);
         setDocuments(docs);
       } catch (err) {
@@ -87,7 +100,11 @@ export function StaticPageDialog({ open, onOpenChange, onSubmit, page }: Props) 
     return translations[lang] || { titulo: "", cuerpo: "" };
   };
 
-  const updateField = (lang: string, field: "titulo" | "cuerpo", value: string) => {
+  const updateField = (
+    lang: string,
+    field: "titulo" | "cuerpo",
+    value: string,
+  ) => {
     if (lang === "ca") {
       setForm((prev) => ({ ...prev, [field]: value }));
     } else {
@@ -109,7 +126,9 @@ export function StaticPageDialog({ open, onOpenChange, onSubmit, page }: Props) 
       ...form,
       titulo: form.titulo || "",
       cuerpo: form.cuerpo || "",
-      translations: Object.keys(translationsPayload).length ? translationsPayload : undefined,
+      translations: Object.keys(translationsPayload).length
+        ? translationsPayload
+        : undefined,
     };
     await onSubmit(payload);
   };
@@ -179,18 +198,20 @@ export function StaticPageDialog({ open, onOpenChange, onSubmit, page }: Props) 
 
   const selectedImage = useMemo(
     () => images.find((img) => img.id === form.featured_media_id),
-    [images, form.featured_media_id]
+    [images, form.featured_media_id],
   );
   const selectedDocument = useMemo(
     () => documents.find((doc) => doc.id === form.attachment_id),
-    [documents, form.attachment_id]
+    [documents, form.attachment_id],
   );
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[720px] px-6">
         <DialogHeader>
-          <DialogTitle>{page ? "Editar página estática" : "Nueva página estática"}</DialogTitle>
+          <DialogTitle>
+            {page ? "Editar página estática" : "Nueva página estática"}
+          </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -200,7 +221,9 @@ export function StaticPageDialog({ open, onOpenChange, onSubmit, page }: Props) 
               <Input
                 id="slug"
                 value={form.slug}
-                onChange={(e) => setForm((prev) => ({ ...prev, slug: e.target.value }))}
+                onChange={(e) =>
+                  setForm((prev) => ({ ...prev, slug: e.target.value }))
+                }
                 required
                 disabled={!!page}
               />
@@ -210,7 +233,12 @@ export function StaticPageDialog({ open, onOpenChange, onSubmit, page }: Props) 
               <select
                 id="template"
                 value={form.template}
-                onChange={(e) => setForm((prev) => ({ ...prev, template: e.target.value as StaticPageTemplate }))}
+                onChange={(e) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    template: e.target.value as StaticPageTemplate,
+                  }))
+                }
                 disabled={!!page}
                 className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
               >
@@ -221,25 +249,35 @@ export function StaticPageDialog({ open, onOpenChange, onSubmit, page }: Props) 
                 ))}
               </select>
               <p className="text-xs text-muted-foreground">
-                Cada plantilla es única. No se puede cambiar al editar para evitar duplicados.
+                Cada plantilla es única. No se puede cambiar al editar para
+                evitar duplicados.
               </p>
             </div>
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">
             <div className="flex items-center justify-between rounded-lg border border-border/60 bg-muted/30 px-3 py-2 text-sm">
-              <Label htmlFor="static-page-is-published" className="cursor-pointer text-sm font-normal">
+              <Label
+                htmlFor="static-page-is-published"
+                className="cursor-pointer text-sm font-normal"
+              >
                 Publicado
               </Label>
               <Switch
                 id="static-page-is-published"
                 checked={!!form.is_published}
-                onCheckedChange={(checked) => setForm((prev) => ({ ...prev, is_published: checked }))}
+                onCheckedChange={(checked) =>
+                  setForm((prev) => ({ ...prev, is_published: checked }))
+                }
               />
             </div>
           </div>
 
-          <Tabs value={activeLang} onValueChange={setActiveLang} defaultValue="ca">
+          <Tabs
+            value={activeLang}
+            onValueChange={setActiveLang}
+            defaultValue="ca"
+          >
             <TabsList className="grid w-full grid-cols-4">
               {LANGUAGES.map((lang) => (
                 <TabsTrigger key={lang.code} value={lang.code}>
@@ -252,9 +290,15 @@ export function StaticPageDialog({ open, onOpenChange, onSubmit, page }: Props) 
               const content = getContent(lang.code);
               const isBase = lang.code === "ca";
               return (
-                <TabsContent key={lang.code} value={lang.code} className="space-y-3 pt-4">
+                <TabsContent
+                  key={lang.code}
+                  value={lang.code}
+                  className="space-y-3 pt-4"
+                >
                   <div className="flex items-center justify-between">
-                    <Label htmlFor={`titulo-${lang.code}`}>Título {isBase ? "" : `(${lang.name})`}</Label>
+                    <Label htmlFor={`titulo-${lang.code}`}>
+                      Título {isBase ? "" : `(${lang.name})`}
+                    </Label>
                     {!isBase && page && (
                       <Button
                         type="button"
@@ -270,16 +314,22 @@ export function StaticPageDialog({ open, onOpenChange, onSubmit, page }: Props) 
                   <Input
                     id={`titulo-${lang.code}`}
                     value={content.titulo || ""}
-                    onChange={(e) => updateField(lang.code, "titulo", e.target.value)}
+                    onChange={(e) =>
+                      updateField(lang.code, "titulo", e.target.value)
+                    }
                     required={isBase}
                     placeholder={isBase ? "" : "Traducción automática o manual"}
                   />
                   <div className="space-y-2">
-                    <Label htmlFor={`cuerpo-${lang.code}`}>Cuerpo {isBase ? "" : `(${lang.name})`}</Label>
+                    <Label htmlFor={`cuerpo-${lang.code}`}>
+                      Cuerpo {isBase ? "" : `(${lang.name})`}
+                    </Label>
                     <RichTextEditor
                       value={content.cuerpo || ""}
                       onChange={(val) => updateField(lang.code, "cuerpo", val)}
-                      placeholder={isBase ? "Contenido" : "Traducción automática o manual"}
+                      placeholder={
+                        isBase ? "Contenido" : "Traducción automática o manual"
+                      }
                     />
                   </div>
                 </TabsContent>
@@ -290,8 +340,12 @@ export function StaticPageDialog({ open, onOpenChange, onSubmit, page }: Props) 
           <div className="space-y-3 rounded-lg border border-border/60 bg-muted/20 p-3">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-semibold text-foreground">Imagen destacada</p>
-                <p className="text-xs text-muted-foreground">Se usará como hero o banner</p>
+                <p className="text-sm font-semibold text-foreground">
+                  Imagen destacada
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Se usará como hero o banner
+                </p>
               </div>
               <div className="flex gap-2">
                 <input
@@ -301,7 +355,12 @@ export function StaticPageDialog({ open, onOpenChange, onSubmit, page }: Props) 
                   onChange={handleUploadImage}
                   className="hidden"
                 />
-                <Button type="button" variant="outline" size="sm" onClick={() => imageInputRef.current?.click()}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => imageInputRef.current?.click()}
+                >
                   Subir
                 </Button>
               </div>
@@ -311,7 +370,9 @@ export function StaticPageDialog({ open, onOpenChange, onSubmit, page }: Props) 
               onChange={(e) =>
                 setForm((prev) => ({
                   ...prev,
-                  featured_media_id: e.target.value ? Number(e.target.value) : null,
+                  featured_media_id: e.target.value
+                    ? Number(e.target.value)
+                    : null,
                 }))
               }
               className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
@@ -326,17 +387,25 @@ export function StaticPageDialog({ open, onOpenChange, onSubmit, page }: Props) 
             {selectedImage && (
               <div className="flex items-center gap-3 rounded-md bg-background/60 p-2">
                 <img
-                  src={selectedImage.thumbnail_url || selectedImage.variant_thumbnail || selectedImage.file}
+                  src={
+                    selectedImage.thumbnail_url ||
+                    selectedImage.variant_thumbnail ||
+                    selectedImage.file
+                  }
                   alt="Miniatura"
                   className="h-14 w-14 rounded object-cover ring-1 ring-border"
                 />
-                <p className="text-sm text-foreground">{selectedImage.original_name}</p>
+                <p className="text-sm text-foreground">
+                  {selectedImage.original_name}
+                </p>
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
                   className="ml-auto text-rose-600"
-                  onClick={() => setForm((prev) => ({ ...prev, featured_media_id: null }))}
+                  onClick={() =>
+                    setForm((prev) => ({ ...prev, featured_media_id: null }))
+                  }
                 >
                   Quitar
                 </Button>
@@ -347,8 +416,12 @@ export function StaticPageDialog({ open, onOpenChange, onSubmit, page }: Props) 
           <div className="space-y-3 rounded-lg border border-border/60 bg-muted/20 p-3">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-semibold text-foreground">Documento adjunto</p>
-                <p className="text-xs text-muted-foreground">PDF informativo o legal</p>
+                <p className="text-sm font-semibold text-foreground">
+                  Documento adjunto
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  PDF informativo o legal
+                </p>
               </div>
               <div className="flex gap-2">
                 <input
@@ -358,7 +431,12 @@ export function StaticPageDialog({ open, onOpenChange, onSubmit, page }: Props) 
                   onChange={handleUploadDoc}
                   className="hidden"
                 />
-                <Button type="button" variant="outline" size="sm" onClick={() => docInputRef.current?.click()}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => docInputRef.current?.click()}
+                >
                   Subir
                 </Button>
               </div>
@@ -388,7 +466,9 @@ export function StaticPageDialog({ open, onOpenChange, onSubmit, page }: Props) 
                   size="sm"
                   variant="ghost"
                   className="text-rose-600"
-                  onClick={() => setForm((prev) => ({ ...prev, attachment_id: null }))}
+                  onClick={() =>
+                    setForm((prev) => ({ ...prev, attachment_id: null }))
+                  }
                 >
                   Quitar
                 </Button>
@@ -397,7 +477,11 @@ export function StaticPageDialog({ open, onOpenChange, onSubmit, page }: Props) 
           </div>
 
           <div className="flex justify-end gap-2">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+            >
               Cancelar
             </Button>
             <Button type="submit">{page ? "Guardar" : "Crear"}</Button>

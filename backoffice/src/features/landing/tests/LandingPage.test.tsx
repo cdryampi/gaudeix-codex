@@ -17,7 +17,7 @@ describe("LandingPage", () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({
       ok: true,
       json: async () => ({ status: "online", database: "ok" }),
-    } as any);
+    } as unknown as Response);
 
     renderWithRouter(<LandingPage />);
 
@@ -29,7 +29,7 @@ describe("LandingPage", () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({
       ok: true,
       json: async () => ({ status: "online", database: "ok" }),
-    } as any);
+    } as unknown as Response);
 
     renderWithRouter(<LandingPage />);
 
@@ -41,7 +41,7 @@ describe("LandingPage", () => {
     const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({
       ok: true,
       json: async () => ({ status: "online", database: "ok" }),
-    } as any);
+    } as unknown as Response);
 
     renderWithRouter(<LandingPage />);
 
@@ -54,7 +54,7 @@ describe("LandingPage", () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({
       ok: true,
       json: async () => ({ status: "online", database: "ok" }),
-    } as any);
+    } as unknown as Response);
 
     renderWithRouter(<LandingPage />);
 
@@ -93,7 +93,7 @@ describe("LandingPage", () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({
       ok: true,
       json: async () => ({ status: "online", database: "error" }),
-    } as any);
+    } as unknown as Response);
 
     renderWithRouter(<LandingPage />);
 
@@ -111,7 +111,7 @@ describe("LandingPage", () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({
       ok: true,
       json: async () => ({ status: "online", database: "ok" }),
-    } as any);
+    } as unknown as Response);
 
     renderWithRouter(<LandingPage />);
 

@@ -1,7 +1,7 @@
 /**
  * Programs management page.
  */
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { PageContainer, PageHeader } from "@/components/common";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -49,12 +49,12 @@ export function ProgramsPage() {
 
   const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
 
-  const fetchPrograms = async () => {
+  const fetchPrograms = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
 
-      const params: Record<string, any> = {
+      const params: Record<string, string | number> = {
         page,
         page_size: pageSize,
       };
@@ -80,7 +80,7 @@ export function ProgramsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, pageSize, search, status, festaSlug]);
 
   const fetchFestes = async () => {
     try {
@@ -97,7 +97,7 @@ export function ProgramsPage() {
 
   useEffect(() => {
     fetchPrograms();
-  }, [page, pageSize, search, status, festaSlug]);
+  }, [fetchPrograms]);
 
   const handleCreate = () => {
     setEditingProgram(undefined);
@@ -126,7 +126,8 @@ export function ProgramsPage() {
   const handleSubmit = async (data: CreateProgramDTO) => {
     try {
       if (editingProgram) {
-        const { festa_id, ...updatePayload } = data;
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { festa_id: _festaId, ...updatePayload } = data;
         await programsApi.update(editingProgram.slug, updatePayload);
         toast.success("Programa actualizado correctamente");
       } else {
@@ -258,20 +259,29 @@ export function ProgramsPage() {
                     </tr>
                   ) : (
                     programs.map((program) => (
-                      <tr key={program.id} className="transition-colors hover:bg-muted/30">
+                      <tr
+                        key={program.id}
+                        className="transition-colors hover:bg-muted/30"
+                      >
                         <td className="px-5 py-4">
                           <p className="font-semibold">{program.title}</p>
-                          <p className="text-xs text-muted-foreground">{program.slug}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {program.slug}
+                          </p>
                           {program.subtitle && (
-                            <p className="text-xs text-muted-foreground mt-1">{program.subtitle}</p>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              {program.subtitle}
+                            </p>
                           )}
                         </td>
                         <td className="px-5 py-4">
-                          {festesById.get(program.festa)?.title || program.festa_slug}
+                          {festesById.get(program.festa)?.title ||
+                            program.festa_slug}
                         </td>
                         <td className="px-5 py-4">
                           <span>
-                            {program.start_date || "-"} {"->"} {program.end_date || "-"}
+                            {program.start_date || "-"} {"->"}{" "}
+                            {program.end_date || "-"}
                           </span>
                         </td>
                         <td className="px-5 py-4">{program.order}</td>
@@ -323,7 +333,11 @@ export function ProgramsPage() {
           Página {page} de {totalPages} • {totalCount} resultados
         </span>
         <div className="w-full md:w-auto">
-          <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+          />
         </div>
       </div>
 
@@ -335,7 +349,10 @@ export function ProgramsPage() {
         festes={festes}
       />
 
-      <AlertDialog open={deleteSlug !== null} onOpenChange={() => setDeleteSlug(null)}>
+      <AlertDialog
+        open={deleteSlug !== null}
+        onOpenChange={() => setDeleteSlug(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>¿Eliminar programa?</AlertDialogTitle>

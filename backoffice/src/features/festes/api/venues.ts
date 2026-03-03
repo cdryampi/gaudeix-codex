@@ -13,7 +13,7 @@ export type PaginatedListResponse<T> = {
 };
 
 export const venuesApi = {
-  getAll: async (params?: Record<string, any>) => {
+  getAll: async (params?: Record<string, string | number | boolean>) => {
     const response = await apiClient.get<PaginatedListResponse<Venue>>(
       API_ENDPOINTS.VENUES.LIST,
       { params },

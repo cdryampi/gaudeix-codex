@@ -1,9 +1,5 @@
 import { useMemo, useState } from "react";
-import {
-  Languages,
-  Monitor,
-  Smartphone,
-} from "lucide-react";
+import { Languages, Monitor, Smartphone } from "lucide-react";
 import { Event } from "../types";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -14,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { LANGUAGES } from "@/lib/config/constants";
-// @ts-ignore - Shared component from frontend via Vite alias
+// Shared component from frontend via Vite alias
 import { EventDetailContent } from "@frontend/features/agenda/components/EventDetailContent";
 
 interface EventPreviewProps {
@@ -33,7 +29,7 @@ export function EventPreview({ event: initialEvent }: EventPreviewProps) {
 
   const event = useMemo(() => {
     if (activeLang === "ca") return initialEvent;
-    
+
     const trans = initialEvent.translations?.[activeLang];
     if (!trans) return initialEvent;
 
@@ -92,7 +88,9 @@ export function EventPreview({ event: initialEvent }: EventPreviewProps) {
                 <DropdownMenuItem
                   key={lang.code}
                   onClick={() => setActiveLang(lang.code)}
-                  className={cn(activeLang === lang.code && "bg-slate-100 font-bold")}
+                  className={cn(
+                    activeLang === lang.code && "bg-slate-100 font-bold",
+                  )}
                 >
                   {lang.name}
                 </DropdownMenuItem>
@@ -107,17 +105,36 @@ export function EventPreview({ event: initialEvent }: EventPreviewProps) {
         <div
           className={cn(
             "bg-white text-slate-900 shadow-2xl transition-all duration-300 ease-in-out overflow-hidden",
-            viewMode === "desktop" ? "w-full max-w-5xl rounded-xl" : "w-[375px] rounded-[3rem] border-[8px] border-slate-900 h-[700px] relative"
+            viewMode === "desktop"
+              ? "w-full max-w-5xl rounded-xl"
+              : "w-[375px] rounded-[3rem] border-[8px] border-slate-900 h-[700px] relative",
           )}
         >
-          <div className={cn("h-full overflow-y-auto custom-scrollbar", viewMode === "mobile" && "px-1")}>
+          <div
+            className={cn(
+              "h-full overflow-y-auto custom-scrollbar",
+              viewMode === "mobile" && "px-1",
+            )}
+          >
             <EventDetailContent
-              event={event as any}
+              event={
+                event as unknown as React.ComponentProps<
+                  typeof EventDetailContent
+                >["event"]
+              }
               isPreview
-              onFavorite={() => showSimulation("Simulación: Evento añadido a favoritos ❤️")}
-              onCheckin={() => showSimulation("Simulación: Check-in realizado (+20 pts)")}
-              onShare={() => showSimulation("Simulación: Menú de compartir abierto")}
-              onAddToCalendar={() => showSimulation("Simulación: Añadido al calendario 📅")}
+              onFavorite={() =>
+                showSimulation("Simulación: Evento añadido a favoritos ❤️")
+              }
+              onCheckin={() =>
+                showSimulation("Simulación: Check-in realizado (+20 pts)")
+              }
+              onShare={() =>
+                showSimulation("Simulación: Menú de compartir abierto")
+              }
+              onAddToCalendar={() =>
+                showSimulation("Simulación: Añadido al calendario 📅")
+              }
             />
           </div>
         </div>

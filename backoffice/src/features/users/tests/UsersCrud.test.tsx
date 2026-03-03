@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
 import { UsersPage } from "../pages/UsersPage";
 import { usersApi } from "../api/users";
 
@@ -56,7 +56,7 @@ const MOCK_USERS = [
 describe("UsersPage CRUD", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    (usersApi.getAll as any).mockResolvedValue(MOCK_USERS);
+    (usersApi.getAll as Mock).mockResolvedValue(MOCK_USERS);
   });
 
   it("renders the users page and fetches users", async () => {
@@ -73,7 +73,7 @@ describe("UsersPage CRUD", () => {
   });
 
   it("can delete a user", async () => {
-    (usersApi.delete as any).mockResolvedValue({});
+    (usersApi.delete as Mock).mockResolvedValue({});
 
     render(<UsersPage />);
 

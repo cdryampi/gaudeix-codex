@@ -9,7 +9,7 @@ export const SCRAPER_KEYS = {
   sources: () => [...SCRAPER_KEYS.all, "sources"] as const,
   source: (slug: string) => [...SCRAPER_KEYS.sources(), slug] as const,
   news: () => [...SCRAPER_KEYS.all, "news"] as const,
-  newsList: (filters?: Record<string, any>) =>
+  newsList: (filters?: Record<string, string | number | boolean>) =>
     [...SCRAPER_KEYS.news(), "list", filters] as const,
   stats: () => [...SCRAPER_KEYS.all, "stats"] as const,
   jobs: () => [...SCRAPER_KEYS.all, "jobs"] as const,
@@ -58,8 +58,11 @@ export function useScraperMutations() {
       queryClient.invalidateQueries({ queryKey: SCRAPER_KEYS.sources() });
       toast.success("Noticia importada correctamente");
     },
-    onError: (error: any) => {
-      if (error?.response?.status === 404) {
+    onError: (error: unknown) => {
+      const apiError = error as {
+        response?: { status?: number; data?: { error?: string } };
+      };
+      if (apiError?.response?.status === 404) {
         queryClient.invalidateQueries({ queryKey: SCRAPER_KEYS.news() });
         queryClient.invalidateQueries({ queryKey: SCRAPER_KEYS.stats() });
         queryClient.invalidateQueries({ queryKey: SCRAPER_KEYS.sources() });
@@ -67,7 +70,7 @@ export function useScraperMutations() {
         return;
       }
       toast.error(
-        error.response?.data?.error || "Error al importar la noticia",
+        apiError.response?.data?.error || "Error al importar la noticia",
       );
     },
   });

@@ -1,6 +1,6 @@
 import apiClient from "@/lib/api/client";
 import { API_ENDPOINTS } from "@/lib/config/constants";
-import { CreateEventDTO, Event, UpdateEventDTO } from "../types";
+import { CreateEventDTO, Event, EventDate, UpdateEventDTO } from "../types";
 
 export const eventsApi = {
   getAll: async (params?: { exclude_children?: boolean }) => {
@@ -21,7 +21,7 @@ export const eventsApi = {
 
   getOccurrences: async (id: number) => {
     // This endpoint now returns EventDate[] objects
-    const response = await apiClient.get<any[]>(
+    const response = await apiClient.get<EventDate[]>(
       `${API_ENDPOINTS.EVENTS.DETAIL(String(id))}occurrences/`,
     );
     return response.data; // Already in correct format or needing minimal transform
@@ -59,9 +59,12 @@ export const eventsApi = {
 
   getTopFavorites: async (limit = 5) => {
     // Fetch events ordered by favorites_count descending
-    const response = await apiClient.get<any>(API_ENDPOINTS.EVENTS.LIST, {
-      params: { page_size: limit, ordering: "-favorites_count" },
-    });
+    const response = await apiClient.get<Event[] | { results: Event[] }>(
+      API_ENDPOINTS.EVENTS.LIST,
+      {
+        params: { page_size: limit, ordering: "-favorites_count" },
+      },
+    );
     const items = Array.isArray(response.data)
       ? response.data
       : (response.data.results ?? []);
@@ -69,7 +72,7 @@ export const eventsApi = {
   },
 };
 
-function normalizeEvent(event: any): Event {
+function normalizeEvent(event: Event): Event {
   return {
     ...event,
     attachments: event.attachments || [],
