@@ -1,0 +1,20 @@
+version: 1
+assets:
+- path: static/logo-cabrera-white.png
+  type: image
+  slug_or_key: logo-cabrera-white.png
+  order: 10
+  attach_to: logo
+  language: null
+- path: static/favicon-32x32.png
+  type: image
+  slug_or_key: favicon-32x32.png
+  order: 20
+  attach_to: favicon
+  language: null
+- path: static/gaudeix_home.mp4
+  type: video
+  slug_or_key: gaudeix_home.mp4
+  order: 30
+  attach_to: background_video
+  language: null

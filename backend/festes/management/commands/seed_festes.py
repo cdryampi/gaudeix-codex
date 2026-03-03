@@ -1,7 +1,7 @@
-﻿"""
+"""
 Seed example festes with translations, sponsors, and media files.
 
-Usage: python manage.py seed_festes
+Usage: python manage.py seed_festes [--dry-run]
 """
 
 from __future__ import annotations
@@ -16,16 +16,10 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
 from core.models import Category
-from festes.models import (
-    Festa,
-    FestaCategorySingleton,
-    FestaEvent,
-    Program,
-    ProgramStatusChoices,
-    Sponsor,
-)
-from media_files.models import ImageFile, DocumentFile
+from core.seed_manifest import load_seed_asset_manifest, render_dry_run
 from events.models import Event
+from festes.models import Festa, FestaCategorySingleton, FestaEvent, Program, ProgramStatusChoices, Sponsor
+from media_files.models import DocumentFile, ImageFile
 
 
 class Command(BaseCommand):
@@ -34,36 +28,41 @@ class Command(BaseCommand):
         "Run `seed_festes_category` first."
     )
 
+    def add_arguments(self, parser):
+        parser.add_argument("--dry-run", action="store_true", help="Print resolved asset attachments and exit.")
+
     def handle(self, *args, **options):
+        manifest_entries = self._load_asset_manifest()
+        if options.get("dry_run"):
+            self.stdout.write(render_dry_run(manifest_entries, title="festes asset manifest"))
+            return
+
         self.stdout.write(self.style.WARNING("Seeding sample festes."))
         with transaction.atomic():
             root_category = self._ensure_root_category()
             self._clear_festes()
-            images = self._ensure_media_files()
-            documents = self._ensure_document_files()
+            images, documents = self._ensure_media_files(manifest_entries)
             self._create_festes(root_category, images, documents)
+
+    def _load_asset_manifest(self):
+        return load_seed_asset_manifest(
+            manifest_path=Path(__file__).resolve().parents[2] / "seed" / "festes_assets.yaml",
+            assets_root=Path(__file__).resolve().parent,
+            allowed_types={"image", "document"},
+            allowed_attach_to={"featured_media", "program_pdf", "sponsor_logo", "gallery"},
+        )
 
     def _ensure_root_category(self) -> Category:
         try:
             singleton = FestaCategorySingleton.objects.get(pk=1)
             return singleton.category
         except FestaCategorySingleton.DoesNotExist:
-            # Create minimal category if not exists
-            category, _ = Category.objects.get_or_create(
-                slug="festes",
-                defaults={"nombre": "Festes", "taxonomy": "festes"},
-            )
+            category, _ = Category.objects.get_or_create(slug="festes", defaults={"nombre": "Festes", "taxonomy": "festes"})
             FestaCategorySingleton.objects.create(pk=1, category=category)
-            self.stdout.write(
-                self.style.WARNING(
-                    "Festes category singleton not found, created minimal version. "
-                    "Run seed_festes_category for full setup."
-                )
-            )
+            self.stdout.write(self.style.WARNING("Festes category singleton not found, created minimal version. Run seed_festes_category for full setup."))
             return category
 
     def _clear_festes(self) -> None:
-        # Sponsors are deleted via cascade
         count = Festa.objects.count()
         Festa.objects.all().delete()
         self.stdout.write(self.style.SUCCESS(f"Removed {count} existing festes."))
@@ -73,20 +72,15 @@ class Command(BaseCommand):
 
         for data in festes_data:
             slug = data.get("slug")
-
-            # Parse dates
             start_date = self._parse_date(data["start_date"])
             end_date = self._parse_date(data["end_date"])
 
-            # Handle is_current constraint - only one can be true
             is_current = data.get("is_current", False)
             if is_current:
-                # Clear any existing current festa
                 Festa.objects.filter(is_current=True).update(is_current=False)
 
-            # Find matching image by slug
-            featured_media = images.get(f"{slug}.png")
-            program_pdf = documents.get(f"programa-{slug}.pdf")
+            featured_media = images.get(f"featured_media:{slug}")
+            program_pdf = documents.get(f"program_pdf:{slug}")
 
             festa = Festa.objects.create(
                 slug=slug,
@@ -109,16 +103,13 @@ class Command(BaseCommand):
             if featured_media:
                 festa.posters.add(featured_media)
 
-            # Add gallery images (any image starting with 'gallery_')
-            gallery_media = [img for name, img in images.items() if name.startswith("gallery_")]
+            gallery_media = [img for key, img in images.items() if key.startswith("gallery:")]
             if gallery_media:
                 festa.gallery.set(gallery_media)
 
-            # Create sponsors
             for sponsor_data in data.get("sponsors", []):
                 tier = sponsor_data.get("tier", "collaborator")
-                logo = images.get(f"sponsor_{tier}.png")
-                
+                logo = images.get(f"sponsor_logo:{tier}")
                 Sponsor.objects.create(
                     festa=festa,
                     name=sponsor_data["name"],
@@ -129,36 +120,21 @@ class Command(BaseCommand):
                 )
 
             self._apply_translations(festa, data.get("translations", {}))
-            
-            # Link to some random events to demonstrate the event selector
             self._link_random_events(festa)
-
-            # Create a sample Program for each seeded Festa.
             self._create_sample_program(festa)
-            
             self.stdout.write(self.style.SUCCESS(f"Created festa '{festa}'"))
 
     def _link_random_events(self, festa: Festa) -> None:
-        # Get up to 15 random published events
-        random_events = Event.objects.filter(is_published=True).order_by('?')[:15]
+        random_events = Event.objects.filter(is_published=True).order_by("?")[:15]
         for idx, event in enumerate(random_events):
-            FestaEvent.objects.create(
-                festa=festa,
-                event=event,
-                order=idx,
-            )
+            FestaEvent.objects.create(festa=festa, event=event, order=idx)
 
     def _create_sample_program(self, festa: Festa) -> None:
-        program = Program.objects.create(
-            festa=festa,
-            title=f"Programa Principal - {festa.title}",
-            status=ProgramStatusChoices.PUBLISHED,
-            order=1,
-        )
+        program = Program.objects.create(festa=festa, title=f"Programa Principal - {festa.title}", status=ProgramStatusChoices.PUBLISHED, order=1)
         program.set_current_language("ca")
         program.save()
+
     def _parse_date(self, date_str: str) -> date:
-        """Parse ISO date string to date object."""
         return date.fromisoformat(date_str)
 
     def _load_seed_festes(self) -> list[dict]:
@@ -191,18 +167,18 @@ class Command(BaseCommand):
                 festa.program_text = values["program_text"]
             festa.save()
 
-    @property
-    def sample_images_dir(self) -> Path:
-        return Path(__file__).resolve().parent / "images"
+    def _ensure_media_files(self, manifest_entries) -> tuple[dict[str, ImageFile], dict[str, DocumentFile]]:
+        image_map: dict[str, ImageFile] = {}
+        doc_map: dict[str, DocumentFile] = {}
 
-    def _ensure_media_files(self) -> dict[str, ImageFile]:
-        image_map = {}
-        images_dir = self.sample_images_dir
-        if images_dir.exists():
-            for image_path in images_dir.glob("*.png"):
-                if image_path.is_file():
-                    image_map[image_path.name] = self._create_image_file(image_path)
-        return image_map
+        for entry in manifest_entries:
+            key = f"{entry.attach_to}:{entry.slug_or_key}"
+            if entry.type == "image":
+                image_map[key] = self._create_image_file(entry.resolved_path)
+            elif entry.type == "document":
+                doc_map[key] = self._create_document_file(entry.resolved_path)
+
+        return image_map, doc_map
 
     def _create_image_file(self, path: Path) -> ImageFile:
         with path.open("rb") as source:
@@ -215,19 +191,6 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS(f"Seeded ImageFile from {path}"))
         return instance
 
-    @property
-    def sample_documents_dir(self) -> Path:
-        return Path(__file__).resolve().parent / "documents"
-
-    def _ensure_document_files(self) -> dict[str, DocumentFile]:
-        doc_map = {}
-        docs_dir = self.sample_documents_dir
-        if docs_dir.exists():
-            for doc_path in docs_dir.glob("*.pdf"):
-                if doc_path.is_file():
-                    doc_map[doc_path.name] = self._create_document_file(doc_path)
-        return doc_map
-
     def _create_document_file(self, path: Path) -> DocumentFile:
         with path.open("rb") as source:
             instance = DocumentFile.objects.create(
@@ -238,5 +201,3 @@ class Command(BaseCommand):
             )
         self.stdout.write(self.style.SUCCESS(f"Seeded DocumentFile from {path}"))
         return instance
-
-
