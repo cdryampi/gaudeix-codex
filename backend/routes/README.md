@@ -92,3 +92,13 @@ Devuelve la estructura completa para renderizar mapa e itinerario en frontend.
 - Si no hay coordenadas válidas, `bounds: null`.
 - `start`/`end` requieren ambos valores (`lat` y `lng`), si no `null`.
 - Nunca se lanza error por datos parciales: los campos faltantes retornan `null`.
+
+## Seed assets (convención unificada)
+
+Los comandos de seed del dominio `routes` buscan primero:
+
+- `backend/seed_assets/routes/images/`
+
+Fallback temporal (deprecated): `backend/routes/management/commands/images/`.
+
+Si se usa fallback legacy, el comando muestra warning deprecado para completar la migración sin romper entornos antiguos.

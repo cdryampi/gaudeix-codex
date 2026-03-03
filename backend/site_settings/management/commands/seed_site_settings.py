@@ -7,6 +7,7 @@ from pathlib import Path
 from django.core.files.base import ContentFile
 from django.core.management.base import BaseCommand, CommandError
 
+from core.seed_assets import resolve_seed_asset_dir
 from media_files.models import ImageFile
 from site_settings.models import SiteSettings
 
@@ -75,24 +76,35 @@ class Command(BaseCommand):
             except Exception:
                 pass
 
-        # Load sample logo and favicon from static if provided
-        static_dir = Path(__file__).resolve().parent / "static"
+        # Load sample logo and favicon from seed assets
+        images_dir = resolve_seed_asset_dir(
+            domain="site_settings",
+            asset_type="images",
+            legacy_dir=Path(__file__).resolve().parent / "static",
+            warning_writer=lambda msg: self.stdout.write(self.style.WARNING(msg)),
+        )
+        videos_dir = resolve_seed_asset_dir(
+            domain="site_settings",
+            asset_type="videos",
+            legacy_dir=Path(__file__).resolve().parent / "static",
+            warning_writer=lambda msg: self.stdout.write(self.style.WARNING(msg)),
+        )
         logo_filename = seed_data.get("logo_file")
         favicon_filename = seed_data.get("favicon_file")
         video_filename = seed_data.get("background_video_file")
 
         logo_path = (
-            static_dir / logo_filename
+            images_dir / logo_filename
             if isinstance(logo_filename, str) and logo_filename
             else None
         )
         favicon_path = (
-            static_dir / favicon_filename
+            images_dir / favicon_filename
             if isinstance(favicon_filename, str) and favicon_filename
             else None
         )
         video_path = (
-            static_dir / video_filename
+            videos_dir / video_filename
             if isinstance(video_filename, str) and video_filename
             else None
         )

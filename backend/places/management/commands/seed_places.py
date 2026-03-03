@@ -15,6 +15,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
 from core.models import Category
+from core.seed_assets import resolve_seed_asset_dir
 from media_files.models import DocumentFile, ImageFile
 from places.models import Place, PlaceCategorySingleton
 
@@ -110,7 +111,12 @@ class Command(BaseCommand):
 
     @property
     def sample_images_dir(self) -> Path:
-        return Path(__file__).resolve().parent / "images"
+        return resolve_seed_asset_dir(
+            domain="places",
+            asset_type="images",
+            legacy_dir=Path(__file__).resolve().parent / "images",
+            warning_writer=lambda msg: self.stdout.write(self.style.WARNING(msg)),
+        )
 
     def _ensure_media_files(self) -> tuple[list[ImageFile], list[DocumentFile]]:
         images = list(ImageFile.objects.all())

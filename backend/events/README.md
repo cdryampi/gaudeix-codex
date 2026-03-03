@@ -143,3 +143,14 @@ La integración con `core` se realizó en la migración `0002_integrate_with_cor
 ```
 
 ```
+
+## Seed assets (convención unificada)
+
+Los comandos de seed del dominio `events` buscan primero:
+
+- `backend/seed_assets/events/images/`
+- `backend/seed_assets/events/documents/`
+
+Fallback temporal (deprecated): `backend/events/management/commands/media/ (legacy imágenes) y fixtures tests/files`.
+
+Si se usa fallback legacy, el comando muestra warning deprecado para completar la migración sin romper entornos antiguos.

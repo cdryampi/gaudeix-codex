@@ -76,3 +76,14 @@ Cargar datos de ejemplo:
 ```bash
 python manage.py seed_festes
 ```
+
+## Seed assets (convención unificada)
+
+Los comandos de seed del dominio `festes` buscan primero:
+
+- `backend/seed_assets/festes/images/`
+- `backend/seed_assets/festes/documents/`
+
+Fallback temporal (deprecated): `backend/festes/management/commands/images/ y documents/`.
+
+Si se usa fallback legacy, el comando muestra warning deprecado para completar la migración sin romper entornos antiguos.
