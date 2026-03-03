@@ -1,12 +1,17 @@
-import { describe, it, expect, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen } from "@/tests/test-utils";
 import { SendNotificationPage } from "../pages/SendNotificationPage";
 
-// Mock API
 vi.mock("../api", () => ({
-  getNotificationHistory: vi
-    .fn()
-    .mockResolvedValue([
+  getNotificationHistory: vi.fn(),
+  sendNotification: vi.fn().mockResolvedValue(true),
+}));
+
+import { getNotificationHistory } from "../api";
+
+describe("SendNotificationPage", () => {
+  beforeEach(() => {
+    vi.mocked(getNotificationHistory).mockResolvedValue([
       {
         id: 1,
         title: "Test Notification",
@@ -14,19 +19,20 @@ vi.mock("../api", () => ({
         recipient_count: 100,
         status: "sent",
       },
-    ]),
-  sendNotification: vi.fn().mockResolvedValue(true),
-}));
+    ]);
+  });
 
-describe("SendNotificationPage", () => {
-  it("renders the form and history", async () => {
+  it("renders campaign form and notification history", async () => {
     render(<SendNotificationPage />);
 
-    expect(screen.getByText("Push Notifications")).toBeInTheDocument();
-    expect(screen.getByText("Nueva Campaña")).toBeInTheDocument();
-    expect(screen.getByLabelText(/Título/i)).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: /push notifications/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: /nueva campaña/i }),
+    ).toBeInTheDocument();
+    expect(screen.getByLabelText(/título/i)).toBeInTheDocument();
 
-    // Check for history item
     expect(await screen.findByText("Test Notification")).toBeInTheDocument();
   });
 });

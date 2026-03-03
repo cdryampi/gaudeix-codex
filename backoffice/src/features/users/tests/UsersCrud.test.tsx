@@ -1,9 +1,10 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
+import userEvent from "@testing-library/user-event";
+import { render, screen, waitFor } from "@/tests/test-utils";
+import { mockUsers } from "@/tests/fixtures/crudData";
 import { UsersPage } from "../pages/UsersPage";
 import { usersApi } from "../api/users";
 
-// Mock the API
 vi.mock("../api/users", () => ({
   usersApi: {
     getAll: vi.fn(),
@@ -13,7 +14,6 @@ vi.mock("../api/users", () => ({
   },
 }));
 
-// Mock the components that are not implemented yet or complex
 vi.mock("@/components/common", () => ({
   PageContainer: ({ children }: { children: React.ReactNode }) => (
     <div>{children}</div>
@@ -32,78 +32,39 @@ vi.mock("@/components/common", () => ({
   ),
 }));
 
-const MOCK_USERS = [
-  {
-    id: 1,
-    username: "admin",
-    email: "admin@gaudeix.com",
-    name: "Admin User",
-    is_staff: true,
-    is_active: true,
-    date_joined: "2023-01-01T00:00:00Z",
-  },
-  {
-    id: 2,
-    username: "user",
-    email: "user@gaudeix.com",
-    name: "Regular User",
-    is_staff: false,
-    is_active: true,
-    date_joined: "2023-01-02T00:00:00Z",
-  },
-];
-
 describe("UsersPage CRUD", () => {
   beforeEach(() => {
-    vi.clearAllMocks();
-    (usersApi.getAll as Mock).mockResolvedValue(MOCK_USERS);
+    (usersApi.getAll as Mock).mockResolvedValue([...mockUsers]);
   });
 
-  it("renders the users page and fetches users", async () => {
+  it("renders users and fetches initial list", async () => {
     render(<UsersPage />);
 
     expect(
       screen.getByRole("heading", { name: "Usuarios", level: 1 }),
     ).toBeInTheDocument();
 
-    await screen.findByText("Admin User");
-
-    expect(usersApi.getAll).toHaveBeenCalled();
+    expect(await screen.findByText("Admin User")).toBeInTheDocument();
+    expect(usersApi.getAll).toHaveBeenCalledTimes(1);
     expect(screen.getByText("admin@gaudeix.com")).toBeInTheDocument();
   });
 
-  it("can delete a user", async () => {
+  it("deletes a user and refetches list", async () => {
     (usersApi.delete as Mock).mockResolvedValue({});
 
     render(<UsersPage />);
+    expect(await screen.findByText("Admin User")).toBeInTheDocument();
 
-    await waitFor(() => {
-      expect(screen.getByText("Admin User")).toBeInTheDocument();
-    });
-
-    // Find the delete button for the first user
     const deleteButtons = screen.getAllByRole("button", { name: /eliminar/i });
-    const deleteBtn = deleteButtons[0];
+    await userEvent.click(deleteButtons[0]);
 
-    // Click delete button to open AlertDialog
-    fireEvent.click(deleteBtn);
-
-    // Wait for confirmation dialog to appear
-    await waitFor(() => {
-      expect(screen.getByText(/¿Estás seguro/i)).toBeInTheDocument();
+    const confirmButton = await screen.findByRole("button", {
+      name: /^Eliminar$/,
     });
+    await userEvent.click(confirmButton);
 
-    // Find and click the confirmation button by its text content
-    const confirmButton = screen.getByRole("button", { name: /^Eliminar$/ });
-    fireEvent.click(confirmButton);
-
-    // Should call delete API
     await waitFor(() => {
       expect(usersApi.delete).toHaveBeenCalledWith(1);
-    });
-
-    // Should refetch users
-    await waitFor(() => {
       expect(usersApi.getAll).toHaveBeenCalledTimes(2);
     });
   });
