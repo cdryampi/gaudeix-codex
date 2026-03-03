@@ -25,6 +25,7 @@ from festes.models import (
     ProgramStatusChoices,
     Sponsor,
 )
+from core.seed_utils import list_files_sorted
 from media_files.models import ImageFile, DocumentFile
 from events.models import Event
 
@@ -205,9 +206,8 @@ class Command(BaseCommand):
         image_map = {}
         images_dir = self.sample_images_dir
         if images_dir.exists():
-            for image_path in images_dir.glob("*.png"):
-                if image_path.is_file():
-                    image_map[image_path.name] = self._create_image_file(image_path)
+            for image_path in list_files_sorted(images_dir, "*.png"):
+                image_map[image_path.name] = self._create_image_file(image_path)
         return image_map
 
     def _create_image_file(self, path: Path) -> ImageFile:
@@ -234,9 +234,8 @@ class Command(BaseCommand):
         doc_map = {}
         docs_dir = self.sample_documents_dir
         if docs_dir.exists():
-            for doc_path in docs_dir.glob("*.pdf"):
-                if doc_path.is_file():
-                    doc_map[doc_path.name] = self._create_document_file(doc_path)
+            for doc_path in list_files_sorted(docs_dir, "*.pdf"):
+                doc_map[doc_path.name] = self._create_document_file(doc_path)
         return doc_map
 
     def _create_document_file(self, path: Path) -> DocumentFile:

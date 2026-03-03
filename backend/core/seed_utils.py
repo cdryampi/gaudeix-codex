@@ -1,44 +1,33 @@
 from __future__ import annotations
 
-import os
-import random
-from dataclasses import dataclass
-from typing import Any
+from collections.abc import Iterable
+from pathlib import Path
 
 
-GLOBAL_SEED_ENV_VAR = "GAUDEIX_SEED"
+def sorted_paths(paths: Iterable[Path]) -> list[Path]:
+    """Return paths sorted deterministically by filename."""
+    return sorted(paths, key=lambda path: path.name)
 
 
-@dataclass(frozen=True)
-class SeedContext:
-    seed: int | None
-    rng: random.Random
-    faker: Any
+def list_files_sorted(directory: Path, pattern: str = "*") -> list[Path]:
+    """List files matching a glob pattern, sorted by filename."""
+    return sorted_paths(path for path in directory.glob(pattern) if path.is_file())
 
 
-def resolve_seed(explicit_seed: int | None) -> int | None:
-    if explicit_seed is not None:
-        return explicit_seed
-
-    env_value = os.getenv(GLOBAL_SEED_ENV_VAR)
-    if env_value is None or env_value == "":
-        return None
-
-    try:
-        return int(env_value)
-    except ValueError:
-        return None
-
-
-def build_seed_context(*, explicit_seed: int | None, faker_locale: str = "es_ES") -> SeedContext:
-    from faker import Faker
-
-    resolved_seed = resolve_seed(explicit_seed)
-    rng = random.Random()
-    faker = Faker(faker_locale)
-
-    if resolved_seed is not None:
-        rng.seed(resolved_seed)
-        faker.seed_instance(resolved_seed)
-
-    return SeedContext(seed=resolved_seed, rng=rng, faker=faker)
+def find_duplicate_manifest_paths(entries: list[dict]) -> list[str]:
+    """Return duplicate path values while preserving first duplicate appearance order."""
+    seen: set[str] = set()
+    duplicates: list[str] = []
+    duplicate_set: set[str] = set()
+    for entry in entries:
+        if not isinstance(entry, dict):
+            continue
+        path = entry.get("path")
+        if not isinstance(path, str) or not path:
+            continue
+        if path in seen and path not in duplicate_set:
+            duplicates.append(path)
+            duplicate_set.add(path)
+            continue
+        seen.add(path)
+    return duplicates

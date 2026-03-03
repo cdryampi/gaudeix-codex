@@ -8,14 +8,22 @@ from django.core.files import File
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
-from core.seed_assets import resolve_seed_asset_dir
+from core.seed_utils import find_duplicate_manifest_paths
 from media_files.models import DocumentFile, ImageFile
 
 
 class Command(BaseCommand):
     help = "Seed example records for the media_files app."
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--verbose-order",
+            action="store_true",
+            help="Show processing order for manifest entries.",
+        )
+
     def handle(self, *args, **options):
+        self.verbose_order = options.get("verbose_order", False)
         with transaction.atomic():
             self._clear_data()
             manifest = self._load_manifest()
@@ -82,10 +90,22 @@ class Command(BaseCommand):
                 )
                 continue
 
-            for entry in entries:
+            duplicate_paths = find_duplicate_manifest_paths(entries)
+            if duplicate_paths:
+                duplicates = ", ".join(duplicate_paths)
+                raise CommandError(
+                    f"Duplicate path entries for {model.__name__} in {self.seed_manifest_path}: {duplicates}"
+                )
+
+            for index, entry in enumerate(entries, start=1):
                 relative_path = entry.get("path") if isinstance(entry, dict) else None
                 if not relative_path:
                     continue
+
+                if self.verbose_order:
+                    self.stdout.write(
+                        f"[{model.__name__}] Processing #{index}: {relative_path}"
+                    )
 
                 path = self.assets_root / relative_path
                 if not path.exists():
