@@ -126,3 +126,28 @@ ENVIRONMENT=test backend/.venv_win/Scripts/python.exe -m pytest
 
 - Usa siempre `.venv` de la raíz del proyecto como intérprete en el IDE.
 - Para desarrollo rápido con SQLite: `ENVIRONMENT=local python manage.py migrate`.
+
+## Convención unificada de seed assets (media)
+
+A partir de ahora, los archivos estáticos para seeds deben vivir bajo una convención única:
+
+```text
+backend/seed_assets/<dominio>/images/
+backend/seed_assets/<dominio>/documents/
+backend/seed_assets/<dominio>/videos/
+```
+
+Dominios con consumo actual de media: `media_files`, `events`, `places`, `routes`, `festes`, `site_settings`.
+
+Compatibilidad temporal:
+
+- Los comandos de seed buscan primero la ruta nueva en `backend/seed_assets/...`.
+- Si no existe, hacen fallback automático a rutas legacy dentro de `management/commands/...` (o `media_files/seed_assets`) y muestran warning deprecado.
+
+### Checklist de migración de assets
+
+1. Crear carpeta destino en `backend/seed_assets/<dominio>/`.
+2. Mover archivos legacy a `images/`, `documents/` o `videos/` según tipo.
+3. Ejecutar el comando seed del dominio y verificar que **no** aparece warning `DEPRECATED seed assets path in use`.
+4. Validar creación de `ImageFile`, `DocumentFile` o `VideoFile` en admin/API.
+5. Cuando todos los entornos estén migrados, eliminar assets legacy de `management/commands/...`.

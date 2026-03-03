@@ -436,3 +436,17 @@ No en la raíz de `seed_assets/`.
 ## Licencia
 
 Este módulo es parte del proyecto Gaudeix Jules.
+
+## Seed assets (convención unificada)
+
+El comando `seed_media_files` prioriza la ruta nueva:
+
+- `backend/seed_assets/media_files/images/`
+- `backend/seed_assets/media_files/documents/`
+
+Fallback temporal (deprecated):
+
+- `backend/media_files/seed_assets/images/`
+- `backend/media_files/seed_assets/documents/`
+
+Si se usa fallback, el comando imprime warning para facilitar la migración de entornos existentes.
