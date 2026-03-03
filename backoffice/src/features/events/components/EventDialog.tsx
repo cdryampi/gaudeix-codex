@@ -407,11 +407,6 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
     [images, form.featured_media_id],
   );
 
-  const selectedCategory = useMemo(
-    () => categories.find((cat) => cat.id === form.category_id),
-    [categories, form.category_id],
-  );
-
   const selectedAttachments = useMemo(
     () => documents.filter((doc) => form.attachments_ids?.includes(doc.id)),
     [documents, form.attachments_ids],
@@ -543,9 +538,7 @@ export function EventDialog({ open, onOpenChange, onSubmit, event }: Props) {
                     }
                   >
                     <SelectTrigger id="category_id">
-                      <SelectValue placeholder="Selecciona una categoría">
-                        {selectedCategory?.nombre}
-                      </SelectValue>
+                      <SelectValue placeholder="Selecciona una categoría" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="">Por defecto</SelectItem>

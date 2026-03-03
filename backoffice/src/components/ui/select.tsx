@@ -4,6 +4,8 @@ import {
   useState,
   useRef,
   useEffect,
+  useMemo,
+  useCallback,
   forwardRef,
   ReactNode,
   HTMLAttributes,
@@ -23,11 +25,18 @@ interface SelectContextValue {
 const SelectContext = createContext<SelectContextValue | undefined>(undefined);
 
 interface SelectProps {
-  value?: string;
-  defaultValue?: string;
+  value?: string | number | null;
+  defaultValue?: string | number | null;
   onValueChange?: (value: string) => void;
   children: ReactNode;
 }
+
+const normalizeSelectValue = (
+  value: string | number | null | undefined,
+): string | undefined => {
+  if (value === null || value === undefined) return undefined;
+  return String(value);
+};
 
 export const Select = ({
   value: controlledValue,
@@ -35,40 +44,60 @@ export const Select = ({
   onValueChange,
   children,
 }: SelectProps) => {
-  const [internalValue, setInternalValue] = useState(defaultValue);
+  const [internalValue, setInternalValue] = useState<string | undefined>(() =>
+    normalizeSelectValue(defaultValue),
+  );
   const [open, setOpen] = useState(false);
-  const labelMap = useRef(new Map<string, ReactNode>()).current;
+  const labelMapRef = useRef(new Map<string, ReactNode>());
+  const [, setLabelVersion] = useState(0);
   const rootRef = useRef<HTMLDivElement>(null);
-  const [, forceUpdate] = useState(0); // Force re-render when labels update
+  const isControlled = controlledValue !== undefined;
+  const value = isControlled
+    ? normalizeSelectValue(controlledValue)
+    : internalValue;
 
-  const value = controlledValue !== undefined ? controlledValue : internalValue;
+  useEffect(() => {
+    if (!isControlled) return;
+    setInternalValue(normalizeSelectValue(controlledValue));
+  }, [controlledValue, isControlled]);
 
-  const handleValueChange = (newValue: string) => {
-    setInternalValue(newValue);
-    onValueChange?.(newValue);
-    setOpen(false);
-  };
+  const handleValueChange = useCallback(
+    (newValue: string) => {
+      if (!isControlled) {
+        setInternalValue(newValue);
+      }
+      onValueChange?.(newValue);
+      setOpen(false);
+    },
+    [isControlled, onValueChange],
+  );
 
-  const registerLabel = (val: string, label: ReactNode) => {
-    if (labelMap.get(val) !== label) {
-      labelMap.set(val, label);
-      // Debounce updates slightly or allow initial render
-      setTimeout(() => forceUpdate((n) => n + 1), 0);
+  const registerLabel = useCallback((val: string, label: ReactNode) => {
+    const normalizedValue = normalizeSelectValue(val);
+    if (!normalizedValue) return;
+
+    const currentLabel = labelMapRef.current.get(normalizedValue);
+    if (currentLabel !== label) {
+      labelMapRef.current.set(normalizedValue, label);
+      setLabelVersion((n) => n + 1);
     }
-  };
+  }, []);
+
+  const contextValue = useMemo(
+    () => ({
+      value,
+      onValueChange: handleValueChange,
+      open,
+      setOpen,
+      labelMap: labelMapRef.current,
+      registerLabel,
+      rootRef,
+    }),
+    [value, handleValueChange, open, registerLabel],
+  );
 
   return (
-    <SelectContext.Provider
-      value={{
-        value,
-        onValueChange: handleValueChange,
-        open,
-        setOpen,
-        labelMap,
-        registerLabel,
-        rootRef,
-      }}
-    >
+    <SelectContext.Provider value={contextValue}>
       <div ref={rootRef} className="relative w-full">
         {children}
       </div>
@@ -109,7 +138,7 @@ export const SelectValue = forwardRef<
 
   const selectedLabel =
     context.value !== undefined && context.value !== null
-      ? context.labelMap.get(context.value)
+      ? context.labelMap.get(String(context.value))
       : null;
 
   return (
@@ -150,14 +179,14 @@ export const SelectContent = forwardRef<
     };
   }, [context]);
 
-  if (!context?.open) return null;
-
   return (
     <div
       ref={ref}
-      className={`absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md border border-gray-200 bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white sm:text-sm animate-in fade-in zoom-in-95 duration-100 ${
-        className || ""
-      }`}
+      className={`absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md border border-gray-200 bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white sm:text-sm ${
+        context?.open
+          ? "animate-in fade-in zoom-in-95 duration-100"
+          : "hidden pointer-events-none"
+      } ${className || ""}`}
       {...props}
     >
       {children}

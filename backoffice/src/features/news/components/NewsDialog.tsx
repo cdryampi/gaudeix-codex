@@ -207,11 +207,6 @@ export function NewsDialog({ open, onOpenChange, onSubmit, news }: Props) {
     [images, form.featured_media_id],
   );
 
-  const selectedCategory = useMemo(
-    () => categories.find((cat) => cat.id === form.category_id),
-    [categories, form.category_id],
-  );
-
   const selectedAttachments = useMemo(
     () => documents.filter((doc) => form.attachments_ids?.includes(doc.id)),
     [documents, form.attachments_ids],
@@ -239,9 +234,7 @@ export function NewsDialog({ open, onOpenChange, onSubmit, news }: Props) {
                 }
               >
                 <SelectTrigger id="category_id">
-                  <SelectValue placeholder="Selecciona una categoría">
-                    {selectedCategory?.nombre}
-                  </SelectValue>
+                  <SelectValue placeholder="Selecciona una categoría" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="">Sin categoría</SelectItem>
