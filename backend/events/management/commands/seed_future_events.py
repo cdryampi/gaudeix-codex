@@ -1,7 +1,6 @@
 
 from __future__ import annotations
 
-import random
 import mimetypes
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -11,11 +10,11 @@ from django.core.files import File
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.utils import timezone
-from faker import Faker
 
-from core.models import Category, Tag
+from core.models import Category
 from events.models import Event
 from media_files.models import ImageFile
+from core.seed_utils import build_seed_context
 
 
 class Command(BaseCommand):
@@ -28,12 +27,30 @@ class Command(BaseCommand):
             default=100,
             help="Number of events to generate",
         )
+        parser.add_argument(
+            "--seed",
+            type=int,
+            help="Deterministic seed for random/Faker generation.",
+        )
+        parser.add_argument(
+            "--dry-run",
+            action="store_true",
+            help="Simulate generation without writing to database.",
+        )
 
     def handle(self, *args, **options):
         count = options["count"]
+        dry_run = options.get("dry_run", False)
+        seed_context = build_seed_context(explicit_seed=options.get("seed"), faker_locale="es_ES")
+
         self.stdout.write(self.style.WARNING(f"Seeding {count} future events for Cabrera de Mar..."))
-        
-        fake = Faker('es_ES')
+        if seed_context.seed is not None:
+            self.stdout.write(self.style.NOTICE(f"Using deterministic seed={seed_context.seed}"))
+        if dry_run:
+            self.stdout.write(self.style.WARNING("Dry-run mode enabled. No writes will occur."))
+
+        fake = seed_context.faker
+        rng = seed_context.rng
         base_now = timezone.now()
         end_date = datetime(2026, 2, 28, 23, 59, 59, tzinfo=ZoneInfo("Europe/Madrid"))
         
@@ -61,6 +78,10 @@ class Command(BaseCommand):
             "Networking": "networking.png",
             "Playa": "beach.png",
         }
+
+        if dry_run:
+            self.stdout.write(self.style.NOTICE(f"[dry-run] would create approximately {count} future events."))
+            return
 
         # Root category
         root_category, _ = Category.objects.get_or_create(
@@ -223,7 +244,7 @@ class Command(BaseCommand):
             # Generate specified count of events
             for _ in range(count):
                 # Pick category
-                cat_name = random.choice(list(categories_map.keys()))
+                cat_name = rng.choice(list(categories_map.keys()))
                 
                 # Get or Create Category
                 category_slug = cat_name.lower().replace("á", "a").replace("í", "i").replace("ó", "o")
@@ -238,18 +259,18 @@ class Command(BaseCommand):
 
                 # Random date between now and end_date
                 time_diff = end_date - base_now
-                random_seconds = random.randint(0, int(time_diff.total_seconds()))
+                random_seconds = rng.randint(0, int(time_diff.total_seconds()))
                 start_at = base_now + timedelta(seconds=random_seconds)
-                end_at = start_at + timedelta(hours=random.randint(2, 6))
+                end_at = start_at + timedelta(hours=rng.randint(2, 6))
 
                 # Pick template and location
-                title = random.choice(event_templates[cat_name])
-                location_data = random.choice(cabrera_locations)
+                title = rng.choice(event_templates[cat_name])
+                location_data = rng.choice(cabrera_locations)
                 
                 summary = f"Únete a nosotros para el evento '{title}' en {location_data['name']}. Una actividad organizada por el Ayuntamiento de Cabrera de Mar para fomentar la cultura y la participación ciudadana."
                 description = f"El evento '{title}' es una de las actividades destacadas de la agenda municipal de Cabrera de Mar. Se llevará a cabo en {location_data['name']} ({location_data['address']}).\n\nEsperamos contar con vuestra presencia para disfrutar de una jornada dedicada a {cat_name.lower()}. No te pierdas esta oportunidad de conectar con la comunidad y disfrutar de lo mejor que nuestro municipio tiene para ofrecer."
                 
-                price = f"{random.randint(5, 25)} EUR" if random.choice([True, False, False]) else "Gratis"
+                price = f"{rng.randint(5, 25)} EUR" if rng.choice([True, False, False]) else "Gratis"
 
                 # Image
                 featured_media = images_cache.get(cat_name)
@@ -257,7 +278,7 @@ class Command(BaseCommand):
                 # Create Event
                 event = Event.objects.create(
                     title=title,
-                    slug=fake.slug() + str(random.randint(1000,9999)),
+                    slug=fake.slug() + str(rng.randint(1000,9999)),
                     summary=summary,
                     description=description,
                     start_at=start_at,

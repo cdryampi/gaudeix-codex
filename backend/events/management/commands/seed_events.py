@@ -21,6 +21,7 @@ from django.utils.dateparse import parse_datetime
 from core.models import Category, Tag
 from core.seed_manifest import load_seed_asset_manifest, render_dry_run
 from events.models import Event, EventCategorySingleton, EventDate
+from core.seed_utils import list_files_sorted
 from media_files.models import DocumentFile, ImageFile
 
 

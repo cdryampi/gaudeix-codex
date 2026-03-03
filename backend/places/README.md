@@ -103,3 +103,14 @@ Ejecutar las migraciones del app:
 .\.venv_win\Scripts\python.exe manage.py makemigrations places
 .\.venv_win\Scripts\python.exe manage.py migrate
 ```
+
+## Seed assets (convención unificada)
+
+Los comandos de seed del dominio `places` buscan primero:
+
+- `backend/seed_assets/places/images/`
+- `backend/seed_assets/places/documents/`
+
+Fallback temporal (deprecated): `backend/places/management/commands/images/ y tests/files`.
+
+Si se usa fallback legacy, el comando muestra warning deprecado para completar la migración sin romper entornos antiguos.
