@@ -77,43 +77,39 @@ python manage.py migrate
 python manage.py migrate
 ```
 
-## Seeds obligatorios (usuarios, eventos, lugares)
+## Seeds (flujo estandarizado)
 
-Ejecuta estos comandos tras migrar para evitar errores en admin/API:
-
-```bash
-# Windows
-python manage.py seed_users
-python manage.py seed_events_category
-python manage.py seed_places_category
-python manage.py seed_places
-
-# Linux/Mac
-python manage.py seed_users
-python manage.py seed_events_category
-python manage.py seed_places_category
-python manage.py seed_places
-```
-
-### Deep Seed (Nuclear Cleanup & Sync)
-
-Para resolver inconsistencias y realizar un reset completo y limpio con datos estéticos sincronizados entre Backend y Frontend (incluyendo imágenes AI premium e iconos de Lucide):
+Comando recomendado (local o CI):
 
 ```bash
-# Limpiar TODO (Categorías, Places, Events, Media) y volver a sembrar con fechas de HOY
-python nuclear_cleanup.py
-
-# Limpiar y sembrar con eventos desplazados 10 días al futuro (útil para pruebas de agenda)
-python nuclear_cleanup.py --days 10
-
-# Solo limpiar (sin volver a sembrar)
-python nuclear_cleanup.py --no-seed
+python manage.py seed_all
 ```
 
-`nuclear_cleanup.py` orquesta la eliminación nuclear de registros protegidos y lanza los comandos de seed en el orden correcto (`places_category`, `events_category`, `tags`, `places`, `events`).
+Opciones estandar:
 
-`seed_places` usa las imágenes incluidas en `seed/images/` y crea datos de ejemplo con media y traducciones.
-Los datos de seeds están separados en JSON por app (p.ej. `places/seed/places.json`, `events/seed/events.json`, `core/seed/tags.json`).
+```bash
+# reset completo + migraciones + seed
+python manage.py seed_all --reset --noinput
+
+# ejecucion reproducible (determinista para seeds con aleatoriedad)
+python manage.py seed_all --seed 42
+
+# ejecutar solo dominios concretos
+python manage.py seed_all --only users,events
+
+# simular sin escribir en base de datos
+python manage.py seed_all --dry-run --only users,events
+```
+
+Compatibilidad legacy:
+
+- `--hard-reset` se mantiene como alias deprecado de `--reset`.
+- `nuclear_cleanup.py` se mantiene por compatibilidad, pero el flujo recomendado es `seed_all`.
+
+Notas de orden/dependencias:
+
+- `seed_all` orquesta el orden de comandos para evitar dependencias frágiles.
+- Los datos de seeds están separados por app (p.ej. `places/seed/places.json`, `events/seed/events.json`, `core/seed/tags.json`).
 
 Usuarios creados:
 
