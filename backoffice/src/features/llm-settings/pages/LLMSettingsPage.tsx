@@ -349,12 +349,7 @@ export function LLMSettingsPage() {
                       onValueChange={(v) => onChange("provider", v)}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Selecciona un provider">
-                          {
-                            PROVIDERS.find((p) => p.value === form.provider)
-                              ?.label
-                          }
-                        </SelectValue>
+                        <SelectValue placeholder="Selecciona un provider" />
                       </SelectTrigger>
                       <SelectContent>
                         {PROVIDERS.map((p) => (
@@ -373,13 +368,7 @@ export function LLMSettingsPage() {
                       onValueChange={(v) => onChange("model_name", v)}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Selecciona un modelo">
-                          {
-                            modelOptions.find(
-                              (m) => m.value === form.model_name,
-                            )?.label
-                          }
-                        </SelectValue>
+                        <SelectValue placeholder="Selecciona un modelo" />
                       </SelectTrigger>
                       <SelectContent>
                         {modelOptions.map((m) => (

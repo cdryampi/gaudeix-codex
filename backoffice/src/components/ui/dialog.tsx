@@ -2,6 +2,7 @@ import {
   createContext,
   useContext,
   useState,
+  useEffect,
   forwardRef,
   ReactNode,
   HTMLAttributes,
@@ -31,9 +32,7 @@ export function Dialog({
   const open = isControlled ? controlledOpen : internalOpen;
 
   const setOpen = (newOpen: boolean) => {
-    if (!isControlled) {
-      setInternalOpen(newOpen);
-    }
+    if (!isControlled) setInternalOpen(newOpen);
     onOpenChange?.(newOpen);
   };
 
@@ -73,33 +72,38 @@ export const DialogContent = forwardRef<
   const context = useContext(DialogContext);
   if (!context) throw new Error("DialogContent must be used within Dialog");
 
+  useEffect(() => {
+    if (!context.open) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") context.setOpen(false);
+    };
+
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [context]);
+
   if (!context.open) return null;
 
   return (
-    <div className="relative z-50">
-      {/* Backdrop - Increased blur and darkness for better focus */}
+    <div className="relative z-50" role="dialog" aria-modal="true">
       <div
         className="fixed inset-0 bg-gray-950/60 backdrop-blur-[4px] transition-all animate-in fade-in duration-300"
         aria-hidden="true"
+        onClick={() => context.setOpen(false)}
       />
 
-      {/* Scroll Container - This handles clicking outside the modal panel */}
       <div
         className="fixed inset-0 z-50 overflow-y-auto"
         onClick={() => context.setOpen(false)}
       >
         <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-6">
-          {/* Modal Panel - Premium styles: rounded-2xl, deep shadow, subtle border */}
           <div
             ref={ref}
             className={`relative w-full max-w-2xl transform overflow-hidden rounded-2xl border border-gray-200 bg-white text-left shadow-2xl transition-all animate-in fade-in zoom-in-95 slide-in-from-bottom-4 duration-300 dark:border-gray-800 dark:bg-gray-900 ${className || ""}`}
-            onClick={(e) => {
-              // VERY IMPORTANT: Stop propagation so clicks inside the modal don't close it
-              e.stopPropagation();
-            }}
+            onClick={(e) => e.stopPropagation()}
             {...props}
           >
-            {/* Close Button - Floating circular button */}
             <button
               type="button"
               className="absolute right-4 top-4 z-10 inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-50 text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:bg-gray-800 dark:text-gray-500 dark:hover:bg-gray-700 dark:hover:text-gray-300"

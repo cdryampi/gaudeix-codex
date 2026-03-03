@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Play, Loader2 } from "lucide-react";
 import { ScraperSource } from "../types";
 import {
@@ -37,10 +37,19 @@ export function StartScrapeDialog({
   const [maxPages, setMaxPages] = useState("5");
   const [loading, setLoading] = useState(false);
 
-  // Set default source when sources load
-  if (!selectedSource && sources.length > 0) {
-    setSelectedSource(sources[0].slug);
-  }
+  useEffect(() => {
+    if (!open) return;
+    if (sources.length === 0) {
+      setSelectedSource("");
+      return;
+    }
+
+    setSelectedSource((prev) =>
+      prev && sources.some((source) => source.slug === prev)
+        ? prev
+        : sources[0].slug,
+    );
+  }, [open, sources]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -2,6 +2,7 @@ import {
   createContext,
   useContext,
   useState,
+  useEffect,
   forwardRef,
   ReactNode,
   HTMLAttributes,
@@ -32,9 +33,7 @@ export function AlertDialog({
   const open = isControlled ? controlledOpen : internalOpen;
 
   const setOpen = (newOpen: boolean) => {
-    if (!isControlled) {
-      setInternalOpen(newOpen);
-    }
+    if (!isControlled) setInternalOpen(newOpen);
     onOpenChange?.(newOpen);
   };
 
@@ -79,20 +78,28 @@ export const AlertDialogContent = forwardRef<
   if (!context)
     throw new Error("AlertDialogContent must be used within AlertDialog");
 
+  useEffect(() => {
+    if (!context.open) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") context.setOpen(false);
+    };
+
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [context]);
+
   if (!context.open) return null;
 
   return (
-    <div className="relative z-50">
-      {/* Backdrop - Increased blur and darkness */}
+    <div className="relative z-50" role="alertdialog" aria-modal="true">
       <div
         className="fixed inset-0 bg-gray-950/60 backdrop-blur-[4px] transition-opacity animate-in fade-in duration-300"
         onClick={() => context.setOpen(false)}
       />
 
-      {/* Scroll Container */}
       <div className="fixed inset-0 z-50 overflow-y-auto">
-        <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-          {/* Modal Panel - Premium styles: rounded-2xl, deep shadow */}
+        <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-6">
           <div
             ref={ref}
             className={`relative w-full max-w-lg transform overflow-hidden rounded-2xl border border-gray-200 bg-white p-6 text-left shadow-2xl transition-all animate-in fade-in zoom-in-95 slide-in-from-bottom-4 duration-300 dark:border-gray-800 dark:bg-gray-900 ${className || ""}`}
