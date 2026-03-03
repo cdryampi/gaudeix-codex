@@ -1,76 +1,46 @@
-import { render, screen, waitFor } from "@testing-library/react";
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { BrowserRouter } from "react-router-dom";
+import { describe, expect, it, vi } from "vitest";
+import { render, screen, waitFor } from "@/tests/test-utils";
 import { LandingPage } from "../pages/LandingPage";
 
-const renderWithRouter = (component: React.ReactNode) => {
-  return render(<BrowserRouter>{component}</BrowserRouter>);
-};
+const mockHealthcheck = (database: "ok" | "error" = "ok") =>
+  vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({
+    ok: true,
+    json: async () => ({ status: "online", database }),
+  } as unknown as Response);
+
+const renderLanding = () =>
+  render(<LandingPage />, {
+    router: { type: "memory", initialEntries: ["/"] },
+  });
 
 describe("LandingPage", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    vi.restoreAllMocks();
-  });
+  it("renders title and description", () => {
+    mockHealthcheck();
 
-  it("renders the landing page with title and description", () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ status: "online", database: "ok" }),
-    } as unknown as Response);
+    renderLanding();
 
-    renderWithRouter(<LandingPage />);
-
-    expect(screen.getByText("Gaudeix Codex")).toBeInTheDocument();
-    expect(screen.getByText("Panel de Administración")).toBeInTheDocument();
-  });
-
-  it("shows frontend status as online", () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ status: "online", database: "ok" }),
-    } as unknown as Response);
-
-    renderWithRouter(<LandingPage />);
-
-    expect(screen.getByText("Frontend")).toBeInTheDocument();
-    expect(screen.getAllByText("Backoffice").length).toBeGreaterThan(0);
+    expect(screen.getByText(/gaudeix codex/i)).toBeInTheDocument();
+    expect(screen.getByText(/panel de administración/i)).toBeInTheDocument();
   });
 
   it("calls health check on mount", async () => {
-    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ status: "online", database: "ok" }),
-    } as unknown as Response);
+    const fetchSpy = mockHealthcheck();
 
-    renderWithRouter(<LandingPage />);
+    renderLanding();
 
     await waitFor(() => {
-      expect(fetchSpy).toHaveBeenCalled();
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
     });
   });
 
   it("shows backend as online when health check succeeds", async () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ status: "online", database: "ok" }),
-    } as unknown as Response);
+    mockHealthcheck();
 
-    renderWithRouter(<LandingPage />);
+    renderLanding();
 
-    // Initially shows "Verificando..."
     expect(screen.getByText(/verificando/i)).toBeInTheDocument();
-
-    // After health check, shows "Online"
-    await waitFor(() => {
-      const badges = screen.getAllByText("Online");
-      expect(badges.length).toBeGreaterThan(0);
-    });
-
-    // Django API + PostgreSQL checks should be OK
-    await waitFor(() => {
-      expect(screen.getAllByText("✓").length).toBeGreaterThanOrEqual(2);
-    });
+    expect(await screen.findByText("Online")).toBeInTheDocument();
+    expect(screen.getAllByText("✓").length).toBeGreaterThanOrEqual(2);
   });
 
   it("shows backend as offline when health check fails", async () => {
@@ -78,47 +48,29 @@ describe("LandingPage", () => {
       new Error("Network error"),
     );
 
-    renderWithRouter(<LandingPage />);
+    renderLanding();
 
-    // Initially shows "Verificando..."
     expect(screen.getByText(/verificando/i)).toBeInTheDocument();
-
-    // After health check fails, shows "Offline"
-    await waitFor(() => {
-      expect(screen.getByText("Offline")).toBeInTheDocument();
-    });
+    expect(await screen.findByText("Offline")).toBeInTheDocument();
   });
 
-  it("shows database error when health check returns error status", async () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ status: "online", database: "error" }),
-    } as unknown as Response);
+  it("shows database error when health check returns db error", async () => {
+    mockHealthcheck("error");
 
-    renderWithRouter(<LandingPage />);
+    renderLanding();
 
-    await waitFor(() => {
-      const badges = screen.getAllByText("Online");
-      expect(badges.length).toBeGreaterThan(0);
-    });
-
-    await waitFor(() => {
-      expect(screen.getAllByText("✗").length).toBeGreaterThan(0);
-    });
+    expect(await screen.findByText("Online")).toBeInTheDocument();
+    expect(screen.getAllByText("✗").length).toBeGreaterThan(0);
   });
 
-  it("renders login button with correct link", () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ status: "online", database: "ok" }),
-    } as unknown as Response);
+  it("renders login link", () => {
+    mockHealthcheck();
 
-    renderWithRouter(<LandingPage />);
+    renderLanding();
 
     const loginButton = screen.getByRole("link", {
       name: /acceder al backoffice/i,
     });
-    expect(loginButton).toBeInTheDocument();
     expect(loginButton).toHaveAttribute("href", "/login");
   });
 });

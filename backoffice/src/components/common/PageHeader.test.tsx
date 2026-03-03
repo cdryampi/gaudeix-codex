@@ -1,11 +1,13 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import { render, screen } from "@/tests/test-utils";
 import { PageHeader } from "@/components/common";
 
 describe("PageHeader", () => {
-  it("renders title", () => {
+  it("renders title as heading", () => {
     render(<PageHeader title="Test Title" />);
-    expect(screen.getByText("Test Title")).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Test Title" }),
+    ).toBeInTheDocument();
   });
 
   it("renders description when provided", () => {
@@ -14,7 +16,12 @@ describe("PageHeader", () => {
   });
 
   it("renders actions when provided", () => {
-    render(<PageHeader title="Test" actions={<button>Action</button>} />);
-    expect(screen.getByText("Action")).toBeInTheDocument();
+    render(
+      <PageHeader
+        title="Test"
+        actions={<button type="button">Action</button>}
+      />,
+    );
+    expect(screen.getByRole("button", { name: "Action" })).toBeInTheDocument();
   });
 });

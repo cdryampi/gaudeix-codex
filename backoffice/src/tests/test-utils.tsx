@@ -1,23 +1,45 @@
-import { ReactElement } from "react";
+import { ReactElement, ReactNode } from "react";
 import { render, RenderOptions } from "@testing-library/react";
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter, MemoryRouter } from "react-router-dom";
 import { AppProviders } from "@/app/providers/AppProviders";
 
-/**
- * Custom render function that wraps components with all necessary providers
- * Use this instead of RTL's render in tests
- */
+type RouterMode =
+  | { type?: "browser" }
+  | { type: "memory"; initialEntries?: string[] };
+
+type CustomRenderOptions = Omit<RenderOptions, "wrapper"> & {
+  router?: RouterMode;
+};
+
+function Providers({ children }: { children: ReactNode }) {
+  return <AppProviders>{children}</AppProviders>;
+}
+
 function customRender(
   ui: ReactElement,
-  options?: Omit<RenderOptions, "wrapper">,
+  options?: CustomRenderOptions,
 ): ReturnType<typeof render> {
-  return render(ui, {
-    wrapper: ({ children }) => (
+  const { router, ...renderOptions } = options ?? {};
+
+  const Wrapper = ({ children }: { children: ReactNode }) => {
+    if (router?.type === "memory") {
+      return (
+        <MemoryRouter initialEntries={router.initialEntries}>
+          <Providers>{children}</Providers>
+        </MemoryRouter>
+      );
+    }
+
+    return (
       <BrowserRouter>
-        <AppProviders>{children}</AppProviders>
+        <Providers>{children}</Providers>
       </BrowserRouter>
-    ),
-    ...options,
+    );
+  };
+
+  return render(ui, {
+    wrapper: Wrapper,
+    ...renderOptions,
   });
 }
 

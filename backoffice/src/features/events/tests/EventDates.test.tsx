@@ -1,9 +1,8 @@
-import { describe, test, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import userEvent from "@testing-library/user-event";
+import { render, screen, waitFor } from "@/tests/test-utils";
 import { EventDialog } from "../components/EventDialog";
-import React from "react";
 
-// Mock child components or modules
 vi.mock("../api/events", () => ({
   eventsApi: {
     getOccurrences: vi.fn().mockResolvedValue([]),
@@ -29,25 +28,21 @@ vi.mock("@/features/tags/api/tags", () => ({
   },
 }));
 
-// Mock EventPreview to avoid resolving @frontend alias in test environment
 vi.mock("../components/EventPreview", () => ({
   EventPreview: () => null,
 }));
 
-describe("EventDialog Logic", () => {
+describe("EventDialog dates", () => {
   const mockOnSubmit = vi.fn();
   const mockOnOpenChange = vi.fn();
 
   beforeEach(() => {
-    vi.clearAllMocks();
+    mockOnSubmit.mockReset();
+    mockOnOpenChange.mockReset();
   });
 
-  test("sanity check", () => {
-    expect(1 + 1).toBe(2);
-  });
-
-  test("adds a date", async () => {
-    const { container } = render(
+  const openDatesTab = async () => {
+    const view = render(
       <EventDialog
         open={true}
         onOpenChange={mockOnOpenChange}
@@ -55,50 +50,47 @@ describe("EventDialog Logic", () => {
       />,
     );
 
-    const datesTab = screen.getByRole("button", { name: /fechas/i });
-    fireEvent.click(datesTab);
+    await userEvent.click(screen.getByRole("button", { name: /fechas/i }));
+    return view;
+  };
 
-    // Label association is missing in component, using selector
-    const startInput = container.querySelector('input[type="datetime-local"]');
-    if (!startInput) throw new Error("Start date input not found");
+  it("adds a date row", async () => {
+    const { container } = await openDatesTab();
 
-    fireEvent.change(startInput, { target: { value: "2026-02-01T10:00" } });
+    const startInput = container.querySelector(
+      'input[type="datetime-local"]',
+    ) as HTMLInputElement | null;
+    expect(startInput).not.toBeNull();
 
-    const addButton = screen.getByRole("button", { name: /registrar fecha/i });
-    fireEvent.click(addButton);
+    await userEvent.type(startInput!, "2026-02-01T10:00");
+    await userEvent.click(
+      screen.getByRole("button", { name: /registrar fecha/i }),
+    );
 
     await waitFor(() => {
       expect(screen.getByText(/2026/)).toBeInTheDocument();
     });
   });
 
-  test("prevents overlapping sessions", async () => {
-    const { container } = render(
-      <EventDialog
-        open={true}
-        onOpenChange={mockOnOpenChange}
-        onSubmit={mockOnSubmit}
-      />,
+  it("prevents overlapping sessions", async () => {
+    const { container } = await openDatesTab();
+
+    const startInput = container.querySelector(
+      'input[type="datetime-local"]',
+    ) as HTMLInputElement | null;
+    expect(startInput).not.toBeNull();
+
+    await userEvent.type(startInput!, "2026-02-01T10:00");
+    await userEvent.click(
+      screen.getByRole("button", { name: /registrar fecha/i }),
     );
 
-    const datesTab = screen.getByRole("button", { name: /fechas/i });
-    fireEvent.click(datesTab);
+    await userEvent.clear(startInput!);
+    await userEvent.type(startInput!, "2026-02-01T10:30");
+    await userEvent.click(
+      screen.getByRole("button", { name: /registrar fecha/i }),
+    );
 
-    const startInput = container.querySelector('input[type="datetime-local"]');
-    if (!startInput) throw new Error("Start date input not found");
-
-    // Add first session
-    fireEvent.change(startInput, { target: { value: "2026-02-01T10:00" } });
-    const addButton = screen.getByRole("button", { name: /registrar fecha/i });
-    fireEvent.click(addButton);
-
-    // Attempt to add overlapping session
-    fireEvent.change(startInput, { target: { value: "2026-02-01T10:30" } });
-    fireEvent.click(addButton);
-
-    // Should show error toast (mocked or checked via behavior)
-    // Since we use sonner, we can check if the session was NOT added
-    const rows = container.querySelectorAll("tbody tr");
-    expect(rows.length).toBe(1);
+    expect(container.querySelectorAll("tbody tr")).toHaveLength(1);
   });
 });

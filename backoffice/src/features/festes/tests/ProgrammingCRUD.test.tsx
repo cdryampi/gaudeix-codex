@@ -3,7 +3,7 @@
  * Tests ProgramsPage rendering with mocked API.
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@/tests/test-utils";
 import userEvent from "@testing-library/user-event";
 import { ProgramsPage } from "../pages/ProgramsPage";
 import { Program, Festa } from "../types";
