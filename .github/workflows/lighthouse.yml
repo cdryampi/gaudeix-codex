@@ -32,12 +32,27 @@ jobs:
       - name: Build Backoffice
         run: pnpm --filter backoffice build
 
+      - name: Start static servers
+        run: |
+          python3 -m http.server 5173 --directory frontend/dist >/tmp/frontend-http.log 2>&1 &
+          python3 -m http.server 5174 --directory backoffice/dist >/tmp/backoffice-http.log 2>&1 &
+
+          for i in {1..30}; do
+            if curl -fsS http://127.0.0.1:5173/ >/dev/null && curl -fsS http://127.0.0.1:5174/ >/dev/null; then
+              echo "Static servers are ready"
+              break
+            fi
+            sleep 1
+          done
+
+          curl -fsS http://127.0.0.1:5173/ >/dev/null
+          curl -fsS http://127.0.0.1:5174/ >/dev/null
+
       - name: Run Lighthouse (Frontend)
         uses: treosh/lighthouse-ci-action@v12
         with:
           urls: |
-            http://localhost:5173/
-          staticDistDir: ./frontend/dist
+            http://127.0.0.1:5173/
           uploadArtifacts: true
           temporaryPublicStorage: true
 
@@ -45,7 +60,6 @@ jobs:
         uses: treosh/lighthouse-ci-action@v12
         with:
           urls: |
-            http://localhost:5174/
-          staticDistDir: ./backoffice/dist
+            http://127.0.0.1:5174/
           uploadArtifacts: true
           temporaryPublicStorage: true
