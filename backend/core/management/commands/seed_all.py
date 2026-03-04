@@ -13,6 +13,7 @@ SEED_PIPELINE: list[tuple[str, str, str]] = [
     ("media_files", "seed_media_files", "Seeding media files..."),
     ("static_pages", "seed_static_pages", "Seeding static pages..."),
     ("site_settings", "seed_site_settings", "Seeding site settings..."),
+    ("menu_items", "seed_menu_items", "Seeding header menu items..."),
     ("social", "seed_social", "Seeding social content..."),
     ("tags", "seed_tags", "Seeding tags..."),
     ("places_category", "seed_places_category", "Seeding places categories..."),

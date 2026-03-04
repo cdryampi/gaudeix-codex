@@ -1,0 +1,114 @@
+[
+  {
+    "type": "custom",
+    "label": "Inicio",
+    "url": "/",
+    "order": 0
+  },
+  {
+    "type": "custom",
+    "label": "Descubre",
+    "url": "/categorias",
+    "order": 1,
+    "children": [
+      {
+        "type": "custom",
+        "label": "Categorías",
+        "url": "/categorias",
+        "order": 0
+      },
+      {
+        "type": "custom",
+        "label": "Patrimonio",
+        "url": "/lugares?category=heritage",
+        "order": 1
+      },
+      {
+        "type": "custom",
+        "label": "Naturaleza",
+        "url": "/lugares?category=nature",
+        "order": 2
+      },
+      {
+        "type": "custom",
+        "label": "Playas",
+        "url": "/lugares?category=beaches",
+        "order": 3
+      },
+      {
+        "type": "custom",
+        "label": "Cultura",
+        "url": "/lugares?category=culture",
+        "order": 4
+      },
+      {
+        "type": "custom",
+        "label": "Gastronomía",
+        "url": "/lugares?category=restaurants",
+        "order": 5
+      },
+      {
+        "type": "custom",
+        "label": "Alojamiento",
+        "url": "/lugares?category=accommodations",
+        "order": 6
+      },
+      {
+        "type": "custom",
+        "label": "Compras",
+        "url": "/lugares?category=shopping",
+        "order": 7
+      }
+    ]
+  },
+  {
+    "type": "custom",
+    "label": "Rutas",
+    "url": "/rutas",
+    "order": 2
+  },
+  {
+    "type": "custom",
+    "label": "Festes",
+    "url": "/festes",
+    "order": 3
+  },
+  {
+    "type": "custom",
+    "label": "Agenda",
+    "url": "/agenda",
+    "order": 4
+  },
+  {
+    "type": "custom",
+    "label": "Info",
+    "url": "/noticias",
+    "order": 5,
+    "children": [
+      {
+        "type": "custom",
+        "label": "Noticias",
+        "url": "/noticias",
+        "order": 0
+      },
+      {
+        "type": "custom",
+        "label": "Mapa interactivo",
+        "url": "/#mapa",
+        "order": 1
+      },
+      {
+        "type": "custom",
+        "label": "Cómo llegar",
+        "url": "/como-llegar",
+        "order": 2
+      },
+      {
+        "type": "custom",
+        "label": "Rankings",
+        "url": "/rankings",
+        "order": 3
+      }
+    ]
+  }
+]
