@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import json
+from io import BytesIO
 from pathlib import Path
 
 import pytest
 from django.core.management import CommandError, call_command
+from PIL import Image
 
 from media_files.management.commands.seed_media_files import Command
 
@@ -18,13 +20,20 @@ def _patch_seed_paths(monkeypatch: pytest.MonkeyPatch, assets_root: Path, manife
     )
 
 
+def _build_png_bytes(color: tuple[int, int, int]) -> bytes:
+    image = Image.new("RGB", (8, 8), color=color)
+    buffer = BytesIO()
+    image.save(buffer, format="PNG")
+    return buffer.getvalue()
+
+
 @pytest.mark.django_db
 def test_seed_media_files_verbose_logs_stable_order(capsys, monkeypatch, tmp_path):
     assets_root = tmp_path / "seed_assets"
     images_dir = assets_root / "images"
     images_dir.mkdir(parents=True)
-    (images_dir / "zeta.png").write_bytes(b"z")
-    (images_dir / "alpha.png").write_bytes(b"a")
+    (images_dir / "zeta.png").write_bytes(_build_png_bytes((255, 0, 0)))
+    (images_dir / "alpha.png").write_bytes(_build_png_bytes((0, 0, 255)))
 
     manifest_path = tmp_path / "media_files.json"
     manifest_path.write_text(
@@ -67,7 +76,7 @@ def test_seed_media_files_rejects_duplicate_manifest_paths(monkeypatch, tmp_path
     assets_root = tmp_path / "seed_assets"
     images_dir = assets_root / "images"
     images_dir.mkdir(parents=True)
-    (images_dir / "alpha.png").write_bytes(b"a")
+    (images_dir / "alpha.png").write_bytes(_build_png_bytes((0, 255, 0)))
 
     manifest_path = tmp_path / "media_files.json"
     manifest_path.write_text(

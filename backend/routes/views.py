@@ -263,8 +263,6 @@ class RouteViewSet(viewsets.ModelViewSet):
         )
         doc.file.save(filename, content_file, save=True)
 
-        # Detach old gpx_file if it was auto-generated (same slug name)
-        old_gpx = route.gpx_file
         route.gpx_file = doc
         route.save(update_fields=["gpx_file"])
 
@@ -274,12 +272,6 @@ class RouteViewSet(viewsets.ModelViewSet):
             len(points),
             doc.pk,
         )
-
-        # Delete old auto-generated document only if it was replaced
-        if old_gpx and old_gpx.pk != doc.pk:
-            old_name = getattr(old_gpx, "original_name", "")
-            if old_name.endswith(".gpx") and old_name == f"{route.slug}.gpx":
-                old_gpx.delete()
 
         serializer = RouteSerializer(
             route, context={"request": request}

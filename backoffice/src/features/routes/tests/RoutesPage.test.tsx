@@ -114,7 +114,7 @@ describe("RoutesPage", () => {
   });
 
   it("shows loading state initially", async () => {
-    vi.mocked(routesApi.getAll).mockImplementation(() => new Promise(() => {}));
+    vi.mocked(routesApi.getAll).mockImplementation(() => new Promise(() => { }));
     render(<RoutesPage />);
     expect(screen.getByText("Cargando rutas...")).toBeInTheDocument();
   });

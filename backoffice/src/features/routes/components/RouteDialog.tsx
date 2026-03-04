@@ -44,6 +44,7 @@ import { Tag } from "@/features/tags/types";
 import { placesApi } from "@/features/places/api/places";
 import { Place } from "@/features/places/types";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
+import { RoutePointsEditor } from "./RoutePointsEditor";
 
 type LocalTranslations = {
   [lang: string]: {
@@ -373,6 +374,22 @@ export function RouteDialog({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validation: At least 1 point with coordinates or a GPX file
+    const hasGpx = !!form.gpx_file_id;
+    const hasStartEnd = !!form.start_latitude && !!form.start_longitude;
+    const hasWaypoints = (form.waypoints_input || []).some(
+      (wp) => places.find((p) => p.id === wp.place_id)?.latitude
+    );
+    const hasCheckpoints = (form.checkpoints_input || []).some(
+      (cp) => !!cp.latitude && !!cp.longitude
+    );
+
+    if (!hasGpx && !hasStartEnd && !hasWaypoints && !hasCheckpoints) {
+      toast.error("La ruta debe tener al menos una coordenada o un archivo GPX.");
+      return;
+    }
+
     const translationsPayload: LocalTranslations = { ...translations };
     delete translationsPayload["ca"];
 
@@ -1197,239 +1214,12 @@ export function RouteDialog({
 
             {/* TAB: WAYPOINTS */}
             <TabsContent value="waypoints" className="space-y-4 pt-4">
-              <div className="flex items-center justify-between border-b pb-4">
-                <div>
-                  <h3 className="text-lg font-medium text-foreground">Itinerario y Puntos de Interés</h3>
-                  <p className="text-sm text-muted-foreground">Añade los lugares que componen esta ruta.</p>
-                </div>
-                <Button
-                  type="button"
-                  onClick={() => {
-                    const current = form.waypoints_input || [];
-                    setForm((prev) => ({
-                      ...prev,
-                      waypoints_input: [
-                        ...current,
-                        { place_id: 0, order: current.length + 1, instructions: "", distance_from_previous_km: null },
-                      ],
-                    }));
-                  }}
-                >
-                  <MapIcon className="mr-2 h-4 w-4" /> Añadir Punto
-                </Button>
-              </div>
-
-              <div className="space-y-4">
-                {(form.waypoints_input || []).length === 0 ? (
-                  <div className="py-12 text-center border-2 border-dashed rounded-xl">
-                    <MapIcon className="mx-auto h-8 w-8 text-muted-foreground/50 mb-3" />
-                    <p className="text-sm font-medium text-muted-foreground">Esta ruta no tiene puntos de interés definidos.</p>
-                  </div>
-                ) : (
-                  (form.waypoints_input || []).map((wp, index) => (
-                    <div key={index} className="grid grid-cols-1 md:grid-cols-12 gap-4 p-4 border rounded-xl bg-slate-50/50 dark:bg-slate-900/20 relative group">
-                      <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          className="h-7 w-7 text-muted-foreground hover:text-foreground"
-                          disabled={index === 0}
-                          onClick={() => {
-                            const current = [...(form.waypoints_input || [])];
-                            if (index > 0) {
-                              [current[index - 1], current[index]] = [current[index], current[index - 1]];
-                              current.forEach((w, i) => w.order = i + 1);
-                              setForm(prev => ({ ...prev, waypoints_input: current }));
-                            }
-                          }}
-                        >
-                          ↑
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          className="h-7 w-7 text-muted-foreground hover:text-foreground"
-                          disabled={index === (form.waypoints_input || []).length - 1}
-                          onClick={() => {
-                            const current = [...(form.waypoints_input || [])];
-                            if (index < current.length - 1) {
-                              [current[index + 1], current[index]] = [current[index], current[index + 1]];
-                              current.forEach((w, i) => w.order = i + 1);
-                              setForm(prev => ({ ...prev, waypoints_input: current }));
-                            }
-                          }}
-                        >
-                          ↓
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          className="h-7 w-7 text-muted-foreground hover:text-destructive"
-                          onClick={() => {
-                            const current = (form.waypoints_input || []).filter((_, i) => i !== index);
-                            current.forEach((w, i) => w.order = i + 1);
-                            setForm(prev => ({ ...prev, waypoints_input: current }));
-                          }}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-
-                      <div className="md:col-span-1 flex items-center justify-center">
-                        <div className="h-8 w-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">
-                          {index + 1}
-                        </div>
-                      </div>
-
-                      <div className="md:col-span-11 space-y-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label>Lugar (Place)</Label>
-                            <Select
-                              value={wp.place_id ? String(wp.place_id) : ""}
-                              onValueChange={(val) => {
-                                const current = [...(form.waypoints_input || [])];
-                                current[index].place_id = Number(val);
-                                setForm(prev => ({ ...prev, waypoints_input: current }));
-                              }}
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Selecciona un lugar..." />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {places.map((place) => (
-                                  <SelectItem key={place.id} value={String(place.id)}>
-                                    {place.title} ({place.slug})
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div className="space-y-2">
-                            <Label>Distancia desde el anterior (km)</Label>
-                            <Input
-                              type="number"
-                              step="0.01"
-                              placeholder="Ej. 1.5"
-                              value={wp.distance_from_previous_km ?? ""}
-                              onChange={(e) => {
-                                const val = e.target.value;
-                                const current = [...(form.waypoints_input || [])];
-                                current[index].distance_from_previous_km = val ? Number(val) : null;
-                                setForm(prev => ({ ...prev, waypoints_input: current }));
-                              }}
-                            />
-                          </div>
-                        </div>
-                        <div className="space-y-2">
-                          <Label>Instrucciones</Label>
-                          <Textarea
-                            placeholder="Ej. Gira a la derecha en la intersección..."
-                            className="h-16"
-                            value={wp.instructions || ""}
-                            onChange={(e) => {
-                              const current = [...(form.waypoints_input || [])];
-                              current[index].instructions = e.target.value;
-                              setForm(prev => ({ ...prev, waypoints_input: current }));
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-
-              {/* CHECKPOINTS SECTION */}
-              <div className="border-t pt-6 mt-4">
-                <div className="flex items-center justify-between mb-4">
-                  <div>
-                    <h4 className="text-base font-semibold text-foreground">Checkpoints de Ruta</h4>
-                    <p className="text-xs text-muted-foreground">Puntos propios con coordenadas y descripción (no vinculados a Places).</p>
-                  </div>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => {
-                      const current = form.checkpoints_input || [];
-                      setForm((prev) => ({
-                        ...prev,
-                        checkpoints_input: [
-                          ...current,
-                          { order: current.length + 1, title: "", description: "", latitude: null, longitude: null, is_active: true },
-                        ],
-                      }));
-                    }}
-                  >
-                    <MapIcon className="mr-2 h-4 w-4" /> Añadir Checkpoint
-                  </Button>
-                </div>
-                <div className="space-y-3">
-                  {(form.checkpoints_input || []).length === 0 ? (
-                    <div className="py-8 text-center border-2 border-dashed rounded-xl">
-                      <p className="text-sm text-muted-foreground">No hay checkpoints definidos para esta ruta.</p>
-                    </div>
-                  ) : (
-                    (form.checkpoints_input || []).map((cp, index) => (
-                      <div key={index} className="p-4 border rounded-xl bg-amber-50/30 dark:bg-amber-900/10 relative group space-y-3">
-                        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
-                          <Button type="button" variant="ghost" size="icon" className="h-7 w-7" disabled={index === 0}
-                            onClick={() => {
-                              const c = [...(form.checkpoints_input || [])];
-                              if (index > 0) { [c[index - 1], c[index]] = [c[index], c[index - 1]]; c.forEach((x, i) => x.order = i + 1); setForm(p => ({ ...p, checkpoints_input: c })); }
-                            }}
-                          >↑</Button>
-                          <Button type="button" variant="ghost" size="icon" className="h-7 w-7" disabled={index === (form.checkpoints_input || []).length - 1}
-                            onClick={() => {
-                              const c = [...(form.checkpoints_input || [])];
-                              if (index < c.length - 1) { [c[index + 1], c[index]] = [c[index], c[index + 1]]; c.forEach((x, i) => x.order = i + 1); setForm(p => ({ ...p, checkpoints_input: c })); }
-                            }}
-                          >↓</Button>
-                          <Button type="button" variant="ghost" size="icon" className="h-7 w-7 hover:text-destructive"
-                            onClick={() => {
-                              const c = (form.checkpoints_input || []).filter((_, i) => i !== index);
-                              c.forEach((x, i) => x.order = i + 1);
-                              setForm(p => ({ ...p, checkpoints_input: c }));
-                            }}
-                          ><X className="h-4 w-4" /></Button>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <div className="h-7 w-7 rounded-full bg-amber-500/20 text-amber-700 dark:text-amber-300 flex items-center justify-center font-bold text-xs flex-shrink-0">{index + 1}</div>
-                          <Input placeholder="Título del checkpoint" value={cp.title}
-                            onChange={(e) => { const c = [...(form.checkpoints_input || [])]; c[index].title = e.target.value; setForm(p => ({ ...p, checkpoints_input: c })); }}
-                          />
-                        </div>
-                        <Textarea placeholder="Descripción (opcional)" className="h-14" value={cp.description || ""}
-                          onChange={(e) => { const c = [...(form.checkpoints_input || [])]; c[index].description = e.target.value; setForm(p => ({ ...p, checkpoints_input: c })); }}
-                        />
-                        <div className="grid grid-cols-2 gap-3">
-                          <div className="space-y-1">
-                            <Label className="text-xs">Latitud</Label>
-                            <Input type="number" step="0.000001" placeholder="41.3851" value={cp.latitude ?? ""}
-                              onChange={(e) => { const c = [...(form.checkpoints_input || [])]; c[index].latitude = e.target.value ? Number(e.target.value) : null; setForm(p => ({ ...p, checkpoints_input: c })); }}
-                            />
-                          </div>
-                          <div className="space-y-1">
-                            <Label className="text-xs">Longitud</Label>
-                            <Input type="number" step="0.000001" placeholder="2.1734" value={cp.longitude ?? ""}
-                              onChange={(e) => { const c = [...(form.checkpoints_input || [])]; c[index].longitude = e.target.value ? Number(e.target.value) : null; setForm(p => ({ ...p, checkpoints_input: c })); }}
-                            />
-                          </div>
-                        </div>
-                        <label className="flex items-center gap-2 cursor-pointer">
-                          <input type="checkbox" checked={cp.is_active}
-                            onChange={(e) => { const c = [...(form.checkpoints_input || [])]; c[index].is_active = e.target.checked; setForm(p => ({ ...p, checkpoints_input: c })); }}
-                          />
-                          <span className="text-sm text-muted-foreground">Activo</span>
-                        </label>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
+              <RoutePointsEditor
+                form={form}
+                setForm={setForm}
+                places={places}
+                googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY || ""}
+              />
             </TabsContent>
           </Tabs>
 

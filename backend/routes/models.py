@@ -206,7 +206,15 @@ class Route(TranslatableModel, ContentBase):
     def save(self, *args, **kwargs):
         """Auto-generate slug from title if not provided."""
         if not self.slug:
-            title = self.safe_translation_getter("title", any_language=True)
+            # Prevent Parler from querying translation M2M relation before PK is set
+            try:
+                title = getattr(self, "title", None)
+            except Exception:
+                title = None
+            
+            if not title and self.pk:
+                title = self.safe_translation_getter("title", any_language=True)
+                
             if title:
                 base_slug = slugify(title)
                 slug = base_slug

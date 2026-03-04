@@ -6,10 +6,9 @@
  *   Mobile:  Hero → Swipeable pills → Map → Carousel → Content → Sticky bar
  */
 
-import { useMemo, useState } from "react";
+import { useState, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { MarkerF, PolylineF, InfoWindowF } from "@react-google-maps/api";
 import {
   ArrowLeft,
   Timer,
@@ -31,7 +30,7 @@ import { GuidedAppBanner } from "../components/GuidedAppBanner";
 
 import { getRouteBySlug, getRouteItinerary } from "../api";
 import { getDifficultyConfig, getRouteTypeConfig } from "../constants";
-import { MapContainer, DEFAULT_CENTER } from "@/components/site/MapContainer";
+import { RouteMap } from "../components/RouteMap";
 
 export const RouteDetailPage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -39,6 +38,8 @@ export const RouteDetailPage = () => {
   const [hoveredCheckpointId, setHoveredCheckpointId] = useState<number | null>(
     null,
   );
+  // Refs for auto-scroll
+  const checkpointRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
 
   const {
     data: route,
@@ -55,49 +56,6 @@ export const RouteDetailPage = () => {
     queryFn: () => getRouteItinerary(slug!),
     enabled: !!slug,
   });
-
-  const polylinePath = useMemo(() => {
-    if (!itinerary?.checkpoints) return [];
-    return itinerary.checkpoints
-      .filter((cp) => cp.lat !== null && cp.lng !== null)
-      .map((cp) => ({ lat: cp.lat as number, lng: cp.lng as number }));
-  }, [itinerary]);
-
-  const mapCenter = useMemo(() => {
-    if (itinerary?.bounds) {
-      return {
-        lat: (itinerary.bounds.north + itinerary.bounds.south) / 2,
-        lng: (itinerary.bounds.east + itinerary.bounds.west) / 2,
-      };
-    }
-    if (route?.start_latitude && route?.start_longitude) {
-      return {
-        lat: Number(route.start_latitude),
-        lng: Number(route.start_longitude),
-      };
-    }
-    return DEFAULT_CENTER;
-  }, [itinerary, route]);
-
-  const renderedMarkers = useMemo(() => {
-    if (!itinerary?.checkpoints) return null;
-    return itinerary.checkpoints.map((cp) =>
-      cp.lat && cp.lng ? (
-        <MarkerF
-          key={cp.id}
-          position={{ lat: cp.lat, lng: cp.lng }}
-          onMouseOver={() => setHoveredCheckpointId(cp.id)}
-          onMouseOut={() => setHoveredCheckpointId(null)}
-          label={{
-            text: String(cp.order),
-            color: "#fff",
-            fontWeight: "bold",
-            fontSize: "11px",
-          }}
-        />
-      ) : null,
-    );
-  }, [itinerary?.checkpoints]);
 
   const hasCheckpoints = itinerary?.checkpoints && itinerary.checkpoints.length > 0;
 
@@ -304,55 +262,21 @@ export const RouteDetailPage = () => {
             </h2>
             <div className="aspect-[4/3] lg:aspect-auto lg:h-[450px] rounded-2xl lg:rounded-3xl overflow-hidden bg-slate-100 border border-slate-200 relative shadow-sm">
               {hasCheckpoints ? (
-                <MapContainer
-                  className="w-full h-full"
-                  center={mapCenter}
-                  zoom={13}
-                  options={{
-                    mapTypeControl: true,
-                    streetViewControl: false,
-                    fullscreenControl: true,
+                <RouteMap
+                  route={route}
+                  itinerary={itinerary}
+                  hoveredCheckpointId={hoveredCheckpointId}
+                  onHoverCheckpoint={setHoveredCheckpointId}
+                  onSelectCheckpoint={(id) => {
+                    setHoveredCheckpointId(id);
+                    if (id && checkpointRefs.current[id]) {
+                      checkpointRefs.current[id]?.scrollIntoView({
+                        behavior: "smooth",
+                        block: "center",
+                      });
+                    }
                   }}
-                >
-                  {/* Polyline */}
-                  {polylinePath.length > 1 && (
-                    <PolylineF
-                      path={polylinePath}
-                      options={{
-                        strokeColor: "#e8a317",
-                        strokeOpacity: 0.9,
-                        strokeWeight: 4,
-                      }}
-                    />
-                  )}
-
-                  {/* Checkpoint markers with numbers */}
-                  {renderedMarkers}
-
-                  {/* InfoWindow */}
-                  {hoveredCheckpointId && (() => {
-                    const cp = itinerary!.checkpoints.find(
-                      (c) => c.id === hoveredCheckpointId,
-                    );
-                    return cp?.lat && cp?.lng ? (
-                      <InfoWindowF
-                        position={{ lat: cp.lat, lng: cp.lng }}
-                        options={{ disableAutoPan: true }}
-                      >
-                        <div className="p-2 min-w-[180px]">
-                          <p className="font-bold text-slate-900 text-sm mb-1">
-                            {cp.order}. {cp.title}
-                          </p>
-                          {cp.description && (
-                            <p className="text-xs text-slate-500">
-                              {cp.description}
-                            </p>
-                          )}
-                        </div>
-                      </InfoWindowF>
-                    ) : null;
-                  })()}
-                </MapContainer>
+                />
               ) : (
                 /* Fallback: static placeholder */
                 <div className="h-full flex items-center justify-center bg-slate-50">
@@ -452,7 +376,9 @@ export const RouteDetailPage = () => {
                 {itinerary!.checkpoints.map((cp, idx) => (
                   <div
                     key={cp.id}
-                    className="flex gap-4 group cursor-pointer"
+                    ref={(el) => (checkpointRefs.current[cp.id] = el)}
+                    className={`flex gap-4 group cursor-pointer p-2 -m-2 rounded-xl transition-colors ${hoveredCheckpointId === cp.id ? "bg-slate-50" : ""
+                      }`}
                     onMouseEnter={() => setHoveredCheckpointId(cp.id)}
                     onMouseLeave={() => setHoveredCheckpointId(null)}
                   >

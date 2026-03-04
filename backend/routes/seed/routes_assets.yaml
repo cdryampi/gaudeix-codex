@@ -60,27 +60,63 @@ assets:
   order: 64
   attach_to: checkpoint_image
   language: null
-- path: images/cp_pineda.png
+- path: images/cabrera_ronda_1.png
   type: image
-  slug_or_key: cp_pineda.png
+  slug_or_key: cabrera_ronda_1.png
   order: 82
   attach_to: gallery
   language: null
-- path: images/cp_torre.png
+- path: images/cabrera_ronda_2.png
   type: image
-  slug_or_key: cp_torre.png
+  slug_or_key: cabrera_ronda_2.png
   order: 83
   attach_to: gallery
   language: null
-- path: images/cp_cala.png
+- path: images/ibers_1.png
   type: image
-  slug_or_key: cp_cala.png
+  slug_or_key: ibers_1.png
   order: 84
   attach_to: gallery
   language: null
-- path: images/cp_passeig.png
+- path: images/ibers_2.png
   type: image
-  slug_or_key: cp_passeig.png
+  slug_or_key: ibers_2.png
+  order: 85
+  attach_to: gallery
+  language: null
+- path: images/btt_1.png
+  type: image
+  slug_or_key: btt_1.png
   order: 86
+  attach_to: gallery
+  language: null
+- path: images/btt_2.png
+  type: image
+  slug_or_key: btt_2.png
+  order: 87
+  attach_to: gallery
+  language: null
+- path: images/vinyaters_1.png
+  type: image
+  slug_or_key: vinyaters_1.png
+  order: 88
+  attach_to: gallery
+  language: null
+- path: images/vinyaters_2.png
+  type: image
+  slug_or_key: vinyaters_2.png
+  order: 89
+  attach_to: gallery
+  language: null
+- path: images/volta_1.png
+  type: image
+  slug_or_key: volta_1.png
+  order: 90
+  attach_to: gallery
+  language: null
+- path: images/volta_2.png
+  type: image
+  slug_or_key: volta_2.png
+  order: 91
   attach_to: gallery
   language: null

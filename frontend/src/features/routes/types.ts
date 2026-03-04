@@ -64,12 +64,15 @@ export interface RouteItineraryResponse {
   start: { lat: number; lng: number } | null;
   end: { lat: number; lng: number } | null;
   bounds: RouteBounds | null;
-  track_geojson: Record<string, unknown> | null; // GeoJSON Object
+  track_geojson: Record<string, any> | null; // GeoJSON Object
   waypoints: RouteWaypoint[];
   checkpoints: RouteCheckpoint[];
   segments: RouteSegment[];
   summary: RouteItinerarySummary;
 }
+
+// Alias for convenience
+export type RouteItinerary = RouteItineraryResponse;
 
 export interface Route {
   id: number;
@@ -94,7 +97,7 @@ export interface Route {
   end_latitude: number | null;
   end_longitude: number | null;
   is_circular: boolean;
-  track_geojson: object | null;
+  track_geojson: Record<string, any> | null;
 
   // Status
   is_published: boolean;

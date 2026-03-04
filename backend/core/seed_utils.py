@@ -3,6 +3,8 @@ from __future__ import annotations
 from collections.abc import Iterable
 from pathlib import Path
 
+GLOBAL_SEED_ENV_VAR = "GAUDEIX_SEED"
+
 
 def sorted_paths(paths: Iterable[Path]) -> list[Path]:
     """Return paths sorted deterministically by filename."""

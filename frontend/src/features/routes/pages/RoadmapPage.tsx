@@ -10,20 +10,39 @@ import {
     Navigation,
     Mountain,
     Timer,
-    Info,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
+import { useQueries } from "@tanstack/react-query";
 
 export const RoadmapPage = () => {
     const [filters, setFilters] = useState<RouteFilters>({
         is_published: true,
     });
-    const [selectedRouteSlug, setSelectedRouteSlug] = useState<string | null>(
-        null,
-    );
-    const [hoveredCheckpointId, setHoveredCheckpointId] = useState<number | null>(
-        null,
-    );
+    const [searchParams, setSearchParams] = useSearchParams();
+    const selectedRouteSlugs = useMemo(() => {
+        const routesParam = searchParams.get("routes");
+        return routesParam ? routesParam.split(',').filter(Boolean) : [];
+    }, [searchParams]);
+
+    const [hoveredCheckpointId, setHoveredCheckpointId] = useState<number | null>(null);
+
+    const toggleRouteSelection = (slug: string) => {
+        setSearchParams((prev) => {
+            const current = prev.get("routes")?.split(',').filter(Boolean) || [];
+            let next: string[];
+            if (current.includes(slug)) {
+                next = current.filter(s => s !== slug);
+            } else {
+                next = [...current, slug];
+            }
+            if (next.length > 0) {
+                prev.set("routes", next.join(','));
+            } else {
+                prev.delete("routes");
+            }
+            return prev;
+        });
+    };
 
     // Fetch list of routes matching filters
     const { data: routesResponse, isLoading: isLoadingRoutes } = useQuery({
@@ -38,32 +57,60 @@ export const RoadmapPage = () => {
             : routesResponse.results || [];
     }, [routesResponse]);
 
-    // Fetch itinerary for selected route
-    const { data: itinerary } = useQuery({
-        queryKey: ["route-itinerary", selectedRouteSlug],
-        queryFn: () =>
-            selectedRouteSlug ? getRouteItinerary(selectedRouteSlug) : null,
-        enabled: !!selectedRouteSlug,
+    // Fetch itineraries for all selected routes
+    const itineraryQueries = useQueries({
+        queries: selectedRouteSlugs.map((slug) => ({
+            queryKey: ["route-itinerary", slug],
+            queryFn: () => getRouteItinerary(slug),
+            staleTime: 5 * 60 * 1000,
+        }))
     });
 
-    // Calculate Map center or bounds
+    const itineraries = useMemo(() => {
+        return itineraryQueries.map(q => q.data).filter(Boolean) as any[];
+    }, [itineraryQueries]);
+
+    // Calculate Map center or bounds across all itineraries
+    const mapBounds = useMemo(() => {
+        if (itineraries.length === 0) return undefined;
+        let north = -90, south = 90, east = -180, west = 180;
+        let hasBounds = false;
+
+        itineraries.forEach(it => {
+            if (it.bounds) {
+                hasBounds = true;
+                north = Math.max(north, it.bounds.north);
+                south = Math.min(south, it.bounds.south);
+                east = Math.max(east, it.bounds.east);
+                west = Math.min(west, it.bounds.west);
+            }
+        });
+
+        return hasBounds ? { north, south, east, west } : undefined;
+    }, [itineraries]);
+
     const mapCenter = useMemo(() => {
-        if (itinerary?.bounds) {
+        if (mapBounds) {
             return {
-                lat: (itinerary.bounds.north + itinerary.bounds.south) / 2,
-                lng: (itinerary.bounds.east + itinerary.bounds.west) / 2,
+                lat: (mapBounds.north + mapBounds.south) / 2,
+                lng: (mapBounds.east + mapBounds.west) / 2,
             };
         }
         return DEFAULT_CENTER;
-    }, [itinerary]);
+    }, [mapBounds]);
 
-    // Derived polyline path from checkpoints
-    const polylinePath = useMemo(() => {
-        if (!itinerary?.checkpoints) return [];
-        return itinerary.checkpoints
-            .filter((cp) => cp.lat !== null && cp.lng !== null)
-            .map((cp) => ({ lat: cp.lat as number, lng: cp.lng as number }));
-    }, [itinerary]);
+    // Calculate totals
+    const totals = useMemo(() => {
+        let distance = 0;
+        let duration = 0;
+        let stops = 0;
+        itineraries.forEach(it => {
+            distance += Number(it.summary?.distance_km || 0);
+            duration += Number(it.summary?.duration_minutes || 0);
+            stops += Number(it.summary?.checkpoints_count || 0);
+        });
+        return { distance, duration, stops };
+    }, [itineraries]);
 
     return (
         <main className="min-h-screen bg-slate-50 pt-24 pb-12 flex flex-col h-screen">
@@ -132,13 +179,13 @@ export const RoadmapPage = () => {
                                 </div>
                             ) : (
                                 routes.map((route: Route) => {
-                                    const isActive = selectedRouteSlug === route.slug;
+                                    const isActive = selectedRouteSlugs.includes(route.slug);
                                     const diffConfig = getDifficultyConfig(route.difficulty);
 
                                     return (
                                         <button
                                             key={route.id}
-                                            onClick={() => setSelectedRouteSlug(route.slug)}
+                                            onClick={() => toggleRouteSelection(route.slug)}
                                             className={`w-full text-left p-4 rounded-2xl transition-all ${isActive
                                                 ? "bg-slate-900 text-white shadow-lg"
                                                 : "bg-white hover:bg-slate-50 text-slate-900 border border-transparent hover:border-slate-100"
@@ -178,83 +225,104 @@ export const RoadmapPage = () => {
                         <MapContainer
                             className="w-full h-full"
                             center={mapCenter}
-                            zoom={itinerary ? 13 : 11}
+                            zoom={itineraries.length > 0 ? 12 : 11}
                             options={{
                                 mapTypeControl: false,
                                 streetViewControl: false,
                                 fullscreenControl: true,
                             }}
                         >
-                            {window.google && itinerary && (
+                            {window.google && itineraries.length > 0 && (
                                 <>
-                                    {/* Polyline connecting checkpoints */}
-                                    {polylinePath.length > 1 && (
-                                        <PolylineF
-                                            path={polylinePath}
-                                            options={{
-                                                strokeColor: "#00f2ea",
-                                                strokeOpacity: 0.8,
-                                                strokeWeight: 4,
-                                            }}
-                                        />
-                                    )}
+                                    {itineraries.map((itinerary, idx) => {
+                                        // Try using track_geojson first
+                                        let paths: google.maps.LatLngLiteral[][] = [];
+                                        if (itinerary.route.track_geojson) {
+                                            const geo = itinerary.route.track_geojson;
+                                            if (geo.type === "LineString" && geo.coordinates) {
+                                                paths = [geo.coordinates.map((c: number[]) => ({ lat: c[1], lng: c[0] }))];
+                                            } else if (geo.type === "MultiLineString" && geo.coordinates) {
+                                                paths = geo.coordinates.map((seg: number[][]) => seg.map((c: number[]) => ({ lat: c[1], lng: c[0] })));
+                                            }
+                                        }
 
-                                    {/* Marker for each active checkpoint */}
-                                    {itinerary.checkpoints.map(
-                                        (cp) =>
-                                            cp.lat &&
-                                            cp.lng && (
-                                                <MarkerF
-                                                    key={cp.id}
-                                                    position={{ lat: cp.lat, lng: cp.lng }}
-                                                    onMouseOver={() => setHoveredCheckpointId(cp.id)}
-                                                    onMouseOut={() => setHoveredCheckpointId(null)}
-                                                    icon={{
-                                                        path: google.maps.SymbolPath.CIRCLE,
-                                                        fillColor:
-                                                            hoveredCheckpointId === cp.id
-                                                                ? "#00f2ea"
-                                                                : "#0f172a",
-                                                        fillOpacity: 1,
-                                                        strokeColor: "#ffffff",
-                                                        strokeWeight: 2,
-                                                        scale: hoveredCheckpointId === cp.id ? 8 : 6,
-                                                    }}
-                                                />
-                                            ),
-                                    )}
+                                        // Fallback to checkpoints
+                                        if (paths.length === 0 && itinerary.checkpoints) {
+                                            const cpPath = itinerary.checkpoints
+                                                .filter((cp: any) => cp.lat !== null && cp.lng !== null)
+                                                .map((cp: any) => ({ lat: cp.lat as number, lng: cp.lng as number }));
+                                            if (cpPath.length > 1) paths = [cpPath];
+                                        }
 
-                                    {/* InfoWindow for hovered checkpoint */}
-                                    {hoveredCheckpointId && (
-                                        <InfoWindowF
-                                            position={{
-                                                lat:
-                                                    itinerary.checkpoints.find(
-                                                        (c) => c.id === hoveredCheckpointId,
-                                                    )?.lat || 0,
-                                                lng:
-                                                    itinerary.checkpoints.find(
-                                                        (c) => c.id === hoveredCheckpointId,
-                                                    )?.lng || 0,
-                                            }}
-                                            options={{ disableAutoPan: true }}
-                                        >
-                                            <div className="p-2 min-w-[150px]">
-                                                <p className="font-bold text-slate-900 text-sm">
-                                                    {
-                                                        itinerary.checkpoints.find(
-                                                            (c) => c.id === hoveredCheckpointId,
-                                                        )?.title
-                                                    }
-                                                </p>
+                                        // Use distinct colors for different routes based on index
+                                        const colors = ["#00f2ea", "#e8a317", "#ef4444", "#8b5cf6", "#10b981"];
+                                        const routeColor = colors[idx % colors.length];
+
+                                        return (
+                                            <div key={`itinerary-${itinerary.route.slug}`}>
+                                                {paths.map((path, pIdx) => (
+                                                    <PolylineF
+                                                        key={`poly-${idx}-${pIdx}`}
+                                                        path={path}
+                                                        options={{
+                                                            strokeColor: routeColor,
+                                                            strokeOpacity: 0.8,
+                                                            strokeWeight: 4,
+                                                        }}
+                                                    />
+                                                ))}
+
+                                                {/* Checkpoint markers */}
+                                                {itinerary.checkpoints.map((cp: any) =>
+                                                    cp.lat && cp.lng && (
+                                                        <MarkerF
+                                                            key={`marker-${idx}-${cp.id}`}
+                                                            position={{ lat: cp.lat, lng: cp.lng }}
+                                                            onMouseOver={() => setHoveredCheckpointId(cp.id)}
+                                                            onMouseOut={() => setHoveredCheckpointId(null)}
+                                                            icon={{
+                                                                path: google.maps.SymbolPath.CIRCLE,
+                                                                fillColor: hoveredCheckpointId === cp.id ? routeColor : "#0f172a",
+                                                                fillOpacity: 1,
+                                                                strokeColor: "#ffffff",
+                                                                strokeWeight: 2,
+                                                                scale: hoveredCheckpointId === cp.id ? 8 : 6,
+                                                            }}
+                                                        />
+                                                    )
+                                                )}
                                             </div>
-                                        </InfoWindowF>
-                                    )}
+                                        );
+                                    })}
+
+                                    {/* Combined InfoWindow for hovered checkpoint */}
+                                    {hoveredCheckpointId && (() => {
+                                        // Find which checkpoint is hovered across all itineraries
+                                        let hoveredCp: any = null;
+                                        for (const it of itineraries) {
+                                            const found = it.checkpoints.find((c: any) => c.id === hoveredCheckpointId);
+                                            if (found) { hoveredCp = found; break; }
+                                        }
+
+                                        return hoveredCp?.lat && hoveredCp?.lng ? (
+                                            <InfoWindowF
+                                                position={{ lat: hoveredCp.lat, lng: hoveredCp.lng }}
+                                                options={{ disableAutoPan: true }}
+                                            >
+                                                <div className="p-2 min-w-[150px]">
+                                                    <p className="font-bold text-slate-900 text-sm">{hoveredCp.title}</p>
+                                                    {hoveredCp.description && (
+                                                        <p className="text-xs text-slate-500 mt-1 line-clamp-2">{hoveredCp.description}</p>
+                                                    )}
+                                                </div>
+                                            </InfoWindowF>
+                                        ) : null;
+                                    })()}
                                 </>
                             )}
                         </MapContainer>
 
-                        {!selectedRouteSlug && (
+                        {selectedRouteSlugs.length === 0 && (
                             <div className="absolute inset-0 bg-slate-900/10 backdrop-blur-sm flex items-center justify-center p-6 text-center">
                                 <div className="bg-white p-8 rounded-3xl shadow-xl max-w-sm">
                                     <Navigation className="h-12 w-12 text-primary mx-auto mb-4" />
@@ -267,48 +335,50 @@ export const RoadmapPage = () => {
                         )}
                     </div>
 
-                    {/* Itinerary Bottom Panel */}
-                    {itinerary && (
+                    {/* Itinerary Bottom Panel - Sum of metrics */}
+                    {selectedRouteSlugs.length > 0 && (
                         <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-6 flex-shrink-0 max-h-[30vh] overflow-y-auto">
                             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
                                 <div>
                                     <h2 className="text-2xl font-black text-slate-900 tracking-tight">
-                                        {itinerary.route.title}
+                                        Roadmap Seleccionado ({selectedRouteSlugs.length} rutas)
                                     </h2>
-                                    <div className="flex items-center gap-4 mt-2 text-sm font-semibold text-slate-500">
-                                        {itinerary.summary.distance_km && (
-                                            <span className="flex items-center gap-1.5">
-                                                <Mountain className="h-4 w-4" />
-                                                {Number(itinerary.summary.distance_km).toFixed(1)} km
-                                            </span>
-                                        )}
-                                        {itinerary.summary.duration_minutes && (
-                                            <span className="flex items-center gap-1.5">
-                                                <Timer className="h-4 w-4" />
-                                                {itinerary.summary.duration_minutes} min
-                                            </span>
-                                        )}
+                                    <div className="flex flex-wrap items-center gap-4 mt-2 text-sm font-semibold text-slate-500">
+                                        <span className="flex items-center gap-1.5">
+                                            <Mountain className="h-4 w-4" />
+                                            {totals.distance.toFixed(1)} km en total
+                                        </span>
+                                        <span className="flex items-center gap-1.5">
+                                            <Timer className="h-4 w-4" />
+                                            {totals.duration} min
+                                        </span>
+                                        <span className="flex items-center gap-1.5 px-2 py-1 bg-slate-100 rounded-lg text-xs">
+                                            {totals.stops} paradas
+                                        </span>
                                     </div>
                                 </div>
-
-                                <Link
-                                    to={`/rutas/${itinerary.route.slug}`}
-                                    className="px-6 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-900 text-xs font-black uppercase tracking-widest transition-colors flex items-center gap-2"
+                                <button
+                                    onClick={() => {
+                                        navigator.clipboard.writeText(window.location.href);
+                                        alert("¡Enlace copiado al portapapeles! Puedes compartir tu Roadmap.");
+                                    }}
+                                    className="px-6 py-3 rounded-xl bg-slate-900 hover:bg-primary text-white text-xs font-black uppercase tracking-widest transition-colors flex items-center gap-2"
                                 >
-                                    Ver Ficha Completa
+                                    Compartir Roadmap
                                     <ChevronRight className="h-4 w-4" />
-                                </Link>
+                                </button>
                             </div>
 
-                            {itinerary.checkpoints && itinerary.checkpoints.length > 0 ? (
-                                <div className="space-y-4">
-                                    <h3 className="text-xs font-black uppercase tracking-widest text-primary">
-                                        Itinerario ({itinerary.checkpoints.length} puntos)
-                                    </h3>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                        {itinerary.checkpoints.map((cp) => (
+                            {/* List of stops/checkpoints across all selected routes */}
+                            <div className="space-y-4">
+                                <h3 className="text-xs font-black uppercase tracking-widest text-primary">
+                                    Puntos de paso ({totals.stops} puntos)
+                                </h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    {itineraries.map((itinerary, rIdx) => (
+                                        itinerary.checkpoints.map((cp: any) => (
                                             <div
-                                                key={cp.id}
+                                                key={`cp-${rIdx}-${cp.id}`}
                                                 className="flex gap-4 p-4 rounded-2xl bg-slate-50 hover:bg-slate-100 transition-colors cursor-pointer group"
                                                 onMouseEnter={() => setHoveredCheckpointId(cp.id)}
                                                 onMouseLeave={() => setHoveredCheckpointId(null)}
@@ -327,15 +397,10 @@ export const RoadmapPage = () => {
                                                     )}
                                                 </div>
                                             </div>
-                                        ))}
-                                    </div>
+                                        ))
+                                    ))}
                                 </div>
-                            ) : (
-                                <div className="flex items-center gap-3 text-slate-400 p-4 rounded-2xl border border-dashed border-slate-200">
-                                    <Info className="h-5 w-5" />
-                                    <p className="text-sm font-medium">Esta ruta no tiene itinerario o puntos de paso configurados aún.</p>
-                                </div>
-                            )}
+                            </div>
                         </div>
                     )}
                 </div>

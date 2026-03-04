@@ -8,6 +8,7 @@ from django.core.files import File
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
+from core.seed_assets import resolve_seed_asset_dir
 from core.seed_utils import find_duplicate_manifest_paths
 from media_files.models import DocumentFile, ImageFile
 

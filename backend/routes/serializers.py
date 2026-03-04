@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from decimal import Decimal
 
-from django.conf import settings
 from rest_framework import serializers
 from parler_rest.serializers import TranslatableModelSerializer, TranslatedFieldsField
 
@@ -14,6 +13,7 @@ from media_files.models import DocumentFile, ImageFile
 from media_files.serializers import DocumentFileSerializer, ImageFileSerializer
 
 from .models import Route, RouteWaypoint, RouteCheckpoint
+from .utils.parsers import parse_track_file
 
 
 class RouteTranslationSerializer(serializers.Serializer):
@@ -259,8 +259,13 @@ class RouteSerializer(TranslatableModelSerializer):
             validated_data["category"] = validated_data.pop("category_id")
         if "featured_media_id" in validated_data:
             validated_data["featured_media"] = validated_data.pop("featured_media_id")
+            
         if "gpx_file_id" in validated_data:
-            validated_data["gpx_file"] = validated_data.pop("gpx_file_id")
+            gpx_file = validated_data.pop("gpx_file_id")
+            validated_data["gpx_file"] = gpx_file
+            if gpx_file:
+                # Try to parse GPX/KML
+                validated_data["track_geojson"] = parse_track_file(gpx_file)
 
         route = super().create(validated_data)
 
@@ -291,8 +296,13 @@ class RouteSerializer(TranslatableModelSerializer):
             validated_data["category"] = validated_data.pop("category_id")
         if "featured_media_id" in validated_data:
             validated_data["featured_media"] = validated_data.pop("featured_media_id")
+            
         if "gpx_file_id" in validated_data:
-            validated_data["gpx_file"] = validated_data.pop("gpx_file_id")
+            gpx_file = validated_data.pop("gpx_file_id")
+            validated_data["gpx_file"] = gpx_file
+            if gpx_file:
+                # Try to parse GPX/KML
+                validated_data["track_geojson"] = parse_track_file(gpx_file)
 
         instance = super().update(instance, validated_data)
 

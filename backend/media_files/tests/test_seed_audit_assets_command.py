@@ -3,12 +3,14 @@ from __future__ import annotations
 import json
 from io import StringIO
 
+import pytest
 from django.core.files.base import ContentFile
 from django.core.management import call_command
 
 from media_files.models import DocumentFile
 
 
+@pytest.mark.django_db
 def test_seed_audit_assets_reports_orphans_duplicates_and_legacy_refs(media_storage):
     shared_content = b"same-content"
 

@@ -88,8 +88,8 @@
       }
     },
     "gallery": [
-      "cp_pineda.png",
-      "cp_torre.png"
+      "cabrera_ronda_1.png",
+      "cabrera_ronda_2.png"
     ]
   },
   {
@@ -166,8 +166,8 @@
       }
     },
     "gallery": [
-      "cp_cala.png",
-      "cp_torre.png"
+      "ibers_1.png",
+      "ibers_2.png"
     ]
   },
   {
@@ -252,8 +252,8 @@
       }
     },
     "gallery": [
-      "cp_passeig.png",
-      "cp_pineda.png"
+      "btt_1.png",
+      "btt_2.png"
     ]
   },
   {
@@ -322,8 +322,8 @@
       }
     },
     "gallery": [
-      "cp_torre.png",
-      "cp_cala.png"
+      "vinyaters_1.png",
+      "vinyaters_2.png"
     ]
   },
   {
@@ -408,8 +408,8 @@
       }
     },
     "gallery": [
-      "cp_torre.png",
-      "cp_torre.png"
+      "volta_1.png",
+      "volta_2.png"
     ]
   }
 ]
