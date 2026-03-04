@@ -129,7 +129,7 @@ export function EventDetailContent({
                   key={tag.id}
                   className="rounded-full bg-white/10 px-5 py-2 text-[10px] font-bold uppercase tracking-wider text-white backdrop-blur-sm border border-white/10"
                 >
-                  #{tag.name}
+                  #{tag.nombre}
                 </span>
               ))}
             </div>
