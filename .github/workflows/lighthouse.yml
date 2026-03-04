@@ -54,6 +54,7 @@ jobs:
           urls: |
             http://127.0.0.1:5173/
           uploadArtifacts: true
+          artifactName: lighthouse-frontend
           temporaryPublicStorage: true
 
       - name: Run Lighthouse (Backoffice)
@@ -62,4 +63,5 @@ jobs:
           urls: |
             http://127.0.0.1:5174/
           uploadArtifacts: true
+          artifactName: lighthouse-backoffice
           temporaryPublicStorage: true
