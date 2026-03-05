@@ -5,10 +5,11 @@ import path from "path";
 export default defineConfig({
   plugins: [react()],
   resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-      "@frontend": path.resolve(__dirname, "../frontend/src"),
-    },
+    alias: [
+      { find: "@", replacement: path.resolve(__dirname, "./src") },
+      { find: "@frontend", replacement: path.resolve(__dirname, "../frontend/src") },
+      { find: /.*\.css$/, replacement: path.resolve(__dirname, "./src/tests/empty.css") }
+    ]
   },
   test: {
     globals: true,

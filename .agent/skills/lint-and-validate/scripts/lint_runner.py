@@ -42,13 +42,15 @@ def detect_project_type(project_path: Path) -> dict:
             
             # Check for lint script
             if "lint" in scripts:
-                result["linters"].append({"name": "npm lint", "cmd": ["npm", "run", "lint"]})
+                result["linters"].append({"name": "pnpm lint", "cmd": ["pnpm", "run", "lint"]})
             elif "eslint" in deps:
-                result["linters"].append({"name": "eslint", "cmd": ["npx", "eslint", "."]})
+                result["linters"].append({"name": "eslint", "cmd": ["pnpm", "exec", "eslint", "."]})
             
             # Check for TypeScript
-            if "typescript" in deps or (project_path / "tsconfig.json").exists():
-                result["linters"].append({"name": "tsc", "cmd": ["npx", "tsc", "--noEmit"]})
+            if "type-check" in scripts:
+                result["linters"].append({"name": "type-check", "cmd": ["pnpm", "run", "type-check"]})
+            elif "typescript" in deps and (project_path / "tsconfig.json").exists():
+                result["linters"].append({"name": "tsc", "cmd": ["pnpm", "exec", "tsc", "--noEmit"]})
                 
         except:
             pass
@@ -76,6 +78,7 @@ def run_linter(linter: dict, cwd: Path) -> dict:
         "error": ""
     }
     
+    import os
     try:
         proc = subprocess.run(
             linter["cmd"],
@@ -84,7 +87,8 @@ def run_linter(linter: dict, cwd: Path) -> dict:
             text=True,
             encoding='utf-8',
             errors='replace',
-            timeout=120
+            timeout=120,
+            shell=(os.name == 'nt')
         )
         
         result["output"] = proc.stdout[:2000] if proc.stdout else ""
