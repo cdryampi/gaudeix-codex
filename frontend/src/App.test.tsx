@@ -80,9 +80,9 @@ describe("App Smoke Tests", () => {
     renderApp(["/"]);
 
     // Wait for something that is uniquely loaded in the HomePage.
-    // "el Pueblo" is part of the "Explora el Pueblo" heading.
+    // "el municipio" is part of the "Explora el municipio" heading.
     await waitFor(() => {
-      expect(screen.getByText(/el Pueblo/i)).toBeInTheDocument();
+      expect(screen.getByText(/el municipio/i)).toBeInTheDocument();
     });
   });
 
