@@ -63,7 +63,7 @@ export function EventDetailContent({
 
         {/* Navigation & Breadcrumbs Overlay */}
         {!isPreview && (
-          <div className="absolute top-0 left-0 right-0 z-10 pt-32 px-6 md:px-16">
+          <div className="absolute top-0 left-0 right-0 z-10 pt-48 px-6 md:px-16">
             <div className="container mx-auto">
               <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-white/40 mb-12">
                 <Link to="/" className="hover:text-white transition-colors">
