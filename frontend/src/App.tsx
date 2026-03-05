@@ -103,7 +103,7 @@ function HomePage() {
   }, [visibleEvents]);
 
   return (
-    <main>
+    <main className="bg-background-light text-[color:var(--color-text-primary)]">
       {/* SECTION 1: VIDEO HERO */}
       <section id="inicio" className="h-screen">
         <HeroVideoFrame />
@@ -111,34 +111,34 @@ function HomePage() {
 
       {/* SECTION 2: CATEGORIES */}
       <section id="categorias">
-        <div className="min-h-screen flex flex-col justify-center px-6 md:px-20 py-24 bg-white">
-          <span className="text-sm font-black uppercase tracking-[0.5em] text-primary mb-8">
+        <div className="min-h-screen flex flex-col justify-center px-6 md:px-20 py-24 bg-background-light">
+          <span className="text-xs font-bold uppercase tracking-[0.32em] text-primary/90 mb-6">
             Municipio
           </span>
-          <h2 className="text-[clamp(4rem,15vw,18rem)] font-black uppercase tracking-tighter leading-[0.75] text-slate-900">
+          <h2 className="text-[clamp(2.25rem,7vw,6rem)] font-bold tracking-tight leading-[1.02] text-slate-900">
             Explora <br />
-            <span className="text-primary">el Pueblo</span>
+            <span className="text-primary">el municipio</span>
           </h2>
-          <p className="text-3xl md:text-5xl font-bold leading-tight text-slate-400 mt-16 max-w-4xl tracking-tight text-balance">
+          <p className="text-lg md:text-2xl font-medium leading-relaxed text-slate-600 mt-10 max-w-3xl text-balance">
             Descubre la esencia de Cabrera de Mar, donde la historia se funde
             con el Mediterráneo.
           </p>
         </div>
 
-        <div className="container mx-auto px-6 pb-48">
+        <div className="container mx-auto px-6 pb-32">
           {!categoriesData && !featuredCategories.length ? (
             // Loading Skeleton
             <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-4">
               {[1, 2, 3, 4].map((i) => (
                 <div
                   key={i}
-                  className="h-[400px] md:h-[540px] rounded-[4rem] bg-slate-100 animate-pulse"
+                  className="h-[380px] md:h-[500px] rounded-3xl bg-slate-200/70 animate-pulse"
                 />
               ))}
             </div>
           ) : featuredCategories.length === 0 ? (
             // Empty State
-            <div className="flex flex-col items-center justify-center py-20 border-4 border-dashed border-slate-100 rounded-[4rem]">
+            <div className="flex flex-col items-center justify-center py-16 border-2 border-dashed border-slate-300 rounded-3xl bg-white">
               <p className="text-2xl font-bold text-slate-300 uppercase tracking-widest text-center">
                 Próximamente más categorías
               </p>
@@ -165,14 +165,14 @@ function HomePage() {
       </section>
 
       {/* SECTION 3: AGENDA */}
-      <section id="eventos" className="bg-slate-950 text-white">
-        <div className="min-h-screen flex flex-col justify-center px-6 md:px-20 py-24 bg-slate-950 uppercase">
-          <span className="text-base font-black uppercase tracking-[0.5em] text-accent mb-8">
+      <section id="eventos" className="bg-[color:var(--color-background-dark)] text-white">
+        <div className="min-h-screen flex flex-col justify-center px-6 md:px-20 py-24 bg-[color:var(--color-background-dark)]">
+          <span className="text-xs font-bold uppercase tracking-[0.3em] text-accent/90 mb-6">
             Agenda Cultural
           </span>
-          <h2 className="text-[clamp(4rem,15vw,18rem)] font-black leading-[0.75] tracking-tighter text-white">
-            AGENDA <br />
-            <span className="italic text-accent">VIVA</span>
+          <h2 className="text-[clamp(2.2rem,8vw,5.5rem)] font-semibold leading-tight tracking-tight text-white">
+            Agenda <br />
+            <span className="text-accent">municipal</span>
           </h2>
 
           <div className="mt-20 flex flex-wrap gap-4 items-center mb-12">
@@ -184,9 +184,9 @@ function HomePage() {
               <button
                 key={f.id}
                 onClick={() => setEventFilter(f.id as any)}
-                className={`h-12 px-8 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${eventFilter === f.id
-                    ? "bg-accent text-slate-900 shadow-lg"
-                    : "bg-white/5 text-white/60 hover:bg-white/10"
+                className={`h-11 px-6 rounded-xl text-[11px] font-semibold uppercase tracking-[0.12em] transition-colors ${eventFilter === f.id
+                    ? "bg-accent text-slate-900"
+                    : "bg-white/10 text-white/85 hover:bg-white/20"
                   }`}
               >
                 {f.label}
@@ -210,14 +210,14 @@ function HomePage() {
               <div className="flex justify-center mt-20">
                 <Link
                   to="/agenda"
-                  className="h-16 px-12 rounded-[2rem] bg-accent text-slate-900 text-xs font-black uppercase tracking-[0.2em] hover:scale-105 transition-transform flex items-center shadow-2xl"
+                  className="h-12 px-8 rounded-xl bg-accent text-slate-900 text-[11px] font-semibold uppercase tracking-[0.12em] hover:bg-accent/90 transition-colors flex items-center"
                 >
                   Ver calendario completo
                 </Link>
               </div>
             </>
           ) : (
-            <div className="py-24 text-center border-4 border-dashed border-white/10 rounded-[4rem]">
+            <div className="py-20 text-center border-2 border-dashed border-white/20 rounded-3xl">
               <span className="text-4xl md:text-6xl font-black uppercase tracking-tighter text-white/20">
                 No hay actividades para esta fecha
               </span>
@@ -228,15 +228,15 @@ function HomePage() {
 
       {/* SECTION 5: NOTICIAS */}
       <section id="noticias">
-        <div className="min-h-screen flex flex-col justify-center px-6 md:px-20 py-24 bg-white">
+        <div className="min-h-screen flex flex-col justify-center px-6 md:px-20 py-24 bg-background-light">
           <span className="text-sm font-black uppercase tracking-[0.5em] text-primary mb-8">
             Información
           </span>
-          <h2 className="text-[clamp(4rem,15vw,18rem)] font-black text-slate-900 leading-[0.75] tracking-tighter uppercase">
+          <h2 className="text-[clamp(2.25rem,7vw,6rem)] font-bold text-slate-900 leading-tight tracking-tight">
             Actual <br />
-            <span className="text-primary italic">idad</span>
+            <span className="text-primary">municipal</span>
           </h2>
-          <p className="text-3xl md:text-5xl font-bold leading-tight text-slate-400 mt-16 max-w-4xl tracking-tight text-balance">
+          <p className="text-lg md:text-2xl font-medium leading-relaxed text-slate-600 mt-10 max-w-3xl text-balance">
             Las últimas noticias y crónicas oficiales de nuestra villa.
           </p>
         </div>
@@ -253,7 +253,7 @@ function HomePage() {
       {/* SECTION 6: MAPA */}
       <section
         id="mapa"
-        className="bg-slate-950 py-32 overflow-hidden relative"
+        className="bg-[color:var(--color-background-dark)] py-24 overflow-hidden relative"
       >
         {/* Background Accents */}
         <div className="absolute -right-64 -top-64 h-[600px] w-[600px] rounded-full bg-primary/10 blur-[120px]" />
@@ -261,27 +261,27 @@ function HomePage() {
 
         <div className="container mx-auto px-6 relative z-10">
           <div className="mb-20">
-            <span className="text-sm font-black uppercase tracking-[0.5em] text-accent mb-8 block">
+            <span className="text-xs font-bold uppercase tracking-[0.3em] text-accent/90 mb-6 block">
               Explora el Territorio
             </span>
-            <h2 className="text-[clamp(4rem,10vw,12rem)] font-black text-white leading-[0.75] tracking-tighter uppercase mb-12">
-              MAPA <br />
-              <span className="italic text-accent">INTERACTIVO</span>
+            <h2 className="text-[clamp(2.25rem,6vw,4.8rem)] font-semibold text-white leading-tight tracking-tight mb-8">
+              Mapa <br />
+              <span className="text-accent">interactivo</span>
             </h2>
-            <p className="text-2xl md:text-3xl font-bold text-slate-400 max-w-3xl leading-snug tracking-tight">
+            <p className="text-lg md:text-xl font-medium text-slate-300 max-w-3xl leading-relaxed">
               Localiza todos los puntos de interés, desde el patrimonio
               histórico hasta los mejores lugares para comer y dormir.
             </p>
           </div>
 
-          <div className="overflow-hidden rounded-[4rem] shadow-[0_0_80px_rgba(0,0,0,0.5)] h-[700px] border border-white/5 bg-slate-900 relative group">
+          <div className="overflow-hidden rounded-3xl shadow-[0_16px_48px_rgba(0,0,0,0.35)] h-[700px] border border-white/10 bg-slate-900 relative group">
             <InteractiveMap />
 
             {/* Map Overlay Button */}
             <div className="absolute bottom-12 left-1/2 -translate-x-1/2">
               <Link
                 to="/lugares"
-                className="flex items-center gap-4 px-10 py-5 rounded-full bg-white text-slate-900 text-xs font-black uppercase tracking-[0.2em] shadow-2xl hover:scale-105 transition-transform"
+                className="flex items-center gap-3 px-7 py-3 rounded-xl bg-white text-slate-900 text-[11px] font-semibold uppercase tracking-[0.12em] shadow-lg hover:bg-slate-100 transition-colors"
               >
                 Abrir explorador completo
                 <ChevronRight className="h-4 w-4" />

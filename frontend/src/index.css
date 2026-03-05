@@ -1,11 +1,15 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #3e9124;
-  --color-secondary: #e97b1c;
-  --color-accent: #f6b324;
-  --color-background-light: #fafaf9;
-  --color-background-dark: #121417;
+  --color-primary: #1f5f4a;
+  --color-secondary: #586b7a;
+  --color-accent: #b9872f;
+  --color-background-light: #f6f8fa;
+  --color-background-dark: #12202d;
+  --color-surface: #ffffff;
+  --color-surface-muted: #eef2f5;
+  --color-text-primary: #15212b;
+  --color-text-secondary: #45525f;
 
   --font-plus-jakarta: "Plus Jakarta Sans", sans-serif;
   --font-weight-card-title: 900;
@@ -18,28 +22,35 @@
 
   body {
     font-family: var(--font-plus-jakarta);
-    @apply bg-white text-slate-900 antialiased overflow-x-hidden;
+    @apply bg-background-light text-[color:var(--color-text-primary)] antialiased overflow-x-hidden;
   }
 
-  /* Robust Massive Typography */
   h1 {
-    @apply text-5xl md:text-8xl lg:text-9xl font-black uppercase tracking-tighter leading-[0.9];
+    @apply text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.05];
   }
 
   h2 {
-    @apply text-4xl md:text-7xl font-black uppercase tracking-tight leading-[1];
+    @apply text-3xl md:text-5xl font-bold tracking-tight leading-[1.1];
   }
 
   p {
-    @apply text-lg md:text-2xl leading-relaxed text-slate-600;
+    @apply text-base md:text-lg leading-relaxed text-[color:var(--color-text-secondary)];
+  }
+
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-white;
   }
 }
 
 @layer utilities {
   .card-title {
     font-weight: var(--font-weight-card-title);
-    @apply text-4xl md:text-5xl text-white leading-[0.85] tracking-tighter uppercase;
-    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    @apply text-3xl md:text-4xl text-white leading-tight tracking-tight;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
   }
 
   .section-fullscreen {

@@ -13,44 +13,44 @@ export function NewsCard({ news }: { news: NewsItem }) {
   return (
     <Link
       to={`/noticias/${news.slug}`}
-      className="group flex flex-col overflow-hidden rounded-[4rem] bg-white text-slate-900 transition-all hover:-translate-y-4 hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.15)] h-full"
+      className="group flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white text-slate-900 shadow-[0_8px_24px_rgba(15,23,42,0.08)] transition-all hover:-translate-y-1 hover:shadow-[0_16px_32px_rgba(15,23,42,0.12)]"
     >
       <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-200">
         <img
           src={news.imageUrl}
           alt={news.title}
-          className="h-full w-full object-cover transition-transform duration-1000 group-hover:scale-110"
+          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-black/5" />
       </div>
 
-      <div className="flex flex-1 flex-col p-10">
-        <div className="mb-6 flex items-center justify-between">
-          <span className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary">
+      <div className="flex flex-1 flex-col p-7 md:p-8">
+        <div className="mb-5 flex items-center justify-between gap-3">
+          <span className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-primary">
             <Tag className="h-4 w-4" />
             {news.category}
           </span>
-          <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+          <span className="text-[11px] font-medium uppercase tracking-[0.08em] text-slate-500">
             {dateLabel}
           </span>
         </div>
 
-        <h3 className="mb-6 text-3xl font-black leading-[1.1] tracking-tighter uppercase">
+        <h3 className="mb-4 text-2xl font-semibold leading-snug tracking-tight">
           {news.title}
         </h3>
 
         {news.excerpt && (
-          <p className="mb-8 line-clamp-3 text-xl text-slate-500 font-medium leading-relaxed">
+          <p className="mb-6 line-clamp-3 text-base text-slate-600 leading-relaxed">
             {news.excerpt}
           </p>
         )}
 
-        <div className="mt-auto pt-8 border-t border-slate-100 flex items-center justify-between">
-          <span className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 group-hover:text-primary transition-colors">
+        <div className="mt-auto flex items-center justify-between border-t border-slate-200 pt-6">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500 group-hover:text-primary transition-colors">
             Leer más
           </span>
-          <div className="h-14 w-14 flex items-center justify-center rounded-2xl bg-slate-50 text-slate-900 group-hover:bg-primary group-hover:text-white transition-all">
-            <ArrowRight className="h-7 w-7" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-100 text-slate-700 group-hover:bg-primary group-hover:text-white transition-colors">
+            <ArrowRight className="h-4 w-4" />
           </div>
         </div>
       </div>
