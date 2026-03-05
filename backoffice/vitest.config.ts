@@ -7,14 +7,16 @@ export default defineConfig({
   resolve: {
     alias: [
       { find: "@", replacement: path.resolve(__dirname, "./src") },
-      { find: "@frontend", replacement: path.resolve(__dirname, "../frontend/src") },
-      { find: /.*\.css$/, replacement: path.resolve(__dirname, "./src/tests/empty.css") }
-    ]
+      {
+        find: "@frontend",
+        replacement: path.resolve(__dirname, "../frontend/src"),
+      },
+    ],
   },
   test: {
     globals: true,
     environment: "jsdom",
     setupFiles: "./src/setupTests.ts",
-    css: true,
+    css: false,
   },
 });
