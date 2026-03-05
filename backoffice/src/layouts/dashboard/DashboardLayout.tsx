@@ -8,30 +8,28 @@ export default function DashboardLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-gray-50 dark:bg-gray-900">
-      {/* Mobile Sidebar Overlay */}
+    <div className="flex h-screen w-full overflow-hidden bg-slate-100 dark:bg-slate-950">
       {isSidebarOpen && (
         <div
-          className="fixed inset-0 z-40 bg-gray-900/50 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-40 bg-slate-950/45 backdrop-blur-[1px] lg:hidden"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
 
-      {/* Sidebar Container */}
-      <div className={`
-        fixed inset-y-0 left-0 z-50 flex h-full transform transition-transform duration-300 ease-in-out lg:static lg:translate-x-0
+      <div
+        className={`
+        fixed inset-y-0 left-0 z-50 flex h-full transform transition-transform duration-200 ease-out lg:static lg:translate-x-0
         ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
-      `}>
+      `}
+      >
         <Sidebar />
       </div>
 
-      {/* Main Content Wrapper */}
-      <div className="flex flex-1 flex-col overflow-hidden min-w-0">
+      <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
         <Header onMenuClick={() => setIsSidebarOpen(true)} />
 
-        <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-6 lg:p-8 custom-scrollbar flex flex-col items-center">
-          {/* Content Container - Centered and constrained */}
-          <div className="w-full max-w-7xl mx-auto animate-in fade-in duration-300">
+        <main className="custom-scrollbar flex flex-1 flex-col items-center overflow-y-auto overflow-x-hidden px-4 py-4 md:px-6 md:py-6 lg:px-8 lg:py-8">
+          <div className="mx-auto w-full max-w-7xl animate-in fade-in duration-200">
             <Outlet />
           </div>
         </main>

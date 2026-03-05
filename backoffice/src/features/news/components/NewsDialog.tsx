@@ -214,7 +214,7 @@ export function NewsDialog({ open, onOpenChange, onSubmit, news }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[860px] px-6">
+      <DialogContent className="max-w-[900px] border-slate-200 bg-white px-6 shadow-xl dark:border-slate-800 dark:bg-slate-900">
         <DialogHeader>
           <DialogTitle>{news ? "Editar noticia" : "Nueva noticia"}</DialogTitle>
         </DialogHeader>
@@ -259,13 +259,13 @@ export function NewsDialog({ open, onOpenChange, onSubmit, news }: Props) {
                     publish_date: e.target.value ? toIso(e.target.value) : null,
                   }))
                 }
-                className="bg-white dark:bg-gray-800"
+                className="border-slate-300 bg-white dark:border-slate-700 dark:bg-slate-950"
               />
             </div>
           </div>
 
           {/* Publication Settings */}
-          <div className="grid gap-6 md:grid-cols-2 p-4 border border-border rounded-xl bg-muted/10">
+          <div className="grid gap-6 rounded-xl border border-slate-200 bg-slate-50/70 p-4 md:grid-cols-2 dark:border-slate-800 dark:bg-slate-800/40">
             {/* Publicado */}
             <div className="flex flex-col gap-1.5">
               <label className="inline-flex items-center cursor-pointer">
@@ -280,8 +280,8 @@ export function NewsDialog({ open, onOpenChange, onSubmit, news }: Props) {
                     }))
                   }
                 />
-                <div className="relative w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-100 dark:peer-focus:ring-primary-900 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-primary-600"></div>
-                <span className="select-none ms-3 text-sm font-medium text-gray-900 dark:text-gray-100">
+                <div className="relative w-9 h-5 bg-slate-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-100 dark:peer-focus:ring-primary-900 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-200 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-slate-500 peer-checked:bg-primary-600"></div>
+                <span className="select-none ms-3 text-sm font-medium text-slate-900 dark:text-slate-100">
                   Publicado
                 </span>
               </label>
@@ -304,8 +304,8 @@ export function NewsDialog({ open, onOpenChange, onSubmit, news }: Props) {
                     }))
                   }
                 />
-                <div className="relative w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-100 dark:peer-focus:ring-primary-900 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-primary-600"></div>
-                <span className="select-none ms-3 text-sm font-medium text-gray-900 dark:text-gray-100">
+                <div className="relative w-9 h-5 bg-slate-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-100 dark:peer-focus:ring-primary-900 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-200 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-slate-500 peer-checked:bg-primary-600"></div>
+                <span className="select-none ms-3 text-sm font-medium text-slate-900 dark:text-slate-100">
                   Destacado
                 </span>
               </label>
@@ -317,7 +317,7 @@ export function NewsDialog({ open, onOpenChange, onSubmit, news }: Props) {
 
           {/* Translation Tabs */}
           <Tabs value={activeLang} onValueChange={setActiveLang}>
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-4 rounded-md bg-slate-100 p-1 dark:bg-slate-800">
               {LANGUAGES.map((lang) => (
                 <TabsTrigger key={lang.code} value={lang.code}>
                   {lang.name}
@@ -382,7 +382,7 @@ export function NewsDialog({ open, onOpenChange, onSubmit, news }: Props) {
           {/* Media Section */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Featured Image Selection */}
-            <div className="space-y-3 rounded-xl border border-border/60 bg-muted/30 p-4 shadow-sm">
+            <div className="space-y-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <ImageIcon className="h-4 w-4 text-primary-500" />
@@ -458,7 +458,7 @@ export function NewsDialog({ open, onOpenChange, onSubmit, news }: Props) {
             </div>
 
             {/* Attachments Selection */}
-            <div className="space-y-3 rounded-xl border border-border/60 bg-muted/30 p-4 shadow-sm">
+            <div className="space-y-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <FileText className="h-4 w-4 text-primary-500" />

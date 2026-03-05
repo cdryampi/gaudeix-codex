@@ -45,29 +45,28 @@ export function NewsFilters({
   };
 
   return (
-    <div className="mb-6 space-y-4">
-      {/* Primary Row: Search and Quick Status */}
+    <div className="mb-6 space-y-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
       <div className="flex flex-col gap-3 md:flex-row md:items-center">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
           <Input
             placeholder="Buscar por título o contenido..."
             value={search}
             onChange={(e) => onSearch(e.target.value)}
-            className="pl-9 bg-card"
+            className="border-slate-300 bg-white pl-9 text-slate-700 dark:border-slate-700 dark:bg-slate-950"
           />
         </div>
 
-        <div className="inline-flex h-10 items-center gap-1 rounded-lg bg-muted/50 p-1">
+        <div className="inline-flex h-10 items-center gap-1 rounded-md border border-slate-200 bg-slate-50 p-1 dark:border-slate-700 dark:bg-slate-800/70">
           {statusTabs.map((tab) => (
             <button
               key={tab.value}
               onClick={() => onStatus(tab.value)}
               className={cn(
-                "rounded-md px-3 py-1.5 text-xs font-medium transition-all whitespace-nowrap",
+                "rounded-sm px-3 py-1.5 text-xs font-semibold transition-all whitespace-nowrap",
                 status === tab.value
-                  ? "bg-card text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground",
+                  ? "bg-white text-primary-800 shadow-sm ring-1 ring-slate-200 dark:bg-slate-900 dark:text-primary-300 dark:ring-slate-700"
+                  : "text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-slate-100",
               )}
             >
               {tab.label}
@@ -76,15 +75,13 @@ export function NewsFilters({
         </div>
       </div>
 
-      {/* Secondary Row: Category Filter */}
       <div className="flex flex-wrap items-center gap-3">
-        {/* Category Dropdown */}
         <div className="flex items-center gap-2">
-          <Filter className="h-3.5 w-3.5 text-muted-foreground" />
+          <Filter className="h-3.5 w-3.5 text-slate-500" />
           <select
             value={selectedCategory}
             onChange={(e) => onCategory(e.target.value)}
-            className="h-8 rounded-full border border-border bg-card px-3 text-xs font-medium transition-all hover:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
+            className="h-8 rounded-md border border-slate-300 bg-white px-3 text-xs font-medium text-slate-700 transition-all hover:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-200"
           >
             <option value="">Todas las categorías</option>
             {categories.map((cat) => (
@@ -95,27 +92,25 @@ export function NewsFilters({
           </select>
         </div>
 
-        {/* Clear Button */}
         {hasActiveFilters && (
           <Button
             variant="ghost"
             size="sm"
             onClick={clearFilters}
-            className="h-8 text-[11px] text-rose-600 hover:text-rose-700 hover:bg-rose-50"
+            className="h-8 text-[11px] text-rose-700 hover:bg-rose-50 hover:text-rose-800"
           >
             <X className="mr-1 h-3 w-3" /> Limpiar filtros
           </Button>
         )}
 
-        {/* Page Size (Compact) */}
-        <div className="ml-auto hidden md:flex items-center gap-2">
-          <Label className="text-[10px] uppercase tracking-wider text-muted-foreground">
+        <div className="ml-auto hidden items-center gap-2 md:flex">
+          <Label className="text-[10px] uppercase tracking-wider text-slate-500 dark:text-slate-400">
             Ver:
           </Label>
           <select
             value={pageSize}
             onChange={(e) => onPageSize(Number(e.target.value))}
-            className="h-7 rounded border border-border bg-card px-1.5 text-xs font-bold"
+            className="h-7 rounded border border-slate-300 bg-white px-1.5 text-xs font-semibold text-slate-700 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-200"
           >
             {[10, 20, 50].map((size) => (
               <option key={size} value={size}>

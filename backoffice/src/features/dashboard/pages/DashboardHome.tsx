@@ -37,7 +37,7 @@ export function DashboardHome() {
   if (loading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-200 border-t-primary-600"></div>
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-200 border-t-primary-700"></div>
       </div>
     );
   }
@@ -49,59 +49,50 @@ export function DashboardHome() {
     icon: Icon,
     title,
     desc,
-    color,
-    ringColor,
   }: {
     to: string;
     icon: React.ComponentType<{ className?: string }>;
     title: string;
     desc: string;
-    color: string;
-    ringColor?: string;
   }) => (
     <Link
       to={to}
-      className={`group relative flex flex-col justify-between overflow-hidden rounded-xl border border-gray-100 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:ring-2 ${ringColor || "hover:ring-primary-500/20"} dark:border-gray-800 dark:bg-gray-800`}
+      className="group relative flex min-h-40 flex-col justify-between overflow-hidden rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-md dark:border-slate-800 dark:bg-slate-900"
     >
-      <div
-        className={`mb-4 inline-flex h-14 w-14 items-center justify-center rounded-xl ${color} shadow-sm transition-transform group-hover:scale-110 group-hover:rotate-3`}
-      >
-        <Icon className="h-7 w-7 text-white" />
+      <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-lg bg-primary-50 text-primary-700 ring-1 ring-primary-100 transition-colors group-hover:bg-primary-100 dark:bg-primary-950/40 dark:text-primary-300 dark:ring-primary-900">
+        <Icon className="h-5 w-5" />
       </div>
       <div>
-        <h3 className="mb-2 text-lg font-bold text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+        <h3 className="mb-2 text-base font-semibold text-slate-900 transition-colors group-hover:text-primary-800 dark:text-slate-100 dark:group-hover:text-primary-300">
           {title}
         </h3>
-        <p className="text-sm font-medium text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300 transition-colors">
-          {desc}
-        </p>
+        <p className="text-sm text-slate-600 dark:text-slate-400">{desc}</p>
       </div>
-      <div className="absolute right-5 top-5 opacity-0 -translate-x-2 transition-all group-hover:opacity-100 group-hover:translate-x-0">
-        <ArrowRight className="h-5 w-5 text-gray-400" />
+      <div className="absolute right-4 top-4 opacity-0 transition-opacity group-hover:opacity-100">
+        <ArrowRight className="h-4 w-4 text-primary-500" />
       </div>
     </Link>
   );
 
   return (
-    <div className="container flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center px-4 py-8 mx-auto animate-in fade-in duration-500">
-      <div className="w-full max-w-6xl space-y-8">
-        {/* Header */}
+    <div className="container mx-auto flex min-h-[calc(100vh-4rem)] max-w-6xl flex-col px-2 py-2 md:px-0">
+      <div className="w-full space-y-8">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+            <h2 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">
               Dashboard
             </h2>
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
               Resumen general de la plataforma Gaudeix
             </p>
           </div>
           <div className="flex items-center space-x-3">
-            <button className="inline-flex items-center justify-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-200 dark:ring-gray-700 dark:hover:bg-gray-700">
+            <button className="inline-flex items-center justify-center rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800">
               Descargar Reporte
             </button>
             <Link
               to={ROUTES.EVENTS}
-              className="inline-flex items-center justify-center rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:bg-primary-600 dark:hover:bg-primary-700"
+              className="inline-flex items-center justify-center rounded-md bg-primary-700 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
             >
               <Plus className="-ml-1 mr-2 h-4 w-4" />
               Nuevo Evento
@@ -109,8 +100,7 @@ export function DashboardHome() {
           </div>
         </div>
 
-        {/* KPI Cards */}
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           <StatCard
             label="Total Usuarios"
             value={stats?.totalUsers || 0}
@@ -138,9 +128,8 @@ export function DashboardHome() {
         </div>
 
         <div className="grid gap-8 lg:grid-cols-3">
-          {/* Quick Actions */}
-          <div className="lg:col-span-2 space-y-6">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+          <div className="space-y-4 lg:col-span-2">
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
               Accesos Rápidos
             </h3>
             <div className="grid gap-4 sm:grid-cols-2">
@@ -149,72 +138,63 @@ export function DashboardHome() {
                 icon={Calendar}
                 title="Gestionar Eventos"
                 desc="Crear, editar y moderar eventos del calendario."
-                color="bg-purple-600"
-                ringColor="hover:ring-purple-500/30"
               />
               <QuickAction
                 to={ROUTES.STATIC_PAGES}
                 icon={FileText}
                 title="Páginas Estáticas"
                 desc="Administrar contenido institucional y legal."
-                color="bg-blue-600"
-                ringColor="hover:ring-blue-500/30"
               />
               <QuickAction
                 to={ROUTES.USERS}
                 icon={Users}
                 title="Usuarios"
                 desc="Control de acceso y perfiles de usuarios."
-                color="bg-emerald-600"
-                ringColor="hover:ring-emerald-500/30"
               />
               <QuickAction
                 to={ROUTES.PLACES}
                 icon={MapPin}
                 title="Lugares"
                 desc="Directorio de puntos de interés y mapas."
-                color="bg-amber-600"
-                ringColor="hover:ring-amber-500/30"
               />
             </div>
           </div>
 
-          {/* Recent Activity */}
-          <div className="space-y-6">
+          <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
                 Actividad Reciente
               </h3>
               <Link
                 to="#"
-                className="text-sm font-medium text-primary-600 hover:text-primary-700 dark:text-primary-400"
+                className="text-sm font-medium text-primary-700 hover:text-primary-800 dark:text-primary-300"
               >
                 Ver todo
               </Link>
             </div>
 
-            <div className="rounded-xl border border-gray-100 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-800">
+            <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
               {recentActivity.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-8 text-center">
-                  <div className="rounded-full bg-gray-50 p-3 dark:bg-gray-700/50">
-                    <Bell className="h-6 w-6 text-gray-400" />
+                  <div className="rounded-full bg-slate-100 p-3 dark:bg-slate-800">
+                    <Bell className="h-6 w-6 text-slate-500" />
                   </div>
-                  <p className="mt-3 text-sm text-gray-500 dark:text-gray-400">
+                  <p className="mt-3 text-sm text-slate-600 dark:text-slate-400">
                     No hay actividad reciente registrada.
                   </p>
                 </div>
               ) : (
-                <div className="relative border-l border-gray-200 dark:border-gray-700 ml-3 space-y-6">
+                <div className="relative ml-3 space-y-6 border-l border-slate-200 dark:border-slate-700">
                   {recentActivity.map((activity, idx) => (
                     <div
                       key={activity.id || idx}
                       className="mb-6 ml-6 last:mb-0"
                     >
-                      <span className="absolute -left-1.5 mt-1.5 h-3 w-3 rounded-full bg-gray-200 ring-4 ring-white dark:bg-gray-700 dark:ring-gray-800"></span>
-                      <p className="text-sm font-medium text-gray-900 dark:text-white">
+                      <span className="absolute -left-1.5 mt-1.5 h-3 w-3 rounded-full bg-primary-200 ring-4 ring-white dark:bg-primary-700 dark:ring-slate-900"></span>
+                      <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
                         {activity.message}
                       </p>
-                      <time className="mb-1 text-xs font-normal text-gray-500 dark:text-gray-400">
+                      <time className="mb-1 text-xs font-normal text-slate-500 dark:text-slate-400">
                         {new Date(activity.timestamp).toLocaleDateString()}
                       </time>
                     </div>
@@ -225,7 +205,6 @@ export function DashboardHome() {
           </div>
         </div>
 
-        {/* Favorites KPI - Top 5 most favorited events */}
         <FavoritesKPI />
       </div>
     </div>

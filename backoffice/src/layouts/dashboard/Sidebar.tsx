@@ -76,11 +76,11 @@ export function Sidebar() {
   }) => (
     <div className="mb-6">
       {title && (
-        <h3 className="mb-2 px-4 text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+        <h3 className="mb-2 px-4 text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">
           {title}
         </h3>
       )}
-      <div className="space-y-0.5 px-2">
+      <div className="space-y-1 px-2">
         {items.map((item) => {
           const isActive = location.pathname === item.href;
           const Icon = item.icon;
@@ -88,17 +88,17 @@ export function Sidebar() {
             <Link
               key={item.name}
               to={item.href}
-              className={`group flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-all duration-200 ${
+              className={`group flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors duration-150 ${
                 isActive
-                  ? "bg-primary-50 text-primary-700 dark:bg-primary-500/10 dark:text-primary-300 shadow-sm ring-1 ring-primary-200 dark:ring-transparent"
-                  : "text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-50"
+                  ? "bg-primary-50 text-primary-800 ring-1 ring-primary-200 dark:bg-primary-950/50 dark:text-primary-200 dark:ring-primary-900"
+                  : "text-slate-700 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100"
               }`}
             >
               <Icon
-                className={`h-5 w-5 shrink-0 transition-colors ${
+                className={`h-4 w-4 shrink-0 transition-colors ${
                   isActive
-                    ? "text-primary-600 dark:text-primary-400"
-                    : "text-gray-400 group-hover:text-gray-600 dark:text-gray-500 dark:group-hover:text-gray-300"
+                    ? "text-primary-700 dark:text-primary-300"
+                    : "text-slate-400 group-hover:text-slate-600 dark:text-slate-500 dark:group-hover:text-slate-300"
                 }`}
               />
               {item.name}
@@ -110,17 +110,15 @@ export function Sidebar() {
   );
 
   return (
-    <aside className="flex h-screen w-[260px] shrink-0 flex-col border-r border-gray-200 bg-white dark:bg-gray-900 dark:border-gray-800 transition-colors duration-300">
-      {/* Brand Header */}
-      <div className="flex h-24 items-center justify-center border-b border-gray-100 px-6 dark:border-gray-800">
-        <div className="flex h-[3.75rem] w-[7.5rem] items-center justify-center rounded-lg bg-primary/10 p-2">
-          <span className="text-xl font-bold text-primary-600 dark:text-primary-400">
-            GAUDEIX
+    <aside className="flex h-screen w-[264px] shrink-0 flex-col border-r border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900 transition-colors duration-200">
+      <div className="flex h-20 items-center border-b border-slate-200 px-6 dark:border-slate-800">
+        <div className="inline-flex items-center gap-2 rounded-md border border-primary-200 bg-primary-50 px-3 py-2 dark:border-primary-900 dark:bg-primary-950/40">
+          <span className="text-sm font-semibold tracking-[0.08em] text-primary-800 dark:text-primary-300">
+            GAUDEIX CODEx
           </span>
         </div>
       </div>
 
-      {/* Navigation */}
       <nav className="custom-scrollbar flex-1 overflow-y-auto py-6">
         <NavSection title="Dashboard" items={panelNavigation} />
         <NavSection title="Gestión de Contenido" items={contentNavigation} />
@@ -132,18 +130,14 @@ export function Sidebar() {
         />
       </nav>
 
-      {/* Footer Info */}
-      <div className="border-t border-gray-100 p-4 dark:border-gray-800">
-        <div className="rounded-lg bg-gray-50 p-3 text-xs text-gray-500 dark:bg-gray-800/50 dark:text-gray-400">
-          <p className="font-medium text-gray-900 dark:text-gray-200">
+      <div className="border-t border-slate-200 p-4 dark:border-slate-800">
+        <div className="rounded-md bg-slate-50 p-3 text-xs text-slate-600 dark:bg-slate-800/70 dark:text-slate-300">
+          <p className="font-semibold text-slate-900 dark:text-slate-100">
             Estado del Sistema
           </p>
           <div className="mt-2 flex items-center gap-2">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75"></span>
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500"></span>
-            </span>
-            <span className="text-[10px]">Todos los servicios operativos</span>
+            <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-secondary-500" />
+            <span className="text-[11px]">Todos los servicios operativos</span>
           </div>
         </div>
       </div>
