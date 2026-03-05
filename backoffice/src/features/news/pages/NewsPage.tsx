@@ -158,7 +158,11 @@ export function NewsPage() {
         title="Noticias"
         description="Gestiona las noticias publicadas y borradores"
         actions={
-          <Button onClick={handleCreate} size="sm">
+          <Button
+            onClick={handleCreate}
+            size="sm"
+            className="bg-primary-700 hover:bg-primary-800"
+          >
             <Plus className="mr-2 h-4 w-4" />
             Nueva noticia
           </Button>
@@ -189,14 +193,14 @@ export function NewsPage() {
         }}
       />
 
-      <Card className="border-border bg-card">
+      <Card className="border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
         <CardContent className="p-0">
           {loading ? (
-            <div className="flex h-48 items-center justify-center text-muted-foreground">
+            <div className="flex h-48 items-center justify-center text-slate-500 dark:text-slate-400">
               Cargando noticias...
             </div>
           ) : error ? (
-            <div className="flex h-48 items-center justify-center text-destructive">
+            <div className="flex h-48 items-center justify-center text-rose-700 dark:text-rose-300">
               {error}
             </div>
           ) : (
@@ -209,7 +213,7 @@ export function NewsPage() {
         </CardContent>
       </Card>
 
-      <div className="mt-4 flex flex-col gap-2 text-sm text-muted-foreground md:flex-row md:items-center md:justify-between">
+      <div className="mt-4 flex flex-col gap-2 text-sm text-slate-600 dark:text-slate-400 md:flex-row md:items-center md:justify-between">
         <span>
           Página {page} de {totalPages} • {filtered.length} resultados
         </span>

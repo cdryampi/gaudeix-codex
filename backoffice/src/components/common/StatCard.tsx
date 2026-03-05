@@ -16,35 +16,38 @@ export function StatCard({
   className,
 }: StatCardProps) {
   const toneStyles = {
-    neutral: "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300",
-    primary: "bg-primary-50 text-primary-600 dark:bg-primary-500/10 dark:text-primary-400",
-    success: "bg-green-50 text-green-600 dark:bg-green-500/10 dark:text-green-400",
-    warning: "bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400",
-    info: "bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400",
+    neutral:
+      "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300",
+    primary:
+      "bg-primary-50 text-primary-700 dark:bg-primary-500/15 dark:text-primary-300",
+    success:
+      "bg-secondary-50 text-secondary-700 dark:bg-secondary-500/15 dark:text-secondary-300",
+    warning:
+      "bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-300",
+    info: "bg-sky-50 text-sky-700 dark:bg-sky-500/10 dark:text-sky-300",
   };
 
   return (
     <div
-      className={`group relative overflow-hidden rounded-xl border border-gray-100 bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md dark:border-gray-800 dark:bg-gray-900 ${className || ""}`}
+      className={`group relative overflow-hidden rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md dark:border-slate-800 dark:bg-slate-900 ${className || ""}`}
     >
       <div className="flex items-start justify-between">
-        <div className="space-y-1">
-          <p className="text-sm font-medium text-gray-500 dark:text-gray-400">{label}</p>
-          <div className="flex items-baseline gap-2">
-            <h3 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-              {value}
-            </h3>
-          </div>
+        <div className="space-y-1.5">
+          <p className="text-sm font-semibold text-slate-600 dark:text-slate-300">
+            {label}
+          </p>
+          <h3 className="text-3xl font-semibold tracking-tight text-slate-900 dark:text-slate-50">
+            {value}
+          </h3>
         </div>
         <div
-          className={`flex h-12 w-12 items-center justify-center rounded-xl ring-1 ring-inset ring-black/5 transition-transform group-hover:scale-110 dark:ring-white/5 ${toneStyles[tone]}`}
+          className={`flex h-11 w-11 items-center justify-center rounded-lg ring-1 ring-inset ring-black/5 transition-transform duration-200 group-hover:scale-105 dark:ring-white/10 ${toneStyles[tone]}`}
         >
-          <Icon className="h-6 w-6" strokeWidth={2.5} />
+          <Icon className="h-5 w-5" strokeWidth={2.25} />
         </div>
       </div>
-      
-      {/* Decorative background shape - adjusted for dark mode visibility */}
-      <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-gray-50 opacity-0 transition-opacity group-hover:opacity-100 dark:bg-gray-800/30 pointer-events-none" />
+
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-0.5 bg-gradient-to-r from-primary-500/0 via-primary-500/45 to-primary-500/0 opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
     </div>
   );
 }

@@ -1,26 +1,27 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
 @config "../tailwind.config.js";
 
 @theme {
-  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-sans: "Source Sans 3", "Inter", system-ui, sans-serif;
 }
 
 /* Base Styles */
 @layer base {
   body {
-    @apply bg-gray-50 text-gray-900 font-sans antialiased;
+    @apply bg-slate-100 text-slate-900 font-sans antialiased;
+    letter-spacing: 0.01em;
   }
 
   .dark body {
-    @apply bg-gray-900 text-gray-100;
+    @apply bg-slate-950 text-slate-100;
   }
 }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -28,16 +29,16 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-gray-300 rounded-full dark:bg-gray-700;
+  @apply bg-slate-300 rounded-full dark:bg-slate-700;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-gray-400 dark:bg-gray-600;
+  @apply bg-slate-400 dark:bg-slate-500;
 }
 
 /* Tiptap specific styles */
 .tiptap p.is-editor-empty:first-child::before {
-  @apply text-gray-400 dark:text-gray-500 float-left h-0 pointer-events-none;
+  @apply text-slate-400 dark:text-slate-500 float-left h-0 pointer-events-none;
   content: attr(data-placeholder);
 }
 
@@ -50,5 +51,5 @@
 }
 
 .tiptap blockquote {
-  @apply border-l-4 border-gray-300 dark:border-gray-600 pl-4 italic;
+  @apply border-l-4 border-slate-300 dark:border-slate-600 pl-4 italic;
 }

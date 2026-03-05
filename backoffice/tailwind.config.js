@@ -4,57 +4,54 @@ module.exports = {
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
-    "node_modules/flowbite-react/**/*.{js,jsx,ts,tsx}"
+    "node_modules/flowbite-react/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
     extend: {
       colors: {
-        // Indigo Palette (Professional, Trustworthy) - Replaces green
+        // Municipal palette (institutional, trustworthy, sober)
         primary: {
-          50: '#eef2ff',
-          100: '#e0e7ff',
-          200: '#c7d2fe',
-          300: '#a5b4fc',
-          400: '#818cf8',
-          500: '#6366f1',
-          600: '#4f46e5',
-          700: '#4338ca',
-          800: '#3730a3',
-          900: '#312e81',
-          950: '#1e1b4b',
+          50: "#f0f6fb",
+          100: "#d9e9f5",
+          200: "#b5d3e9",
+          300: "#89b7d9",
+          400: "#5e9bc8",
+          500: "#3f82b5",
+          600: "#326b97",
+          700: "#2a5578",
+          800: "#254865",
+          900: "#213d55",
+          950: "#152739",
         },
-        // Secondary/Accent - Cyan
+        // Secondary accent (soft civic green)
         secondary: {
-          50: '#ecfeff',
-          100: '#cffafe',
-          200: '#a5f3fc',
-          300: '#67e8f9',
-          400: '#22d3ee',
-          500: '#06b6d4',
-          600: '#0891b2',
-          700: '#0e7490',
-          800: '#155e75',
-          900: '#164e63',
+          50: "#f1f7f4",
+          100: "#dcece3",
+          200: "#badac7",
+          300: "#8fc1a5",
+          400: "#66a985",
+          500: "#4c936f",
+          600: "#3b7659",
+          700: "#315e49",
+          800: "#2b4c3c",
+          900: "#243f32",
         },
       },
       fontFamily: {
         sans: [
-          'Inter', 
-          'ui-sans-serif', 
-          'system-ui', 
-          '-apple-system', 
-          'system-ui', 
-          'Segoe UI', 
-          'Roboto', 
-          'Helvetica Neue', 
-          'Arial', 
-          'sans-serif'
+          "Inter",
+          "ui-sans-serif",
+          "system-ui",
+          "-apple-system",
+          "system-ui",
+          "Segoe UI",
+          "Roboto",
+          "Helvetica Neue",
+          "Arial",
+          "sans-serif",
         ],
-      }
+      },
     },
   },
-  plugins: [
-    require("flowbite/plugin"),
-    require("@tailwindcss/typography")
-  ],
+  plugins: [require("flowbite/plugin"), require("@tailwindcss/typography")],
 };
