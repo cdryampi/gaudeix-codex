@@ -57,6 +57,39 @@ export const eventsApi = {
     await apiClient.delete(API_ENDPOINTS.EVENTS.DETAIL(String(id)));
   },
 
+  exportPdf: async (params: {
+    start_date?: string;
+    end_date?: string;
+    category_slug?: string;
+    format?: "A4" | "A3";
+  }) => {
+    const backendParams: Record<string, string | undefined> = { ...params };
+    if (backendParams.format) {
+      backendParams.paper_format = backendParams.format;
+      delete backendParams.format;
+    }
+
+    const response = await apiClient.get<Blob>(
+      `${API_ENDPOINTS.EVENTS.LIST}program-pdf/`,
+      {
+        params: backendParams,
+        responseType: "blob",
+      },
+    );
+    const url = window.URL.createObjectURL(
+      new Blob([response.data], { type: "application/pdf" }),
+    );
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute(
+      "download",
+      `programa_eventos_${new Date().toISOString().split("T")[0]}.pdf`,
+    );
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  },
+
   getTopFavorites: async (limit = 5) => {
     // Fetch events ordered by favorites_count descending
     const response = await apiClient.get<Event[] | { results: Event[] }>(

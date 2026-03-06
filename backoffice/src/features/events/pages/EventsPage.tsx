@@ -25,6 +25,8 @@ import { Category } from "@/features/categories/types";
 import { envConfig } from "@/lib/config/env";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { EventPreview } from "../components/EventPreview";
+import { EventPdfDialog } from "../components/EventPdfDialog";
+import { Download } from "lucide-react";
 
 export function EventsPage() {
   const [events, setEvents] = useState<Event[]>([]);
@@ -37,6 +39,7 @@ export function EventsPage() {
   const [editingEvent, setEditingEvent] = useState<Event | undefined>();
   const [deleteEventId, setDeleteEventId] = useState<number | null>(null);
   const [previewEvent, setPreviewEvent] = useState<Event | null>(null);
+  const [isPdfDialogOpen, setIsPdfDialogOpen] = useState(false);
 
   // Filter states
   const [search, setSearch] = useState("");
@@ -200,10 +203,20 @@ export function EventsPage() {
         title="Eventos"
         description="Gestiona los eventos publicados y borradores"
         actions={
-          <Button onClick={handleCreate} size="sm">
-            <Plus className="mr-2 h-4 w-4" />
-            Nuevo evento
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setIsPdfDialogOpen(true)}
+              size="sm"
+            >
+              <Download className="mr-2 h-4 w-4" />
+              Exportar PDF
+            </Button>
+            <Button onClick={handleCreate} size="sm">
+              <Plus className="mr-2 h-4 w-4" />
+              Nuevo evento
+            </Button>
+          </div>
         }
       />
 
@@ -319,6 +332,11 @@ export function EventsPage() {
           {previewEvent && <EventPreview event={previewEvent} />}
         </DialogContent>
       </Dialog>
+      <EventPdfDialog
+        open={isPdfDialogOpen}
+        onOpenChange={setIsPdfDialogOpen}
+        categories={categories}
+      />
     </PageContainer>
   );
 }

@@ -1,0 +1,86 @@
+/* xhtml2pdf compatible styles */
+@page {
+  size: A4 portrait;
+  margin: 20mm;
+
+  @frame footer {
+    -pdf-frame-content: footerContent;
+    bottom: 10mm;
+    margin-left: 20mm;
+    margin-right: 20mm;
+    height: 10mm;
+  }
+}
+
+@page a3_page {
+  size: A3 portrait;
+  margin: 25mm;
+
+  @frame footer {
+    -pdf-frame-content: footerContent;
+    bottom: 10mm;
+    margin-left: 25mm;
+    margin-right: 25mm;
+    height: 10mm;
+  }
+}
+
+body.format-a3 {
+  -pdf-page-sequence: a3_page;
+}
+
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #333;
+  line-height: 1.5;
+  margin: 0;
+  padding: 0;
+}
+
+/* Premium Cover */
+.cover {
+  text-align: center;
+  background-color: #f8f9fa;
+  border: 4px solid #2c3e50;
+  padding: 100px 40px;
+}
+
+.cover-title {
+  font-size: 36pt;
+  font-weight: bold;
+  color: #2c3e50;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
+
+.cover-subtitle {
+  font-size: 20pt;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+.cover-categories {
+  font-size: 14pt;
+  color: #7f8c8d;
+  margin-top: 30px;
+  font-style: italic;
+}
+
+/* Calendar Summary */
+.calendar-summary {
+  pdf-page-break-before: always;
+  padding: 20px 0;
+}
+
+.calendar-summary h2 {
+  font-size: 24pt;
+  color: #2c3e50;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+/* Detailed List */
+.day-section {
+  padding-top: 20px;
+}

@@ -11,8 +11,9 @@ from rest_framework import viewsets, status
 from rest_framework.exceptions import ValidationError
 
 from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
+from django.http import HttpResponse
 
 from gamification.models import EventCheckin
 from gamification.serializers import EventCheckinSerializer
@@ -22,6 +23,7 @@ from .models import Event, UserFavoriteEvent
 
 from .serializers import EventDetailSerializer, EventSerializer
 from .utils import get_upcoming_events
+from .services.pdf_generator import generate_events_pdf
 
 
 logger = logging.getLogger(__name__)
@@ -41,8 +43,10 @@ class EventViewSet(viewsets.ModelViewSet):
     lookup_field = "slug"
 
     def get_permissions(self):
-        if self.action in ["list", "retrieve", "occurrences"]:
+        if self.action in ["list", "retrieve", "occurrences", "program_pdf"]:
             return [AllowAny()]
+        if self.action == "regenerate_program_pdf":
+            return [IsAdminUser()]
         return [IsAuthenticated()]
 
     def get_serializer_class(self):
@@ -504,3 +508,64 @@ class EventViewSet(viewsets.ModelViewSet):
 
         serializer = EventDateSerializer(dates, many=True)
         return Response(serializer.data)
+
+    @action(detail=False, methods=["get"], permission_classes=[AllowAny], url_path="program-pdf")
+    def program_pdf(self, request):
+        """
+        Generate a PDF program for the filtered events via GET.
+        """
+        return self._generate_program_pdf_response(request, request.query_params)
+
+    @action(detail=False, methods=["post"], permission_classes=[IsAdminUser], url_path="program-pdf/regenerate")
+    def regenerate_program_pdf(self, request):
+        """
+        Regenerate a PDF program for the filtered events via POST.
+        """
+        return self._generate_program_pdf_response(request, request.data)
+
+    def _generate_program_pdf_response(self, request, params):
+        queryset = self.get_queryset().filter(is_published=True)
+        
+        start_date = params.get("start_date") or params.get("start_from")
+        end_date = params.get("end_date") or params.get("start_to")
+        
+        parsed_start = parse_date(start_date[:10]) if start_date else None
+        parsed_end = parse_date(end_date[:10]) if end_date else None
+        
+        if parsed_start and parsed_end and parsed_start > parsed_end:
+            raise ValidationError({"detail": "start_date cannot be after end_date"})
+            
+        if parsed_start or parsed_end:
+            date_filter = Q()
+            if parsed_start:
+                date_filter &= Q(dates__start_at__gte=timezone.make_aware(datetime.combine(parsed_start, time.min)))
+            if parsed_end:
+                date_filter &= Q(dates__start_at__lte=timezone.make_aware(datetime.combine(parsed_end, time.max)))
+            queryset = queryset.filter(date_filter).distinct()
+        
+        paper_format = str(params.get("paper_format") or params.get("format") or "A4").upper()
+        if paper_format not in ["A4", "A3"]:
+            raise ValidationError({"detail": f"Invalid format {paper_format}. Use A4 or A3."})
+
+        category_name = params.get("category") or params.get("category_slug")
+        if category_name:
+            if str(category_name).isdigit():
+                queryset = queryset.filter(category_id=int(category_name))
+            else:
+                queryset = queryset.filter(category__slug=category_name)
+
+        try:
+            pdf_file = generate_events_pdf(
+                events=queryset,
+                request=request,
+                start_date=parsed_start,
+                end_date=parsed_end,
+                categories=category_name,
+                format=paper_format
+            )
+            response = HttpResponse(pdf_file, content_type='application/pdf')
+            response['Content-Disposition'] = f'attachment; filename="programa_{timezone.now().strftime("%Y%m%d")}.pdf"'
+            return response
+        except Exception as e:
+            logger.exception("Error generating PDF")
+            return Response({"error": "Failed to generate PDF", "detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
