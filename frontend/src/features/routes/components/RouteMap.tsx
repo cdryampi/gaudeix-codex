@@ -406,7 +406,11 @@ export const RouteMap = ({
             const cp = itinerary?.checkpoints?.find(
               (c) => c.id === hoveredCheckpointId,
             );
-            return cp?.lat !== null && cp?.lng !== null ? (
+            if (!cp || cp.lat === null || cp.lng === null) {
+              return null;
+            }
+
+            return (
               <InfoWindowF
                 position={{ lat: cp.lat, lng: cp.lng }}
                 options={{
@@ -423,7 +427,7 @@ export const RouteMap = ({
                   )}
                 </div>
               </InfoWindowF>
-            ) : null;
+            );
           })()}
       </MapContainer>
     </div>
