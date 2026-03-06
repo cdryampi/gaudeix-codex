@@ -18,6 +18,11 @@ export interface RouteWaypoint {
   distance_from_previous_km: number | null;
 }
 
+export interface RouteItineraryWaypoint extends RouteWaypoint {
+  lat: number | null;
+  lng: number | null;
+}
+
 export interface RouteCheckpoint {
   id: number;
   order: number;
@@ -65,7 +70,7 @@ export interface RouteItineraryResponse {
   end: { lat: number; lng: number } | null;
   bounds: RouteBounds | null;
   track_geojson: Record<string, any> | null; // GeoJSON Object
-  waypoints: RouteWaypoint[];
+  waypoints: RouteItineraryWaypoint[];
   checkpoints: RouteCheckpoint[];
   segments: RouteSegment[];
   summary: RouteItinerarySummary;

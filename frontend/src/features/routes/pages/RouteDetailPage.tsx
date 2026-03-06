@@ -57,7 +57,35 @@ export const RouteDetailPage = () => {
     enabled: !!slug,
   });
 
-  const hasCheckpoints = itinerary?.checkpoints && itinerary.checkpoints.length > 0;
+  const hasCheckpoints = (itinerary?.checkpoints?.length ?? 0) > 0;
+  const hasMapData =
+    !!route?.track_geojson ||
+    !!itinerary?.bounds ||
+    hasCheckpoints ||
+    itinerary?.start !== null ||
+    itinerary?.end !== null ||
+    (itinerary?.waypoints?.some(
+      (waypoint) => waypoint.lat !== null && waypoint.lng !== null,
+    ) ??
+      false);
+
+  const itinerarySteps = hasCheckpoints
+    ? (itinerary?.checkpoints.map((checkpoint) => ({
+        id: checkpoint.id,
+        order: checkpoint.order,
+        title: checkpoint.title,
+        description: checkpoint.description,
+        imageUrl: checkpoint.image_url,
+        distanceFromPreviousKm: null,
+      })) ?? [])
+    : (itinerary?.waypoints.map((waypoint) => ({
+        id: waypoint.id,
+        order: waypoint.order,
+        title: waypoint.place_title,
+        description: waypoint.instructions,
+        imageUrl: "",
+        distanceFromPreviousKm: waypoint.distance_from_previous_km,
+      })) ?? []);
 
   // ---------- Loading ----------
   if (isLoading) {
@@ -101,7 +129,7 @@ export const RouteDetailPage = () => {
   const RouteTypeIcon = routeTypeConfig.icon;
 
   const googleMapsUrl =
-    route.start_latitude && route.start_longitude
+    route.start_latitude !== null && route.start_longitude !== null
       ? `https://www.google.com/maps/search/?api=1&query=${route.start_latitude},${route.start_longitude}`
       : null;
 
@@ -171,29 +199,45 @@ export const RouteDetailPage = () => {
             {route.distance_km && (
               <div className="flex flex-col items-center px-5 py-3 rounded-2xl bg-white/10 min-w-[90px]">
                 <Mountain className="h-4 w-4 text-accent mb-1" />
-                <span className="text-lg font-black text-white">{Number(route.distance_km).toFixed(1)} km</span>
-                <span className="text-[9px] font-bold uppercase tracking-widest text-white/50">Distància</span>
+                <span className="text-lg font-black text-white">
+                  {Number(route.distance_km).toFixed(1)} km
+                </span>
+                <span className="text-[9px] font-bold uppercase tracking-widest text-white/50">
+                  Distància
+                </span>
               </div>
             )}
             {route.duration_formatted && (
               <div className="flex flex-col items-center px-5 py-3 rounded-2xl bg-white/10 min-w-[90px]">
                 <Timer className="h-4 w-4 text-accent mb-1" />
-                <span className="text-lg font-black text-white">{route.duration_formatted}</span>
-                <span className="text-[9px] font-bold uppercase tracking-widest text-white/50">Duració</span>
+                <span className="text-lg font-black text-white">
+                  {route.duration_formatted}
+                </span>
+                <span className="text-[9px] font-bold uppercase tracking-widest text-white/50">
+                  Duració
+                </span>
               </div>
             )}
             {route.elevation_gain && (
               <div className="flex flex-col items-center px-5 py-3 rounded-2xl bg-white/10 min-w-[90px]">
                 <ArrowUp className="h-4 w-4 text-green-400 mb-1" />
-                <span className="text-lg font-black text-white">+{route.elevation_gain}m</span>
-                <span className="text-[9px] font-bold uppercase tracking-widest text-white/50">Desnivell +</span>
+                <span className="text-lg font-black text-white">
+                  +{route.elevation_gain}m
+                </span>
+                <span className="text-[9px] font-bold uppercase tracking-widest text-white/50">
+                  Desnivell +
+                </span>
               </div>
             )}
             {route.elevation_loss && (
               <div className="flex flex-col items-center px-5 py-3 rounded-2xl bg-white/10 min-w-[90px]">
                 <ArrowDown className="h-4 w-4 text-red-400 mb-1" />
-                <span className="text-lg font-black text-white">-{route.elevation_loss}m</span>
-                <span className="text-[9px] font-bold uppercase tracking-widest text-white/50">Desnivell -</span>
+                <span className="text-lg font-black text-white">
+                  -{route.elevation_loss}m
+                </span>
+                <span className="text-[9px] font-bold uppercase tracking-widest text-white/50">
+                  Desnivell -
+                </span>
               </div>
             )}
           </div>
@@ -209,8 +253,12 @@ export const RouteDetailPage = () => {
                     <Mountain className="h-5 w-5 text-accent" />
                   </div>
                   <div>
-                    <div className="text-2xl font-black">{Number(route.distance_km).toFixed(1)} km</div>
-                    <div className="text-[10px] font-bold uppercase tracking-widest text-white/50">Distancia</div>
+                    <div className="text-2xl font-black">
+                      {Number(route.distance_km).toFixed(1)} km
+                    </div>
+                    <div className="text-[10px] font-bold uppercase tracking-widest text-white/50">
+                      Distancia
+                    </div>
                   </div>
                 </div>
               )}
@@ -220,8 +268,12 @@ export const RouteDetailPage = () => {
                     <Timer className="h-5 w-5 text-accent" />
                   </div>
                   <div>
-                    <div className="text-2xl font-black">{route.duration_formatted}</div>
-                    <div className="text-[10px] font-bold uppercase tracking-widest text-white/50">Duración</div>
+                    <div className="text-2xl font-black">
+                      {route.duration_formatted}
+                    </div>
+                    <div className="text-[10px] font-bold uppercase tracking-widest text-white/50">
+                      Duración
+                    </div>
                   </div>
                 </div>
               )}
@@ -231,8 +283,12 @@ export const RouteDetailPage = () => {
                     <ArrowUp className="h-5 w-5 text-green-400" />
                   </div>
                   <div>
-                    <div className="text-2xl font-black">+{route.elevation_gain}m</div>
-                    <div className="text-[10px] font-bold uppercase tracking-widest text-white/50">Desnivel +</div>
+                    <div className="text-2xl font-black">
+                      +{route.elevation_gain}m
+                    </div>
+                    <div className="text-[10px] font-bold uppercase tracking-widest text-white/50">
+                      Desnivel +
+                    </div>
                   </div>
                 </div>
               )}
@@ -242,8 +298,12 @@ export const RouteDetailPage = () => {
                     <ArrowDown className="h-5 w-5 text-red-400" />
                   </div>
                   <div>
-                    <div className="text-2xl font-black">-{route.elevation_loss}m</div>
-                    <div className="text-[10px] font-bold uppercase tracking-widest text-white/50">Desnivel -</div>
+                    <div className="text-2xl font-black">
+                      -{route.elevation_loss}m
+                    </div>
+                    <div className="text-[10px] font-bold uppercase tracking-widest text-white/50">
+                      Desnivel -
+                    </div>
                   </div>
                 </div>
               )}
@@ -261,7 +321,7 @@ export const RouteDetailPage = () => {
               Mapa del Recorrido
             </h2>
             <div className="aspect-[4/3] lg:aspect-auto lg:h-[450px] rounded-2xl lg:rounded-3xl overflow-hidden bg-slate-100 border border-slate-200 relative shadow-sm">
-              {hasCheckpoints ? (
+              {hasMapData ? (
                 <RouteMap
                   route={route}
                   itinerary={itinerary}
@@ -331,22 +391,22 @@ export const RouteDetailPage = () => {
           </div>
 
           {/* Mobile: Checkpoint carousel (Screen 3) */}
-          {hasCheckpoints && (
+          {itinerarySteps.length > 0 && (
             <div className="lg:hidden col-span-full">
               <h2 className="text-sm font-black uppercase tracking-widest text-primary mb-4">
                 Itinerario
               </h2>
               <div className="overflow-x-auto -mx-6 px-6 scrollbar-hide">
                 <div className="flex gap-4 min-w-max pb-2">
-                  {itinerary!.checkpoints.map((cp) => (
+                  {itinerarySteps.map((step) => (
                     <div
-                      key={cp.id}
+                      key={step.id}
                       className="w-48 shrink-0 rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 shadow-sm"
                     >
-                      {cp.image_url ? (
+                      {step.imageUrl ? (
                         <img
-                          src={cp.image_url}
-                          alt={cp.title}
+                          src={step.imageUrl}
+                          alt={step.title}
                           className="w-full h-28 object-cover"
                         />
                       ) : (
@@ -355,8 +415,18 @@ export const RouteDetailPage = () => {
                         </div>
                       )}
                       <div className="p-3">
-                        <span className="text-xs font-black text-primary">{cp.order}.</span>
-                        <p className="text-sm font-bold text-slate-900 mt-0.5 leading-tight">{cp.title}</p>
+                        <span className="text-xs font-black text-primary">
+                          {step.order}.
+                        </span>
+                        <p className="text-sm font-bold text-slate-900 mt-0.5 leading-tight">
+                          {step.title}
+                        </p>
+                        {step.distanceFromPreviousKm !== null && (
+                          <p className="text-[11px] text-slate-500 mt-1">
+                            {Number(step.distanceFromPreviousKm).toFixed(1)} km
+                            desde el punto anterior
+                          </p>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -371,28 +441,32 @@ export const RouteDetailPage = () => {
               Itinerario
             </h2>
 
-            {hasCheckpoints ? (
+            {itinerarySteps.length > 0 ? (
               <div className="space-y-0">
-                {itinerary!.checkpoints.map((cp, idx) => (
+                {itinerarySteps.map((step, idx) => (
                   <div
-                    key={cp.id}
-                    ref={(el) => (checkpointRefs.current[cp.id] = el)}
-                    className={`flex gap-4 group cursor-pointer p-2 -m-2 rounded-xl transition-colors ${hoveredCheckpointId === cp.id ? "bg-slate-50" : ""
-                      }`}
-                    onMouseEnter={() => setHoveredCheckpointId(cp.id)}
+                    key={step.id}
+                    ref={(el) => (checkpointRefs.current[step.id] = el)}
+                    className={`flex gap-4 group cursor-pointer p-2 -m-2 rounded-xl transition-colors ${
+                      hoveredCheckpointId === step.id ? "bg-slate-50" : ""
+                    }`}
+                    onMouseEnter={() =>
+                      hasCheckpoints && setHoveredCheckpointId(step.id)
+                    }
                     onMouseLeave={() => setHoveredCheckpointId(null)}
                   >
                     {/* Timeline */}
                     <div className="flex flex-col items-center">
                       <div
-                        className={`h-8 w-8 rounded-full flex items-center justify-center text-xs font-black shrink-0 transition-colors ${hoveredCheckpointId === cp.id
-                          ? "bg-primary text-white"
-                          : "bg-slate-900 text-white"
-                          }`}
+                        className={`h-8 w-8 rounded-full flex items-center justify-center text-xs font-black shrink-0 transition-colors ${
+                          hoveredCheckpointId === step.id
+                            ? "bg-primary text-white"
+                            : "bg-slate-900 text-white"
+                        }`}
                       >
-                        {cp.order}
+                        {step.order}
                       </div>
-                      {idx < itinerary!.checkpoints.length - 1 && (
+                      {idx < itinerarySteps.length - 1 && (
                         <div className="w-0.5 flex-1 bg-slate-200 my-1" />
                       )}
                     </div>
@@ -400,32 +474,39 @@ export const RouteDetailPage = () => {
                     {/* Content — horizontal card layout on desktop */}
                     <div className="pb-6 flex-1">
                       <p
-                        className={`font-bold text-sm transition-colors ${hoveredCheckpointId === cp.id
-                          ? "text-primary"
-                          : "text-slate-900"
-                          }`}
+                        className={`font-bold text-sm transition-colors ${
+                          hoveredCheckpointId === step.id
+                            ? "text-primary"
+                            : "text-slate-900"
+                        }`}
                       >
-                        {cp.title}
+                        {step.title}
                       </p>
-                      {cp.image_url && (
+                      {step.imageUrl && (
                         <div className="mt-2 mb-1.5 flex gap-3">
                           <div className="w-24 h-16 rounded-lg overflow-hidden shrink-0 shadow-sm">
                             <img
-                              src={cp.image_url}
-                              alt={cp.title}
+                              src={step.imageUrl}
+                              alt={step.title}
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                             />
                           </div>
-                          {cp.description && (
+                          {step.description && (
                             <p className="text-xs text-slate-500 leading-relaxed flex-1">
-                              {cp.description}
+                              {step.description}
                             </p>
                           )}
                         </div>
                       )}
-                      {!cp.image_url && cp.description && (
+                      {!step.imageUrl && step.description && (
                         <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                          {cp.description}
+                          {step.description}
+                        </p>
+                      )}
+                      {step.distanceFromPreviousKm !== null && (
+                        <p className="text-[11px] text-slate-400 mt-2">
+                          {Number(step.distanceFromPreviousKm).toFixed(1)} km
+                          desde el punto anterior
                         </p>
                       )}
                     </div>
@@ -511,8 +592,10 @@ export const RouteDetailPage = () => {
                         )}
                         {waypoint.distance_from_previous_km && (
                           <p className="text-xs text-slate-400 mt-2">
-                            {Number(waypoint.distance_from_previous_km).toFixed(1)} km
-                            desde el punto anterior
+                            {Number(waypoint.distance_from_previous_km).toFixed(
+                              1,
+                            )}{" "}
+                            km desde el punto anterior
                           </p>
                         )}
                       </div>
