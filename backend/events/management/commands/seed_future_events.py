@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import mimetypes
-from datetime import datetime, timedelta
+from datetime import timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -18,7 +18,7 @@ from core.seed_utils import build_seed_context
 
 
 class Command(BaseCommand):
-    help = "Seed future events with random data and new AI-generated images up to Feb 2026."
+    help = "Seed future events with random data and new AI-generated images using a rolling future window."
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -37,10 +37,17 @@ class Command(BaseCommand):
             action="store_true",
             help="Simulate generation without writing to database.",
         )
+        parser.add_argument(
+            "--days-ahead",
+            type=int,
+            default=120,
+            help="How many days ahead to generate events from the current local date.",
+        )
 
     def handle(self, *args, **options):
         count = options["count"]
         dry_run = options.get("dry_run", False)
+        days_ahead = max(options.get("days_ahead", 120), 1)
         seed_context = build_seed_context(explicit_seed=options.get("seed"), faker_locale="es_ES")
 
         self.stdout.write(self.style.WARNING(f"Seeding {count} future events for Cabrera de Mar..."))
@@ -51,13 +58,20 @@ class Command(BaseCommand):
 
         fake = seed_context.faker
         rng = seed_context.rng
-        base_now = timezone.now()
-        end_date = datetime(2026, 2, 28, 23, 59, 59, tzinfo=ZoneInfo("Europe/Madrid"))
-        
-        # Ensure we cover the range if now is past end_date (unlikely given prompt)
-        if base_now > end_date:
-             self.stdout.write(self.style.ERROR("Current date is past Feb 2026. Adjusting end date to +1 month."))
-             end_date = base_now + timedelta(days=30)
+        local_tz = ZoneInfo("Europe/Madrid")
+        base_now = timezone.localtime(timezone.now(), local_tz)
+        end_date = (base_now + timedelta(days=days_ahead)).replace(
+            hour=23,
+            minute=59,
+            second=59,
+            microsecond=0,
+        )
+
+        self.stdout.write(
+            self.style.NOTICE(
+                f"Generating events between {base_now.strftime('%d/%m/%Y')} and {end_date.strftime('%d/%m/%Y')}."
+            )
+        )
 
         # Categories mapping to our generated images
         # Category Name -> Image Filename

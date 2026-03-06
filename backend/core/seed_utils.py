@@ -1,9 +1,40 @@
 from __future__ import annotations
 
+import os
+import random
 from collections.abc import Iterable
+from dataclasses import dataclass
 from pathlib import Path
 
+from faker import Faker
+
 GLOBAL_SEED_ENV_VAR = "GAUDEIX_SEED"
+
+
+@dataclass(slots=True)
+class SeedContext:
+    seed: int | None
+    rng: random.Random
+    faker: Faker
+
+
+def build_seed_context(explicit_seed: int | None = None, faker_locale: str = "es_ES") -> SeedContext:
+    """Return deterministic random/Faker helpers when a seed is provided."""
+    seed = explicit_seed
+    if seed is None:
+        raw_seed = os.getenv(GLOBAL_SEED_ENV_VAR)
+        if raw_seed not in (None, ""):
+            try:
+                seed = int(raw_seed)
+            except ValueError:
+                seed = None
+
+    rng = random.Random(seed)
+    faker = Faker(faker_locale)
+    if seed is not None:
+        faker.seed_instance(seed)
+
+    return SeedContext(seed=seed, rng=rng, faker=faker)
 
 
 def sorted_paths(paths: Iterable[Path]) -> list[Path]:
