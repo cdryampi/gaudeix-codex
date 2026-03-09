@@ -1,7 +1,11 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, Link } from "react-router-dom";
+import { CalendarDays, Sparkles } from "lucide-react";
 
+import { DataCard, PageHero, SectionHeader } from "@/components/site/primitives";
+import { MotionReveal } from "@/components/animated/MotionReveal";
+import { AnimatedCardGrid } from "@/components/animated/AnimatedCardGrid";
 import { AgendaFilters } from "@/features/agenda/components/AgendaFilters";
 import { EventDayGroup } from "@/features/agenda/components/EventDayGroup";
 import {
@@ -12,7 +16,6 @@ import {
   DateRangeFilter,
 } from "@/features/agenda/utils";
 import { getEvents } from "@/features/events/api";
-import { Event } from "@/features/events/types";
 import { EventCard } from "@/features/agenda/components/EventCard";
 
 export function AgendaPage() {
@@ -69,27 +72,45 @@ export function AgendaPage() {
   const groups = useMemo(() => groupEventsByDay(rest), [rest]);
 
   return (
-    <main className="min-h-screen bg-slate-950 text-white selection:bg-accent selection:text-slate-950">
-      {/* High-Impact Hero Header */}
-      <section className="min-h-[80vh] flex flex-col justify-center px-6 md:px-20 py-32 bg-slate-950 uppercase relative overflow-hidden">
-        {/* Background Accent Blur */}
-        <div className="absolute -right-40 -top-40 h-[600px] w-[600px] rounded-full bg-primary/20 blur-[120px] pointer-events-none" />
-        <div className="absolute -left-40 bottom-0 h-[400px] w-[400px] rounded-full bg-accent/10 blur-[100px] pointer-events-none" />
+    <main className="min-h-screen bg-background-light page-shell-offset">
+      <PageHero
+        eyebrow="Agenda municipal"
+        title="Una agenda mas visual, filtrable y util para seguir el pulso de Cabrera de Mar"
+        description="La programacion cultural y las actividades del municipio se presentan ahora con un lenguaje mas editorial, mas ritmo visual y acceso directo a cada propuesta."
+        tone="immersive"
+        breadcrumbs={[
+          { label: "Inicio", href: "/" },
+          { label: "Agenda" },
+        ]}
+        metrics={[
+          { label: "Eventos publicados", value: `${events.length} actividades` },
+          {
+            label: "Filtro activo",
+            value: range === "month" ? "Este mes" : range === "week" ? "Esta semana" : "Hoy",
+          },
+          { label: "Uso publico", value: "Agenda cultural y familiar" },
+        ]}
+        aside={
+          <div className="grid gap-4">
+            <DataCard
+              label="Consulta rapida"
+              value="Filtra, explora y accede al detalle"
+              icon={CalendarDays}
+              className="border-white/12 bg-white/10 text-white [&_p]:text-white/68 [&_.text-slate-900]:text-white"
+            />
+            <Link
+              to="/festes"
+              className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/16 bg-white/10 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/16"
+            >
+              <Sparkles className="h-4 w-4" />
+              Ver festes y programacion
+            </Link>
+          </div>
+        }
+      />
 
-        <div className="relative z-10">
-          <span className="text-base font-black uppercase tracking-[0.5em] text-accent mb-8 block">
-            Agenda Cultural
-          </span>
-          <h1 className="text-[clamp(4rem,15vw,15rem)] font-black leading-[0.8] tracking-tighter text-white mb-16">
-            AGENDA <br />
-            <span className="italic text-accent">VIVA</span>
-          </h1>
-
-          <p className="text-xl md:text-3xl font-bold leading-tight text-slate-400 max-w-4xl tracking-tight mb-20 normal-case">
-            Descubre las actividades municipales, cultura, deportes y propuestas
-            familiares de Cabrera de Mar.
-          </p>
-
+      <div className="page-container space-y-10 py-10">
+        <MotionReveal>
           <AgendaFilters
             category={category}
             range={range}
@@ -98,73 +119,74 @@ export function AgendaPage() {
               setFilters(next);
             }}
           />
-        </div>
-      </section>
+        </MotionReveal>
 
-      <div className="container mx-auto px-6 pb-48">
         {loading ? (
-          <div className="py-24 text-center">
-            <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-accent border-t-transparent" />
-            <p className="mt-8 text-xl font-black uppercase tracking-widest text-slate-500">
-              Cargando experiencias...
-            </p>
+          <div className="card-surface flex items-center justify-center py-20 text-center">
+            <p className="text-lg font-semibold text-slate-500">Cargando agenda municipal...</p>
           </div>
         ) : error ? (
-          <div className="rounded-[4rem] border-4 border-dashed border-red-500/20 bg-red-500/5 p-24 text-center">
-            <p className="text-4xl font-black uppercase tracking-tighter text-red-500">
-              Error en el sistema
-            </p>
-            <p className="mt-4 text-xl font-bold text-slate-400">
-              No hemos podido conectar con la agenda viva.
+          <div className="card-surface flex items-center justify-center py-20 text-center">
+            <p className="text-lg font-semibold text-red-500">
+              No hemos podido cargar la agenda en este momento.
             </p>
           </div>
         ) : (
-          <div className="space-y-48">
-            {/* Featured Section */}
-            {featured.length > 0 && (
-              <section className="space-y-16">
-                <div className="flex items-center gap-6">
-                  <h2 className="text-4xl font-black uppercase italic tracking-tighter">
-                    Destacados
-                  </h2>
-                  <div className="h-px flex-1 bg-white/10" />
-                </div>
-                <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-3">
-                  {featured.map((e) => (
-                    <EventCard key={e.id} event={e} />
+          <div className="space-y-14">
+            {featured.length > 0 ? (
+              <section className="space-y-6">
+                <MotionReveal>
+                  <SectionHeader
+                    eyebrow="Selección destacada"
+                    title="Eventos recomendados"
+                    description="Una entrada curada para descubrir los planes más atractivos de los próximos días."
+                  />
+                </MotionReveal>
+                <AnimatedCardGrid className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 xl:gap-10">
+                  {featured.map((event) => (
+                    <EventCard key={event.id} event={event} />
+                  ))}
+                </AnimatedCardGrid>
+              </section>
+            ) : null}
+
+            {groups.length ? (
+              <section className="space-y-8">
+                <MotionReveal>
+                  <SectionHeader
+                    eyebrow="Calendario"
+                    title="Programación por fechas"
+                    description="Consulta las actividades organizadas por jornada con una lectura más aireada y fácil de recorrer."
+                  />
+                </MotionReveal>
+                <div className="space-y-16">
+                  {groups.map((group) => (
+                    <MotionReveal key={group.dayLabel}>
+                      <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start">
+                        <div className="lg:w-72 shrink-0 lg:sticky lg:top-32">
+                          <div className="flex flex-col gap-2">
+                            <h3 className="text-3xl font-black tracking-tight text-slate-900">{group.dayLabel}</h3>
+                            <p className="text-sm font-bold uppercase tracking-[0.2em] text-primary/60">
+                              {group.items.length} {group.items.length === 1 ? "actividad programada" : "actividades programadas"}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex-1 w-full scale-100">
+                          <EventDayGroup dayLabel={group.dayLabel} items={group.items} />
+                        </div>
+                      </div>
+                    </MotionReveal>
                   ))}
                 </div>
               </section>
-            )}
-
-            {/* List Section */}
-            {groups.length ? (
-              <div className="space-y-32">
-                {groups.map((g) => (
-                  <div key={g.dayLabel} className="space-y-16">
-                    <div className="sticky top-20 z-20 bg-slate-950/80 backdrop-blur-md py-6 border-b border-white/5">
-                      <h3 className="text-3xl font-black uppercase tracking-tighter text-accent italic">
-                        {g.dayLabel}
-                      </h3>
-                    </div>
-                    <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-3">
-                      {g.items.map((item) => (
-                        <EventCard key={item.id} event={item} />
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
             ) : (
-              <div className="py-48 text-center border-4 border-dashed border-white/10 rounded-[4rem] flex flex-col items-center gap-12">
-                <span className="text-4xl md:text-6xl font-black uppercase tracking-tighter text-white/10">
-                  Sin eventos para esta selección
+              <div className="card-surface flex flex-col items-center justify-center gap-4 py-20 text-center">
+                <span className="text-xl font-semibold text-slate-500">
+                  No hay eventos para esta seleccion.
                 </span>
                 <button
-                  onClick={() =>
-                    setFilters({ category: "all", range: "month", query: "" })
-                  }
-                  className="px-10 py-4 rounded-full bg-accent text-slate-950 font-black uppercase tracking-widest hover:scale-105 transition-transform"
+                  onClick={() => setFilters({ category: "all", range: "month", query: "" })}
+                  className="rounded-full bg-primary px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-secondary"
                 >
                   Limpiar filtros
                 </button>

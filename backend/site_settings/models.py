@@ -426,3 +426,178 @@ class MenuItem(models.Model):
                     {"parent": _("Máximo 3 niveles (raíz > hijo > nieto).")}
                 )
             parent = parent.parent
+
+
+class FooterSettings(models.Model):
+    site_settings = models.OneToOneField(
+        SiteSettings,
+        on_delete=models.CASCADE,
+        related_name="footer_settings",
+        verbose_name=_("ConfiguraciÃ³n del site"),
+    )
+    eyebrow = models.CharField(
+        max_length=120, blank=True, default="", verbose_name=_("Eyebrow")
+    )
+    title = models.CharField(
+        max_length=255, blank=True, default="", verbose_name=_("TÃ­tulo")
+    )
+    description = models.TextField(
+        blank=True, default="", verbose_name=_("DescripciÃ³n")
+    )
+    show_social_links = models.BooleanField(
+        default=True, verbose_name=_("Mostrar enlaces sociales")
+    )
+    show_contact_block = models.BooleanField(
+        default=True, verbose_name=_("Mostrar bloque de contacto")
+    )
+    show_badges_block = models.BooleanField(
+        default=True, verbose_name=_("Mostrar bloque de sellos")
+    )
+    copyright_text = models.CharField(
+        max_length=255,
+        blank=True,
+        default="",
+        verbose_name=_("Texto de copyright"),
+    )
+
+    class Meta:
+        verbose_name = _("Footer Settings")
+        verbose_name_plural = _("Footer Settings")
+
+    def __str__(self):
+        return self.title or "Footer Settings"
+
+    @classmethod
+    def for_site_settings(cls, site_settings: SiteSettings | None = None):
+        site_settings = site_settings or SiteSettings.get_solo()
+        obj, _ = cls.objects.get_or_create(site_settings=site_settings)
+        return obj
+
+
+class FooterLink(models.Model):
+    class SectionChoices(models.TextChoices):
+        EXPLORE = "explore", _("Explorar")
+        INSTITUTIONAL = "institutional", _("Institucional")
+
+    footer_settings = models.ForeignKey(
+        FooterSettings,
+        on_delete=models.CASCADE,
+        related_name="links",
+        verbose_name=_("ConfiguraciÃ³n del footer"),
+    )
+    section = models.CharField(
+        max_length=30,
+        choices=SectionChoices.choices,
+        default=SectionChoices.EXPLORE,
+        verbose_name=_("SecciÃ³n"),
+    )
+    order = models.PositiveIntegerField(default=0, verbose_name=_("Orden"))
+    is_active = models.BooleanField(default=True, verbose_name=_("Activo"))
+    type = models.CharField(
+        max_length=20, choices=MenuItem.TypeChoices.choices, verbose_name=_("Tipo")
+    )
+    label = models.CharField(
+        max_length=200, blank=True, default="", verbose_name=_("Etiqueta")
+    )
+    url = models.CharField(
+        max_length=500, blank=True, default="", verbose_name=_("URL personalizada")
+    )
+    category = models.ForeignKey(
+        Category,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="footer_links",
+        verbose_name=_("CategorÃ­a"),
+    )
+    static_page = models.ForeignKey(
+        StaticPage,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="footer_links",
+        verbose_name=_("PÃ¡gina estÃ¡tica"),
+    )
+
+    class Meta:
+        verbose_name = _("Footer Link")
+        verbose_name_plural = _("Footer Links")
+        ordering = ("section", "order", "id")
+
+    def __str__(self):
+        if self.type == MenuItem.TypeChoices.CATEGORY and self.category_id:
+            return (
+                self.category.safe_translation_getter("nombre", any_language=True)
+                or self.category.slug
+            )
+        if self.type == MenuItem.TypeChoices.STATIC_PAGE and self.static_page_id:
+            return (
+                self.static_page.safe_translation_getter("titulo", any_language=True)
+                or self.static_page.slug
+            )
+        return self.label or self.url or f"FooterLink #{self.pk}"
+
+    def clean(self):
+        super().clean()
+
+        if self.type == MenuItem.TypeChoices.CATEGORY:
+            if not self.category_id:
+                raise ValidationError({"category": _("Requerida para tipo categorÃ­a.")})
+            if self.static_page_id or self.url:
+                raise ValidationError(
+                    {"type": _("Solo puede apuntar a una categorÃ­a.")}
+                )
+        elif self.type == MenuItem.TypeChoices.STATIC_PAGE:
+            if not self.static_page_id:
+                raise ValidationError(
+                    {"static_page": _("Requerida para tipo pÃ¡gina estÃ¡tica.")}
+                )
+            if self.category_id or self.url:
+                raise ValidationError(
+                    {"type": _("Solo puede apuntar a una pÃ¡gina estÃ¡tica.")}
+                )
+        elif self.type == MenuItem.TypeChoices.CUSTOM:
+            if not self.url:
+                raise ValidationError({"url": _("Requerida para link personalizado.")})
+            if not self.label:
+                raise ValidationError(
+                    {"label": _("Etiqueta requerida para link personalizado.")}
+                )
+            if self.category_id or self.static_page_id:
+                raise ValidationError(
+                    {"type": _("Solo puede apuntar a una URL personalizada.")}
+                )
+
+
+class FooterBadge(models.Model):
+    footer_settings = models.ForeignKey(
+        FooterSettings,
+        on_delete=models.CASCADE,
+        related_name="badges",
+        verbose_name=_("ConfiguraciÃ³n del footer"),
+    )
+    title = models.CharField(max_length=150, verbose_name=_("TÃ­tulo"))
+    alt_text = models.CharField(
+        max_length=255, blank=True, default="", verbose_name=_("Texto alternativo")
+    )
+    url = models.CharField(
+        max_length=500, blank=True, default="", verbose_name=_("Enlace")
+    )
+    image = models.ForeignKey(
+        ImageFile,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="footer_badges",
+        verbose_name=_("Imagen"),
+    )
+    order = models.PositiveIntegerField(default=0, verbose_name=_("Orden"))
+    is_active = models.BooleanField(default=False, verbose_name=_("Activo"))
+
+    class Meta:
+        verbose_name = _("Footer Badge")
+        verbose_name_plural = _("Footer Badges")
+        ordering = ("order", "id")
+
+    def __str__(self):
+        return self.title

@@ -14,6 +14,7 @@ import {
   FileStack,
   Video,
   Menu,
+  PanelsTopLeft,
   Bot,
   MapPin,
   LucideIcon,
@@ -60,6 +61,7 @@ const systemNavigation: NavItem[] = [
   { name: "Site settings", href: ROUTES.SITE_SETTINGS, icon: Settings },
   { name: "Video", href: ROUTES.VIDEO_SETTINGS, icon: Video },
   { name: "Header", href: ROUTES.HEADER_MENU, icon: Menu },
+  { name: "Footer", href: ROUTES.FOOTER_SETTINGS, icon: PanelsTopLeft },
   { name: "Redes sociales", href: ROUTES.SOCIAL, icon: Tag },
   { name: "LLM", href: ROUTES.LLM_SETTINGS, icon: Bot },
 ];

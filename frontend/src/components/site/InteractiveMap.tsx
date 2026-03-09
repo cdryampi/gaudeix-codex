@@ -65,6 +65,11 @@ export function InteractiveMap({
     return Array.isArray(placesData) ? placesData : placesData.results || [];
   }, [placesData]);
 
+  const markerAnchor =
+    typeof google !== "undefined" && typeof google.maps?.Point === "function"
+      ? new google.maps.Point(12, 24)
+      : undefined;
+
   useEffect(() => {
     if (highlightedPlaceId) {
       const place = places.find((p) => p.id === highlightedPlaceId);
@@ -122,7 +127,7 @@ export function InteractiveMap({
                   strokeColor: "#ffffff",
                   strokeWeight: 2,
                   scale: isHighlighted ? 1.8 : 1.4,
-                  anchor: new google.maps.Point(12, 24),
+                  anchor: markerAnchor,
                 }}
               />
             );
@@ -138,8 +143,8 @@ export function InteractiveMap({
           }}
           onCloseClick={() => setSelectedPlace(null)}
         >
-          <div className="min-w-[280px] p-0 overflow-hidden bg-white rounded-2xl shadow-2xl border-none">
-            <div className="relative h-32 overflow-hidden">
+          <div className="w-[300px] overflow-hidden rounded-3xl bg-white shadow-2xl font-interface ring-1 ring-slate-100">
+            <div className="relative h-40 overflow-hidden bg-slate-100">
               {selectedPlace.featured_media ? (
                 <img
                   src={
@@ -147,44 +152,44 @@ export function InteractiveMap({
                     selectedPlace.featured_media.file
                   }
                   alt={selectedPlace.title}
-                  className="w-full h-full object-cover"
+                  className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
                 />
               ) : (
-                <div className="w-full h-full bg-slate-100 flex items-center justify-center">
-                  <MapPin className="text-slate-300 h-10 w-10" />
+                <div className="flex h-full w-full items-center justify-center">
+                  <MapPin className="h-8 w-8 text-slate-300" />
                 </div>
               )}
-              <div className="absolute top-4 left-4">
-                <span className="rounded-full bg-black/60 backdrop-blur-md px-3 py-1 text-[8px] font-black uppercase tracking-widest text-white">
+              <div className="absolute left-4 top-4">
+                <span className="rounded-full bg-slate-900/60 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-white backdrop-blur-md">
                   {selectedPlace.template_key || "Lugar"}
                 </span>
               </div>
             </div>
 
-            <div className="p-5">
-              <h4 className="text-xl font-black text-slate-900 leading-[1.1] mb-2 tracking-tight">
+            <div className="flex flex-col p-6">
+              <span className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">
+                {selectedPlace.location_text || "Cabrera de mar"}
+              </span>
+              <h4 className="mb-6 line-clamp-2 text-xl font-bold leading-tight text-slate-900">
                 {selectedPlace.title}
               </h4>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-relaxed mb-6">
-                {selectedPlace.location_text}
-              </p>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="mt-auto grid grid-cols-2 gap-3">
                 <a
                   href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${selectedPlace.title} ${selectedPlace.location_text}`)}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex items-center justify-center gap-2 bg-slate-50 text-slate-600 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-slate-100 transition-colors"
+                  className="group flex flex-col items-center justify-center gap-1.5 rounded-2xl bg-slate-50 py-3 transition-colors hover:bg-slate-100"
                 >
-                  <ExternalLink className="h-3 w-3" />
-                  Ruta
+                  <ExternalLink className="h-4 w-4 text-slate-500 transition-transform group-hover:scale-110 group-hover:text-primary" />
+                  <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-slate-600 group-hover:text-slate-900">Abrir</span>
                 </a>
                 <a
                   href={`/lugares/${selectedPlace.slug}`}
-                  className="flex items-center justify-center gap-2 bg-slate-900 text-white py-3 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-primary transition-colors shadow-lg shadow-slate-900/20"
+                  className="group flex flex-col items-center justify-center gap-1.5 rounded-2xl bg-primary py-3 text-white shadow-lg shadow-primary/20 transition-all hover:bg-secondary hover:shadow-xl hover:shadow-secondary/20"
                 >
-                  Detalles
-                  <ChevronRight className="h-3 w-3" />
+                  <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  <span className="text-[10px] font-bold uppercase tracking-[0.16em]">Detalles</span>
                 </a>
               </div>
             </div>

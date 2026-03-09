@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { DynamicLucideIcon } from "@/components/atoms/LucideIcon";
-import type { LucideIcon } from "lucide-react";
 import { ChevronRight, Image as ImageIcon } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+
+import { CategoryBrandIcon } from "@/features/categories/components/CategoryBrandIcon";
 
 export interface CategoryCardProps {
   id: string | number;
@@ -10,9 +11,7 @@ export interface CategoryCardProps {
   href: string;
   image_src?: string | null;
   image?: string | null;
-  /** Component from lucide-react */
   IconComponent?: LucideIcon;
-  /** String name of the icon from backend */
   icon?: string | null;
   description?: string;
   taxonomy?: string;
@@ -32,65 +31,65 @@ export function FeaturedCategoryCard({
   const isInternal = category.href.startsWith("/");
 
   const Content = (
-    <>
-      <div className="absolute inset-0 z-0 bg-slate-200">
-        {!loaded && (
-          <div className="absolute inset-0 animate-pulse bg-slate-300" />
-        )}
+    <div className="group relative flex h-full flex-col overflow-hidden rounded-[2.5rem] bg-white text-slate-900 shadow-sm ring-1 ring-slate-100 transition-all duration-500 hover:shadow-[0_32px_80px_rgba(15,76,129,0.08)] hover:ring-slate-200">
+      <div className="relative aspect-[4/3] overflow-hidden bg-slate-100">
+        {!loaded ? <div className="absolute inset-0 animate-pulse bg-slate-200" /> : null}
         <img
           src={image}
           alt=""
           loading="lazy"
-          className={`h-full w-full object-cover transition-all duration-1000 group-hover:scale-110 ${loaded ? "opacity-100" : "opacity-0 scale-105"}`}
+          className={`h-full w-full object-cover transition-transform duration-1000 ease-out group-hover:scale-105 ${loaded ? "opacity-100" : "scale-[1.02] opacity-0"
+            }`}
           onLoad={() => setLoaded(true)}
           onError={(e) => {
             e.currentTarget.src = PLACEHOLDER_IMAGE;
-            e.currentTarget.onerror = null; // Prevent infinite loop
+            e.currentTarget.onerror = null;
             setLoaded(true);
           }}
         />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-slate-900/10 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
       </div>
 
-      <div className="absolute inset-0 z-10 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent p-8 md:p-12 flex flex-col justify-end gap-6 transition-all duration-500 group-hover:via-slate-950/60">
-        <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-primary text-white shadow-2xl transition-all duration-300 group-hover:rotate-12 group-hover:scale-110 group-hover:bg-accent group-hover:text-slate-900">
+      <div className="relative flex flex-1 flex-col p-6 md:p-8">
+        <div className="absolute -top-9 right-8 flex h-[4.7rem] w-[4.7rem] items-center justify-center rounded-[1.15rem] border border-slate-200/90 bg-white text-primary shadow-[0_18px_44px_rgba(15,76,129,0.12)] transition-transform duration-500 ease-out group-hover:-translate-y-2">
           {IconComponent ? (
-            <IconComponent className="h-8 w-8" />
+            <IconComponent className="h-7 w-7 stroke-[2.1]" />
           ) : iconName ? (
-            <DynamicLucideIcon name={iconName} className="h-8 w-8" />
+            <CategoryBrandIcon iconName={iconName} className="h-9 w-9 text-primary" />
           ) : (
-            <ImageIcon className="h-8 w-8" />
+            <ImageIcon className="h-7 w-7 stroke-[2.1]" />
           )}
         </div>
 
-        <div className="space-y-3 relative">
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-accent opacity-90 group-hover:text-white transition-colors">
-              {category.taxonomy || "Descubrir"}
-            </span>
-            <ChevronRight className="h-5 w-5 text-white opacity-0 -translate-x-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0" />
-          </div>
+        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">
+          {category.taxonomy || "Municipio"}
+        </span>
 
-          <h3 className="card-title">{category.title}</h3>
+        <div className="mt-3 flex-1 space-y-3">
+          <h3 className="text-2xl font-bold leading-tight transition-colors group-hover:text-primary">{category.title}</h3>
+          {category.description ? (
+            <p className="line-clamp-3 text-sm leading-relaxed text-slate-500">{category.description}</p>
+          ) : null}
+        </div>
 
-          {category.description && (
-            <div className="grid grid-rows-[0fr] transition-all duration-500 group-hover:grid-rows-[1fr]">
-              <p className="overflow-hidden text-sm md:text-base font-medium text-slate-200 opacity-0 transition-opacity duration-500 delay-100 group-hover:opacity-100 leading-snug">
-                {category.description}
-              </p>
-            </div>
-          )}
+        <div className="mt-8 flex items-center gap-2 text-sm font-bold text-primary">
+          <span className="relative overflow-hidden">
+            <span className="block transition-transform duration-500 group-hover:-translate-y-full">Explorar categoria</span>
+            <span className="absolute inset-0 block translate-y-full text-secondary transition-transform duration-500 group-hover:translate-y-0">Explorar categoria</span>
+          </span>
+          <ChevronRight className="h-4 w-4 transition-transform duration-500 group-hover:translate-x-1 group-hover:text-secondary" />
         </div>
       </div>
-    </>
+    </div>
   );
 
-  const containerClasses =
-    "group relative flex flex-col overflow-hidden rounded-[4rem] bg-slate-50 transition-all duration-300 hover:-translate-y-4 hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.4)] h-[400px] md:h-[540px]";
+  const containerClasses = "block h-full cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-[2.5rem]";
 
   if (isInternal) {
     return (
       <Link
         to={category.href}
+        data-animated-card
         className={containerClasses}
         aria-label={`Explorar ${category.title}`}
       >
@@ -102,6 +101,7 @@ export function FeaturedCategoryCard({
   return (
     <a
       href={category.href}
+      data-animated-card
       className={containerClasses}
       aria-label={`Explorar ${category.title}`}
     >

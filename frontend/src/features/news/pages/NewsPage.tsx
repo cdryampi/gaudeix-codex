@@ -1,10 +1,13 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Search, Newspaper } from "lucide-react";
+import { Newspaper, RadioTower } from "lucide-react";
 
+import { FilterBar, PageHero, SectionHeader } from "@/components/site/primitives";
+import { MotionReveal } from "@/components/animated/MotionReveal";
+import { AnimatedCardGrid } from "@/components/animated/AnimatedCardGrid";
 import { listNewsItems } from "@/features/news/api";
 import { NewsCard } from "@/features/news/components/NewsCard";
-import type { NewsItem, NewsCategory } from "@/features/news/types";
+import type { NewsCategory } from "@/features/news/types";
 
 const NEWS_CATEGORIES: NewsCategory[] = [
   "Actualidad",
@@ -33,18 +36,16 @@ export function NewsPage() {
   const filteredNews = useMemo(() => {
     let result = newsItems;
 
-    // Filter by category
     if (category !== "all") {
-      result = result.filter((n) => n.category === category);
+      result = result.filter((item) => item.category === category);
     }
 
-    // Filter by search query
     if (query.trim()) {
-      const q = query.toLowerCase();
+      const currentQuery = query.toLowerCase();
       result = result.filter(
-        (n) =>
-          n.title.toLowerCase().includes(q) ||
-          n.excerpt?.toLowerCase().includes(q),
+        (item) =>
+          item.title.toLowerCase().includes(currentQuery) ||
+          item.excerpt?.toLowerCase().includes(currentQuery),
       );
     }
 
@@ -52,114 +53,100 @@ export function NewsPage() {
   }, [newsItems, category, query]);
 
   return (
-    <main className="min-h-screen bg-background-light text-slate-900 selection:bg-primary/20 selection:text-slate-900">
-      {/* High-Impact Hero Header */}
-      <section className="min-h-[64vh] flex flex-col justify-center px-6 md:px-20 py-24 bg-[color:var(--color-background-dark)] relative overflow-hidden">
-        {/* Background Accent Blur */}
-        <div className="absolute -right-40 -top-40 h-[600px] w-[600px] rounded-full bg-primary/20 blur-[120px] pointer-events-none" />
-        <div className="absolute -left-40 bottom-0 h-[400px] w-[400px] rounded-full bg-accent/10 blur-[100px] pointer-events-none" />
+    <main className="min-h-screen bg-background-light page-shell-offset text-slate-900">
+      <PageHero
+        eyebrow="Informacion municipal"
+        title="Noticias, avisos y comunicacion local con una portada mas viva"
+        description="La actualidad del municipio gana una entrada mas visual y periodica, con filtros claros y un archivo de noticias mas facil de consultar."
+        tone="immersive"
+        breadcrumbs={[
+          { label: "Inicio", href: "/" },
+          { label: "Noticias" },
+        ]}
+        metrics={[
+          { label: "Publicaciones", value: `${newsItems.length} noticias` },
+          { label: "Categoria activa", value: category === "all" ? "Todas" : category },
+          { label: "Uso publico", value: "Avisos, cultura y actualidad" },
+        ]}
+      />
 
-        <div className="relative z-10">
-          <span className="text-xs font-semibold uppercase tracking-[0.28em] text-accent/90 mb-6 block">
-            Información Municipal
-          </span>
-          <h1 className="text-[clamp(2.4rem,8vw,5.75rem)] font-semibold leading-tight tracking-tight text-white mb-8">
-            Noticias <br />
-            <span className="text-accent">oficiales</span>
-          </h1>
-
-          <p className="text-base md:text-xl font-medium leading-relaxed text-slate-300 max-w-3xl mb-12">
-            Las últimas noticias y crónicas oficiales de Cabrera de Mar.
-            Actualidad, cultura, deportes y más.
-          </p>
-
-          {/* Filters */}
-          <div className="flex flex-col gap-8">
-            {/* Category Pills */}
-            <div className="flex flex-wrap gap-3">
-              <button
-                onClick={() => setCategory("all")}
-                className={`h-10 px-5 rounded-xl text-[11px] font-medium uppercase tracking-[0.08em] transition-colors ${
-                  category === "all"
-                    ? "bg-accent text-slate-900"
-                    : "bg-white/10 text-white/90 hover:bg-white/20"
-                }`}
-              >
-                Todas
-              </button>
-              {NEWS_CATEGORIES.map((cat) => (
+      <div className="page-container space-y-10 py-10">
+        <MotionReveal>
+          <FilterBar>
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-wrap gap-3">
                 <button
-                  key={cat}
-                  onClick={() => setCategory(cat)}
-                  className={`h-10 px-5 rounded-xl text-[11px] font-medium uppercase tracking-[0.08em] transition-colors ${
-                    category === cat
-                      ? "bg-accent text-slate-900 shadow-lg"
-                      : "bg-white/5 text-white/60 hover:bg-white/10"
-                  }`}
+                  onClick={() => setCategory("all")}
+                  className={`rounded-full px-4 py-2 text-sm font-semibold transition-colors ${category === "all"
+                      ? "bg-primary text-white"
+                      : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                    }`}
                 >
-                  {cat}
+                  Todas
                 </button>
-              ))}
-            </div>
+                {NEWS_CATEGORIES.map((newsCategory) => (
+                  <button
+                    key={newsCategory}
+                    onClick={() => setCategory(newsCategory)}
+                    className={`rounded-full px-4 py-2 text-sm font-semibold transition-colors ${category === newsCategory
+                        ? "bg-primary text-white"
+                        : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                      }`}
+                  >
+                    {newsCategory}
+                  </button>
+                ))}
+              </div>
 
-            {/* Search Input */}
-            <div className="relative max-w-md">
-              <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
               <input
                 type="text"
                 placeholder="Buscar noticias..."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className="w-full h-12 pl-12 pr-4 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-slate-400 focus:border-accent transition-colors"
+                className="h-12 rounded-2xl border border-[color:var(--color-border-soft)] bg-white px-4 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/15"
               />
             </div>
-          </div>
-        </div>
-      </section>
+          </FilterBar>
+        </MotionReveal>
 
-      {/* News Grid */}
-      <div className="container mx-auto px-6 pb-28 pt-12">
         {loading ? (
-          <div className="py-24 text-center">
-            <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-accent border-t-transparent" />
-            <p className="mt-8 text-xl font-black uppercase tracking-widest text-slate-500">
-              Cargando noticias...
-            </p>
+          <div className="card-surface flex items-center justify-center py-20 text-center">
+            <p className="text-lg font-semibold text-slate-500">Cargando noticias...</p>
           </div>
         ) : error ? (
-          <div className="rounded-3xl border-2 border-dashed border-red-500/30 bg-red-500/5 p-16 text-center">
-            <p className="text-4xl font-black uppercase tracking-tighter text-red-500">
-              Error en el sistema
-            </p>
-            <p className="mt-4 text-xl font-bold text-slate-400">
+          <div className="card-surface flex items-center justify-center py-20 text-center">
+            <p className="text-lg font-semibold text-red-500">
               No hemos podido conectar con las noticias.
             </p>
           </div>
         ) : filteredNews.length === 0 ? (
-          <div className="py-32 text-center border-2 border-dashed border-slate-300 rounded-3xl bg-white">
-            <Newspaper className="h-16 w-16 text-slate-300 mx-auto mb-6" />
-            <span className="text-3xl md:text-5xl font-semibold tracking-tight text-slate-500">
-              Sin noticias para esta selección
+          <div className="card-surface flex flex-col items-center justify-center py-20 text-center">
+            <Newspaper className="mb-4 h-12 w-12 text-slate-300" />
+            <span className="text-xl font-semibold text-slate-500">
+              No hay noticias para esta seleccion.
             </span>
           </div>
         ) : (
-          <div className="space-y-16">
-            {/* Results Count */}
-            <div className="flex items-center gap-6">
-              <h2 className="text-xl font-semibold tracking-tight text-primary">
-                {filteredNews.length}{" "}
-                {filteredNews.length === 1 ? "Noticia" : "Noticias"}
-              </h2>
-              <div className="h-px flex-1 bg-slate-300" />
-            </div>
-
-            {/* Grid */}
-            <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-3">
+          <section className="space-y-6">
+            <MotionReveal>
+              <SectionHeader
+                eyebrow="Archivo municipal"
+                title={`${filteredNews.length} noticia${filteredNews.length === 1 ? "" : "s"} disponibles`}
+                description="Consulta el detalle completo de cada publicación municipal con una lectura más clara y editorial."
+                action={
+                  <div className="inline-flex items-center gap-2 rounded-full border border-primary/12 bg-white/80 px-4 py-2 text-sm font-semibold text-primary">
+                    <RadioTower className="h-4 w-4" />
+                    Información actualizada
+                  </div>
+                }
+              />
+            </MotionReveal>
+            <AnimatedCardGrid className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 xl:gap-10">
               {filteredNews.map((news) => (
                 <NewsCard key={news.id} news={news} />
               ))}
-            </div>
-          </div>
+            </AnimatedCardGrid>
+          </section>
         )}
       </div>
     </main>

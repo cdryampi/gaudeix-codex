@@ -68,10 +68,10 @@ export function HeroScrollIndicator({
   return (
     <div className={wrapperClassName}>
       <div ref={indicatorRef} className="flex flex-col items-center justify-center gap-3">
-        <div className="relative h-16 w-10 rounded-full border-2 border-white bg-black/35 shadow-[0_10px_30px_rgba(0,0,0,0.45)] ring-1 ring-white/20 backdrop-blur">
+        <div className="relative h-12 w-7 rounded-full border border-white/40 shadow-sm backdrop-blur-sm">
           <div
             ref={dotRef}
-            className="absolute left-1/2 top-3 h-2.5 w-2.5 -translate-x-1/2 rounded-full bg-puerto-rico-300 shadow-[0_0_18px_rgba(62,191,171,0.85)]"
+            className="absolute left-1/2 top-3 h-2.5 w-2.5 -translate-x-1/2 rounded-full bg-accent shadow-[0_0_18px_rgba(255,178,77,0.6)]"
           />
         </div>
 

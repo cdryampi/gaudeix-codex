@@ -1,56 +1,66 @@
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Tag } from "lucide-react";
+import { ArrowRight, Tag, Clock } from "lucide-react";
+
 import type { NewsItem } from "../types";
-import { formatDateTime } from "@/features/agenda/dateUtils";
+
+function formatDateCustom(isoString: string) {
+  const date = new Date(isoString);
+  return new Intl.DateTimeFormat("es-ES", {
+    day: "numeric",
+    month: "short",
+    year: "numeric"
+  }).format(date).replace('.', '');
+}
 
 export function NewsCard({ news }: { news: NewsItem }) {
-  const dateLabel = useMemo(
-    () => formatDateTime(news.publishedAt),
-    [news.publishedAt],
-  );
+  const dateLabel = useMemo(() => formatDateCustom(news.publishedAt), [news.publishedAt]);
 
   return (
     <Link
       to={`/noticias/${news.slug}`}
-      className="group flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white text-slate-900 shadow-[0_8px_24px_rgba(15,23,42,0.08)] transition-all hover:-translate-y-1 hover:shadow-[0_16px_32px_rgba(15,23,42,0.12)]"
+      data-animated-card
+      className="group block h-full cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-[2.5rem]"
     >
-      <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-200">
-        <img
-          src={news.imageUrl}
-          alt={news.title}
-          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-        />
-        <div className="absolute inset-0 bg-black/5" />
-      </div>
+      <div className="relative flex h-full flex-col overflow-hidden rounded-[2.5rem] bg-white shadow-sm ring-1 ring-slate-100 transition-all duration-500 hover:shadow-[0_32px_80px_rgba(15,76,129,0.08)] hover:ring-slate-200">
+        <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-100">
+          <img
+            src={news.imageUrl}
+            alt={news.title}
+            className="h-full w-full object-cover transition-transform duration-1000 ease-out group-hover:scale-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-slate-900/10 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
 
-      <div className="flex flex-1 flex-col p-7 md:p-8">
-        <div className="mb-5 flex items-center justify-between gap-3">
-          <span className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-primary">
-            <Tag className="h-4 w-4" />
-            {news.category}
-          </span>
-          <span className="text-[11px] font-medium uppercase tracking-[0.08em] text-slate-500">
-            {dateLabel}
-          </span>
+          <div className="absolute left-5 top-5">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-white/95 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-primary shadow-sm backdrop-blur-md border border-white/20">
+              <Tag className="h-3 w-3" />
+              {news.category}
+            </span>
+          </div>
         </div>
 
-        <h3 className="mb-4 text-2xl font-semibold leading-snug tracking-tight">
-          {news.title}
-        </h3>
+        <div className="flex flex-1 flex-col p-6 md:p-8">
+          <div className="mb-4 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">
+            <Clock className="h-3.5 w-3.5" />
+            <span>{dateLabel}</span>
+          </div>
 
-        {news.excerpt && (
-          <p className="mb-6 line-clamp-3 text-base text-slate-600 leading-relaxed">
-            {news.excerpt}
-          </p>
-        )}
+          <h3 className="mb-4 line-clamp-3 text-xl font-bold leading-tight text-slate-900 transition-colors group-hover:text-primary md:text-2xl">
+            {news.title}
+          </h3>
 
-        <div className="mt-auto flex items-center justify-between border-t border-slate-200 pt-6">
-          <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500 group-hover:text-primary transition-colors">
-            Leer más
-          </span>
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-100 text-slate-700 group-hover:bg-primary group-hover:text-white transition-colors">
-            <ArrowRight className="h-4 w-4" />
+          {news.excerpt ? (
+            <p className="mb-6 line-clamp-3 text-sm leading-relaxed text-slate-500">
+              {news.excerpt}
+            </p>
+          ) : null}
+
+          <div className="mt-auto flex items-center gap-2 text-sm font-bold text-primary border-t border-slate-100/80 pt-6">
+            <span className="relative overflow-hidden">
+              <span className="block transition-transform duration-500 group-hover:-translate-y-full">Leer Noticia completa</span>
+              <span className="absolute inset-0 block translate-y-full text-secondary transition-transform duration-500 group-hover:translate-y-0">Leer Noticia completa</span>
+            </span>
+            <ArrowRight className="h-4 w-4 transition-transform duration-500 group-hover:translate-x-1 group-hover:text-secondary" />
           </div>
         </div>
       </div>

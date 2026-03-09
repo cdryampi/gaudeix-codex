@@ -1,11 +1,36 @@
 from __future__ import annotations
 
+from django.core.validators import URLValidator
+from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
-from .models import MenuItem, SiteSettings
 from core.serializers import CategorySerializer
 from media_files.serializers import ImageFileSerializer, VideoFileSerializer
 from static_pages.serializers import StaticPageSerializer
+
+from .models import FooterBadge, FooterLink, FooterSettings, MenuItem, SiteSettings
+
+
+def is_allowed_link_value(value: str) -> bool:
+    if not value:
+        return False
+
+    if value.startswith(("/", "#", "mailto:", "tel:")):
+        return True
+
+    validator = URLValidator()
+    try:
+        validator(value)
+    except Exception:
+        return False
+    return True
+
+
+class FooterStaticPageLinkSerializer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
+    slug = serializers.CharField(read_only=True)
+    template = serializers.CharField(read_only=True)
+    titulo = serializers.CharField(read_only=True)
 
 
 class SiteSettingsSerializer(serializers.ModelSerializer):
@@ -103,15 +128,12 @@ class SiteSettingsSerializer(serializers.ModelSerializer):
             "is_alert_active",
             "current_weather",
         ]
-
         read_only_fields = ["id", "current_weather"]
 
     def get_current_weather(self, obj):
-        """
-        Returns the weather for today from MunicipalityWeather.
-        """
-        from .models_weather import MunicipalityWeather
         from django.utils import timezone
+
+        from .models_weather import MunicipalityWeather
 
         weather = MunicipalityWeather.objects.order_by("-updated_at").first()
         if not weather:
@@ -132,7 +154,6 @@ class SiteSettingsSerializer(serializers.ModelSerializer):
         return None
 
     def update(self, instance, validated_data):
-        # Map write-only ids to FK fields
         fk_fields = [
             ("logo_id", "logo_id"),
             ("logo_dark_id", "logo_dark_id"),
@@ -203,28 +224,28 @@ class MenuItemSerializer(serializers.ModelSerializer):
         if item_type == MenuItem.TypeChoices.CATEGORY:
             if not category_id:
                 raise serializers.ValidationError(
-                    {"category_id": "Requerida para tipo categoría."}
+                    {"category_id": "Requerida para tipo categoria."}
                 )
             if static_page_id:
                 raise serializers.ValidationError(
-                    {"static_page_id": "No permitido para tipo categoría."}
+                    {"static_page_id": "No permitido para tipo categoria."}
                 )
             if url:
                 raise serializers.ValidationError(
-                    {"url": "No permitido para tipo categoría."}
+                    {"url": "No permitido para tipo categoria."}
                 )
         elif item_type == MenuItem.TypeChoices.STATIC_PAGE:
             if not static_page_id:
                 raise serializers.ValidationError(
-                    {"static_page_id": "Requerida para tipo página estática."}
+                    {"static_page_id": "Requerida para tipo pagina estatica."}
                 )
             if category_id:
                 raise serializers.ValidationError(
-                    {"category_id": "No permitido para tipo página estática."}
+                    {"category_id": "No permitido para tipo pagina estatica."}
                 )
             if url:
                 raise serializers.ValidationError(
-                    {"url": "No permitido para tipo página estática."}
+                    {"url": "No permitido para tipo pagina estatica."}
                 )
         elif item_type == MenuItem.TypeChoices.CUSTOM:
             if not url:
@@ -237,7 +258,7 @@ class MenuItemSerializer(serializers.ModelSerializer):
                 )
             if category_id or static_page_id:
                 raise serializers.ValidationError(
-                    {"type": "No puede apuntar a categoría o página."}
+                    {"type": "No puede apuntar a categoria o pagina."}
                 )
 
         parent = (
@@ -252,24 +273,23 @@ class MenuItemSerializer(serializers.ModelSerializer):
         )
         settings_id = getattr(self.instance, "settings_id", None)
 
-        # Depth / cycles (max 3 levels)
         target_parent = parent
         seen: set[int] = set()
         depth = 0
         while target_parent:
             if self.instance and target_parent.pk == self.instance.pk:
                 raise serializers.ValidationError(
-                    {"parent": "Un ítem no puede ser su propio padre."}
+                    {"parent": "Un item no puede ser su propio padre."}
                 )
             if target_parent.pk and target_parent.pk in seen:
                 raise serializers.ValidationError(
-                    {"parent": "No se pueden crear ciclos en el menú."}
+                    {"parent": "No se pueden crear ciclos en el menu."}
                 )
             if target_parent.pk:
                 seen.add(target_parent.pk)
             if location and target_parent.location != location:
                 raise serializers.ValidationError(
-                    {"parent": "El padre debe estar en la misma ubicación."}
+                    {"parent": "El padre debe estar en la misma ubicacion."}
                 )
             if settings_id and target_parent.settings_id != settings_id:
                 raise serializers.ValidationError(
@@ -278,8 +298,300 @@ class MenuItemSerializer(serializers.ModelSerializer):
             depth += 1
             if depth >= 3:
                 raise serializers.ValidationError(
-                    {"parent": "Máximo 3 niveles (raíz > hijo > nieto)."}
+                    {"parent": "Maximo 3 niveles (raiz > hijo > nieto)."}
                 )
             target_parent = target_parent.parent
 
         return attrs
+
+
+class FooterSettingsSerializer(serializers.ModelSerializer):
+    site_settings_id = serializers.IntegerField(source="site_settings.id", read_only=True)
+
+    class Meta:
+        model = FooterSettings
+        fields = [
+            "id",
+            "site_settings_id",
+            "eyebrow",
+            "title",
+            "description",
+            "show_social_links",
+            "show_contact_block",
+            "show_badges_block",
+            "copyright_text",
+        ]
+        read_only_fields = ["id", "site_settings_id"]
+
+
+class FooterLinkSerializer(serializers.ModelSerializer):
+    category = CategorySerializer(read_only=True)
+    category_id = serializers.IntegerField(
+        write_only=True, required=False, allow_null=True
+    )
+    static_page = StaticPageSerializer(read_only=True)
+    static_page_id = serializers.IntegerField(
+        write_only=True, required=False, allow_null=True
+    )
+    footer_settings_id = serializers.IntegerField(
+        source="footer_settings.id", read_only=True
+    )
+
+    class Meta:
+        model = FooterLink
+        fields = [
+            "id",
+            "footer_settings_id",
+            "section",
+            "order",
+            "is_active",
+            "type",
+            "label",
+            "url",
+            "category",
+            "category_id",
+            "static_page",
+            "static_page_id",
+        ]
+        read_only_fields = [
+            "id",
+            "footer_settings_id",
+            "category",
+            "static_page",
+        ]
+
+    def validate(self, attrs):
+        item_type = attrs.get("type") or getattr(self.instance, "type", None)
+        category_id = (
+            attrs.get("category_id")
+            if "category_id" in attrs
+            else getattr(self.instance, "category_id", None)
+        )
+        static_page_id = (
+            attrs.get("static_page_id")
+            if "static_page_id" in attrs
+            else getattr(self.instance, "static_page_id", None)
+        )
+        url = attrs.get("url") if "url" in attrs else getattr(self.instance, "url", "")
+        label = (
+            attrs.get("label")
+            if "label" in attrs
+            else getattr(self.instance, "label", "")
+        )
+
+        if item_type == MenuItem.TypeChoices.CATEGORY:
+            if not category_id:
+                raise serializers.ValidationError(
+                    {"category_id": "Requerida para tipo categoria."}
+                )
+            if static_page_id:
+                raise serializers.ValidationError(
+                    {"static_page_id": "No permitido para tipo categoria."}
+                )
+            if url:
+                raise serializers.ValidationError(
+                    {"url": "No permitido para tipo categoria."}
+                )
+        elif item_type == MenuItem.TypeChoices.STATIC_PAGE:
+            if not static_page_id:
+                raise serializers.ValidationError(
+                    {"static_page_id": "Requerida para tipo pagina estatica."}
+                )
+            if category_id:
+                raise serializers.ValidationError(
+                    {"category_id": "No permitido para tipo pagina estatica."}
+                )
+            if url:
+                raise serializers.ValidationError(
+                    {"url": "No permitido para tipo pagina estatica."}
+                )
+        elif item_type == MenuItem.TypeChoices.CUSTOM:
+            if not url:
+                raise serializers.ValidationError(
+                    {"url": "Requerida para link personalizado."}
+                )
+            if not is_allowed_link_value(url):
+                raise serializers.ValidationError(
+                    {"url": "Introduce una URL absoluta o una ruta relativa valida."}
+                )
+            if not label:
+                raise serializers.ValidationError(
+                    {"label": "Etiqueta requerida para link personalizado."}
+                )
+            if category_id or static_page_id:
+                raise serializers.ValidationError(
+                    {"type": "No puede apuntar a categoria o pagina."}
+                )
+
+        return attrs
+
+
+class FooterBadgeSerializer(serializers.ModelSerializer):
+    image = ImageFileSerializer(read_only=True)
+    image_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
+    footer_settings_id = serializers.IntegerField(
+        source="footer_settings.id", read_only=True
+    )
+
+    class Meta:
+        model = FooterBadge
+        fields = [
+            "id",
+            "footer_settings_id",
+            "title",
+            "alt_text",
+            "url",
+            "image",
+            "image_id",
+            "order",
+            "is_active",
+        ]
+        read_only_fields = ["id", "footer_settings_id", "image"]
+
+    def validate(self, attrs):
+        url = attrs.get("url") if "url" in attrs else getattr(self.instance, "url", "")
+        if url and not is_allowed_link_value(url):
+            raise serializers.ValidationError(
+                {"url": "Introduce una URL absoluta o una ruta relativa valida."}
+            )
+        return attrs
+
+    def update(self, instance, validated_data):
+        if "image_id" in validated_data:
+            instance.image_id = validated_data.pop("image_id")
+        return super().update(instance, validated_data)
+
+    def create(self, validated_data):
+        image_id = validated_data.pop("image_id", None)
+        instance = super().create(validated_data)
+        if image_id is not None:
+            instance.image_id = image_id
+            instance.save(update_fields=["image"])
+        return instance
+
+
+class FooterPublicLinkSerializer(FooterLinkSerializer):
+    class Meta(FooterLinkSerializer.Meta):
+        fields = [
+            "id",
+            "section",
+            "order",
+            "type",
+            "label",
+            "url",
+            "category",
+            "static_page",
+        ]
+        read_only_fields = fields
+
+
+class FooterPublicBadgeSerializer(FooterBadgeSerializer):
+    class Meta(FooterBadgeSerializer.Meta):
+        fields = [
+            "id",
+            "title",
+            "alt_text",
+            "url",
+            "image",
+            "order",
+        ]
+        read_only_fields = fields
+
+
+class FooterPublicSerializer(serializers.ModelSerializer):
+    branding = serializers.SerializerMethodField()
+    contact = serializers.SerializerMethodField()
+    social = serializers.SerializerMethodField()
+    legal = serializers.SerializerMethodField()
+    links = serializers.SerializerMethodField()
+    badges = serializers.SerializerMethodField()
+
+    class Meta:
+        model = FooterSettings
+        fields = [
+            "id",
+            "eyebrow",
+            "title",
+            "description",
+            "show_social_links",
+            "show_contact_block",
+            "show_badges_block",
+            "copyright_text",
+            "branding",
+            "contact",
+            "social",
+            "legal",
+            "links",
+            "badges",
+        ]
+        read_only_fields = fields
+
+    def get_branding(self, obj):
+        site = obj.site_settings
+        return {
+            "site_name": site.site_name,
+            "tagline": site.tagline,
+            "logo": ImageFileSerializer(site.logo, context=self.context).data
+            if site.logo
+            else None,
+            "logo_dark": ImageFileSerializer(site.logo_dark, context=self.context).data
+            if site.logo_dark
+            else None,
+            "favicon": ImageFileSerializer(site.favicon, context=self.context).data
+            if site.favicon
+            else None,
+        }
+
+    def get_contact(self, obj):
+        site = obj.site_settings
+        return {
+            "phone": site.phone,
+            "support_email": site.support_email,
+            "contact_email": site.contact_email,
+            "address": site.address,
+            "schedule": site.schedule,
+            "maps_base_url": site.maps_base_url,
+            "latitude": site.latitude,
+            "longitude": site.longitude,
+        }
+
+    def get_social(self, obj):
+        site = obj.site_settings
+        return {
+            "facebook_url": site.facebook_url,
+            "instagram_url": site.instagram_url,
+            "twitter_url": site.twitter_url,
+            "youtube_url": site.youtube_url,
+        }
+
+    def get_legal(self, obj):
+        site = obj.site_settings
+
+        def serialize(page):
+            return (
+                FooterStaticPageLinkSerializer(page, context=self.context).data
+                if page
+                else None
+            )
+
+        return {
+            "privacy_page": serialize(site.privacy_page),
+            "cookies_page": serialize(site.cookies_page),
+            "legal_page": serialize(site.legal_page),
+            "inclusion_page": serialize(site.inclusion_page),
+        }
+
+    def get_links(self, obj):
+        grouped = {
+            FooterLink.SectionChoices.EXPLORE: [],
+            FooterLink.SectionChoices.INSTITUTIONAL: [],
+        }
+        for link in obj.links.filter(is_active=True).order_by("section", "order", "id"):
+            grouped.setdefault(link.section, []).append(
+                FooterPublicLinkSerializer(link, context=self.context).data
+            )
+        return grouped
+
+    def get_badges(self, obj):
+        badges = obj.badges.filter(is_active=True).order_by("order", "id")
+        return FooterPublicBadgeSerializer(badges, many=True, context=self.context).data

@@ -1,6 +1,13 @@
 import { useState } from "react";
-import { LogIn, ChevronDown, Navigation, User, X } from "lucide-react";
-import { Heart, Menu } from "lucide-react";
+import {
+  ChevronDown,
+  Heart,
+  LogIn,
+  Menu,
+  Navigation,
+  User,
+  X,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
@@ -36,18 +43,18 @@ function toHeaderNavItems(items: MenuTreeItem[]): HeaderNavItem[] {
   return items.map((item) => ({
     label: resolveLabel(item),
     href: resolveUrl(item),
-    children: item.children?.length
-      ? toHeaderNavItems(item.children)
-      : undefined,
+    children: item.children?.length ? toHeaderNavItems(item.children) : undefined,
   }));
 }
 
 export function SiteHeader({
   siteName = "Cabrera de Mar",
   isTransparent = false,
+  isCondensed = false,
 }: {
   siteName?: string;
   isTransparent?: boolean;
+  isCondensed?: boolean;
 }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
@@ -63,141 +70,112 @@ export function SiteHeader({
   });
 
   const navItems: HeaderNavItem[] =
-    apiMenuTree && apiMenuTree.length > 0
-      ? toHeaderNavItems(apiMenuTree)
-      : HEADER_NAV;
+    apiMenuTree && apiMenuTree.length > 0 ? toHeaderNavItems(apiMenuTree) : HEADER_NAV;
 
   return (
     <>
-      <div
-        className={`w-full transition-all duration-500 ${
-          isTransparent
-            ? "bg-transparent"
-            : "bg-white/95 backdrop-blur-2xl border-b border-slate-100 shadow-lg"
-        }`}
+      <header
+        className={`relative z-30 w-full transition-all duration-500 ${isTransparent
+          ? "border-b border-transparent bg-transparent text-white"
+          : "border-b border-slate-100/60 bg-white/95 backdrop-blur-md shadow-sm"
+          }`}
       >
-        <div className="container mx-auto px-6 lg:px-8 h-20 flex items-center justify-between">
-          {/* LOGO */}
-          <Link to="/" className="flex items-center shrink-0">
-            <div
-              className={`transition-all duration-500 ${!isTransparent ? "brightness-0" : "brightness-100"}`}
-            >
+        <div
+          className={`page-container flex items-center justify-between gap-4 transition-all duration-500 ${isCondensed ? "h-14" : "h-16 md:h-20"
+            }`}
+        >
+          <Link to="/" className="flex shrink-0 items-center group">
+            <div className="transition-transform duration-300 group-hover:scale-105">
               <img
                 src={logoCabrera}
                 alt={siteName}
-                className="h-9 md:h-10 w-auto object-contain"
+                className={`w-auto object-contain transition-all duration-500 ${isCondensed ? "h-7 md:h-8" : "h-8 md:h-10"} ${isTransparent ? "brightness-[100]" : "brightness-0"}`}
               />
             </div>
           </Link>
 
-          {/* DESKTOP NAVIGATION */}
-          <nav className="hidden lg:flex items-center gap-1 mx-8">
-            {navItems.map((item, idx) => (
-              <div key={idx} className="group relative">
+          <nav className="hidden items-center gap-1 lg:flex">
+            {navItems.map((item) => (
+              <div key={item.label} className="group relative">
                 <Link
                   to={item.href || "#"}
-                  className={`flex items-center gap-1.5 px-4 py-6 text-[11px] font-extrabold uppercase tracking-[0.2em] transition-all relative ${
-                    isTransparent
-                      ? "text-white/90 hover:text-white"
-                      : "text-slate-600 hover:text-slate-900"
-                  }`}
+                  className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold transition-all ${isTransparent
+                    ? "text-white/60 hover:bg-white/5 hover:text-white"
+                    : "text-slate-600 hover:bg-slate-100/80 hover:text-slate-900"
+                    }`}
                 >
                   {item.label}
-                  {item.children && (
-                    <ChevronDown className="h-3 w-3 opacity-40 group-hover:rotate-180 transition-transform duration-300" />
-                  )}
-                  {/* Active indicator */}
-                  <span
-                    className={`absolute bottom-4 left-4 right-4 h-0.5 rounded-full transition-all duration-300 scale-x-0 group-hover:scale-x-100 ${
-                      isTransparent ? "bg-accent" : "bg-primary"
-                    }`}
-                  />
+                  {item.children ? (
+                    <ChevronDown className="h-3.5 w-3.5 opacity-40 transition-transform duration-300 group-hover:rotate-180" />
+                  ) : null}
                 </Link>
 
-                {/* Mega Dropdown */}
-                {item.children && (
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 pt-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform group-hover:translate-y-0 translate-y-1 z-50">
-                    <div
-                      className={`rounded-2xl shadow-[0_16px_64px_rgba(0,0,0,0.12)] border border-slate-100 bg-white overflow-hidden ${
-                        item.children.length > 4
-                          ? "p-6 min-w-[400px] grid grid-cols-2 gap-1"
-                          : "p-3 min-w-[220px] grid gap-0.5"
-                      }`}
-                    >
-                      {item.children.map((child, cIdx) => (
+                {item.children ? (
+                  <div className="invisible absolute left-0 top-full z-50 translate-y-1 pt-2 opacity-0 transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
+                    <div className="min-w-[240px] overflow-hidden rounded-2xl border border-[color:var(--color-border-soft)] bg-white p-2 shadow-[0_18px_44px_rgba(17,37,53,0.14)]">
+                      {item.children.map((child) => (
                         <Link
-                          key={cIdx}
+                          key={child.label}
                           to={child.href || "#"}
-                          className="flex items-center gap-3 px-4 py-3 rounded-xl text-[11px] font-bold uppercase tracking-widest text-slate-500 hover:text-slate-900 hover:bg-slate-50 transition-all group/item"
+                          className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm text-slate-600 transition-all hover:bg-slate-50 hover:text-primary"
                         >
-                          <span className="h-1.5 w-1.5 rounded-full bg-primary/30 group-hover/item:bg-primary transition-colors shrink-0" />
+                          <span className="h-2 w-2 shrink-0 rounded-full bg-primary/25" />
                           {child.label}
                         </Link>
                       ))}
                     </div>
                   </div>
-                )}
+                ) : null}
               </div>
             ))}
           </nav>
 
-          {/* ACTIONS */}
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex shrink-0 items-center gap-3">
             <Link
               to="/como-llegar"
-              className={`hidden md:flex items-center gap-2 px-5 py-2.5 rounded-full text-[10px] font-extrabold uppercase tracking-widest transition-all ${
-                isTransparent
-                  ? "bg-white/10 text-white hover:bg-white/20 border border-white/10"
-                  : "bg-primary/5 text-primary hover:bg-primary/10 border border-primary/10"
-              }`}
+              className={`hidden items-center gap-2 rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-widest transition-all md:flex ${isTransparent
+                ? "bg-white/10 text-white hover:bg-white/20 hover:scale-[1.02]"
+                : "bg-slate-100 text-slate-800 hover:bg-slate-200"
+                }`}
             >
-              <Navigation className="h-3.5 w-3.5" />
-              Llegar
+              <Navigation className="h-3.5 w-3.5 opacity-80" />
+              Como llegar
             </Link>
 
             {isAuthenticated ? (
               <>
                 <Link
                   to="/mis-favoritos"
-                  className={`flex items-center gap-2 h-10 px-3 rounded-xl transition-all ${
-                    isTransparent
-                      ? "bg-white/10 text-white hover:bg-white/20"
-                      : "bg-rose-50 text-rose-500 hover:bg-rose-100"
-                  }`}
+                  className={`flex h-9 w-9 items-center justify-center rounded-full transition-all ${isTransparent
+                    ? "bg-white/10 text-white hover:bg-white/20"
+                    : "bg-rose-50 text-rose-500 hover:bg-rose-100"
+                    }`}
                   title="Mis Favoritos"
                 >
-                  <Heart
-                    className={`h-4 w-4 ${isTransparent ? "text-white" : "text-rose-500"}`}
-                  />
+                  <Heart className={`h-4 w-4 ${isTransparent ? "text-white" : "text-rose-500"}`} />
                 </Link>
-                <div className="hidden md:flex items-center gap-2">
+                <div className="hidden items-center gap-2 md:flex">
                   <div
-                    className={`group relative flex items-center gap-2 h-10 px-3 rounded-xl cursor-pointer ${
-                      isTransparent
-                        ? "bg-white/10 text-white"
-                        : "bg-slate-50 text-slate-700"
-                    }`}
+                    className={`group relative flex h-9 cursor-pointer items-center justify-center gap-2 rounded-full px-3.5 transition-all ${isTransparent ? "bg-white/10 text-white hover:bg-white/20" : "bg-slate-100 text-slate-700"
+                      }`}
                   >
-                    <User
-                      className={`h-4 w-4 ${isTransparent ? "text-white" : "text-primary"}`}
-                    />
-                    <span className="text-[10px] font-extrabold uppercase tracking-widest">
+                    <User className="h-3.5 w-3.5" />
+                    <span className="text-[10px] font-bold uppercase tracking-wider">
                       {user?.username}
                     </span>
 
-                    {/* User Dropdown */}
-                    <div className="invisible absolute right-0 top-full mt-2 w-44 opacity-0 shadow-xl transition-all group-hover:visible group-hover:translate-y-0 translate-y-1 group-hover:opacity-100 z-50">
-                      <div className="overflow-hidden rounded-xl border border-slate-100 bg-white p-1.5">
+                    <div className="invisible absolute right-0 top-full mt-2 translate-y-1 opacity-0 shadow-lg transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
+                      <div className="overflow-hidden rounded-xl border border-slate-100 bg-white p-1.5 shadow-xl">
                         <Link
                           to="/mis-favoritos"
-                          className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-xs font-bold text-slate-600 hover:bg-slate-50"
+                          className="flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50"
                         >
-                          <Heart className="h-3.5 w-3.5" />
+                          <Heart className="h-3.5 w-3.5 text-rose-500" />
                           Favoritos
                         </Link>
                         <button
                           onClick={() => logout()}
-                          className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-xs font-bold text-red-500 hover:bg-red-50"
+                          className="flex w-full items-center gap-2 rounded-lg px-4 py-2 text-xs font-bold text-red-600 hover:bg-red-50 text-left"
                         >
                           <LogIn className="h-3.5 w-3.5 rotate-180" />
                           Cerrar sesión
@@ -210,163 +188,167 @@ export function SiteHeader({
             ) : (
               <Link
                 to="/login"
-                className={`hidden md:flex h-10 items-center gap-2 px-6 rounded-xl transition-all font-extrabold text-[10px] uppercase tracking-widest ${
-                  !isTransparent
-                    ? "bg-slate-900 text-white shadow-lg shadow-slate-900/10 hover:bg-primary"
-                    : "bg-white text-slate-900 shadow-lg hover:scale-105"
-                }`}
+                className={`hidden h-9 items-center gap-2 rounded-full px-5 text-xs font-bold transition-all md:flex hover:scale-[1.02] ${isTransparent ? "bg-white text-slate-900 shadow-xl" : "bg-slate-900 text-white hover:bg-slate-800"
+                  }`}
               >
                 <LogIn className="h-3.5 w-3.5" />
                 Entrar
               </Link>
             )}
 
-            {/* MOBILE HAMBURGER */}
             <button
               onClick={() => setMobileOpen(true)}
-              className={`lg:hidden flex items-center justify-center h-10 w-10 rounded-xl transition-all ${
-                isTransparent
-                  ? "bg-white/10 text-white hover:bg-white/20"
-                  : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-              }`}
+              className={`flex h-9 w-9 items-center justify-center rounded-full transition-all lg:hidden ${isTransparent
+                ? "bg-white/10 text-white hover:bg-white/16"
+                : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                }`}
               aria-label="Abrir menú"
             >
-              <Menu className="h-5 w-5" />
+              <Menu className="h-4.5 w-4.5" />
             </button>
           </div>
         </div>
-      </div>
+      </header>
 
-      {/* MOBILE DRAWER */}
-      {mobileOpen && (
+      {mobileOpen ? (
         <div className="fixed inset-0 z-[100] lg:hidden">
-          {/* Backdrop */}
           <div
             className="absolute inset-0 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200"
             onClick={() => setMobileOpen(false)}
           />
 
-          {/* Drawer */}
-          <div className="absolute right-0 top-0 h-full w-80 max-w-[85vw] bg-white shadow-2xl animate-in slide-in-from-right duration-300 flex flex-col">
-            {/* Drawer Header */}
-            <div className="flex items-center justify-between px-6 h-20 border-b border-slate-50">
-              <img
-                src={logoCabrera}
-                alt={siteName}
-                className="h-8 w-auto brightness-0"
-              />
+          <div className="absolute right-0 top-0 flex h-full w-80 max-w-[85vw] flex-col bg-white shadow-2xl animate-in slide-in-from-right duration-300">
+            <div className="flex h-20 items-center justify-between border-b border-slate-50 px-8">
+              <div className="flex items-center gap-4">
+                <img
+                  src={logoCabrera}
+                  alt={siteName}
+                  className="h-7 w-auto brightness-0"
+                />
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Cabrera de Mar</span>
+                </div>
+              </div>
               <button
                 onClick={() => setMobileOpen(false)}
-                className="h-9 w-9 rounded-lg bg-slate-100 flex items-center justify-center hover:bg-slate-200 transition-colors"
-                aria-label="Cerrar menú"
+                className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-50 transition-all hover:bg-slate-100 active:scale-95"
+                aria-label="Cerrar menu"
               >
-                <X className="h-4 w-4 text-slate-600" />
+                <X className="h-6 w-6 text-slate-900" />
               </button>
             </div>
 
-            {/* Drawer Nav */}
-            <nav className="flex-1 overflow-y-auto py-3">
-              {navItems.map((item, idx) => (
-                <div key={idx}>
-                  {item.children ? (
-                    <>
-                      <button
-                        onClick={() =>
-                          setMobileExpanded(
-                            mobileExpanded === item.label ? null : item.label,
-                          )
-                        }
-                        className="flex items-center justify-between w-full px-6 py-4 text-[13px] font-extrabold uppercase tracking-widest text-slate-800 hover:bg-slate-50 transition-colors"
+            <nav className="flex-1 overflow-y-auto px-2 py-6">
+              <div className="space-y-1">
+                {navItems.map((item) => (
+                  <div key={item.label} className="overflow-hidden rounded-2xl">
+                    {item.children ? (
+                      <>
+                        <button
+                          onClick={() =>
+                            setMobileExpanded(
+                              mobileExpanded === item.label ? null : item.label,
+                            )
+                          }
+                          className={`flex w-full items-center justify-between px-6 py-4 text-sm font-bold uppercase tracking-widest transition-colors ${mobileExpanded === item.label ? "bg-slate-50 text-primary" : "text-slate-900 hover:bg-slate-50"}`}
+                        >
+                          {item.label}
+                          <ChevronDown
+                            className={`h-4 w-4 text-slate-400 transition-transform duration-300 ${mobileExpanded === item.label ? "rotate-180" : ""
+                              }`}
+                          />
+                        </button>
+                        {mobileExpanded === item.label ? (
+                          <div className="bg-slate-50/40 py-1">
+                            {item.children.map((child) => (
+                              <Link
+                                key={child.label}
+                                to={child.href || "#"}
+                                onClick={() => setMobileOpen(false)}
+                                className="flex items-center gap-3 px-10 py-3.5 text-xs font-bold uppercase tracking-[0.15em] text-slate-500 transition-colors hover:text-primary"
+                              >
+                                {child.label}
+                              </Link>
+                            ))}
+                          </div>
+                        ) : null}
+                      </>
+                    ) : (
+                      <Link
+                        to={item.href || "#"}
+                        onClick={() => setMobileOpen(false)}
+                        className="flex items-center px-6 py-4 text-sm font-bold uppercase tracking-widest text-slate-900 transition-colors hover:bg-slate-50"
                       >
                         {item.label}
-                        <ChevronDown
-                          className={`h-4 w-4 text-slate-400 transition-transform duration-300 ${
-                            mobileExpanded === item.label ? "rotate-180" : ""
-                          }`}
-                        />
-                      </button>
-                      {mobileExpanded === item.label && (
-                        <div className="bg-slate-50/80 py-1">
-                          {item.children.map((child, cIdx) => (
-                            <Link
-                              key={cIdx}
-                              to={child.href || "#"}
-                              onClick={() => setMobileOpen(false)}
-                              className="flex items-center gap-3 px-8 py-3 text-xs font-bold text-slate-500 hover:text-primary transition-colors uppercase tracking-widest"
-                            >
-                              <span className="h-1 w-1 rounded-full bg-primary/40" />
-                              {child.label}
-                            </Link>
-                          ))}
-                        </div>
-                      )}
-                    </>
-                  ) : (
-                    <Link
-                      to={item.href || "#"}
-                      onClick={() => setMobileOpen(false)}
-                      className="flex items-center px-6 py-4 text-[13px] font-extrabold uppercase tracking-widest text-slate-800 hover:bg-slate-50 transition-colors"
-                    >
-                      {item.label}
-                    </Link>
-                  )}
-                </div>
-              ))}
+                      </Link>
+                    )}
+                  </div>
+                ))}
+              </div>
             </nav>
 
-            {/* Drawer Footer */}
-            <div className="border-t border-slate-100 p-5 space-y-2.5">
+            <div className="space-y-4 border-t border-slate-50 p-8 bg-slate-50/30">
+              <div className="flex items-center justify-center gap-4 py-2">
+                <button className="text-[11px] font-black tracking-widest text-slate-900">ES</button>
+                <div className="h-4 w-px bg-slate-200" />
+                <button className="text-[11px] font-bold tracking-widest text-slate-400">CA</button>
+              </div>
+
               <Link
                 to="/como-llegar"
                 onClick={() => setMobileOpen(false)}
-                className="flex items-center justify-center gap-2 h-11 rounded-xl bg-primary/5 text-primary text-xs font-extrabold uppercase tracking-widest hover:bg-primary/10 transition-colors border border-primary/10"
+                className="flex h-12 items-center justify-center gap-2 rounded-2xl bg-slate-900 text-[11px] font-black uppercase tracking-[0.2em] text-white shadow-lg shadow-slate-900/10 active:scale-[0.98] transition-transform"
               >
-                <Navigation className="h-3.5 w-3.5" />
+                <Navigation className="h-4 w-4" />
                 Cómo llegar
               </Link>
 
-              {isAuthenticated ? (
-                <>
-                  <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-50">
-                    <User className="h-4 w-4 text-primary" />
-                    <span className="text-xs font-extrabold uppercase tracking-widest text-slate-800">
-                      {user?.username}
-                    </span>
-                  </div>
-                  <div className="flex gap-2">
-                    <Link
-                      to="/mis-favoritos"
-                      onClick={() => setMobileOpen(false)}
-                      className="flex-1 flex items-center justify-center gap-2 h-11 rounded-xl bg-rose-50 text-rose-500 text-xs font-extrabold uppercase tracking-widest"
-                    >
-                      <Heart className="h-3.5 w-3.5" />
-                      Favoritos
-                    </Link>
-                    <button
-                      onClick={() => {
-                        logout();
-                        setMobileOpen(false);
-                      }}
-                      className="flex-1 h-11 rounded-xl bg-red-600 text-white text-xs font-extrabold uppercase tracking-widest hover:bg-red-700 transition-colors"
-                    >
-                      Salir
-                    </button>
-                  </div>
-                </>
-              ) : (
+              {!isAuthenticated ? (
                 <Link
                   to="/login"
                   onClick={() => setMobileOpen(false)}
-                  className="flex h-11 items-center justify-center gap-2 rounded-xl bg-slate-900 text-white text-xs font-extrabold uppercase tracking-widest hover:bg-primary transition-colors"
+                  className="flex h-12 items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white text-[11px] font-black uppercase tracking-[0.2em] text-slate-900 transition-all active:scale-[0.98]"
                 >
-                  <LogIn className="h-3.5 w-3.5" />
+                  <LogIn className="h-4 w-4" />
                   Entrar
                 </Link>
-              )}
+              ) : null}
             </div>
+
+            {isAuthenticated ? (
+              <div className="mt-4 space-y-3">
+                <div className="flex items-center gap-3 rounded-2xl bg-white px-5 py-4 ring-1 ring-slate-100">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
+                    <User className="h-4 w-4" />
+                  </div>
+                  <span className="text-xs font-bold uppercase tracking-widest text-slate-800">
+                    {user?.username}
+                  </span>
+                </div>
+                <div className="flex gap-2">
+                  <Link
+                    to="/mis-favoritos"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex h-12 flex-1 items-center justify-center gap-2 rounded-2xl bg-rose-50 text-[10px] font-bold uppercase tracking-widest text-rose-500"
+                  >
+                    <Heart className="h-3.5 w-3.5" />
+                    Favoritos
+                  </Link>
+                  <button
+                    onClick={() => {
+                      logout();
+                      setMobileOpen(false);
+                    }}
+                    className="h-12 flex-1 rounded-2xl bg-red-50 text-[10px] font-bold uppercase tracking-widest text-red-600 transition-colors hover:bg-red-100"
+                  >
+                    Salir
+                  </button>
+                </div>
+              </div>
+            ) : null}
           </div>
         </div>
-      )}
+      ) : null}
     </>
   );
 }

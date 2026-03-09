@@ -1,7 +1,7 @@
 from django.contrib import admin
 from solo.admin import SingletonModelAdmin
 
-from .models import MenuItem, SiteSettings
+from .models import FooterBadge, FooterLink, FooterSettings, MenuItem, SiteSettings
 
 
 @admin.register(SiteSettings)
@@ -99,4 +99,64 @@ class MenuItemAdmin(admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         if not obj.settings_id:
             obj.settings = SiteSettings.get_solo()
+        super().save_model(request, obj, form, change)
+
+
+@admin.register(FooterSettings)
+class FooterSettingsAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "site_settings",
+        "title",
+        "show_social_links",
+        "show_contact_block",
+        "show_badges_block",
+    )
+    search_fields = ("title", "eyebrow")
+
+    def save_model(self, request, obj, form, change):
+        if not obj.site_settings_id:
+            obj.site_settings = SiteSettings.get_solo()
+        super().save_model(request, obj, form, change)
+
+
+@admin.register(FooterLink)
+class FooterLinkAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "section",
+        "type",
+        "label",
+        "category",
+        "static_page",
+        "order",
+        "is_active",
+    )
+    list_filter = ("section", "type", "is_active")
+    search_fields = (
+        "label",
+        "url",
+        "category__translations__nombre",
+        "static_page__translations__titulo",
+    )
+    raw_id_fields = ("footer_settings", "category", "static_page")
+    ordering = ("section", "order", "id")
+
+    def save_model(self, request, obj, form, change):
+        if not obj.footer_settings_id:
+            obj.footer_settings = FooterSettings.for_site_settings()
+        super().save_model(request, obj, form, change)
+
+
+@admin.register(FooterBadge)
+class FooterBadgeAdmin(admin.ModelAdmin):
+    list_display = ("id", "title", "order", "is_active", "image")
+    list_filter = ("is_active",)
+    search_fields = ("title", "alt_text", "url")
+    raw_id_fields = ("footer_settings", "image")
+    ordering = ("order", "id")
+
+    def save_model(self, request, obj, form, change):
+        if not obj.footer_settings_id:
+            obj.footer_settings = FooterSettings.for_site_settings()
         super().save_model(request, obj, form, change)

@@ -1,11 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
+
 import { AgendaPage } from "./AgendaPage";
 
-// Mock dependencies
 vi.mock("@tanstack/react-query", () => ({
   useQuery: vi.fn(),
 }));
@@ -19,32 +19,16 @@ vi.mock("react-router-dom", async () => {
   };
 });
 
-// Mock API
 vi.mock("@/features/events/api", () => ({
   getEvents: vi.fn(),
 }));
 
-const mockEvents = [
-  {
-    id: 1,
-    slug: "event-1",
-    title: "Evento Simple",
-    start_at: new Date().toISOString(),
-    occurrences_count: 1,
-    is_featured: false,
-    category_name: "Cultura",
-    event_status: "upcoming",
-    dates: [],
-  },
-];
-
-const renderComponent = () => {
-  return render(
+const renderComponent = () =>
+  render(
     <MemoryRouter>
       <AgendaPage />
     </MemoryRouter>,
   );
-};
 
 describe("AgendaPage", () => {
   beforeEach(() => {
@@ -61,9 +45,11 @@ describe("AgendaPage", () => {
       isLoading: false,
       error: null,
     });
+
     renderComponent();
+
     expect(
-      await screen.findByText(/Sin eventos para esta selección/i),
+      await screen.findByText(/No hay eventos para esta seleccion/i),
     ).toBeInTheDocument();
   });
 });

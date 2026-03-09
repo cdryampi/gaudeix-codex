@@ -1,9 +1,10 @@
 import { ReactNode, useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteTopbar } from "@/components/site/SiteTopbar";
 import { FestaAnnouncementBar } from "@/components/site/FestaAnnouncementBar";
-import { useLocation } from "react-router-dom";
 import { apiGet } from "@/lib/api";
 import { SiteSettings } from "@/features/site-settings/types";
 
@@ -13,17 +14,9 @@ interface MainLayoutProps {
 
 export function MainLayout({ children }: MainLayoutProps) {
   const [settings, setSettings] = useState<SiteSettings | null>(null);
-  const [scrolled, setScrolled] = useState(false);
-  const { pathname } = useLocation();
-
-  const isHeroPage =
-    pathname === "/" ||
-    pathname.startsWith("/agenda/") ||
-    pathname.startsWith("/lugares/") ||
-    pathname.startsWith("/noticias/") ||
-    pathname.startsWith("/rutas/") ||
-    pathname.startsWith("/festes/");
-  const isTransparent = isHeroPage && !scrolled;
+  const [isScrolled, setIsScrolled] = useState(false);
+  const location = useLocation();
+  const isHome = location.pathname === "/";
 
   useEffect(() => {
     const load = async () => {
@@ -34,30 +27,28 @@ export function MainLayout({ children }: MainLayoutProps) {
         console.warn("API not available for settings.", err);
       }
     };
-    load();
 
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    void load();
   }, []);
 
+  useEffect(() => {
+    const onScroll = () => setIsScrolled(window.scrollY > (isHome ? 48 : 8));
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [isHome]);
+
+  const shellTransparent = isHome && !isScrolled;
+
   return (
-    <div className="min-h-screen bg-white text-slate-900 selection:bg-accent selection:text-slate-950">
-      {/* GLOBAL HEADER WRAPPER */}
-      <div className="fixed top-0 z-[1000] w-full">
-        <div
-          className={`transition-all duration-500 ease-in-out overflow-hidden ${scrolled ? "h-0 opacity-0" : "h-auto opacity-100"}`}
-        >
-          <FestaAnnouncementBar />
-          <div className="h-12 overflow-hidden">
-            <SiteTopbar isTransparent={isTransparent} />
-          </div>
-        </div>
+    <div className="min-h-screen bg-background-light text-slate-900 selection:bg-accent selection:text-slate-950">
+      <div className="floating-shell">
+        <FestaAnnouncementBar />
+        <SiteTopbar isTransparent={shellTransparent} />
         <SiteHeader
           siteName={settings?.site_name}
-          isTransparent={isTransparent}
+          isTransparent={shellTransparent}
+          isCondensed={isScrolled}
         />
       </div>
 

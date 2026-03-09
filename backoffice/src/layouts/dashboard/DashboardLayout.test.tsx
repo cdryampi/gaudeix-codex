@@ -10,6 +10,7 @@ describe("DashboardLayout", () => {
     expect(screen.getByRole("link", { name: /usuarios/i })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /media/i })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /eventos/i })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /footer/i })).toBeInTheDocument();
   });
 
   it("renders the dashboard header branding", () => {

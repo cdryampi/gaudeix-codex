@@ -1,54 +1,65 @@
 import { useMemo } from "react";
 
-export function DateSelector({ selected, onSelect }: { selected: string; onSelect: (iso: string) => void }) {
-    const dates = useMemo(() => {
-        const arr = [];
-        const now = new Date();
-        // EXACTLY 7 DAYS
-        for (let i = 0; i < 7; i++) {
-            const d = new Date(now);
-            d.setDate(now.getDate() + i);
-            const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+export function DateSelector({
+  selected,
+  onSelect,
+}: {
+  selected: string;
+  onSelect: (iso: string) => void;
+}) {
+  const dates = useMemo(() => {
+    const arr = [];
+    const now = new Date();
 
-            let dayLabel = new Intl.DateTimeFormat('es-ES', { weekday: 'short' }).format(d).toUpperCase().replace('.', '');
-            if (i === 0) dayLabel = "Hoy";
-            if (i === 1) dayLabel = "Mañana";
+    for (let i = 0; i < 7; i += 1) {
+      const date = new Date(now);
+      date.setDate(now.getDate() + i);
 
-            arr.push({
-                iso,
-                dayNum: d.getDate(),
-                dayLabel,
-            });
-        }
-        return arr;
-    }, []);
+      const iso = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(
+        date.getDate(),
+      ).padStart(2, "0")}`;
 
-    return (
-        <div className="w-full max-w-6xl mx-auto px-4">
-            {/* SEGMENTED CONTROL STYLE - NO SCROLL */}
-            <div className="flex flex-wrap md:flex-nowrap items-center justify-center gap-2 md:gap-4 p-2 bg-white/5 rounded-[3rem] backdrop-blur-xl border border-white/10">
-                {dates.map((d) => (
-                    <button
-                        key={d.iso}
-                        onClick={() => onSelect(d.iso)}
-                        className={`flex-1 min-w-[70px] md:min-w-0 flex flex-col items-center justify-center py-6 md:py-10 rounded-[2.5rem] transition-all duration-500 overflow-hidden relative ${selected === d.iso
-                                ? 'bg-accent text-slate-900 shadow-2xl scale-100'
-                                : 'text-white/60 hover:text-white hover:bg-white/5'
-                            }`}
-                    >
-                        <span className={`text-[10px] font-black uppercase tracking-[0.2em] mb-2 ${selected === d.iso ? 'text-slate-900/60' : 'text-white/30'}`}>
-                            {d.dayLabel}
-                        </span>
-                        <span className="text-3xl md:text-5xl font-black italic tracking-tighter leading-none">
-                            {d.dayNum}
-                        </span>
+      let dayLabel = new Intl.DateTimeFormat("es-ES", { weekday: "short" })
+        .format(date)
+        .toUpperCase()
+        .replace(".", "");
+      if (i === 0) dayLabel = "HOY";
+      if (i === 1) dayLabel = "MANANA";
 
-                        {selected === d.iso && (
-                            <div className="absolute inset-x-0 bottom-0 h-1.5 bg-slate-900/10" />
-                        )}
-                    </button>
-                ))}
-            </div>
-        </div>
-    );
+      arr.push({
+        iso,
+        dayNum: date.getDate(),
+        dayLabel,
+      });
+    }
+
+    return arr;
+  }, []);
+
+  return (
+    <div className="w-full">
+      <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-7">
+        {dates.map((date) => (
+          <button
+            key={date.iso}
+            onClick={() => onSelect(date.iso)}
+            className={`rounded-2xl border px-3 py-4 text-center transition ${
+              selected === date.iso
+                ? "border-primary bg-primary text-white"
+                : "border-[color:var(--color-border-soft)] bg-slate-50 text-slate-700 hover:border-primary/30 hover:bg-white"
+            }`}
+          >
+            <span
+              className={`block text-[11px] font-semibold uppercase tracking-[0.16em] ${
+                selected === date.iso ? "text-white/80" : "text-slate-500"
+              }`}
+            >
+              {date.dayLabel}
+            </span>
+            <span className="mt-2 block text-2xl font-bold">{date.dayNum}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
 }

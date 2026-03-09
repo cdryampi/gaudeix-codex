@@ -7,12 +7,17 @@ import * as eventsApi from "@/features/events/api";
 import * as categoriesApi from "@/features/categories/api";
 import * as newsApi from "@/features/news/api";
 import * as socialApi from "@/features/social/api";
+import * as footerApi from "@/features/site-settings/api/footerApi";
 
 // Mock the Google Maps API that's used by InteractiveMap component
 vi.stubGlobal("google", {
   maps: {
     SymbolPath: {
       CIRCLE: "CIRCLE",
+    },
+    Point: function Point(x: number, y: number) {
+      this.x = x;
+      this.y = y;
     },
   },
 });
@@ -32,6 +37,10 @@ vi.mock("@/features/categories/api", () => ({
 
 vi.mock("@/features/news/api", () => ({
   listNewsItems: vi.fn(),
+}));
+
+vi.mock("@/features/site-settings/api/footerApi", () => ({
+  getFooterPublic: vi.fn(),
 }));
 
 const queryClient = new QueryClient({
@@ -74,26 +83,67 @@ describe("App Smoke Tests", () => {
     });
 
     vi.mocked(newsApi.listNewsItems).mockResolvedValue([]);
+    vi.mocked(footerApi.getFooterPublic).mockResolvedValue({
+      id: 1,
+      eyebrow: "",
+      title: "",
+      description: "",
+      show_social_links: false,
+      show_contact_block: false,
+      show_badges_block: false,
+      copyright_text: "",
+      branding: {
+        site_name: "Cabrera de Mar",
+        tagline: "",
+        logo: null,
+        logo_dark: null,
+        favicon: null,
+      },
+      contact: {
+        phone: "",
+        support_email: "",
+        contact_email: "",
+        address: "",
+        schedule: "",
+        maps_base_url: "",
+        latitude: null,
+        longitude: null,
+      },
+      social: {
+        facebook_url: "",
+        instagram_url: "",
+        twitter_url: "",
+        youtube_url: "",
+      },
+      legal: {
+        privacy_page: null,
+        cookies_page: null,
+        legal_page: null,
+        inclusion_page: null,
+      },
+      links: {
+        explore: [],
+        institutional: [],
+      },
+      badges: [],
+    });
   });
 
   it("renders the home page initially", async () => {
     renderApp(["/"]);
 
-    // Wait for something that is uniquely loaded in the HomePage.
-    // "el municipio" is part of the "Explora el municipio" heading.
     await waitFor(() => {
-      expect(screen.getByText(/el municipio/i)).toBeInTheDocument();
+      expect(
+        screen.getAllByText(/Cabrera de Mar/i)[0],
+      ).toBeInTheDocument();
     });
   });
 
   it("navigates and renders the agenda page", async () => {
     renderApp(["/agenda"]);
 
-    // Add expectations based on what AgendaPage renders
-    // As we mocked data, it should render an empty state or the title
     await waitFor(() => {
-      // Find a typical element from AgendaPage, e.g., a header or filter
-      expect(screen.getByText(/Agenda Cultural/i)).toBeInTheDocument();
+      expect(screen.getByText(/Agenda municipal/i)).toBeInTheDocument();
     });
   });
 });

@@ -1,24 +1,30 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Routes, Route, Navigate, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import {
+  CalendarDays,
+  ChevronRight,
+  MapPin,
+  Navigation,
+  Sparkles,
+} from "lucide-react";
 
+import { cn } from "@/lib/utils";
 import { InteractiveMap } from "@/components/site/InteractiveMap";
+import {
+  MunicipalCTA,
+  SectionHeader,
+} from "@/components/site/primitives";
+import { CategoryBrandIcon } from "@/features/categories/components/CategoryBrandIcon";
 import { HeroVideoFrame } from "@/features/hero/components/HeroVideo";
+import { HomeExperienceGrid } from "@/features/hero/components/HomeExperienceGrid";
 import { getEvents } from "@/features/events/api";
-import { ChevronRight } from "lucide-react";
 import { getCategories } from "@/features/categories/api";
-import {
-  FeaturedCategoryCard,
-  CategoryCardProps,
-} from "@/features/categories/components/FeaturedCategoryCard";
 import { NewsCard } from "@/features/news/components/NewsCard";
-import { EventDayGroup } from "@/features/agenda/components/EventDayGroup";
 import {
-  groupEventsByDay,
   filterEvents,
   DateRangeFilter,
 } from "@/features/agenda/utils";
-import { DateSelector } from "@/features/agenda/components/DateSelector";
 import LoginPage from "@/pages/LoginPage";
 import RegisterPage from "@/pages/RegisterPage";
 import PasswordResetPage from "@/pages/PasswordResetPage";
@@ -32,55 +38,102 @@ import { CategoriesPage } from "@/features/categories/pages/CategoriesPage";
 import { CategoryDetailPage } from "@/features/categories/pages/CategoryDetailPage";
 import { ComoLlegarPage } from "@/features/site-settings/pages/ComoLlegarPage";
 import { FavoritesPage } from "@/features/users/pages/FavoritesPage";
-import { VisitUsCTA } from "@/features/site-settings/components/VisitUsCTA";
 import { MainLayout } from "@/components/layouts/MainLayout";
 import { useAuthStore } from "@/features/auth/store";
-
-// Routes (hiking/cycling)
 import { RoutesPage } from "@/features/routes/pages/RoutesPage";
 import { RouteDetailPage } from "@/features/routes/pages/RouteDetailPage";
 import { RoadmapPage } from "@/features/routes/pages/RoadmapPage";
-
-// Festes (festivals)
 import { FestesPage } from "@/features/festes/pages/FestesPage";
 import { FestaDetailPage } from "@/features/festes/pages/FestaDetailPage";
 import { ProgrammingPage } from "@/features/festes/pages/ProgrammingPage";
-
-// News
 import { NewsPage } from "@/features/news/pages/NewsPage";
-
 import { listNewsItems } from "@/features/news/api";
 import { Category } from "@/features/categories/types";
+import { EventCard } from "@/features/agenda/components/EventCard";
+import { AnimatedCardGrid } from "@/components/animated/AnimatedCardGrid";
+import { MotionReveal } from "@/components/animated/MotionReveal";
+
+const mosaicPattern = [
+  "lg:col-span-7 lg:row-span-2",
+  "lg:col-span-5",
+  "lg:col-span-5",
+  "lg:col-span-4",
+  "lg:col-span-4",
+  "lg:col-span-4",
+];
+
+function HomeMosaicTile({
+  category,
+  index,
+}: {
+  category: Category;
+  index: number;
+}) {
+  const image = category.featured_media?.variant_large || category.featured_media?.file;
+  const isLarge = index === 0;
+
+  return (
+    <Link
+      to={`/categorias/${category.slug}`}
+      data-animated-card
+      className={cn(
+        "group relative flex flex-col overflow-hidden rounded-[2.5rem] bg-slate-900 text-white shadow-xl ring-1 ring-white/10 transition-all duration-500 hover:shadow-2xl hover:ring-white/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+        mosaicPattern[index % mosaicPattern.length],
+        isLarge ? "min-h-[400px] md:min-h-[480px]" : "min-h-[280px] md:min-h-[320px]"
+      )}
+    >
+      {image ? (
+        <img
+          src={image}
+          alt={category.nombre}
+          className="absolute inset-0 h-full w-full object-cover transition-transform duration-1000 ease-out group-hover:scale-[1.04]"
+        />
+      ) : null}
+      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/20 to-transparent transition-opacity duration-500 group-hover:opacity-90" />
+
+      <div className="relative flex h-full flex-col justify-between p-6 md:p-8">
+        <div className="flex items-start justify-between gap-4">
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-white backdrop-blur-md transition-colors group-hover:bg-white/25">
+            {category.icon ? (
+              <CategoryBrandIcon
+                iconName={category.icon}
+                className="h-3.5 w-3.5 opacity-80"
+              />
+            ) : null}
+            {category.taxonomy || "Experiencia"}
+          </div>
+          <div className="flex h-10 w-10 shrink-0 transform items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-md transition-all duration-500 group-hover:scale-110 group-hover:bg-white group-hover:text-slate-900">
+            <ChevronRight className="h-5 w-5" />
+          </div>
+        </div>
+
+        <div className="transform space-y-3 transition-transform duration-500 ease-out group-hover:-translate-y-1">
+          <h3 className={cn("font-bold text-white", isLarge ? "text-3xl md:text-5xl" : "text-2xl md:text-3xl")}>{category.nombre}</h3>
+          {category.descripcion ? (
+            <p className={cn("text-white/80", isLarge ? "max-w-xl text-base md:text-lg" : "text-sm md:text-base line-clamp-2 md:line-clamp-3")}>
+              {category.descripcion}
+            </p>
+          ) : null}
+        </div>
+      </div>
+    </Link>
+  );
+}
+
 
 function HomePage() {
-  const [eventFilter, setEventFilter] = useState<DateRangeFilter>("all");
+  const [eventFilter, setEventFilter] = useState<DateRangeFilter>("week");
 
-  // Fetch Events
   const { data: eventsData } = useQuery({
     queryKey: ["events", { is_published: true, limit: 10, upcoming: true }],
     queryFn: () => getEvents({ is_published: true, limit: 10, upcoming: true }),
   });
 
-  // Fetch Categories
   const { data: categoriesData } = useQuery({
     queryKey: ["categories"],
     queryFn: () => getCategories(),
   });
 
-  const featuredCategories = useMemo(() => {
-    const list = Array.isArray(categoriesData)
-      ? categoriesData
-      : categoriesData?.results || [];
-    return list.slice(0, 8);
-  }, [categoriesData]);
-
-  const allEvents = useMemo(() => {
-    if (!eventsData) return [];
-    if (Array.isArray(eventsData)) return eventsData;
-    return eventsData.results || [];
-  }, [eventsData]);
-
-  // Fetch News
   const { data: latestNews = [] } = useQuery({
     queryKey: ["news", "latest"],
     queryFn: async () => {
@@ -89,210 +142,235 @@ function HomePage() {
     },
   });
 
+  const featuredCategories = useMemo(() => {
+    const list = Array.isArray(categoriesData) ? categoriesData : categoriesData?.results || [];
+    return list.slice(0, 6);
+  }, [categoriesData]);
+
+  const allEvents = useMemo(() => {
+    if (!eventsData) return [];
+    if (Array.isArray(eventsData)) return eventsData;
+    return eventsData.results || [];
+  }, [eventsData]);
+
   const visibleEvents = useMemo(() => {
     const filtered = filterEvents(allEvents, {
       category: "all",
       range: eventFilter,
       query: "",
     });
-    return filtered.slice(0, 10);
+    return filtered.slice(0, 4);
   }, [allEvents, eventFilter]);
-
-  const groupedEvents = useMemo(() => {
-    return groupEventsByDay(visibleEvents);
-  }, [visibleEvents]);
 
   return (
     <main className="bg-background-light text-[color:var(--color-text-primary)]">
-      {/* SECTION 1: VIDEO HERO */}
-      <section id="inicio" className="h-screen">
-        <HeroVideoFrame />
-      </section>
+      <HeroVideoFrame />
 
-      {/* SECTION 2: CATEGORIES */}
-      <section id="categorias">
-        <div className="min-h-screen flex flex-col justify-center px-6 md:px-20 py-24 bg-background-light">
-          <span className="text-xs font-bold uppercase tracking-[0.32em] text-primary/90 mb-6">
-            Municipio
-          </span>
-          <h2 className="text-[clamp(2.25rem,7vw,6rem)] font-bold tracking-tight leading-[1.02] text-slate-900">
-            Explora <br />
-            <span className="text-primary">el municipio</span>
-          </h2>
-          <p className="text-lg md:text-2xl font-medium leading-relaxed text-slate-600 mt-10 max-w-3xl text-balance">
-            Descubre la esencia de Cabrera de Mar, donde la historia se funde
-            con el Mediterráneo.
-          </p>
-        </div>
+      <HomeExperienceGrid />
 
-        <div className="container mx-auto px-6 pb-32">
-          {!categoriesData && !featuredCategories.length ? (
-            // Loading Skeleton
-            <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-4">
-              {[1, 2, 3, 4].map((i) => (
-                <div
-                  key={i}
-                  className="h-[380px] md:h-[500px] rounded-3xl bg-slate-200/70 animate-pulse"
-                />
+      <section id="categorias" className="page-section pt-6">
+        <div className="page-container space-y-10">
+          <MotionReveal>
+            <SectionHeader
+              eyebrow="Experiencias para descubrir"
+              title="Un mosaico vivo para recorrer Cabrera de Mar"
+              description="La portada se abre ahora con una capa inspiracional mas alegre y visual, mezclando playas, patrimonio, rutas, gastronomia y planes con un orden util."
+              action={
+                <Link
+                  to="/categorias"
+                  className="inline-flex items-center gap-2 rounded-full border border-primary/12 bg-white/80 px-5 py-3 text-sm font-semibold text-primary transition-colors hover:bg-white"
+                >
+                  Ver todas las categorias
+                  <ChevronRight className="h-4 w-4" />
+                </Link>
+              }
+            />
+          </MotionReveal>
+
+          {!featuredCategories.length ? (
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="card-surface h-[280px] animate-pulse bg-slate-100 lg:col-span-4" />
               ))}
             </div>
-          ) : featuredCategories.length === 0 ? (
-            // Empty State
-            <div className="flex flex-col items-center justify-center py-16 border-2 border-dashed border-slate-300 rounded-3xl bg-white">
-              <p className="text-2xl font-bold text-slate-300 uppercase tracking-widest text-center">
-                Próximamente más categorías
+          ) : (
+            <AnimatedCardGrid className="grid grid-cols-1 gap-5 lg:grid-cols-12">
+              {featuredCategories.map((category, index) => (
+                <HomeMosaicTile key={category.id} category={category} index={index} />
+              ))}
+            </AnimatedCardGrid>
+          )}
+        </div>
+      </section>
+
+      <section id="eventos" className="page-section sand-section relative overflow-hidden">
+        <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 rounded-full bg-[radial-gradient(circle_at_center,rgba(15,76,129,0.04),transparent_60%)] w-[800px] h-[800px] pointer-events-none" />
+        <div className="page-container relative z-10 grid gap-10 lg:grid-cols-[320px_minmax(0,1fr)] xl:grid-cols-[380px_minmax(0,1fr)] lg:items-start">
+          <MotionReveal className="flex flex-col gap-8 lg:sticky lg:top-32 lg:h-max">
+            <div className="space-y-4">
+              <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
+                Agenda Viva
+              </span>
+              <h2 className="text-4xl font-bold leading-tight text-slate-900 lg:text-5xl">La cultura nunca se detiene.</h2>
+              <p className="text-base leading-relaxed text-slate-600 lg:text-lg">
+                Nuestra selección de planes, exposiciones, conciertos y actividades familiares que no te puedes perder.
               </p>
             </div>
-          ) : (
-            // Categories Grid
-            <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-4">
-              {featuredCategories.map((c: Category) => {
-                const props: CategoryCardProps = {
-                  id: c.id,
-                  title: c.nombre,
-                  href: `/categorias/${c.slug}`,
-                  image:
-                    c.featured_media?.variant_medium || c.featured_media?.file,
-                  icon: c.icon,
-                  description: c.descripcion,
-                  taxonomy: c.taxonomy,
-                };
-                return <FeaturedCategoryCard key={c.id} category={props} />;
-              })}
-            </div>
-          )}
-        </div>
-      </section>
 
-      {/* SECTION 3: AGENDA */}
-      <section id="eventos" className="bg-[color:var(--color-background-dark)] text-white">
-        <div className="min-h-screen flex flex-col justify-center px-6 md:px-20 py-24 bg-[color:var(--color-background-dark)]">
-          <span className="text-xs font-bold uppercase tracking-[0.3em] text-accent/90 mb-6">
-            Agenda Cultural
-          </span>
-          <h2 className="text-[clamp(2.2rem,8vw,5.5rem)] font-semibold leading-tight tracking-tight text-white">
-            Agenda <br />
-            <span className="text-accent">municipal</span>
-          </h2>
-
-          <div className="mt-20 flex flex-wrap gap-4 items-center mb-12">
-            {[
-              { id: "all", label: "Todo" },
-              { id: "week", label: "Semana" },
-              { id: "month", label: "Mes" },
-            ].map((f) => (
-              <button
-                key={f.id}
-                onClick={() => setEventFilter(f.id as any)}
-                className={`h-11 px-6 rounded-xl text-[11px] font-semibold uppercase tracking-[0.12em] transition-colors ${eventFilter === f.id
-                    ? "bg-accent text-slate-900"
-                    : "bg-white/10 text-white/85 hover:bg-white/20"
-                  }`}
-              >
-                {f.label}
-              </button>
-            ))}
-          </div>
-
-          <DateSelector selected={eventFilter} onSelect={setEventFilter} />
-        </div>
-
-        <div className="container mx-auto px-6 pb-48 space-y-32">
-          {groupedEvents.length > 0 ? (
-            <>
-              {groupedEvents.map((group) => (
-                <EventDayGroup
-                  key={group.dayLabel}
-                  dayLabel={group.dayLabel}
-                  items={group.items}
-                />
-              ))}
-              <div className="flex justify-center mt-20">
-                <Link
-                  to="/agenda"
-                  className="h-12 px-8 rounded-xl bg-accent text-slate-900 text-[11px] font-semibold uppercase tracking-[0.12em] hover:bg-accent/90 transition-colors flex items-center"
+            <div className="flex flex-wrap gap-2">
+              {[
+                { id: "today", label: "Hoy" },
+                { id: "week", label: "Esta semana" },
+                { id: "month", label: "Este mes" },
+              ].map((filter) => (
+                <button
+                  key={filter.id}
+                  onClick={() => setEventFilter(filter.id as DateRangeFilter)}
+                  className={`rounded-full px-5 py-2.5 text-sm font-bold transition-all duration-300 ${eventFilter === filter.id
+                    ? "bg-slate-900 text-white shadow-lg shadow-slate-900/20"
+                    : "bg-white/60 text-slate-600 hover:bg-white hover:text-slate-900 hover:shadow-sm ring-1 ring-slate-200/50"
+                    }`}
                 >
-                  Ver calendario completo
-                </Link>
-              </div>
-            </>
-          ) : (
-            <div className="py-20 text-center border-2 border-dashed border-white/20 rounded-3xl">
-              <span className="text-4xl md:text-6xl font-black uppercase tracking-tighter text-white/20">
-                No hay actividades para esta fecha
-              </span>
+                  {filter.label}
+                </button>
+              ))}
             </div>
-          )}
+
+            <div className="pt-2">
+              <Link
+                to="/agenda"
+                className="group inline-flex items-center gap-3 text-sm font-bold text-primary transition-colors hover:text-secondary"
+              >
+                Explorar agenda completa
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 transition-colors group-hover:bg-secondary/10">
+                  <ChevronRight className="h-4 w-4" />
+                </span>
+              </Link>
+            </div>
+          </MotionReveal>
+
+          <div className="min-w-0">
+            {visibleEvents.length ? (
+              <AnimatedCardGrid className="grid gap-6 xl:gap-8 md:grid-cols-2">
+                {visibleEvents.map((event) => (
+                  <EventCard key={event.id} event={event} />
+                ))}
+              </AnimatedCardGrid>
+            ) : (
+              <div className="card-surface flex items-center justify-center py-16 text-center">
+                <span className="text-xl font-semibold text-slate-500">
+                  No hay actividades para esta seleccion.
+                </span>
+              </div>
+            )}
+          </div>
         </div>
       </section>
 
-      {/* SECTION 5: NOTICIAS */}
-      <section id="noticias">
-        <div className="min-h-screen flex flex-col justify-center px-6 md:px-20 py-24 bg-background-light">
-          <span className="text-sm font-black uppercase tracking-[0.5em] text-primary mb-8">
-            Información
-          </span>
-          <h2 className="text-[clamp(2.25rem,7vw,6rem)] font-bold text-slate-900 leading-tight tracking-tight">
-            Actual <br />
-            <span className="text-primary">municipal</span>
-          </h2>
-          <p className="text-lg md:text-2xl font-medium leading-relaxed text-slate-600 mt-10 max-w-3xl text-balance">
-            Las últimas noticias y crónicas oficiales de nuestra villa.
-          </p>
-        </div>
+      <section id="mapa" className="page-section coast-section">
+        <div className="page-container space-y-8">
+          <MotionReveal>
+            <SectionHeader
+              eyebrow="Territorio en contexto"
+              title="Mapa y lugares para orientarte antes y durante la visita"
+              description="El explorador mantiene la herramienta publica, pero con una envolvente mas contemporanea y amable para residentes y visitantes."
+              action={
+                <Link
+                  to="/lugares"
+                  className="inline-flex items-center gap-2 rounded-full border border-primary/12 bg-white/75 px-5 py-3 text-sm font-semibold text-primary transition-colors hover:bg-white"
+                >
+                  Abrir explorador completo
+                  <ChevronRight className="h-4 w-4" />
+                </Link>
+              }
+            />
+          </MotionReveal>
 
-        <div className="container mx-auto px-6 pb-48">
-          <div className="grid grid-cols-1 gap-16 md:grid-cols-2 lg:grid-cols-3">
+          <MotionReveal>
+            <div className="relative overflow-hidden rounded-[2.5rem] bg-white ring-1 ring-slate-100 shadow-[0_32px_80px_rgba(15,76,129,0.06)] md:rounded-[3rem]">
+              <div className="absolute left-4 right-4 top-4 z-10 flex flex-col gap-4 pointer-events-none md:left-6 md:right-6 md:top-6 md:flex-row md:items-start md:justify-between">
+                <div className="flex max-w-sm items-start gap-4 rounded-3xl bg-white/95 p-4 ring-1 ring-slate-900/5 backdrop-blur-md shadow-xl transition-transform duration-500 hover:scale-[1.02] pointer-events-auto">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[1rem] bg-slate-100 text-primary">
+                    <MapPin className="h-6 w-6" />
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-sm font-bold leading-tight text-slate-900">Explorador Interactivo</p>
+                    <p className="text-xs font-medium leading-snug text-slate-500">
+                      Zonas naturales, patrimonio y servicios sobre el territorio.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.2em] text-white shadow-xl pointer-events-auto">
+                  <Sparkles className="h-3.5 w-3.5 text-accent" />
+                  Vista de Pájaro
+                </div>
+              </div>
+
+              <div className="relative h-[600px] w-full bg-slate-50 md:h-[700px]">
+                <InteractiveMap />
+              </div>
+            </div>
+          </MotionReveal>
+        </div>
+      </section>
+
+      <section id="noticias" className="page-section">
+        <div className="page-container space-y-10">
+          <MotionReveal>
+            <SectionHeader
+              eyebrow="Actualidad local"
+              title="Noticias, avisos y vida municipal con una lectura mas editorial"
+              description="El bloque informativo gana ritmo visual sin perder claridad, con portada, imagen y acceso directo a cada publicacion."
+              action={
+                <Link
+                  to="/noticias"
+                  className="inline-flex items-center gap-2 rounded-full border border-primary/12 bg-white/80 px-5 py-3 text-sm font-semibold text-primary transition-colors hover:bg-white"
+                >
+                  Ver noticias
+                  <ChevronRight className="h-4 w-4" />
+                </Link>
+              }
+            />
+          </MotionReveal>
+
+          <AnimatedCardGrid className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:gap-10">
             {latestNews.map((news) => (
               <NewsCard key={news.id} news={news} />
             ))}
-          </div>
+          </AnimatedCardGrid>
         </div>
       </section>
 
-      {/* SECTION 6: MAPA */}
-      <section
-        id="mapa"
-        className="bg-[color:var(--color-background-dark)] py-24 overflow-hidden relative"
-      >
-        {/* Background Accents */}
-        <div className="absolute -right-64 -top-64 h-[600px] w-[600px] rounded-full bg-primary/10 blur-[120px]" />
-        <div className="absolute -left-64 -bottom-64 h-[600px] w-[600px] rounded-full bg-accent/5 blur-[120px]" />
-
-        <div className="container mx-auto px-6 relative z-10">
-          <div className="mb-20">
-            <span className="text-xs font-bold uppercase tracking-[0.3em] text-accent/90 mb-6 block">
-              Explora el Territorio
-            </span>
-            <h2 className="text-[clamp(2.25rem,6vw,4.8rem)] font-semibold text-white leading-tight tracking-tight mb-8">
-              Mapa <br />
-              <span className="text-accent">interactivo</span>
-            </h2>
-            <p className="text-lg md:text-xl font-medium text-slate-300 max-w-3xl leading-relaxed">
-              Localiza todos los puntos de interés, desde el patrimonio
-              histórico hasta los mejores lugares para comer y dormir.
-            </p>
-          </div>
-
-          <div className="overflow-hidden rounded-3xl shadow-[0_16px_48px_rgba(0,0,0,0.35)] h-[700px] border border-white/10 bg-slate-900 relative group">
-            <InteractiveMap />
-
-            {/* Map Overlay Button */}
-            <div className="absolute bottom-12 left-1/2 -translate-x-1/2">
-              <Link
-                to="/lugares"
-                className="flex items-center gap-3 px-7 py-3 rounded-xl bg-white text-slate-900 text-[11px] font-semibold uppercase tracking-[0.12em] shadow-lg hover:bg-slate-100 transition-colors"
-              >
-                Abrir explorador completo
-                <ChevronRight className="h-4 w-4" />
-              </Link>
-            </div>
-          </div>
+      <section className="page-section pt-0">
+        <div className="page-container">
+          <MotionReveal>
+            <MunicipalCTA
+              eyebrow="Planifica la visita"
+              title="Turismo luminoso, agenda activa y un municipio reconocible en cada pantalla"
+              description="La nueva capa visual mezcla energia mediterranea y utilidad publica: descubres el pueblo, encuentras la agenda, ubicas los recursos y llegas mejor."
+              actions={
+                <>
+                  <Link
+                    to="/como-llegar"
+                    className="group inline-flex items-center gap-2.5 rounded-full bg-white px-7 py-4 text-sm font-bold text-slate-900 shadow-xl transition-all hover:scale-105 hover:bg-slate-50 hover:shadow-2xl"
+                  >
+                    <Navigation className="h-4 w-4 text-primary transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                    Cómo llegar al municipio
+                  </Link>
+                  <Link
+                    to="/agenda"
+                    className="group inline-flex items-center gap-2.5 rounded-full border border-white/20 bg-white/10 px-7 py-4 text-sm font-bold text-white shadow-lg backdrop-blur-md transition-all hover:bg-white/20 hover:shadow-xl"
+                  >
+                    <CalendarDays className="h-4 w-4 text-white/70 transition-transform group-hover:scale-110" />
+                    Visitar la agenda
+                  </Link>
+                </>
+              }
+            />
+          </MotionReveal>
         </div>
       </section>
-
-      {/* SECTION 7: VISIT US CTA */}
-      <VisitUsCTA />
     </main>
   );
 }
@@ -328,29 +406,17 @@ export default function App() {
         <Route path="/rankings" element={<RankingsPage />} />
         <Route path="/como-llegar" element={<ComoLlegarPage />} />
         <Route path="/noticias/:slug" element={<NewsDetailPage />} />
-
-        {/* User Routes */}
         <Route path="/mis-favoritos" element={<FavoritesPage />} />
-
-        {/* Routes (hiking/cycling) */}
         <Route path="/rutas" element={<RoutesPage />} />
         <Route path="/rutas/roadmap" element={<RoadmapPage />} />
         <Route path="/rutas/:slug" element={<RouteDetailPage />} />
-
-        {/* Festes (festivals) */}
         <Route path="/festes" element={<FestesPage />} />
         <Route path="/festes/programacio" element={<ProgrammingPage />} />
         <Route path="/festes/:slug" element={<FestaDetailPage />} />
-
-        {/* News */}
         <Route path="/noticias" element={<NewsPage />} />
-
-        {/* Auth Routes */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/password-reset" element={<PasswordResetPage />} />
-
-        {/* Catch-all redirect */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </MainLayout>

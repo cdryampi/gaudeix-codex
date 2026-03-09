@@ -26,6 +26,7 @@ export const ROUTES = {
   SITE_SETTINGS: "/dashboard/settings/site",
   VIDEO_SETTINGS: "/dashboard/settings/video",
   HEADER_MENU: "/dashboard/settings/header",
+  FOOTER_SETTINGS: "/dashboard/settings/footer",
   LLM_SETTINGS: "/dashboard/settings/llm",
   NOTIFICATIONS: "/dashboard/notifications",
   ROUTES_HIKING: "/dashboard/routes",
@@ -114,6 +115,18 @@ export const QUERY_KEYS = {
     LIST: ["social", "list"],
     DETAIL: (id: string) => ["social", "detail", id],
   },
+  FOOTER_SETTINGS: {
+    DETAIL: ["footer-settings", "detail"],
+    PUBLIC: ["footer-settings", "public"],
+  },
+  FOOTER_LINKS: {
+    LIST: ["footer-links", "list"],
+    DETAIL: (id: string) => ["footer-links", "detail", id],
+  },
+  FOOTER_BADGES: {
+    LIST: ["footer-badges", "list"],
+    DETAIL: (id: string) => ["footer-badges", "detail", id],
+  },
   ROUTES_HIKING: {
     LIST: ["routes", "list"],
     DETAIL: (slug: string) => ["routes", "detail", slug],
@@ -189,6 +202,19 @@ export const API_ENDPOINTS = {
   MENU_ITEMS: {
     LIST: "/menu-items/",
     DETAIL: (id: string) => `/menu-items/${id}/`,
+  },
+  FOOTER_SETTINGS: {
+    LIST: "/footer-settings/",
+    DETAIL: (id: string) => `/footer-settings/${id}/`,
+    PUBLIC: "/footer-settings/public/",
+  },
+  FOOTER_LINKS: {
+    LIST: "/footer-links/",
+    DETAIL: (id: string) => `/footer-links/${id}/`,
+  },
+  FOOTER_BADGES: {
+    LIST: "/footer-badges/",
+    DETAIL: (id: string) => `/footer-badges/${id}/`,
   },
   LLM: {
     CONFIG: "/llm-config/",

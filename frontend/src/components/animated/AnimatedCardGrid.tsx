@@ -1,19 +1,17 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { ensureGsapPlugins, MOTION, shouldSkipMotion } from "@/lib/motion";
 
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
+ensureGsapPlugins();
 
 export function AnimatedCardGrid({
   children,
   stagger = 0.06,
   y = 18,
-  duration = 0.55,
-  start = "top 80%",
+  duration = MOTION.duration.reveal,
+  start = MOTION.scrollStart.grid,
   reduceMotion,
   className,
 }: {
@@ -31,22 +29,24 @@ export function AnimatedCardGrid({
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    if (shouldReduceMotion) return;
+    if (shouldReduceMotion || shouldSkipMotion) return;
     if (!rootRef.current) return;
 
     const ctx = gsap.context(() => {
       const cards = gsap.utils.toArray<HTMLElement>("[data-animated-card]");
       if (!cards.length) return;
 
-      gsap.set(cards, { autoAlpha: 0, y, willChange: "transform,opacity" });
+      gsap.set(cards, { autoAlpha: 0, y, filter: "blur(12px)", scale: 0.98, willChange: "transform,opacity,filter" });
 
       gsap.to(cards, {
         autoAlpha: 1,
         y: 0,
-        duration,
-        ease: "power2.out",
-        stagger,
-        clearProps: "willChange",
+        filter: "blur(0px)",
+        scale: 1,
+        duration: duration * 1.5,
+        ease: "power3.out",
+        stagger: stagger * 1.5,
+        clearProps: "willChange,filter,transform",
         scrollTrigger: {
           trigger: rootRef.current,
           start,
@@ -64,4 +64,3 @@ export function AnimatedCardGrid({
     </div>
   );
 }
-

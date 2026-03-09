@@ -19,6 +19,7 @@ import { StaticPagesPage } from "@/features/static-pages/pages/StaticPagesPage";
 import { SiteSettingsPage } from "@/features/site-settings/pages/SiteSettingsPage";
 import { VideoSettingsPage } from "@/features/site-settings/pages/VideoSettingsPage";
 import { HeaderMenuPage } from "@/features/site-settings/pages/HeaderMenuPage";
+import { FooterSettingsPage } from "@/features/site-settings/pages/FooterSettingsPage";
 import { LLMSettingsPage } from "@/features/llm-settings/pages/LLMSettingsPage";
 import { SendNotificationPage } from "@/features/notifications/pages/SendNotificationPage";
 import { RoutesPage } from "@/features/routes/pages/RoutesPage";
@@ -117,6 +118,10 @@ export const router = createBrowserRouter([
       {
         path: "settings/header",
         element: <HeaderMenuPage />,
+      },
+      {
+        path: "settings/footer",
+        element: <FooterSettingsPage />,
       },
       {
         path: "settings/social",

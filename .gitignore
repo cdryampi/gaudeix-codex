@@ -109,3 +109,6 @@ docker-compose.override.yml
 
 # Development plans and drafts
 .sisyphus/
+
+#codex tmp files
+.codex-tmp-issues/

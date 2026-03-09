@@ -1,11 +1,16 @@
-import { type ComponentPropsWithoutRef } from "react";
+import {
+  type ComponentPropsWithoutRef,
+  type CSSProperties,
+  type ReactNode,
+} from "react";
 
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { MOTION } from "@/lib/motion";
 
 type AnimatedCardBaseProps = {
   reduceMotion?: boolean;
   className?: string;
-  children?: React.ReactNode;
+  children?: ReactNode;
 };
 
 type AnimatedCardAsDiv = AnimatedCardBaseProps & { as?: "div" } & Omit<ComponentPropsWithoutRef<"div">, "className" | "children">;
@@ -23,16 +28,15 @@ export function AnimatedCard(props: AnimatedCardProps) {
   const reduceMotion = props.reduceMotion ?? prefersReducedMotion;
   const Component = (props.as ?? "div") as "div" | "a" | "button";
 
-  const {
-    className,
-    children,
-    reduceMotion: _reduceMotionProp,
-    ...rest
-  } = props as AnimatedCardProps & Record<string, unknown>;
+  const { className, children } = props;
+  const rest = { ...(props as AnimatedCardProps & Record<string, unknown>) };
+  delete rest.className;
+  delete rest.children;
+  delete rest.reduceMotion;
 
   const hoverClasses = reduceMotion
     ? ""
-    : "transform-gpu transition-[transform,box-shadow] duration-300 hover:-translate-y-2 hover:scale-[1.02] hover:shadow-lg";
+    : "transform-gpu transition-[transform,box-shadow,border-color] hover:-translate-y-2 hover:scale-[1.015] hover:shadow-[0_28px_60px_rgba(19,49,80,0.18)] hover:border-white/50";
 
   const shineClasses = reduceMotion
     ? ""
@@ -42,7 +46,19 @@ export function AnimatedCard(props: AnimatedCardProps) {
     <Component
       {...(rest as any)}
       data-animated-card
-      className={cx("will-change-transform will-change-opacity", hoverClasses, shineClasses, className)}
+      className={cx(
+        "will-change-transform will-change-opacity duration-300",
+        hoverClasses,
+        shineClasses,
+        className,
+      )}
+      style={
+        reduceMotion
+          ? undefined
+          : ({
+              transitionDuration: `${MOTION.duration.hover}s`,
+            } as CSSProperties)
+      }
     >
       {children}
     </Component>

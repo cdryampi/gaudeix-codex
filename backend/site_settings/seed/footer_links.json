@@ -1,0 +1,50 @@
+[
+  {
+    "section": "explore",
+    "type": "custom",
+    "label": "Inicio",
+    "url": "/",
+    "order": 0,
+    "is_active": true
+  },
+  {
+    "section": "explore",
+    "type": "custom",
+    "label": "Agenda",
+    "url": "/agenda",
+    "order": 1,
+    "is_active": true
+  },
+  {
+    "section": "explore",
+    "type": "custom",
+    "label": "Lugares",
+    "url": "/lugares",
+    "order": 2,
+    "is_active": true
+  },
+  {
+    "section": "institutional",
+    "type": "custom",
+    "label": "Transparencia",
+    "url": "https://www.cabrerademar.cat/ajuntament/transparencia",
+    "order": 0,
+    "is_active": true
+  },
+  {
+    "section": "institutional",
+    "type": "custom",
+    "label": "Perfil del contratante",
+    "url": "https://www.cabrerademar.cat/ajuntament/perfil-del-contractant",
+    "order": 1,
+    "is_active": true
+  },
+  {
+    "section": "institutional",
+    "type": "custom",
+    "label": "Sede electronica",
+    "url": "https://www.cabrerademar.cat/ajuntament/seu-electronica",
+    "order": 2,
+    "is_active": true
+  }
+]

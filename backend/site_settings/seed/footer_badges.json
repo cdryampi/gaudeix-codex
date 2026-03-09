@@ -1,0 +1,138 @@
+[
+  {
+    "key": "municipal-institutional-seal",
+    "title": "Sello institucional municipal",
+    "image_file": "badge_institutional.png",
+    "alt_text": "Insignia institucional del ayuntamiento pendiente de imagen",
+    "url": "https://www.cabrerademar.cat",
+    "order": 0,
+    "is_active": false,
+    "image_generation": {
+      "status": "pending",
+      "toolchain": [
+        "antigravity",
+        "nano banana"
+      ],
+      "asset_type": "footer_badge",
+      "recommended_aspect_ratio": "1:1",
+      "transparent_background": true,
+      "safe_area": "Mantener toda la iconografia dentro del 80 por ciento central del sello.",
+      "style_keywords": [
+        "municipal",
+        "institutional",
+        "mediterranean",
+        "premium civic branding",
+        "vector badge"
+      ],
+      "prompt": "Create a refined circular municipal badge for a Mediterranean town hall. Use a clean vector look, elegant gold and deep navy accents, subtle laurel geometry, civic authority feeling, no photorealism, no mockup, transparent background, centered composition, high contrast for small footer use.",
+      "negative_prompt": "No text, no letters, no watermark, no mockup, no 3d plastic effect, no blurry edges, no photographic textures, no drop shadows outside the badge silhouette.",
+      "notes": [
+        "Pensado para convivir junto al logo municipal sin competir con el branding principal.",
+        "Debe funcionar a 40-56 px de alto en footer.",
+        "Evitar texto generado para reducir artefactos."
+      ]
+    }
+  },
+  {
+    "key": "responsible-tourism-badge",
+    "title": "Turismo responsable",
+    "image_file": "badge_tourism.png",
+    "alt_text": "Sello de turismo responsable pendiente de imagen",
+    "url": "https://www.cabrerademar.cat/turisme",
+    "order": 1,
+    "is_active": false,
+    "image_generation": {
+      "status": "pending",
+      "toolchain": [
+        "antigravity",
+        "nano banana"
+      ],
+      "asset_type": "footer_badge",
+      "recommended_aspect_ratio": "1:1",
+      "transparent_background": true,
+      "safe_area": "Reservar una corona circular limpia y legible para su uso a tamano reducido.",
+      "style_keywords": [
+        "responsible tourism",
+        "eco hospitality",
+        "coastal destination",
+        "clean vector emblem",
+        "trust mark"
+      ],
+      "prompt": "Design a premium eco tourism badge for a Mediterranean destination, circular emblem, warm sand and sea green palette, subtle wave and leaf symbolism, trustworthy and welcoming, flat vector finish, transparent background, centered, optimized for small website footer display.",
+      "negative_prompt": "No text, no letters, no people, no hotel photo, no complex scenery, no watermark, no realistic shadows, no gradients that reduce legibility.",
+      "notes": [
+        "Debe transmitir confianza y sostenibilidad, no parecer un sticker infantil.",
+        "Iconografia sugerida: hoja, ola, brujula costera o sendero suave.",
+        "Preparado para uso futuro junto a otros sellos sin romper coherencia visual."
+      ]
+    }
+  },
+  {
+    "key": "ecological-commitment-badge",
+    "title": "Compromiso ecologico",
+    "image_file": "badge_eco.png",
+    "alt_text": "Sello de compromiso ecologico pendiente de imagen",
+    "url": "https://www.cabrerademar.cat/medi-ambient",
+    "order": 2,
+    "is_active": false,
+    "image_generation": {
+      "status": "pending",
+      "toolchain": [
+        "antigravity",
+        "nano banana"
+      ],
+      "asset_type": "footer_badge",
+      "recommended_aspect_ratio": "1:1",
+      "transparent_background": true,
+      "safe_area": "Composicion compacta y reconocible incluso en monocromo.",
+      "style_keywords": [
+        "ecological commitment",
+        "sustainability",
+        "municipal environment",
+        "clean vector icon",
+        "minimal emblem"
+      ],
+      "prompt": "Generate a compact sustainability badge for a municipal footer, circular or softly rounded emblem, forest green and mineral teal palette, leaf and circular renewal motif, modern civic style, flat vector, transparent background, crisp edges, strong small-size readability.",
+      "negative_prompt": "No text, no recycling clipart cliché, no photorealism, no mascot, no watercolor, no busy background, no paper texture.",
+      "notes": [
+        "Debe sentirse institucional y contemporaneo.",
+        "Evitar el icono de reciclaje estandar si domina demasiado la composicion.",
+        "Pensado para alinearse con otros badges en una misma fila."
+      ]
+    }
+  },
+  {
+    "key": "local-heritage-badge",
+    "title": "Patrimonio local",
+    "image_file": "badge_heritage.png",
+    "alt_text": "Sello de patrimonio local pendiente de imagen",
+    "url": "https://www.cabrerademar.cat/patrimoni",
+    "order": 3,
+    "is_active": false,
+    "image_generation": {
+      "status": "pending",
+      "toolchain": [
+        "antigravity",
+        "nano banana"
+      ],
+      "asset_type": "footer_badge",
+      "recommended_aspect_ratio": "1:1",
+      "transparent_background": true,
+      "safe_area": "Jerarquia clara entre icono central y marco del sello.",
+      "style_keywords": [
+        "heritage",
+        "archaeology",
+        "cultural route",
+        "Mediterranean town",
+        "vector medallion"
+      ],
+      "prompt": "Create a heritage recognition badge for a coastal Catalan municipality, elegant medallion style, terracotta and stone palette with a restrained sea accent, abstract historic landmark silhouette, premium vector aesthetic, transparent background, centered, suitable for footer use.",
+      "negative_prompt": "No text, no realistic ruins photo, no noisy textures, no fake emboss mockup, no random skyline, no watermark.",
+      "notes": [
+        "Puede insinuar arqueologia o casco historico sin depender de un monumento exacto.",
+        "Mantener un tono cultural y sobrio.",
+        "Debe convivir bien con badges ecologicos e institucionales."
+      ]
+    }
+  }
+]
