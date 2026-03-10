@@ -13,7 +13,7 @@ export const HEADER_NAV: HeaderNavItem[] = [
       { label: "Categorías", href: "/categorias" },
       { label: "Patrimonio", href: "/lugares?category=heritage" },
       { label: "Naturaleza", href: "/lugares?category=nature" },
-      { label: "Playas", href: "/lugares?category=beaches" },
+      { label: "Playas", href: "/categorias/beaches" },
       { label: "Cultura", href: "/lugares?category=culture" },
       { label: "Gastronomía", href: "/lugares?category=restaurants" },
       { label: "Alojamiento", href: "/lugares?category=accommodations" },

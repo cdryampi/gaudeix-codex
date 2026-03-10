@@ -46,7 +46,7 @@ const PILLARS: PillarItem[] = [
     },
     {
         title: "Platges",
-        href: "/lugares?category=beaches",
+        href: "/categorias/beaches",
         icon: Umbrella,
         color: "bg-[#3EC5FF]",
         lightColor: "hover:bg-[#3EC5FF]/90",

@@ -39,7 +39,7 @@ const EXPERIENCES: ExperienceItem[] = [
     },
     {
         title: "Playas",
-        href: "/lugares?category=beaches",
+        href: "/categorias/beaches",
         iconKey: "beaches",
         color: "text-[#3EC5FF]",
         bg: "bg-[#3EC5FF]/16 ring-[#3EC5FF]/40",
