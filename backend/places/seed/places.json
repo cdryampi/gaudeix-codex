@@ -38,25 +38,6 @@
     }
   },
   {
-    "title": "Platja de Cabrera de Mar",
-    "description": "Amplia zona de sorra ideal per gaudir de la brisa mediterrania i les aigues tranquil·les.",
-    "location_text": "Passeig Maritim",
-    "latitude": 41.5178,
-    "longitude": 2.4081,
-    "category_slug": "beaches",
-    "image_filename": "beach.png",
-    "translations": {
-      "es": {
-        "title": "Playa de Cabrera de Mar",
-        "description": "Amplia zona de arena ideal para disfrutar de la brisa mediterranea y las aguas tranquilas."
-      },
-      "en": {
-        "title": "Cabrera de Mar Beach",
-        "description": "Wide sandy area ideal for enjoying the Mediterranean breeze and calm waters."
-      }
-    }
-  },
-  {
     "title": "Restaurant del Poble",
     "description": "Cuina tradicional mediterrania amb productes de proximitat i vistes al mar.",
     "location_text": "Carrer de Mar, 10",
@@ -463,44 +444,6 @@
     }
   },
   {
-    "title": "Cala del Moro",
-    "description": "Petita cala amb aigues cristal·lines i roques, ideal per a snorkel.",
-    "location_text": "Sud del Passeig Maritim",
-    "latitude": 41.515,
-    "longitude": 2.412,
-    "category_slug": "beaches",
-    "image_filename": "beach.png",
-    "translations": {
-      "es": {
-        "title": "Cala del Moro",
-        "description": "Pequena cala con aguas cristalinas y rocas, ideal para snorkel."
-      },
-      "en": {
-        "title": "Moro Cove",
-        "description": "Small cove with crystal-clear waters and rocks, ideal for snorkeling."
-      }
-    }
-  },
-  {
-    "title": "Platja de les Roques",
-    "description": "Zona de bany amb formacions rocoses naturals i piscines de marea.",
-    "location_text": "Nord del Passeig Maritim",
-    "latitude": 41.52,
-    "longitude": 2.406,
-    "category_slug": "beaches",
-    "image_filename": "beach.png",
-    "translations": {
-      "es": {
-        "title": "Playa de las Rocas",
-        "description": "Zona de bano con formaciones rocosas naturales y piscinas de marea."
-      },
-      "en": {
-        "title": "Rocky Beach",
-        "description": "Swimming area with natural rock formations and tide pools."
-      }
-    }
-  },
-  {
     "title": "Centre Civic de Cabrera",
     "description": "Espai polivalent per a activitats culturals, tallers i exposicions.",
     "location_text": "Carrer de l'Escola, 5",
@@ -611,6 +554,111 @@
       "en": {
         "title": "Village Bakery",
         "description": "Traditional bakery with wood-fired bread, flatbreads and artisan pastries."
+      }
+    }
+  },
+  {
+    "title": "Platja dels Vinyals",
+    "description": "A la zona sud, de sorra gruixuda i mar oberta. Ideal per a tota la família.",
+    "location_text": "Passeig Marítim (Sud)",
+    "latitude": 41.517,
+    "longitude": 2.405,
+    "category_slug": "beaches",
+    "image_filename": "beach_platja_vinyals.png",
+    "beach_type": "urban",
+    "recommended_for": ["families", "swimming"],
+    "services": {
+      "showers": true,
+      "toilets": true,
+      "foot_wash": true,
+      "beach_bar": true
+    },
+    "accessibility_features": {
+      "accessible_walkway": true,
+      "adapted_toilet": true,
+      "amphibious_chair": true
+    },
+    "translations": {
+      "es": {
+        "title": "Playa dels Vinyals",
+        "description": "En la zona sur, de arena gruesa y mar abierto. Ideal para toda la familia."
+      },
+      "en": {
+        "title": "Vinyals Beach",
+        "description": "In the southern area, with coarse sand and open sea. Ideal for the whole family."
+      }
+    }
+  },
+  {
+    "title": "Platja del Molí",
+    "description": "Platja oberta de sorra gruixuda propera a la zona agrícola i residencial.",
+    "location_text": "Passeig Marítim (Centre)",
+    "latitude": 41.5185,
+    "longitude": 2.4065,
+    "category_slug": "beaches",
+    "image_filename": "beach_platja_moli.png",
+    "beach_type": "urban",
+    "recommended_for": ["families", "swimming"],
+    "services": {
+      "showers": true,
+      "foot_wash": true
+    },
+    "translations": {
+      "es": {
+        "title": "Playa del Molí",
+        "description": "Playa abierta de arena gruesa cercana a la zona agrícola y residencial."
+      },
+      "en": {
+        "title": "Molí Beach",
+        "description": "Open beach with coarse sand close to the agricultural and residential area."
+      }
+    }
+  },
+  {
+    "title": "Platja de Santa Margarida",
+    "description": "Un dels sectors centrals de la costa de Cabrera de Mar, tranquil·la i familiar.",
+    "location_text": "Passeig Marítim",
+    "latitude": 41.5195,
+    "longitude": 2.408,
+    "category_slug": "beaches",
+    "image_filename": "beach_platja_santa_margarida.png",
+    "beach_type": "urban",
+    "recommended_for": ["families", "swimming"],
+    "services": {
+      "showers": true
+    },
+    "translations": {
+      "es": {
+        "title": "Playa de Santa Margarida",
+        "description": "Uno de los sectores centrales de la costa de Cabrera de Mar, tranquila y familiar."
+      },
+      "en": {
+        "title": "Santa Margarida Beach",
+        "description": "One of the central sectors of the Cabrera de Mar coast, quiet and family-friendly."
+      }
+    }
+  },
+  {
+    "title": "Platja de les Sènies",
+    "description": "El sector nord de la zona de platges, amb encant natural i sorra daurada.",
+    "location_text": "Passeig Marítim (Nord)",
+    "latitude": 41.521,
+    "longitude": 2.4095,
+    "category_slug": "beaches",
+    "image_filename": "beach_platja_senies.png",
+    "beach_type": "urban",
+    "recommended_for": ["quiet_visit", "swimming"],
+    "services": {
+      "showers": true
+    },
+    "translations": {
+      "es": {
+        "title": "Playa de les Sènies",
+        "description": "El sector norte de la zona de playas, con encanto natural y arena dorada."
+      },
+      "en": {
+        "title": "Les Sènies Beach",
+        "description": "The northern sector of the beach area, with natural charm and golden sand."
       }
     }
   }

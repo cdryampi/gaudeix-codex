@@ -9,7 +9,7 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from core.models import Category
-from places.models import Place, PlaceCategorySingleton
+from places.models import Beach, Place, PlaceCategorySingleton
 from media_files.models import DocumentFile, ImageFile
 
 User = get_user_model()
@@ -47,6 +47,11 @@ def places_singleton(places_category) -> PlaceCategorySingleton:
 
 
 @pytest.fixture
+def beaches_category() -> Category:
+    return Category.objects.create(nombre="Playas", slug="beaches", taxonomy="template")
+
+
+@pytest.fixture
 def sample_document(sample_files_path) -> DocumentFile:
     pdf_path = sample_files_path / "sample.pdf"
     with pdf_path.open("rb") as source:
@@ -65,6 +70,18 @@ def sample_image(sample_files_path) -> ImageFile:
         return ImageFile.objects.create(
             file=File(source, name=image_path.name),
             original_name=image_path.name,
+            mime_type="image/png",
+            size_bytes=os.path.getsize(image_path),
+        )
+
+
+@pytest.fixture
+def sample_image_secondary(sample_files_path) -> ImageFile:
+    image_path = sample_files_path / "sample.png"
+    with image_path.open("rb") as source:
+        return ImageFile.objects.create(
+            file=File(source, name="sample-secondary.png"),
+            original_name="sample-secondary.png",
             mime_type="image/png",
             size_bytes=os.path.getsize(image_path),
         )
@@ -91,6 +108,19 @@ def test_get_places_list(media_root, places_singleton):
     assert "created_at" in place_data
     assert "updated_at" in place_data
     assert "template_key" in place_data
+
+
+def test_places_list_excludes_beaches(media_root, places_singleton, beaches_category):
+    Place.objects.create(title="Listed Place", latitude=1.0, longitude=1.0)
+    Beach.objects.create(title="Platja Gran")
+
+    client = APIClient()
+    url = reverse("place-list")
+    response = client.get(url)
+
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.data) == 1
+    assert response.data[0]["title"] == "Listed Place"
 
 
 def test_create_place_requires_authentication(media_root, places_singleton):
@@ -274,3 +304,120 @@ def test_auto_translate_missing_content(media_root, places_singleton, auth_clien
     response = auth_client.post(url, {"source_lang": "es"}, format="json")
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+def test_get_beaches_list(media_root, places_singleton, beaches_category):
+    Beach.objects.create(title="Platja Gran")
+
+    client = APIClient()
+    url = reverse("beach-list")
+    response = client.get(url)
+
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.data) == 1
+    assert response.data[0]["template_key"] == "beaches"
+
+
+def test_create_beach_authenticated(
+    media_root, places_singleton, beaches_category, sample_image, auth_client
+):
+    url = reverse("beach-list")
+    data = {
+        "title": "Platja Nova",
+        "description": "Ideal per families",
+        "beach_type": "urban",
+        "environment_summary": "Passeig maritim i sorra ampla",
+        "recommended_for": ["families", "sunset"],
+        "length_m": 450,
+        "access_notes": "Acces des del passeig",
+        "parking_info": "Aparcament a 5 minuts",
+        "public_transport_info": "Bus interurbÃ ",
+        "services": {"showers": True, "toilets": True},
+        "accessibility_features": {"accessible_access": True},
+        "gallery_ids": [sample_image.id],
+        "latitude": 1.0,
+        "longitude": 2.0,
+    }
+
+    response = auth_client.post(url, data, format="json")
+
+    assert response.status_code == status.HTTP_201_CREATED
+    beach = Beach.objects.get()
+    assert beach.category == beaches_category
+    assert beach.gallery.count() == 1
+    assert beach.services["showers"] is True
+
+
+def test_beach_requires_authentication(media_root, places_singleton, beaches_category):
+    client = APIClient()
+    url = reverse("beach-list")
+
+    response = client.post(url, {"title": "Platja"}, format="json")
+
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+
+def test_beach_detail_returns_gallery(
+    media_root, places_singleton, beaches_category, sample_image
+):
+    beach = Beach.objects.create(title="Platja amb Fotos")
+    beach.gallery.add(sample_image)
+
+    client = APIClient()
+    url = reverse("beach-detail", kwargs={"slug": beach.slug})
+    response = client.get(url)
+
+    assert response.status_code == status.HTTP_200_OK
+    assert response.data["gallery"][0]["id"] == sample_image.id
+
+
+def test_create_beach_rejects_invalid_recommended_for(
+    media_root, places_singleton, beaches_category, auth_client
+):
+    url = reverse("beach-list")
+
+    response = auth_client.post(
+        url,
+        {
+            "title": "Platja Invàlida",
+            "beach_type": "urban",
+            "recommended_for": ["families", "invalid-option"],
+        },
+        format="json",
+    )
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert "recommended_for" in response.data
+
+
+def test_update_beach_replaces_gallery_and_flags(
+    media_root,
+    places_singleton,
+    beaches_category,
+    auth_client,
+    sample_image,
+    sample_image_secondary,
+):
+    beach = Beach.objects.create(
+        title="Platja Editable",
+        services={"showers": True},
+        recommended_for=["families"],
+    )
+    beach.gallery.add(sample_image)
+
+    url = reverse("beach-detail", kwargs={"slug": beach.slug})
+    response = auth_client.patch(
+        url,
+        {
+            "gallery_ids": [sample_image_secondary.id],
+            "services": {"beach_bar": True},
+            "recommended_for": ["sunset"],
+        },
+        format="json",
+    )
+
+    assert response.status_code == status.HTTP_200_OK
+    beach.refresh_from_db()
+    assert list(beach.gallery.values_list("id", flat=True)) == [sample_image_secondary.id]
+    assert beach.services == {"beach_bar": True}
+    assert beach.recommended_for == ["sunset"]

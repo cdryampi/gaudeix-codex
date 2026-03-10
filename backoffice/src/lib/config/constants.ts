@@ -20,6 +20,7 @@ export const ROUTES = {
   MEDIA: "/dashboard/media",
   EVENTS: "/dashboard/events",
   PLACES: "/dashboard/places",
+  BEACHES: "/dashboard/beaches",
   CATEGORIES: "/dashboard/categories",
   STATIC_PAGES: "/dashboard/static-pages",
   SOCIAL: "/dashboard/settings/social",
@@ -98,6 +99,10 @@ export const QUERY_KEYS = {
   PLACES: {
     LIST: ["places", "list"],
     DETAIL: (id: string) => ["places", "detail", id],
+  },
+  BEACHES: {
+    LIST: ["beaches", "list"],
+    DETAIL: (slug: string) => ["beaches", "detail", slug],
   },
   STATIC_PAGES: {
     LIST: ["static-pages", "list"],
@@ -180,6 +185,10 @@ export const API_ENDPOINTS = {
     LIST: "/places/",
     DETAIL: (id: string) => `/places/${id}/`,
     AUTO_TRANSLATE: (id: string) => `/places/${id}/auto_translate/`,
+  },
+  BEACHES: {
+    LIST: "/beaches/",
+    DETAIL: (slug: string) => `/beaches/${slug}/`,
   },
   STATIC_PAGES: {
     LIST: "/static-pages/",

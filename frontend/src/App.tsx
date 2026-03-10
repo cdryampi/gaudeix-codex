@@ -11,20 +11,14 @@ import {
 
 import { cn } from "@/lib/utils";
 import { InteractiveMap } from "@/components/site/InteractiveMap";
-import {
-  MunicipalCTA,
-  SectionHeader,
-} from "@/components/site/primitives";
+import { MunicipalCTA, SectionHeader } from "@/components/site/primitives";
 import { CategoryBrandIcon } from "@/features/categories/components/CategoryBrandIcon";
 import { HeroVideoFrame } from "@/features/hero/components/HeroVideo";
 import { HomeExperienceGrid } from "@/features/hero/components/HomeExperienceGrid";
 import { getEvents } from "@/features/events/api";
 import { getCategories } from "@/features/categories/api";
 import { NewsCard } from "@/features/news/components/NewsCard";
-import {
-  filterEvents,
-  DateRangeFilter,
-} from "@/features/agenda/utils";
+import { filterEvents, DateRangeFilter } from "@/features/agenda/utils";
 import LoginPage from "@/pages/LoginPage";
 import RegisterPage from "@/pages/RegisterPage";
 import PasswordResetPage from "@/pages/PasswordResetPage";
@@ -34,6 +28,7 @@ import { AgendaPage } from "@/features/agenda/pages/AgendaPage";
 import { PlacesPage } from "@/features/places/pages/PlacesPage";
 import { PlaceDetailPage } from "@/features/places/pages/PlaceDetailPage";
 import { LegacyBeachPlaceRedirect } from "@/features/places/pages/LegacyBeachPlaceRedirect";
+import { BeachDetailPage } from "@/features/beaches/pages/BeachDetailPage";
 import { RankingsPage } from "@/features/gamification/pages/RankingsPage";
 import { CategoriesPage } from "@/features/categories/pages/CategoriesPage";
 import { CategoryDetailPage } from "@/features/categories/pages/CategoryDetailPage";
@@ -70,7 +65,8 @@ function HomeMosaicTile({
   category: Category;
   index: number;
 }) {
-  const image = category.featured_media?.variant_large || category.featured_media?.file;
+  const image =
+    category.featured_media?.variant_large || category.featured_media?.file;
   const isLarge = index === 0;
 
   return (
@@ -80,7 +76,9 @@ function HomeMosaicTile({
       className={cn(
         "group relative flex flex-col overflow-hidden rounded-[2.5rem] bg-slate-900 text-white shadow-xl ring-1 ring-white/10 transition-all duration-500 hover:shadow-2xl hover:ring-white/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
         mosaicPattern[index % mosaicPattern.length],
-        isLarge ? "min-h-[400px] md:min-h-[480px]" : "min-h-[280px] md:min-h-[320px]"
+        isLarge
+          ? "min-h-[400px] md:min-h-[480px]"
+          : "min-h-[280px] md:min-h-[320px]",
       )}
     >
       {image ? (
@@ -109,9 +107,23 @@ function HomeMosaicTile({
         </div>
 
         <div className="transform space-y-3 transition-transform duration-500 ease-out group-hover:-translate-y-1">
-          <h3 className={cn("font-bold text-white", isLarge ? "text-3xl md:text-5xl" : "text-2xl md:text-3xl")}>{category.nombre}</h3>
+          <h3
+            className={cn(
+              "font-bold text-white",
+              isLarge ? "text-3xl md:text-5xl" : "text-2xl md:text-3xl",
+            )}
+          >
+            {category.nombre}
+          </h3>
           {category.descripcion ? (
-            <p className={cn("text-white/80", isLarge ? "max-w-xl text-base md:text-lg" : "text-sm md:text-base line-clamp-2 md:line-clamp-3")}>
+            <p
+              className={cn(
+                "text-white/80",
+                isLarge
+                  ? "max-w-xl text-base md:text-lg"
+                  : "text-sm md:text-base line-clamp-2 md:line-clamp-3",
+              )}
+            >
               {category.descripcion}
             </p>
           ) : null}
@@ -120,7 +132,6 @@ function HomeMosaicTile({
     </Link>
   );
 }
-
 
 function HomePage() {
   const [eventFilter, setEventFilter] = useState<DateRangeFilter>("week");
@@ -144,7 +155,9 @@ function HomePage() {
   });
 
   const featuredCategories = useMemo(() => {
-    const list = Array.isArray(categoriesData) ? categoriesData : categoriesData?.results || [];
+    const list = Array.isArray(categoriesData)
+      ? categoriesData
+      : categoriesData?.results || [];
     return list.slice(0, 6);
   }, [categoriesData]);
 
@@ -191,20 +204,30 @@ function HomePage() {
           {!featuredCategories.length ? (
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="card-surface h-[280px] animate-pulse bg-slate-100 lg:col-span-4" />
+                <div
+                  key={i}
+                  className="card-surface h-[280px] animate-pulse bg-slate-100 lg:col-span-4"
+                />
               ))}
             </div>
           ) : (
             <AnimatedCardGrid className="grid grid-cols-1 gap-5 lg:grid-cols-12">
               {featuredCategories.map((category, index) => (
-                <HomeMosaicTile key={category.id} category={category} index={index} />
+                <HomeMosaicTile
+                  key={category.id}
+                  category={category}
+                  index={index}
+                />
               ))}
             </AnimatedCardGrid>
           )}
         </div>
       </section>
 
-      <section id="eventos" className="page-section sand-section relative overflow-hidden">
+      <section
+        id="eventos"
+        className="page-section sand-section relative overflow-hidden"
+      >
         <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 rounded-full bg-[radial-gradient(circle_at_center,rgba(15,76,129,0.04),transparent_60%)] w-[800px] h-[800px] pointer-events-none" />
         <div className="page-container relative z-10 grid gap-10 lg:grid-cols-[320px_minmax(0,1fr)] xl:grid-cols-[380px_minmax(0,1fr)] lg:items-start">
           <MotionReveal className="flex flex-col gap-8 lg:sticky lg:top-32 lg:h-max">
@@ -212,9 +235,12 @@ function HomePage() {
               <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
                 Agenda Viva
               </span>
-              <h2 className="text-4xl font-bold leading-tight text-slate-900 lg:text-5xl">La cultura nunca se detiene.</h2>
+              <h2 className="text-4xl font-bold leading-tight text-slate-900 lg:text-5xl">
+                La cultura nunca se detiene.
+              </h2>
               <p className="text-base leading-relaxed text-slate-600 lg:text-lg">
-                Nuestra selección de planes, exposiciones, conciertos y actividades familiares que no te puedes perder.
+                Nuestra selección de planes, exposiciones, conciertos y
+                actividades familiares que no te puedes perder.
               </p>
             </div>
 
@@ -227,10 +253,11 @@ function HomePage() {
                 <button
                   key={filter.id}
                   onClick={() => setEventFilter(filter.id as DateRangeFilter)}
-                  className={`rounded-full px-5 py-2.5 text-sm font-bold transition-all duration-300 ${eventFilter === filter.id
-                    ? "bg-slate-900 text-white shadow-lg shadow-slate-900/20"
-                    : "bg-white/60 text-slate-600 hover:bg-white hover:text-slate-900 hover:shadow-sm ring-1 ring-slate-200/50"
-                    }`}
+                  className={`rounded-full px-5 py-2.5 text-sm font-bold transition-all duration-300 ${
+                    eventFilter === filter.id
+                      ? "bg-slate-900 text-white shadow-lg shadow-slate-900/20"
+                      : "bg-white/60 text-slate-600 hover:bg-white hover:text-slate-900 hover:shadow-sm ring-1 ring-slate-200/50"
+                  }`}
                 >
                   {filter.label}
                 </button>
@@ -295,9 +322,12 @@ function HomePage() {
                     <MapPin className="h-6 w-6" />
                   </div>
                   <div className="space-y-1">
-                    <p className="text-sm font-bold leading-tight text-slate-900">Explorador Interactivo</p>
+                    <p className="text-sm font-bold leading-tight text-slate-900">
+                      Explorador Interactivo
+                    </p>
                     <p className="text-xs font-medium leading-snug text-slate-500">
-                      Zonas naturales, patrimonio y servicios sobre el territorio.
+                      Zonas naturales, patrimonio y servicios sobre el
+                      territorio.
                     </p>
                   </div>
                 </div>
@@ -402,7 +432,7 @@ export default function App() {
         <Route path="/agenda/:slug" element={<EventDetailPage />} />
         <Route path="/lugares" element={<PlacesPage />} />
         <Route path="/lugares/:slug" element={<LegacyBeachPlaceRedirect />} />
-        <Route path="/playas/:slug" element={<PlaceDetailPage />} />
+        <Route path="/playas/:slug" element={<BeachDetailPage />} />
         <Route path="/categorias" element={<CategoriesPage />} />
         <Route path="/categorias/:slug" element={<CategoryDetailPage />} />
         <Route path="/rankings" element={<RankingsPage />} />

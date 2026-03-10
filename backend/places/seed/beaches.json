@@ -1,0 +1,178 @@
+[
+  {
+    "title": "Platja dels Vinyals",
+    "description": "Tram litoral amb ambient tranquil, sorra oberta i lectura pausada del front marítim.",
+    "location_text": "Sector dels Vinyals",
+    "latitude": 41.5189,
+    "longitude": 2.4098,
+    "beach_type": "urban",
+    "environment_summary": "Platja oberta de perfil amable, pensada per a passeig i bany tranquil.",
+    "recommended_for": ["families", "swimming", "quiet_visit"],
+    "length_m": 280,
+    "access_notes": "Accés a peu des del passeig marítim.",
+    "parking_info": "Aparcament de rotació a l'entorn del passeig.",
+    "public_transport_info": "Connexió amb la zona litoral des de l'entorn de l'estació.",
+    "services": {
+      "showers": true,
+      "foot_wash": true,
+      "toilets": false,
+      "lifeguard_point": false,
+      "sunbeds": false,
+      "beach_bar": false
+    },
+    "accessibility_features": {
+      "accessible_access": true,
+      "accessible_walkway": true,
+      "assisted_bath": false,
+      "amphibious_chair": false,
+      "adapted_toilet": false
+    },
+    "image_filename": "beach_platja_vinyals.png",
+    "gallery_filenames": [
+      "beach_platja_vinyals_g1.png",
+      "beach_platja_vinyals_g2.png"
+    ],
+    "translations": {
+      "es": {
+        "title": "Playa dels Vinyals",
+        "description": "Tramo litoral de ambiente tranquilo, arena abierta y lectura pausada del frente marítimo."
+      },
+      "en": {
+        "title": "Vinyals Beach",
+        "description": "Coastal stretch with a calm atmosphere, open sand and a relaxed seafront setting."
+      }
+    }
+  },
+  {
+    "title": "Platja del Molí",
+    "description": "Platja urbana de caràcter familiar, útil per a una visita curta i molt accessible.",
+    "location_text": "Entorn del Molí",
+    "latitude": 41.5181,
+    "longitude": 2.4087,
+    "beach_type": "urban",
+    "environment_summary": "Espai litoral proper al nucli, fàcil d'entendre i de recórrer.",
+    "recommended_for": ["families", "swimming", "sunset"],
+    "length_m": 240,
+    "access_notes": "Accés directe des del front marítim.",
+    "parking_info": "Aparcament proper en trama urbana litoral.",
+    "public_transport_info": "Accessible amb mobilitat a peu des dels principals accessos al litoral.",
+    "services": {
+      "showers": true,
+      "foot_wash": true,
+      "toilets": false,
+      "lifeguard_point": false,
+      "sunbeds": false,
+      "beach_bar": false
+    },
+    "accessibility_features": {
+      "accessible_access": true,
+      "accessible_walkway": true,
+      "assisted_bath": false,
+      "amphibious_chair": false,
+      "adapted_toilet": false
+    },
+    "image_filename": "beach_platja_moli.png",
+    "gallery_filenames": [
+      "beach_platja_moli_g1.png",
+      "beach_platja_moli_g2.png"
+    ],
+    "translations": {
+      "es": {
+        "title": "Playa del Molí",
+        "description": "Playa urbana de carácter familiar, útil para una visita corta y muy accesible."
+      },
+      "en": {
+        "title": "Moli Beach",
+        "description": "Family-friendly urban beach, well suited to a short and very accessible visit."
+      }
+    }
+  },
+  {
+    "title": "Platja de Santa Margarida",
+    "description": "Tram litoral lluminós amb lectura més panoràmica i una experiència de passeig agradable.",
+    "location_text": "Sector de Santa Margarida",
+    "latitude": 41.5195,
+    "longitude": 2.4106,
+    "beach_type": "natural",
+    "environment_summary": "Platja de caràcter més obert, pensada per caminar, aturar-se i mirar el mar.",
+    "recommended_for": ["sunset", "quiet_visit", "swimming"],
+    "length_m": 320,
+    "access_notes": "Accés per recorregut de passeig i passos cap a la sorra.",
+    "parking_info": "Aparcament a l'entorn litoral subjecte a disponibilitat.",
+    "public_transport_info": "Accés des dels eixos principals del municipi i connexió amb la façana marítima.",
+    "services": {
+      "showers": false,
+      "foot_wash": false,
+      "toilets": false,
+      "lifeguard_point": false,
+      "sunbeds": false,
+      "beach_bar": false
+    },
+    "accessibility_features": {
+      "accessible_access": true,
+      "accessible_walkway": false,
+      "assisted_bath": false,
+      "amphibious_chair": false,
+      "adapted_toilet": false
+    },
+    "image_filename": "beach_platja_santa_margarida.png",
+    "gallery_filenames": [
+      "beach_platja_santa_margarida_g1.png",
+      "beach_platja_santa_margarida_g2.png"
+    ],
+    "translations": {
+      "es": {
+        "title": "Playa de Santa Margarida",
+        "description": "Tramo litoral luminoso con una lectura más panorámica y una experiencia de paseo agradable."
+      },
+      "en": {
+        "title": "Santa Margarida Beach",
+        "description": "Bright coastal stretch with a more panoramic feel and a pleasant walking experience."
+      }
+    }
+  },
+  {
+    "title": "Platja de les Senies",
+    "description": "Tram de platja amb imatge més natural, adequat per a una estada calmada i observació del litoral.",
+    "location_text": "Sector de les Senies",
+    "latitude": 41.5202,
+    "longitude": 2.4114,
+    "beach_type": "natural",
+    "environment_summary": "Entorn de platja més serè, amb una lectura menys urbana i més contemplativa.",
+    "recommended_for": ["quiet_visit", "sunset", "snorkeling"],
+    "length_m": 300,
+    "access_notes": "Accés per camins i continuïtat del passeig litoral.",
+    "parking_info": "Aparcament de proximitat limitat segons temporada.",
+    "public_transport_info": "Connexió indirecta mitjançant els accessos generals al front marítim.",
+    "services": {
+      "showers": false,
+      "foot_wash": false,
+      "toilets": false,
+      "lifeguard_point": false,
+      "sunbeds": false,
+      "beach_bar": false
+    },
+    "accessibility_features": {
+      "accessible_access": false,
+      "accessible_walkway": false,
+      "assisted_bath": false,
+      "amphibious_chair": false,
+      "adapted_toilet": false
+    },
+    "image_filename": "beach_platja_senies.png",
+    "gallery_filenames": [
+      "beach_platja_senies_g1.png",
+      "beach_platja_senies_g2.png"
+    ],
+    "translations": {
+      "es": {
+        "title": "Playa de les Senies",
+        "description": "Tramo de playa con una imagen más natural, adecuado para una estancia calmada y observación del litoral."
+      },
+      "en": {
+        "title": "Les Senies Beach",
+        "description": "Beach stretch with a more natural feel, suited to a calm stay and coastal observation."
+      }
+    }
+  }
+]

@@ -1,13 +1,6 @@
-import { useParams } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import {
-  ExternalLink,
-  Globe,
-  Mail,
-  MapPin,
-  Phone,
-  Star,
-} from "lucide-react";
+import { ExternalLink, Globe, Mail, MapPin, Phone, Star } from "lucide-react";
 
 import { MotionReveal } from "@/components/animated/MotionReveal";
 import { PageHero, SectionHeader } from "@/components/site/primitives";
@@ -30,7 +23,14 @@ export const PlaceDetailPage = () => {
 
   if (isLoading) return <PlaceDetailSkeleton />;
   if (error || !place) {
-    return <div className="page-shell-offset text-center text-lg text-slate-500">Lugar no encontrado</div>;
+    return (
+      <div className="page-shell-offset text-center text-lg text-slate-500">
+        Lugar no encontrado
+      </div>
+    );
+  }
+  if (place.template_key === "beaches") {
+    return <Navigate to={`/playas/${place.slug}`} replace />;
   }
 
   const imageUrl =
@@ -77,7 +77,11 @@ export const PlaceDetailPage = () => {
         <MotionReveal>
           <div className="card-surface overflow-hidden md:rounded-[2.5rem]">
             <div className="aspect-[21/9] overflow-hidden bg-slate-200">
-              <img src={imageUrl} alt={place.title} className="h-full w-full object-cover" />
+              <img
+                src={imageUrl}
+                alt={place.title}
+                className="h-full w-full object-cover"
+              />
             </div>
           </div>
         </MotionReveal>
@@ -111,20 +115,28 @@ export const PlaceDetailPage = () => {
           <MotionReveal>
             <aside className="space-y-8">
               <div className="card-surface p-8 md:rounded-[2.5rem]">
-                <h3 className="text-2xl font-semibold tracking-tight text-slate-900">Contacto y accesos</h3>
+                <h3 className="text-2xl font-semibold tracking-tight text-slate-900">
+                  Contacto y accesos
+                </h3>
                 <div className="mt-6 space-y-5 text-base text-slate-700">
                   <p className="flex items-start gap-3">
                     <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
                     {place.location_text}
                   </p>
                   {place.phone ? (
-                    <a href={`tel:${place.phone}`} className="flex items-center gap-3 hover:text-primary">
+                    <a
+                      href={`tel:${place.phone}`}
+                      className="flex items-center gap-3 hover:text-primary"
+                    >
                       <Phone className="h-4 w-4 text-primary" />
                       {place.phone}
                     </a>
                   ) : null}
                   {place.email ? (
-                    <a href={`mailto:${place.email}`} className="flex items-center gap-3 hover:text-primary">
+                    <a
+                      href={`mailto:${place.email}`}
+                      className="flex items-center gap-3 hover:text-primary"
+                    >
                       <Mail className="h-4 w-4 text-primary" />
                       {place.email}
                     </a>
@@ -144,9 +156,14 @@ export const PlaceDetailPage = () => {
 
                 {isAccommodation && accommodation?.stars ? (
                   <div className="mt-6 flex items-center gap-1">
-                    {Array.from({ length: accommodation.stars }).map((_, index) => (
-                      <Star key={index} className="h-4 w-4 fill-accent text-accent" />
-                    ))}
+                    {Array.from({ length: accommodation.stars }).map(
+                      (_, index) => (
+                        <Star
+                          key={index}
+                          className="h-4 w-4 fill-accent text-accent"
+                        />
+                      ),
+                    )}
                   </div>
                 ) : null}
 

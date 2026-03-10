@@ -10,6 +10,7 @@ import { UsersPage } from "@/features/users/pages/UsersPage";
 import { MediaPage } from "@/features/media/pages/MediaPage";
 import { EventsPage } from "@/features/events/pages/EventsPage";
 import { PlacesPage } from "@/features/places/pages/PlacesPage";
+import { BeachesPage } from "@/features/beaches/pages/BeachesPage";
 import { LandingPage } from "@/features/landing/pages/LandingPage";
 import { TestFormPage } from "@/features/test/pages/TestFormPage";
 import { ROUTES } from "@/lib/config/constants";
@@ -94,6 +95,10 @@ export const router = createBrowserRouter([
       {
         path: "places",
         element: <PlacesPage />,
+      },
+      {
+        path: "beaches",
+        element: <BeachesPage />,
       },
       {
         path: "categories",

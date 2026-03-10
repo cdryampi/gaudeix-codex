@@ -3,6 +3,10 @@ import { InfoWindowF, MarkerF } from "@react-google-maps/api";
 import { useQuery } from "@tanstack/react-query";
 import { getPlaces } from "@/features/places/api";
 import { Place } from "@/features/places/types";
+import {
+  getPlaceDetailPath,
+  isPlaceVisibleInExplorer,
+} from "@/features/places/utils";
 import { getSiteSettings } from "@/features/site-settings/api";
 import { MapContainer, DEFAULT_CENTER } from "./MapContainer";
 import {
@@ -62,7 +66,10 @@ export function InteractiveMap({
 
   const places = useMemo(() => {
     if (!placesData) return [];
-    return Array.isArray(placesData) ? placesData : placesData.results || [];
+    const normalized = Array.isArray(placesData)
+      ? placesData
+      : placesData.results || [];
+    return normalized.filter(isPlaceVisibleInExplorer);
   }, [placesData]);
 
   const markerAnchor =
@@ -182,14 +189,18 @@ export function InteractiveMap({
                   className="group flex flex-col items-center justify-center gap-1.5 rounded-2xl bg-slate-50 py-3 transition-colors hover:bg-slate-100"
                 >
                   <ExternalLink className="h-4 w-4 text-slate-500 transition-transform group-hover:scale-110 group-hover:text-primary" />
-                  <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-slate-600 group-hover:text-slate-900">Abrir</span>
+                  <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-slate-600 group-hover:text-slate-900">
+                    Abrir
+                  </span>
                 </a>
                 <a
-                  href={`/lugares/${selectedPlace.slug}`}
+                  href={getPlaceDetailPath(selectedPlace)}
                   className="group flex flex-col items-center justify-center gap-1.5 rounded-2xl bg-primary py-3 text-white shadow-lg shadow-primary/20 transition-all hover:bg-secondary hover:shadow-xl hover:shadow-secondary/20"
                 >
                   <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  <span className="text-[10px] font-bold uppercase tracking-[0.16em]">Detalles</span>
+                  <span className="text-[10px] font-bold uppercase tracking-[0.16em]">
+                    Detalles
+                  </span>
                 </a>
               </div>
             </div>

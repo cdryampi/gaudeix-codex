@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from rest_framework.routers import DefaultRouter
 
-from .views import PlaceViewSet, RestaurantViewSet, AccommodationViewSet
+from .views import PlaceViewSet, RestaurantViewSet, AccommodationViewSet, BeachViewSet
 
 
 def register_routes(router: DefaultRouter) -> None:
@@ -12,6 +12,7 @@ def register_routes(router: DefaultRouter) -> None:
     router.register(r"places", PlaceViewSet, basename="place")
     router.register(r"restaurants", RestaurantViewSet, basename="restaurant")
     router.register(r"accommodations", AccommodationViewSet, basename="accommodation")
+    router.register(r"beaches", BeachViewSet, basename="beach")
 
 
 # Standalone usage (optional) if this file is included directly.

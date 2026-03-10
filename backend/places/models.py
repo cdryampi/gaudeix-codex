@@ -265,3 +265,161 @@ class Accommodation(Place):
     class Meta:
         verbose_name = _("Accommodation")
         verbose_name_plural = _("Accommodations")
+
+
+class Beach(Place):
+    """
+    Specialized Place model for beaches.
+    Stores practical tourism data without turning Place into a god model.
+    """
+
+    BEACH_TYPES = [
+        ("urban", _("Urban")),
+        ("cove", _("Cove")),
+        ("natural", _("Natural")),
+    ]
+
+    RECOMMENDED_FOR_CHOICES = {
+        "families",
+        "swimming",
+        "snorkeling",
+        "quiet_visit",
+        "sunset",
+    }
+
+    SERVICE_CHOICES = {
+        "showers",
+        "foot_wash",
+        "toilets",
+        "lifeguard_point",
+        "sunbeds",
+        "beach_bar",
+    }
+
+    ACCESSIBILITY_FEATURE_CHOICES = {
+        "accessible_access",
+        "accessible_walkway",
+        "assisted_bath",
+        "amphibious_chair",
+        "adapted_toilet",
+    }
+
+    beach_type = models.CharField(
+        _("Beach Type"),
+        max_length=20,
+        choices=BEACH_TYPES,
+        default="urban",
+    )
+    environment_summary = models.CharField(
+        _("Environment Summary"),
+        max_length=255,
+        blank=True,
+    )
+    recommended_for = models.JSONField(
+        _("Recommended For"),
+        default=list,
+        blank=True,
+        help_text=_("JSON array of audience tags such as families or sunset."),
+    )
+    length_m = models.PositiveIntegerField(
+        _("Length (m)"),
+        null=True,
+        blank=True,
+    )
+    access_notes = models.TextField(_("Access Notes"), blank=True)
+    parking_info = models.TextField(_("Parking Information"), blank=True)
+    public_transport_info = models.TextField(
+        _("Public Transport Information"),
+        blank=True,
+    )
+    services = models.JSONField(
+        _("Services"),
+        default=dict,
+        blank=True,
+        help_text=_("JSON object of service booleans."),
+    )
+    accessibility_features = models.JSONField(
+        _("Accessibility Features"),
+        default=dict,
+        blank=True,
+        help_text=_("JSON object of accessibility feature booleans."),
+    )
+    gallery = models.ManyToManyField(
+        "media_files.ImageFile",
+        blank=True,
+        related_name="in_beach_galleries",
+        verbose_name=_("Gallery"),
+    )
+
+    class Meta:
+        verbose_name = _("Beach")
+        verbose_name_plural = _("Beaches")
+
+    @staticmethod
+    def get_beaches_category():
+        from core.models import Category
+
+        return Category.objects.filter(slug="beaches").first()
+
+    def clean(self) -> None:
+        super().clean()
+        beaches_category = self.get_beaches_category()
+        if beaches_category is None:
+            raise ValidationError(
+                {"category": _("Category with slug 'beaches' must exist.")}
+            )
+
+        self._validate_array_choice_field(
+            "recommended_for",
+            self.recommended_for,
+            self.RECOMMENDED_FOR_CHOICES,
+        )
+        self._validate_object_choice_field(
+            "services",
+            self.services,
+            self.SERVICE_CHOICES,
+        )
+        self._validate_object_choice_field(
+            "accessibility_features",
+            self.accessibility_features,
+            self.ACCESSIBILITY_FEATURE_CHOICES,
+        )
+
+    def save(self, *args, **kwargs):
+        beaches_category = self.get_beaches_category()
+        if beaches_category is not None:
+            self.category = beaches_category
+        super().save(*args, **kwargs)
+
+    def _validate_array_choice_field(
+        self, field_name: str, value: list[str] | None, allowed: set[str]
+    ) -> None:
+        if value in (None, ""):
+            return
+        if not isinstance(value, list):
+            raise ValidationError({field_name: _("Must be a JSON array.")})
+        invalid = [item for item in value if item not in allowed]
+        if invalid:
+            raise ValidationError(
+                {field_name: _("Contains invalid values: %(values)s.") % {"values": ", ".join(invalid)}}
+            )
+
+    def _validate_object_choice_field(
+        self, field_name: str, value: dict | None, allowed: set[str]
+    ) -> None:
+        if value in (None, ""):
+            return
+        if not isinstance(value, dict):
+            raise ValidationError({field_name: _("Must be a JSON object.")})
+
+        invalid = [key for key in value.keys() if key not in allowed]
+        if invalid:
+            raise ValidationError(
+                {field_name: _("Contains invalid keys: %(values)s.") % {"values": ", ".join(invalid)}}
+            )
+
+        wrong_types = [key for key, item in value.items() if not isinstance(item, bool)]
+        if wrong_types:
+            raise ValidationError(
+                {field_name: _("Values must be booleans for keys: %(values)s.") % {"values": ", ".join(wrong_types)}}
+            )

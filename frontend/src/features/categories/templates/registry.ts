@@ -22,6 +22,9 @@ const EventsCategoryLayout = lazy(
 const NatureCategoryLayout = lazy(
   () => import("./layouts/NatureCategoryLayout"),
 );
+const BeachesCategoryLayout = lazy(
+  () => import("./layouts/BeachesCategoryLayout"),
+);
 const AccommodationsCategoryLayout = lazy(
   () => import("./layouts/AccommodationsCategoryLayout"),
 );
@@ -50,7 +53,7 @@ const categoryLayoutRegistry: Record<string, CategoryLayout> = {
   // Nature/Heritage group
   nature: NatureCategoryLayout,
   heritage: NatureCategoryLayout,
-  beaches: NatureCategoryLayout,
+  beaches: BeachesCategoryLayout,
   culture: NatureCategoryLayout,
 
   // Specialized place categories

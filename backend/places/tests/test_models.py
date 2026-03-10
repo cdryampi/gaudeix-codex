@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 from django.core.files import File
 
 from core.models import Category
-from places.models import Place, PlaceCategorySingleton
+from places.models import Beach, Place, PlaceCategorySingleton
 from media_files.models import DocumentFile, ImageFile
 
 pytestmark = pytest.mark.django_db
@@ -41,6 +41,11 @@ def places_singleton(places_category) -> PlaceCategorySingleton:
     """Create the places category singleton."""
     singleton = PlaceCategorySingleton.objects.create(category=places_category)
     return singleton
+
+
+@pytest.fixture
+def beaches_category() -> Category:
+    return Category.objects.create(nombre="Playas", slug="beaches", taxonomy="template")
 
 
 @pytest.fixture
@@ -133,3 +138,56 @@ def test_place_auto_assigns_category(places_singleton):
     place = Place.objects.create(title="Auto Category Test")
 
     assert place.category == places_singleton.category
+
+
+def test_beach_assigns_beaches_category(media_root, places_singleton, beaches_category):
+    beach = Beach.objects.create(title="Platja Nova")
+
+    assert beach.category == beaches_category
+    assert beach.template_key == "beaches"
+
+
+def test_beach_overrides_manual_category_assignment(
+    media_root, places_singleton, beaches_category
+):
+    other_category = Category.objects.create(
+        slug="nature", nombre="Naturaleza", taxonomy="template"
+    )
+
+    beach = Beach.objects.create(title="Platja Forçada", category=other_category)
+
+    assert beach.category == beaches_category
+
+
+def test_beach_validates_choice_payloads(media_root, places_singleton, beaches_category):
+    with pytest.raises(ValidationError):
+        Beach.objects.create(
+            title="Invalid Beach",
+            recommended_for=["families", "invalid-option"],
+        )
+
+    with pytest.raises(ValidationError):
+        Beach.objects.create(
+            title="Invalid Services",
+            services={"showers": True, "invalid": True},
+        )
+
+    with pytest.raises(ValidationError):
+        Beach.objects.create(
+            title="Wrong Service Types",
+            services={"showers": "yes"},
+        )
+
+
+def test_beach_gallery_and_flags(media_root, places_singleton, beaches_category, sample_image):
+    beach = Beach.objects.create(
+        title="Platja Amb Galeria",
+        beach_type="cove",
+        recommended_for=["families", "sunset"],
+        services={"showers": True, "beach_bar": False},
+        accessibility_features={"accessible_access": True},
+    )
+    beach.gallery.add(sample_image)
+
+    assert beach.gallery.count() == 1
+    assert beach.recommended_for == ["families", "sunset"]

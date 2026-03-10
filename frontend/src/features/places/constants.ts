@@ -7,7 +7,6 @@ import {
   Sailboat,
   Brush,
   MapPin,
-  Waves,
   Church,
   Trees,
   ShoppingBag,
@@ -45,14 +44,6 @@ export const PLACE_CATEGORIES = {
     bg: "bg-slate-50",
     border: "border-slate-200",
     text: "text-slate-600",
-  },
-  beaches: {
-    label: "Playas",
-    icon: Waves,
-    color: "#06b6d4", // Cyan
-    bg: "bg-cyan-50",
-    border: "border-cyan-100",
-    text: "text-cyan-600",
   },
   culture: {
     label: "Cultura",

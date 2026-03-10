@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from core.models import Category
-from places.models import Restaurant, Accommodation, PlaceCategorySingleton
+from places.models import Beach, Restaurant, Accommodation, PlaceCategorySingleton
 
 
 @pytest.mark.django_db
@@ -12,6 +12,9 @@ class TestDirectoryAPI:
         self.client = APIClient()
         # Setup required category infrastructure
         self.category = Category.objects.create(slug="places", nombre="Places")
+        self.beaches_category = Category.objects.create(
+            slug="beaches", nombre="Playas", taxonomy="template"
+        )
 
         # Ensure singleton exists and points to valid category
         # Cannot use get_or_create without defaults because category is required
@@ -60,8 +63,9 @@ class TestDirectoryAPI:
         # Create one of each
         Restaurant.objects.create(title="Resto 1", cuisine_type="tapas")
         Accommodation.objects.create(title="Hotel 1", stars=3)
+        Beach.objects.create(title="Platja 1")
 
-        # /places/ should list both (as base Place objects)
+        # /places/ should list generic places only, excluding specialized beaches
         response = self.client.get("/api/v1/places/")
         assert response.status_code == status.HTTP_200_OK
 
@@ -70,6 +74,7 @@ class TestDirectoryAPI:
             response.data["results"] if "results" in response.data else response.data
         )
         assert len(results) >= 2
+        assert all(item["template_key"] != "beaches" for item in results)
 
         # /restaurants/ should list only restaurants
         response_rest = self.client.get("/api/v1/restaurants/")

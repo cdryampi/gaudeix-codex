@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Place } from "../types";
 import { getCategoryData } from "../constants";
 import { AnimatedCard } from "@/components/animated/AnimatedCard";
+import { getPlaceDetailPath } from "../utils";
 
 interface PlaceCardProps {
   place: Place;
@@ -28,7 +29,9 @@ export const PlaceCard = ({
     <AnimatedCard
       as="div"
       className={`card-surface group flex h-full flex-col overflow-hidden transition ${
-        isHovered ? "border-primary/30 shadow-[0_24px_48px_rgba(17,37,53,0.12)]" : ""
+        isHovered
+          ? "border-primary/30 shadow-[0_24px_48px_rgba(17,37,53,0.12)]"
+          : ""
       }`}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
@@ -76,7 +79,7 @@ export const PlaceCard = ({
             Llegar
           </a>
           <Link
-            to={`/lugares/${place.slug}`}
+            to={getPlaceDetailPath(place)}
             className="inline-flex items-center justify-center gap-2 rounded-2xl bg-primary py-3 text-sm font-semibold text-white transition-colors hover:bg-secondary"
           >
             Detalles

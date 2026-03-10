@@ -10,12 +10,13 @@ from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
-from .models import Place, Restaurant, Accommodation
+from .models import Place, Restaurant, Accommodation, Beach
 from .serializers import (
     PlaceDetailSerializer,
     PlaceSerializer,
     RestaurantSerializer,
     AccommodationSerializer,
+    BeachSerializer,
 )
 
 logger = logging.getLogger(__name__)
@@ -46,6 +47,9 @@ class PlaceViewSet(viewsets.ModelViewSet):
             queryset = self.queryset.all()
         else:
             queryset = Place.objects.all()
+
+        if queryset.model is Place:
+            queryset = queryset.filter(beach__isnull=True)
 
         params = self.request.query_params
 
@@ -204,3 +208,15 @@ class AccommodationViewSet(PlaceViewSet):
 
     def get_serializer_class(self):
         return AccommodationSerializer
+
+
+class BeachViewSet(PlaceViewSet):
+    """
+    API endpoints for beaches.
+    """
+
+    queryset = Beach.objects.all().prefetch_related("gallery")
+    serializer_class = BeachSerializer
+
+    def get_serializer_class(self):
+        return BeachSerializer

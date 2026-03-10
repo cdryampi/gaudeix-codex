@@ -1,13 +1,14 @@
 from __future__ import annotations
 
 from django.conf import settings
+from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework import serializers
 from parler_rest.serializers import TranslatableModelSerializer, TranslatedFieldsField
 
 from core.models import Category
 from media_files.models import DocumentFile, ImageFile
 from media_files.serializers import DocumentFileSerializer, ImageFileSerializer
-from .models import Place, Restaurant, Accommodation
+from .models import Place, Restaurant, Accommodation, Beach
 
 
 class PlaceTranslationSerializer(serializers.Serializer):
@@ -258,3 +259,68 @@ class AccommodationSerializer(PlaceSerializer):
             "check_in_time",
             "check_out_time",
         ]
+
+
+class BeachSerializer(PlaceSerializer):
+    gallery = ImageFileSerializer(many=True, read_only=True)
+    gallery_ids = serializers.PrimaryKeyRelatedField(
+        queryset=ImageFile.objects.all(),
+        many=True,
+        required=False,
+        write_only=True,
+    )
+
+    class Meta(PlaceSerializer.Meta):
+        model = Beach
+        fields = [
+            field for field in PlaceSerializer.Meta.fields if field != "category_id"
+        ] + [
+            "beach_type",
+            "environment_summary",
+            "recommended_for",
+            "length_m",
+            "access_notes",
+            "parking_info",
+            "public_transport_info",
+            "services",
+            "accessibility_features",
+            "gallery",
+            "gallery_ids",
+        ]
+
+    def validate(self, attrs):
+        attrs = super().validate(attrs)
+
+        instance = self.instance or Beach()
+        for field in [
+            "recommended_for",
+            "services",
+            "accessibility_features",
+        ]:
+            if field in attrs:
+                setattr(instance, field, attrs[field])
+            elif self.instance is not None:
+                setattr(instance, field, getattr(self.instance, field))
+
+        try:
+            instance.clean()
+        except DjangoValidationError as exc:
+            if hasattr(exc, "message_dict"):
+                raise serializers.ValidationError(exc.message_dict)
+            raise serializers.ValidationError(exc.messages)
+
+        return attrs
+
+    def create(self, validated_data):
+        gallery_ids = validated_data.pop("gallery_ids", [])
+        instance = super().create(validated_data)
+        if gallery_ids:
+            instance.gallery.set(gallery_ids)
+        return instance
+
+    def update(self, instance, validated_data):
+        gallery_ids = validated_data.pop("gallery_ids", None)
+        instance = super().update(instance, validated_data)
+        if gallery_ids is not None:
+            instance.gallery.set(gallery_ids)
+        return instance

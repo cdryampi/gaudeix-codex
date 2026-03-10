@@ -114,7 +114,10 @@ describe("PlaceDetailPage", () => {
       "href",
       "https://example.com",
     );
-    expect(screen.getByText("Reservar")).toHaveAttribute("href", "https://booking.com");
+    expect(screen.getByText("Reservar")).toHaveAttribute(
+      "href",
+      "https://booking.com",
+    );
   });
 
   it("renders restaurant specific details", () => {
@@ -128,7 +131,9 @@ describe("PlaceDetailPage", () => {
 
     expect(screen.getByText("Restauracion")).toBeInTheDocument();
     expect(screen.getByText(/Tipo de cocina: Italian/)).toBeInTheDocument();
-    expect(screen.getByText(/Capacidad estimada: 50 personas/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Capacidad estimada: 50 personas/),
+    ).toBeInTheDocument();
   });
 
   it("renders accommodation specific details", () => {
@@ -143,5 +148,27 @@ describe("PlaceDetailPage", () => {
     expect(screen.getByText("Alojamiento")).toBeInTheDocument();
     expect(screen.getByText(/Check-in: 14:00/)).toBeInTheDocument();
     expect(screen.getByText(/Check-out: 11:00/)).toBeInTheDocument();
+  });
+
+  it("redirects beach places to the dedicated beach detail route", () => {
+    (useQuery as any).mockReturnValue({
+      data: { ...mockBasePlace, template_key: "beaches", slug: "platja-test" },
+      isLoading: false,
+      error: null,
+    });
+
+    render(
+      <MemoryRouter initialEntries={["/lugares/platja-test"]}>
+        <Routes>
+          <Route path="/lugares/:slug" element={<PlaceDetailPage />} />
+          <Route
+            path="/playas/:slug"
+            element={<div>Beach route reached</div>}
+          />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByText("Beach route reached")).toBeInTheDocument();
   });
 });

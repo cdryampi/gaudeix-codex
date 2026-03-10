@@ -72,6 +72,17 @@ describe("PlaceCard Component", () => {
     expect(link).toHaveAttribute("href", "/lugares/test-place");
   });
 
+  it("routes beaches to the dedicated beach detail page", () => {
+    renderWithRouter(
+      <PlaceCard
+        place={{ ...mockPlace, template_key: "beaches", slug: "platja-test" }}
+      />,
+    );
+
+    const link = screen.getByRole("link", { name: /Detalles/i });
+    expect(link).toHaveAttribute("href", "/playas/platja-test");
+  });
+
   it("calls onMouseEnter and onMouseLeave handlers", () => {
     const onMouseEnter = vi.fn();
     const onMouseLeave = vi.fn();
