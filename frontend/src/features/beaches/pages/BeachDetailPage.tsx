@@ -10,7 +10,6 @@ import {
   MapPin,
   Phone,
   Route,
-  ShieldCheck,
   type LucideIcon,
   Waves,
 } from "lucide-react";
@@ -396,30 +395,6 @@ function FeaturePanel({
         )}
       </div>
     </ContentCard>
-  );
-}
-
-function StatusRow({
-  icon: Icon,
-  label,
-  value,
-}: {
-  icon: LucideIcon;
-  label: string;
-  value: string;
-}) {
-  return (
-    <div className="flex items-center justify-between gap-4 rounded-2xl bg-slate-50 px-4 py-3">
-      <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-primary shadow-sm">
-          <Icon className="h-4 w-4" />
-        </div>
-        <span className="text-sm font-semibold text-slate-700">{label}</span>
-      </div>
-      <span className="rounded-full bg-cyan-50 px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] text-cyan-700">
-        {value}
-      </span>
-    </div>
   );
 }
 

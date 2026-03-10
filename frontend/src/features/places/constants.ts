@@ -1,12 +1,7 @@
 import {
   Utensils,
   Hotel,
-  Mountain,
-  Landmark,
-  Palmtree,
-  Sailboat,
   Brush,
-  MapPin,
   Church,
   Trees,
   ShoppingBag,

@@ -29,10 +29,7 @@ export const PlacesPage = () => {
 
   const activeCategory = searchParams.get("category");
   const searchQuery = searchParams.get("q") || "";
-
-  if (activeCategory === "beaches") {
-    return <Navigate to="/categorias/beaches" replace />;
-  }
+  const shouldRedirectToBeaches = activeCategory === "beaches";
 
   const { data, isLoading } = useQuery({
     queryKey: ["places", { category: activeCategory, q: searchQuery }],
@@ -42,6 +39,7 @@ export const PlacesPage = () => {
         category: activeCategory || undefined,
         search: searchQuery || undefined,
       }),
+    enabled: !shouldRedirectToBeaches,
   });
 
   const places = useMemo(() => {
@@ -49,6 +47,10 @@ export const PlacesPage = () => {
     const normalized = Array.isArray(data) ? data : data.results || [];
     return normalized.filter(isPlaceVisibleInExplorer);
   }, [data]);
+
+  if (shouldRedirectToBeaches) {
+    return <Navigate to="/categorias/beaches" replace />;
+  }
 
   const handleCategoryToggle = (slug: string) => {
     setSearchParams((prev) => {

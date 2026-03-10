@@ -26,7 +26,6 @@ import { NewsDetailPage } from "@/features/news/pages/NewsDetailPage";
 import { EventDetailPage } from "@/features/agenda/pages/EventDetailPage";
 import { AgendaPage } from "@/features/agenda/pages/AgendaPage";
 import { PlacesPage } from "@/features/places/pages/PlacesPage";
-import { PlaceDetailPage } from "@/features/places/pages/PlaceDetailPage";
 import { LegacyBeachPlaceRedirect } from "@/features/places/pages/LegacyBeachPlaceRedirect";
 import { BeachDetailPage } from "@/features/beaches/pages/BeachDetailPage";
 import { RankingsPage } from "@/features/gamification/pages/RankingsPage";
