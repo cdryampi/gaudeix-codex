@@ -90,7 +90,7 @@ export default function NatureCategoryLayout({
                 </div>
 
                 <Link
-                  to={`/lugares?category=${category.slug}`}
+                  to={`/categorias/${category.slug}`}
                   className="inline-flex items-center gap-2 rounded-full border border-primary/12 bg-primary/5 px-4 py-2.5 text-sm font-semibold text-primary"
                 >
                   <Map className="h-4 w-4" />
@@ -139,6 +139,48 @@ export default function NatureCategoryLayout({
             </AnimatedCardGrid>
           )}
         </section>
+
+        {category.slug === "beaches" ? (
+          <MotionReveal>
+            {places.length === 2 ? (
+              <section className="card-surface space-y-6 p-6 md:p-8">
+                <SectionHeader
+                  eyebrow="Comparativa"
+                  title="Compara las dos playas publicadas"
+                  description="Vista rapida para decidir cual visitar segun ubicacion y contacto disponible."
+                />
+                <div className="overflow-x-auto">
+                  <table className="min-w-full text-left text-sm text-slate-700">
+                    <thead>
+                      <tr className="border-b border-slate-200 text-xs uppercase tracking-[0.14em] text-slate-500">
+                        <th className="px-3 py-3">Playa</th>
+                        <th className="px-3 py-3">Ubicacion</th>
+                        <th className="px-3 py-3">Telefono</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {places.map((place) => (
+                        <tr key={place.id} className="border-b border-slate-100 last:border-b-0">
+                          <td className="px-3 py-3 font-semibold text-slate-900">{place.title}</td>
+                          <td className="px-3 py-3">{place.location_text}</td>
+                          <td className="px-3 py-3">{place.phone || "-"}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+            ) : (
+              <section className="card-surface space-y-4 p-6 md:p-8">
+                <SectionHeader
+                  eyebrow="Seleccion editorial"
+                  title="El equipo municipal destaca las mejores opciones para hoy"
+                  description="Cuando hay mas o menos de dos playas publicadas, mostramos una narrativa editorial en lugar de forzar una comparativa."
+                />
+              </section>
+            )}
+          </MotionReveal>
+        ) : null}
 
         {places.length === 0 && !isLoadingPlaces ? (
           <div className="py-24 text-center">

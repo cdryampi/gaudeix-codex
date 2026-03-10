@@ -33,6 +33,7 @@ import { EventDetailPage } from "@/features/agenda/pages/EventDetailPage";
 import { AgendaPage } from "@/features/agenda/pages/AgendaPage";
 import { PlacesPage } from "@/features/places/pages/PlacesPage";
 import { PlaceDetailPage } from "@/features/places/pages/PlaceDetailPage";
+import { LegacyBeachPlaceRedirect } from "@/features/places/pages/LegacyBeachPlaceRedirect";
 import { RankingsPage } from "@/features/gamification/pages/RankingsPage";
 import { CategoriesPage } from "@/features/categories/pages/CategoriesPage";
 import { CategoryDetailPage } from "@/features/categories/pages/CategoryDetailPage";
@@ -400,7 +401,8 @@ export default function App() {
         <Route path="/agenda" element={<AgendaPage />} />
         <Route path="/agenda/:slug" element={<EventDetailPage />} />
         <Route path="/lugares" element={<PlacesPage />} />
-        <Route path="/lugares/:slug" element={<PlaceDetailPage />} />
+        <Route path="/lugares/:slug" element={<LegacyBeachPlaceRedirect />} />
+        <Route path="/playas/:slug" element={<PlaceDetailPage />} />
         <Route path="/categorias" element={<CategoriesPage />} />
         <Route path="/categorias/:slug" element={<CategoryDetailPage />} />
         <Route path="/rankings" element={<RankingsPage />} />
