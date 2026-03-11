@@ -72,18 +72,14 @@ export function InteractiveMap({
     return normalized.filter(isPlaceVisibleInExplorer);
   }, [placesData]);
 
-  const symbolPathCircle =
-    typeof window !== "undefined" &&
-    typeof window.google !== "undefined" &&
-    window.google.maps?.SymbolPath?.CIRCLE
-      ? window.google.maps.SymbolPath.CIRCLE
-      : undefined;
+  const googleMaps =
+    typeof window !== "undefined" ? window.google?.maps : undefined;
+
+  const symbolPathCircle = googleMaps?.SymbolPath.CIRCLE;
 
   const markerAnchor =
-    typeof window !== "undefined" &&
-    typeof window.google !== "undefined" &&
-    typeof window.google.maps?.Point === "function"
-      ? new window.google.maps.Point(12, 24)
+    typeof googleMaps?.Point === "function"
+      ? new googleMaps.Point(12, 24)
       : undefined;
 
   useEffect(() => {
@@ -99,7 +95,7 @@ export function InteractiveMap({
       center={center}
       onClick={() => setSelectedPlace(null)}
     >
-      {symbolPathCircle && (
+      {symbolPathCircle !== undefined && (
         <>
           {/* Main Village Marker */}
           <MarkerF
