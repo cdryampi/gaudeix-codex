@@ -2,507 +2,299 @@
 
 ## Entorno Cloud/Linux
 
-Si trabajas en Codex Web/Cloud, Jules o runners Linux, lee primero AGENTS_CLOUD.md.
-Ese documento complementa este archivo con setup, variables y comandos especificos para nube.
+Si trabajas en Codex Web/Cloud, Jules o runners Linux, lee primero `AGENTS_CLOUD.md`.
 
-## 🎯 Contexto del Proyecto
+## Contexto del proyecto
 
-**Gaudeix Codex** es una plataforma municipal de gestión de contenidos (CMS) que está en **migración activa** de un monolito Django a arquitectura de microservicios desacoplados:
+**Gaudeix Codex** es una plataforma municipal en migracion a frontends desacoplados:
 
-- **Backend**: Django REST Framework (puerto 8000) - API JSON con autenticación JWT
-- **Frontend público**: React + Vite (puerto 5173) - Sitio web municipal
-- **Backoffice**: React 18 + TypeScript + Tailwind + shadcn/ui (puerto 5174) - Panel administrativo
-- **Mobile**: React Native + Expo (puerto N/A) - App móvil iOS/Android
-- **Infraestructura**: PostgreSQL + MinIO (almacenamiento de objetos) vía Docker Compose
+- **Backend**: Django REST Framework en `http://localhost:8000`
+- **Frontend publico**: React + Vite
+- **Backoffice**: React 18 + TypeScript + Tailwind + shadcn/ui
+- **Mobile**: React Native + Expo
+- **Infraestructura local canonica**: Docker Compose con PostgreSQL, MinIO, Redis, Celery worker y Celery beat
 
-**Principio arquitectónico crítico**: Frontends se comunican con backend **exclusivamente vía API REST**. No hay templates compartidos ni acceso directo a base de datos.
+Principio critico: los frontends hablan con backend solo via API REST.
 
-## 🚀 Inicio Rápido
+## Inicio rapido
 
-### Arrancar Servicios de Desarrollo
+### Ruta canonica de desarrollo
 
-**Windows (recomendado)**:
+La forma correcta de arrancar el backend y la infraestructura local es:
 
 ```bash
-start_dev.bat  # Arranca backend, frontend y backoffice automáticamente
+docker compose up --build
 ```
 
-**Manual**:
+Si el agente necesita backend, PostgreSQL, Redis, Celery o almacenamiento local y no estan levantados, debe arrancar Docker Compose antes de seguir con el ticket. No debe asumir que existe un backend local fuera de Docker.
+
+Eso levanta:
+
+- `backend`
+- `worker`
+- `beat`
+- `db`
+- `redis`
+- `storage`
+- `frontend` en `http://localhost:4173`
+- `backoffice` en `http://localhost:4174`
+
+### UI local opcional
+
+Si necesitas iterar mas rapido en UI, puedes usar Vite local contra el backend Docker:
 
 ```bash
-# Terminal 1 - Backend
-cd backend
-.venv_win\Scripts\activate  # Windows
-python manage.py runserver 0.0.0.0:8000
-
-# Terminal 2 - Frontend
 cd frontend
 npm run dev
 
-# Terminal 3 - Backoffice
 cd backoffice
 npm run dev
 ```
 
-**URLs de acceso**:
+URLs utiles:
 
-- Backend API: http://localhost:8000
-- Frontend: http://localhost:5173
-- Backoffice: http://localhost:5174
-- API Docs: http://localhost:8000/api/schema/swagger-ui/
+- Backend API: `http://localhost:8000`
+- Frontend Docker: `http://localhost:4173`
+- Backoffice Docker: `http://localhost:4174`
+- Frontend Vite local: `http://localhost:5173`
+- Backoffice Vite local: `http://localhost:5174`
+- Swagger: `http://localhost:8000/api/schema/swagger-ui/`
 
-### Usuarios por Defecto
+### Regla importante de entorno
 
-Después de `python manage.py seed_users`:
+No uses `start_dev.bat`, `ENVIRONMENT=local` ni `python manage.py runserver` como flujo principal del repo. Ese camino puede dejar al agente trabajando contra una base distinta, sin Redis/Celery o con un backend diferente al que usa Docker.
 
-- **Admin**: Ver variables de entorno `ADMIN_USER` / `ADMIN_PASSWORD`
-- **Sistema**: Ver variables de entorno `SYSTEM_USER` / `SYSTEM_PASSWORD`
-- **Otros usuarios**: Consultar con el equipo o verificar en `.env` local
+Cuando el ticket dependa de API, base de datos, colas, automatizaciones o media, el agente debe comprobar primero si Docker esta levantado y, si no lo esta, ejecutar el stack necesario antes de diagnosticar errores de aplicacion.
 
-## 🏗️ Arquitectura Específica de Codex
+### Regla obligatoria de bootstrap de datos
 
-### Estructura de Apps Django
+Si se recrea la base de datos, se crea un volumen Docker nuevo, se hace `flush`, se ejecuta un reset destructivo o el frontend/backoffice aparece vacio tras levantar Docker, **no asumas que la API esta rota**. Primero repuebla los datos base del entorno local.
 
-Cada app en `backend/` sigue este patrón modular:
-
-```
-backend/
-├── users/           # Gestión de usuarios y autenticación JWT
-├── social/          # Contenido social (noticias, eventos) con i18n
-├── media_files/     # Gestión de archivos con variantes automáticas
-├── llm_translations/# Traducciones automáticas con OpenAI/Gemini/Anthropic
-├── places/          # Puntos de interés con geolocalización
-├── events/          # Gestión de eventos con calendario
-└── config/          # Configuración Django (settings/, urls.py)
-```
-
-**Patrón de archivos por app**:
-
-- `models.py` - Modelos Django ORM
-- `serializers.py` - DRF serializers (separados por acción: create/update/detail)
-- `views.py` - **Solo ViewSets**, no vistas basadas en funciones
-- `permissions.py` - Permisos personalizados (ej: `IsOwnerOrAdmin`)
-- `urls.py` - Registro de rutas con DRF router
-- `tests/` o `tests.py` - Suite pytest con cobertura >80%
-- `README.md` - Documentación de la app
-
-### Sistema de Permisos por Acción
-
-Codex usa permisos granulares por acción en ViewSets:
-
-```python
-# Ejemplo real de backend/users/views.py
-def get_permissions(self):
-    if self.action in ['create']:  # Registro público
-        return [AllowAny()]
-    elif self.action in ['update', 'partial_update', 'destroy']:
-        return [IsAuthenticated(), IsOwnerOrAdmin()]  # Solo dueño o admin
-    return [IsAuthenticated()]  # Por defecto: autenticado
-```
-
-### Gestión de Media Files
-
-El app `media_files` es crítico para el CMS:
-
-**Características únicas**:
-
-- Generación automática de **3 variantes** de imágenes al subir:
-  - `thumbnail`: 150px (miniatura)
-  - `medium`: 600px (vista previa)
-  - `large`: 1200px (resolución completa)
-- Nombres UUID para prevenir colisiones
-- Eliminación automática de archivos físicos vía signals
-- Validación: Max 10MB, formatos permitidos: `.jpg`, `.jpeg`, `.png`, `.webp`, `.gif`, `.pdf`, `.ics`, `.txt`, `.docx`, `.xlsx`
-
-**Endpoints**:
-
-```
-POST   /api/v1/media/images/       # Upload con auto-generación de variantes
-GET    /api/v1/media/images/{id}/  # Detalle con URLs de todas las variantes
-DELETE /api/v1/media/images/{id}/  # Elimina archivo + variantes
-```
-
-### Traducciones con LLMs
-
-El app `llm_translations` permite traducciones automáticas vía múltiples proveedores:
-
-**Proveedores soportados**:
-
-- OpenAI (`LLM_OPENAI_API_KEY`)
-- Google Gemini (`LLM_GEMINI_API_KEY`)
-- Anthropic (`LLM_ANTHROPIC_API_KEY`)
-- Mistral (`LLM_MISTRAL_API_KEY`)
-- Groq (`LLM_GROQ_API_KEY`)
-
-**Uso**: Campos traducibles en modelos usan `django-parler` (ver app `social`).
-
-## 💻 Convenciones de Código de Codex
-
-### Backend Django
-
-✅ **Hacer**:
-
-- Usar `ModelViewSet` o `GenericViewSet` con mixins
-- Separar serializers por acción (create/update/detail)
-- Implementar `get_permissions()` para control granular
-- JWT en header: `Authorization: Bearer {token}`
-- Versionado de API: `/api/v1/`
-- Tests con pytest y fixtures en `conftest.py`
-
-❌ **Evitar**:
-
-- Vistas basadas en funciones (usar ViewSets)
-- Permisos globales (usar por acción)
-- Hardcodear secrets (usar env vars)
-
-### Frontend/Backoffice React
-
-✅ **Hacer**:
-
-- Importaciones con alias: `@/` (configurado en tsconfig)
-- Estructura por features: `src/features/[feature]/pages|components|api`
-- **Solo Lucide React** para iconos (ver `backoffice/UI_GUIDELINES.md`)
-- shadcn/ui para componentes UI
-- Variables de entorno con prefijo `VITE_`
-
-❌ **Evitar**:
-
-- Otras librerías de iconos (FontAwesome, Heroicons, etc.)
-- Acceso directo a backend (siempre usar API)
-- Importaciones relativas largas (usar `@/`)
-- **Generar archivos `.js` compilados en `src/`**. Vite prioriza `.js` sobre `.tsx`, lo que causa que los cambios sean ignorados silenciosamente. Usa siempre ejecutables de TypeScript con `--noEmit`.
-
-### Mobile (React Native + Expo)
-
-✅ **Hacer**:
-
-- Importaciones con alias: `@/` para `src/` (configurado en tsconfig)
-- Estructura por features: `src/features/[feature]/pages|components|api`
-- NativeWind (Tailwind CSS) para estilos: `className="flex-1 bg-primary"`
-- Variables de entorno con prefijo `EXPO_PUBLIC_`
-- Zustand para state management global
-- React Query para data fetching y caching
-- Expo Secure Store para tokens/credenciales sensibles
-
-❌ **Evitar**:
-
-- StyleSheet de React Native (usar NativeWind)
-- Acceso directo a backend (usar API client centralizado)
-- Hardcodear API URLs (usar env vars)
-- Importaciones relativas largas (usar `@/`)
-
-### Comandos Esenciales
-
-**Backend**:
+Flujo canonico despues de una DB vacia o reiniciada:
 
 ```bash
-python manage.py migrate              # Aplicar migraciones
-python manage.py makemigrations --name descripcion  # Crear migración
-python manage.py seed_users           # Usuarios por defecto
-python manage.py seed_media_files     # Datos de ejemplo
-pytest --cov=. --cov-report=html      # Tests con cobertura
-ruff check . --fix                    # Linting
-black .                               # Formateo
+docker compose up --build -d
+docker compose exec -T backend python manage.py migrate
+docker compose exec -T backend python manage.py seed_all --noinput
+docker compose exec -T backend python manage.py bootstrap_automations
+docker compose exec -T backend python manage.py seed_media_files
 ```
 
-**Frontend/Backoffice**:
+Comprobaciones minimas antes de seguir depurando frontend:
+
+- `GET /api/v1/categories/` debe devolver contenido
+- `GET /api/v1/places/?is_published=true&limit=100` debe devolver contenido
+- `GET /api/v1/events/?is_published=true&limit=10&upcoming=true` debe devolver contenido
+
+Si esos endpoints estan vacios, el problema prioritario es de bootstrap/seed, no de UI.
+
+## Usuarios por defecto
+
+Despues de `python manage.py seed_users`:
+
+- **Admin**: ver `ADMIN_USER` / `ADMIN_PASSWORD`
+- **Sistema**: ver `SYSTEM_USER` / `SYSTEM_PASSWORD`
+
+## Arquitectura backend
+
+Cada app Django en `backend/` sigue este patron:
+
+- `models.py`
+- `serializers.py`
+- `views.py` con **ViewSets**
+- `permissions.py`
+- `urls.py`
+- `tests/`
+- `README.md`
+
+### Reglas backend
+
+Haz:
+
+- Usar `ModelViewSet` o `GenericViewSet`
+- Separar serializers por accion cuando haga falta
+- Implementar `get_permissions()` por accion
+- Versionar la API en `/api/v1/`
+- Escribir tests con pytest
+
+Evita:
+
+- Vistas basadas en funciones
+- Permisos globales sin granularidad
+- Secrets hardcodeados
+
+### Celery y automatizaciones
+
+Cuando un ticket toque automatizaciones:
+
+- Celery es orquestacion; la logica de negocio vive en servicios de dominio
+- El estado real, auditoria y propuestas vive en PostgreSQL
+- Redis es broker, no fuente de verdad
+- Las tareas deben ser idempotentes
+- Backoffice solo puede activar plantillas whitelistadas en backend
+- No disenes tareas cuya unica validacion sea "arranca el worker y mira si pasa"
+- En GitHub Actions, por defecto usa tests con `config.settings.test` y Celery eager
+
+## Frontend y backoffice
+
+Haz:
+
+- Importaciones con alias `@/`
+- Estructura por features
+- Solo **Lucide React** para iconos
+- shadcn/ui para componentes
+- Variables `VITE_*`
+
+Evita:
+
+- Acceso directo a DB
+- Importaciones relativas largas
+- Dejar `.js` compilados dentro de `src/`
+
+## Mobile
+
+Haz:
+
+- Alias `@/`
+- Estructura por features
+- Variables `EXPO_PUBLIC_*`
+- Zustand + React Query
+
+Evita:
+
+- Hardcodear URLs
+- Imports relativos largos
+
+## Comandos esenciales
+
+### Backend
 
 ```bash
-npm run dev                           # Servidor desarrollo
-npm run build                         # Build producción
-npm test                              # Tests Vitest
-npm run lint                          # ESLint
-npx shadcn@latest add [componente]    # Agregar componente UI
+python manage.py migrate
+python manage.py makemigrations --name descripcion
+python manage.py seed_users
+python manage.py seed_media_files
+python manage.py bootstrap_automations
+pytest --cov=. --cov-report=html
+ruff check .
+black .
 ```
 
-**Mobile**:
+### Frontend / backoffice
+
+```bash
+npm run dev
+npm run build
+npm test
+npm run lint
+```
+
+### Mobile
 
 ```bash
 cd mobile
-npm start                             # Iniciar Expo dev server
-npm run android                       # Android Emulator
-npm run ios                           # iOS Simulator (solo macOS)
-npm run lint                          # ESLint
-npm run format                        # Prettier
-npm run type-check                    # TypeScript check
+npm start
+npm run lint
+npm run type-check
 ```
 
-## 🔧 Entornos y Configuración
+## Entornos y configuracion
 
-### Perfiles de Entorno Backend
+### Backend
 
-Variable `ENVIRONMENT` controla el profile:
+Perfiles relevantes:
 
-- `local` - SQLite para desarrollo sin Docker
-- `test` - SQLite en memoria para tests
-- `production` - PostgreSQL vía `DATABASE_URL` o variables `DB_*`
+- `ENVIRONMENT=production` en Docker local y despliegues
+- `ENVIRONMENT=test` para pytest
 
-**Configuración en**: `backend/config/settings/`
+No uses `ENVIRONMENT=local` como recomendacion operativa del repo.
 
-### Variables de Entorno Críticas
-
-Ver documentación completa en `/docs/environment.md`. Las más importantes:
-
-**Backend**:
+Variables criticas:
 
 ```bash
-ENVIRONMENT=local
+ENVIRONMENT=production
 DJANGO_SECRET_KEY=django-insecure-...
-DATABASE_URL=postgresql://...  # Solo en producción
+DATABASE_URL=postgresql://...
 DJANGO_ALLOWED_CORS_ORIGINS=http://localhost:5173,http://localhost:5174
+REDIS_URL=redis://redis:6379/0
+CELERY_BROKER_URL=redis://redis:6379/0
+CELERY_RESULT_BACKEND=redis://redis:6379/1
+CELERY_TASK_ALWAYS_EAGER=false
+CELERY_TASK_EAGER_PROPAGATES=true
 ```
 
-**Frontend/Backoffice** (prefijo `VITE_` obligatorio):
+### Frontend / backoffice
 
 ```bash
 VITE_API_BASE_URL=http://localhost:8000/api/v1
 ```
 
-**Mobile** (prefijo `EXPO_PUBLIC_` obligatorio):
+### Mobile
 
 ```bash
 EXPO_PUBLIC_API_BASE_URL=http://localhost:8000/api/v1
 ```
 
-## 📦 Flujos de Trabajo Comunes
+## Flujos comunes
 
-### Crear Nueva App Django
+### Crear una nueva app Django
 
-```bash
-# 1. Crear app
-python manage.py startapp nombre_app
+1. `python manage.py startapp nombre_app`
+2. Registrar en `INSTALLED_APPS`
+3. Crear `models.py`, `serializers.py`, `views.py`, `urls.py`, `tests/`
+4. Registrar rutas en `config/urls.py`
 
-# 2. Registrar en INSTALLED_APPS (config/settings/base.py)
-INSTALLED_APPS = [
-    ...
-    'nombre_app',
-]
+### Agregar una feature en frontend/backoffice
 
-# 3. Estructura recomendada
-nombre_app/
-├── models.py          # Modelo con campos
-├── serializers.py     # Serializers separados por acción
-├── views.py           # ViewSet con get_permissions()
-├── permissions.py     # Permisos personalizados (opcional)
-├── urls.py            # Router DRF
-├── tests/             # Tests pytest
-│   ├── conftest.py
-│   └── test_views.py
-└── README.md          # Documentación
+1. Crear `src/features/mi-feature/{pages,components,api}`
+2. Registrar la ruta
+3. Conectar API y navegación
 
-# 4. Registrar rutas en config/urls.py
-from nombre_app.urls import router as nombre_app_router
-router.registry.extend(nombre_app_router.registry)
-```
+## Docker y despliegue
 
-### Agregar Nueva Feature Frontend
+### Stack local
 
 ```bash
-# 1. Crear estructura
-mkdir -p src/features/mi-feature/{pages,components,api}
-
-# 2. Crear archivos base
-# src/features/mi-feature/pages/MiFeaturePage.tsx
-# src/features/mi-feature/api/index.ts
-# src/features/mi-feature/components/MiComponente.tsx
-
-# 3. Registrar ruta en src/app/routes/index.tsx
-# 4. Agregar al sidebar (backoffice): src/layouts/dashboard/Sidebar.tsx
-# 5. Usar importaciones con @/ para todo
+docker compose up --build
 ```
 
-### Subir Archivo con Variantes
+### Regla de trabajo con Docker
 
-```bash
-# Endpoint: POST /api/v1/media/images/
-# Content-Type: multipart/form-data
+- El backend canonico local corre en Docker Compose
+- PostgreSQL y Redis locales del proyecto tambien corren en Docker Compose
+- Si necesitas validar scheduling, colas o runs reales, usa `worker` y `beat` del compose
+- No mezcles backend Docker con otro backend local salvo para debug puntual y consciente
+- Si levantas una DB nueva o se pierde el volumen, ejecuta el bootstrap de datos antes de validar frontend o backoffice
+- Antes de depurar un backend "caido", verifica `docker compose ps` y levanta al menos `db`, `redis`, `backend`, `worker` y `beat` si faltan
 
-# Respuesta incluye:
-{
-  "id": "uuid",
-  "file": "url-original",
-  "thumbnail": "url-150px",
-  "medium": "url-600px",
-  "large": "url-1200px",
-  "file_size": 1234567,
-  "file_type": "image/jpeg"
-}
-```
+## Reglas de supervivencia en Windows
 
-## 🐳 Docker y Despliegue
+1. Usa comillas dobles en rutas con espacios
+2. Prefiere `workdir` a `cd ... && ...`
+3. Para Vitest desde raiz, usa siempre el workspace correcto
+4. Si una QA falla por entorno, reporta el error y valida la logica con codigo/tests
+5. Antes de cerrar, revisa `git status`
+6. No dejes archivos temporales o logs en el repo
+7. Si los cambios en `.tsx` no se reflejan, limpia `.js` generados en `src/`
 
-### Stack Completo con Docker
+## Anti-patrones del repo
 
-```bash
-docker-compose up --build
+No hacer:
 
-# Servicios:
-# - backend:8000
-# - frontend:4173
-# - backoffice:4174
-# - db (PostgreSQL)
-# - minio:9000 (API), 9001 (Console)
-```
+1. Vistas basadas en funciones en backend nuevo
+2. Librerias de iconos que no sean Lucide
+3. Acceso directo a base de datos desde frontend
+4. Hardcodear credenciales
+5. Cambios breaking de API sin versionado
+6. Saltarse tests
+7. Dejar `.js` compilados junto a `.tsx`
+8. Diseñar automatizaciones que dependan solo de procesos vivos para poder probarse
+9. Permitir tareas o cron arbitrarios desde backoffice sin whitelist fuerte
 
-### Despliegue en Dokploy
+## Recursos
 
-Ver documentación completa en `/docs/deployment.md`:
-
-1. **Subdomains**: `api.*` (backend), `www.*` (frontend), `admin.*` (backoffice)
-2. **CORS**: Configurado en `backend/config/settings/base.py`
-3. **Build**: Cada servicio tiene Dockerfile optimizado
-4. **Variables**: Configurar en Dokploy según `/docs/environment.md`
-
-## 📚 Documentación de Referencia
-
-**Archivos clave**:
-
-- `/docs/environment.md` - Variables de entorno completas
-- `/docs/deployment.md` - Guía de despliegue Docker/Dokploy
-- `/backend/[app]/README.md` - Documentación por app
-- `/backoffice/UI_GUIDELINES.md` - Guías de UI específicas
-- `.vscode/tasks.json` - Tareas VS Code para auto-start
-- `.github/copilot-instructions.md` - Instrucciones detalladas para GitHub Copilot
-
-## 🪟 Reglas de Supervivencia en Windows (Anti-Errores Opencode)
-
-Para evitar que el modelo "la líe" o se quede bloqueado en este entorno:
-
-1.  **Rutas y Comandos**:
-    - Usa siempre **comillas dobles** para rutas con espacios.
-    - Evita `cd path && comando`. Usa el parámetro `workdir` de la herramienta `bash`.
-    - Si un comando falla con `ENOENT` o `uv_spawn`, intenta ejecutarlo desde la raíz del proyecto usando `--prefix` o rutas relativas completas.
-
-2.  **Persistencia Obligatoria**:
-    - **PROHIBIDO** decir "Tarea completada" sin haber usado la herramienta `Write` o `Edit`.
-    - Los subagentes a veces "simulan" el éxito en su memoria interna sin escribir en el disco. El Orquestador DEBE verificar la existencia del archivo con `ls` o `glob` inmediatamente después de una delegación.
-
-3.  **Gestión de Tests (Vitest/Jest)**:
-    - En Windows, Vitest puede fallar si no se especifica el `--root` o el `--config` correctamente desde la raíz.
-    - Patrón recomendado: `npm test --prefix backoffice -- ruta/al/test.test.ts`.
-
-4.  **Verificación de Evidencias**:
-    - Si una tarea de QA (Playwright/Screenshots) falla por el entorno, el agente debe reportar el error técnico pero validar la lógica mediante `Read` del código generado. No asumas éxito si no hay archivo de evidencia.
-
-5.  **Logs y Debugging**:
-    - Si te quedas "pillado", limpia el estado con `git status` para ver qué se ha escrito realmente y usa `todoread` para recalibrar el progreso.
-
-6.  **Limpieza Pre-Commit Obligatoria**:
-    - Antes de hacer cualquier `commit`, elimina archivos temporales y de debug generados por agentes o herramientas que no formen parte del cambio funcional.
-    - Incluye especialmente: logs ad-hoc (`*.log`, `*_out*.txt`), artefactos temporales (`tmp*`, `temp*`, `*.tmp`), y salidas de pruebas/manuales fuera de carpetas esperadas.
-    - Verifica con `git status` que sólo quedan archivos relevantes al alcance del ticket antes de confirmar el commit.
-7.  **Aislamiento de Errores de Lint**:
-    - Si el `checklist.py` falla en Lint, no intentes arreglar todo el monorepo.
-    - Ejecuta `npx eslint src` en la carpeta afectada y vuelca el resultado a un archivo (`npx eslint src > lint_errors.txt`).
-    - Filtra los resultados para asegurar que **tus** archivos modificados tienen 0 errores. Ignora errores en archivos no relacionados con tu ticket.
-8.  **Captura de Logs en Windows**:
-    - Para salidas de consola muy largas o con errores de encoding (UTF-16LE), usa `cmd /c "comando > log.txt"`. Esto permite leer el archivo posteriormente sin errores de piping.
-9.  **Higiene de Compilación en Backoffice**:
-    - Si los cambios en `.tsx` no se reflejan, es probable que haya archivos `.js` antiguos en `src/`.
-    - Usa `npm run clean:js` en `backoffice/` periódicamente para limpiar la carpeta de fuentes.
-
-## ⚠️ Anti-Patrones Específicos de Codex
-
-❌ **NO hacer**:
-
-1. Usar vistas basadas en funciones en nuevo código backend (solo ViewSets)
-2. Instalar librerías de iconos que no sean Lucide React
-3. Acceder a base de datos directamente desde frontend
-4. Hardcodear credenciales (usar env vars)
-5. Modificar directorio `/chatGPT/` sin instrucción explícita
-6. Hacer cambios breaking en API sin versionado
-7. Saltarse tests (mínimo 80% cobertura backend)
-8. **Dejar archivos `.js` compilados al lado de `.tsx` en carpetas servidas por Vite.** Si Vite encuentra un `.js` y un `.tsx`, servirá el `.js` antiguo ignorando las actualizaciones.
-9. **Commitear archivos temporales/debug de agentes** (logs, outputs de prueba manual, dumps, artefactos transitorios) que no aportan valor al cambio.
-
-## 🎨 Casos de Uso Comunes
-
-### 1. Endpoint Protegido con Permisos Personalizados
-
-```python
-# backend/mi_app/permissions.py
-from rest_framework import permissions
-
-class IsOwnerOrReadOnly(permissions.BasePermission):
-    def has_object_permission(self, request, view, obj):
-        if request.method in permissions.SAFE_METHODS:
-            return True
-        return obj.owner == request.user
-
-# backend/mi_app/views.py
-class MiViewSet(viewsets.ModelViewSet):
-    queryset = MiModelo.objects.all()
-    serializer_class = MiSerializer
-
-    def get_permissions(self):
-        if self.action == 'list':
-            return [permissions.AllowAny()]
-        elif self.action in ['update', 'destroy']:
-            return [permissions.IsAuthenticated(), IsOwnerOrReadOnly()]
-        return [permissions.IsAuthenticated()]
-```
-
-### 2. Upload de Imagen con Validación
-
-```typescript
-// backoffice/src/features/media/api/uploadImage.ts
-import axios from "axios";
-
-export const uploadImage = async (file: File) => {
-  const formData = new FormData();
-  formData.append("file", file);
-  formData.append("title", file.name);
-
-  const response = await axios.post("/api/v1/media/images/", formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
-
-  // Respuesta incluye: thumbnail, medium, large URLs
-  return response.data;
-};
-```
-
-### 3. Componente con shadcn/ui y Lucide Icons
-
-```tsx
-// backoffice/src/features/dashboard/components/StatsCard.tsx
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { TrendingUp } from "lucide-react"; // ✅ Solo Lucide
-
-export function StatsCard({
-  title,
-  value,
-  trend,
-}: {
-  title: string;
-  value: string;
-  trend: string;
-}) {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <TrendingUp className="h-4 w-4" />
-          {title}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <p className="text-2xl font-bold">{value}</p>
-        <p className="text-xs text-muted-foreground">{trend}</p>
-      </CardContent>
-    </Card>
-  );
-}
-```
-
-## 🔍 Recursos Adicionales
-
-- **Swagger API**: http://localhost:8000/api/schema/swagger-ui/
-- **ReDoc**: http://localhost:8000/api/schema/redoc/
-- **MinIO Console**: http://localhost:9001 (credenciales en `.env` o `docker-compose.yml`)
-- **VS Code**: Workspace auto-inicia servicios al abrir
-
----
-
-**Última actualización**: Enero 2025  
-**Versión**: Django 5.2 + React 18 + React Native 0.81 + PostgreSQL 16
+- `docs/environment.md`
+- `docs/deployment.md`
+- `backend/[app]/README.md`
+- `backoffice/UI_GUIDELINES.md`
+- `.github/copilot-instructions.md`

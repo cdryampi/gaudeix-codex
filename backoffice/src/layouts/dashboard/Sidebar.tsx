@@ -18,6 +18,7 @@ import {
   Bot,
   MapPin,
   Waves,
+  Clock3,
   LucideIcon,
   Send,
   Route,
@@ -43,6 +44,7 @@ const contentNavigation: NavItem[] = [
   { name: "Eventos", href: ROUTES.EVENTS, icon: FileText },
   { name: "Lugares", href: ROUTES.PLACES, icon: MapPin },
   { name: "Playas", href: ROUTES.BEACHES, icon: Waves },
+  { name: "Automatizaciones", href: ROUTES.AUTOMATIONS, icon: Clock3 },
   { name: "Rutas", href: ROUTES.ROUTES_HIKING, icon: Route },
   { name: "Festes", href: ROUTES.FESTES, icon: PartyPopper },
   { name: "Categorías", href: ROUTES.CATEGORIES, icon: FolderOpen },
@@ -86,7 +88,9 @@ export function Sidebar() {
       )}
       <div className="space-y-1 px-2">
         {items.map((item) => {
-          const isActive = location.pathname === item.href;
+          const isActive =
+            location.pathname === item.href ||
+            location.pathname.startsWith(`${item.href}/`);
           const Icon = item.icon;
           return (
             <Link

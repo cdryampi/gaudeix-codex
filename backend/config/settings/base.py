@@ -30,6 +30,13 @@ env = environ.Env(
     LLM_LOCAL_API_URL=(str, "http://localhost:11434"),
     FCM_CREDENTIALS_FILE=(str, ""),
     ASSET_LEGACY_DEPRECATION_RELEASE_WINDOW=(int, 2),
+    REDIS_URL=(str, "redis://localhost:6379/0"),
+    CELERY_BROKER_URL=(str, ""),
+    CELERY_RESULT_BACKEND=(str, ""),
+    CELERY_TASK_ALWAYS_EAGER=(bool, False),
+    CELERY_TASK_EAGER_PROPAGATES=(bool, True),
+    SERVE_MEDIA_FILES=(bool, False),
+    SERVE_STATIC_FILES=(bool, False),
 )
 
 ENV_FILE = BASE_DIR / ".env"
@@ -76,6 +83,8 @@ INSTALLED_APPS = [
     "gamification.apps.GamificationConfig",
     "notifications.apps.NotificationsConfig",
     "places",
+    "automations.apps.AutomationsConfig",
+    "beach_safety.apps.BeachSafetyConfig",
     "drf_spectacular",
     "dj_rest_auth",
     "django.contrib.sites",
@@ -214,8 +223,12 @@ CORS_ALLOWED_ORIGINS = env.list(
     default=[
         "http://localhost:4173",
         "http://localhost:4174",
+        "http://127.0.0.1:4173",
+        "http://127.0.0.1:4174",
         "http://localhost:5173",
         "http://localhost:5174",
+        "http://127.0.0.1:5173",
+        "http://127.0.0.1:5174",
     ],
 )
 CORS_ALLOW_CREDENTIALS = True
@@ -224,8 +237,12 @@ CSRF_TRUSTED_ORIGINS = env.list(
     default=[
         "http://localhost:4173",
         "http://localhost:4174",
+        "http://127.0.0.1:4173",
+        "http://127.0.0.1:4174",
         "http://localhost:5173",
         "http://localhost:5174",
+        "http://127.0.0.1:5173",
+        "http://127.0.0.1:5174",
     ],
 )
 
@@ -246,3 +263,14 @@ FCM_CREDENTIALS_FILE = env("FCM_CREDENTIALS_FILE")
 
 
 ASSET_LEGACY_DEPRECATION_RELEASE_WINDOW = env("ASSET_LEGACY_DEPRECATION_RELEASE_WINDOW")
+REDIS_URL = env("REDIS_URL")
+CELERY_BROKER_URL = env("CELERY_BROKER_URL") or REDIS_URL
+CELERY_RESULT_BACKEND = env("CELERY_RESULT_BACKEND") or REDIS_URL
+CELERY_TASK_ALWAYS_EAGER = env("CELERY_TASK_ALWAYS_EAGER")
+CELERY_TASK_EAGER_PROPAGATES = env("CELERY_TASK_EAGER_PROPAGATES")
+SERVE_MEDIA_FILES = env("SERVE_MEDIA_FILES")
+SERVE_STATIC_FILES = env("SERVE_STATIC_FILES")
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TIMEZONE = TIME_ZONE

@@ -22,9 +22,10 @@ class Command(BaseCommand):
     Seeds the database with admin and system users from environment variables.
     """
     help = "Seeds users from JSON + environment variables."
+    env_file = Path(__file__).resolve().parents[3] / ".env"
 
     def handle(self, *args, **options):
-        env = environ.Env()
+        env = self._build_env()
         seed_users = self._load_seed_users()
         self.stdout.write("Seeding users...")
 
@@ -73,6 +74,12 @@ class Command(BaseCommand):
         self.stdout.write(
             self.style.SUCCESS(f"Successfully seeded users. created={created}, updated={updated}")
         )
+
+    def _build_env(self) -> environ.Env:
+        env = environ.Env()
+        if self.env_file.exists():
+            environ.Env.read_env(str(self.env_file))
+        return env
 
     def _resolve_env(self, env: environ.Env, env_key: str | None, default: str) -> str:
         if not env_key:

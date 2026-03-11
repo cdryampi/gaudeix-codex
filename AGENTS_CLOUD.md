@@ -1,27 +1,28 @@
-# AGENTS_CLOUD.md - Guia Operativa para Agentes en Nube
+# AGENTS_CLOUD.md - Guia operativa para nube
 
-Este documento complementa `AGENTS.md` y esta pensado para ejecucion en entornos cloud/Linux (Codex Web/Cloud, Jules, runners CI), donde no existe el contexto local de Windows.
+Este documento complementa `AGENTS.md` para Codex Cloud, Jules y runners Linux.
 
-## 1. Objetivo
+## Objetivo
 
-Evitar bloqueos por diferencias de entorno y dar un flujo reproducible para trabajar por ticket sin levantar toda la plataforma local.
+Evitar que un agente replique el entorno local de forma incorrecta. En cloud se prioriza:
 
-## 2. Supuestos de Entorno Cloud
+- validacion por modulo
+- tests reproducibles
+- backend en modo de test, no un entorno SQLite "local" paralelo
 
-- Shell Linux (`bash`), no PowerShell.
-- Sin uso de `start_dev.bat` ni rutas Windows (`.venv_win\\...`).
-- Puede no haber Docker disponible.
-- Se prioriza validacion por modulo (backend o frontend o backoffice), no full stack salvo que el ticket lo exija.
+## Reglas de entorno
 
-## 3. Setup Rapido Recomendado
+- Shell Linux (`bash`)
+- Sin `start_dev.bat`
+- Sin rutas Windows
+- Puede no haber Docker disponible
+- Si Docker no esta disponible, no inventes un flujo alternativo con `ENVIRONMENT=local`
 
-Desde la raiz del repo:
+## Setup recomendado
 
 ```bash
-# Node / monorepo
 pnpm install --frozen-lockfile
 
-# Python backend
 python3 -m venv .venv
 source .venv/bin/activate
 pip install --upgrade pip
@@ -29,51 +30,28 @@ pip install -r backend/requirements.txt
 pip install -r backend/requirements-dev.txt
 ```
 
-## 4. Variables de Entorno Minimas (Cloud-Friendly)
+## Backend en cloud
 
-No dependas de Postgres local para tareas de codigo/tests rapidos. Usa SQLite temporal:
+### Para tests
 
-```bash
-cp .env_backend backend/.env
-cp .env_frontend frontend/.env.local
-cp .env_backoffice backoffice/.env.local
-```
-
-Luego ajusta `backend/.env`:
-
-```env
-ENVIRONMENT=local
-DEBUG=True
-DATABASE_URL=sqlite:////tmp/gaudeix_codex.sqlite3
-ALLOWED_HOSTS=localhost,127.0.0.1
-DJANGO_ALLOWED_CORS_ORIGINS=http://localhost:5173,http://localhost:5174
-```
-
-Notas:
-
-- Si el ticket usa traducciones con Groq, define `LLM_GROQ_API_KEY`.
-- Si no se usa LLM local, deja `LLM_LOCAL_API_URL` vacio.
-- Para tests backend, usa `ENVIRONMENT=test` al ejecutar pytest.
-
-## 5. Flujo por Tipo de Ticket
-
-### Backend
+Usa siempre el perfil de test del backend:
 
 ```bash
 source .venv/bin/activate
-python backend/manage.py migrate
-ENVIRONMENT=test pytest backend -q
+cd backend
+python manage.py check --settings=config.settings.test
+pytest -q
 ```
 
-Validaciones minimas antes de cerrar:
+`config.settings.test` ya usa SQLite en memoria y Celery eager. Ese es el camino correcto para CI y para agentes cloud.
 
-```bash
-source .venv/bin/activate
-ruff check backend
-ENVIRONMENT=test pytest backend -q
-```
+### Para codigo backend
 
-### Frontend Publico (`frontend/`)
+- No recomiendes `ENVIRONMENT=local`
+- No montes un `.env` con SQLite ad hoc salvo que el ticket lo exija de forma explicita
+- Si necesitas documentar variables, apunta al flujo Docker local o al perfil de test
+
+## Frontend publico
 
 ```bash
 pnpm --filter frontend type-check
@@ -81,61 +59,48 @@ pnpm --filter frontend test -- --run
 pnpm --filter frontend build
 ```
 
-### Backoffice (`backoffice/`)
+## Backoffice
 
 ```bash
 pnpm --filter backoffice type-check
-pnpm --filter backoffice test
+pnpm --filter backoffice test -- --run
 pnpm --filter backoffice build
 ```
 
-Muy importante en este repo:
+Muy importante:
 
 ```bash
 pnpm --filter backoffice clean:js
 ```
 
-No dejes `.js` compilados dentro de `backoffice/src/`, porque Vite puede priorizarlos sobre `.tsx`.
+No dejes `.js` compilados dentro de `backoffice/src/`.
 
-## 6. Reglas Operativas para Agentes Cloud
+## Reglas operativas
 
-- Trabaja siempre por alcance de ticket (no arregles el monorepo entero si falla lint global).
-- Si hay errores no relacionados, reportalos y enfoca la validacion en archivos tocados.
-- No hagas cambios en `chatGPT/` salvo instruccion explicita.
-- No hardcodees secretos; usa variables de entorno.
-- En frontend/backoffice usa imports con alias `@/`.
-- En backend nuevo codigo: ViewSets + permisos por accion (`get_permissions`).
+- Trabaja por alcance del ticket
+- Si falla algo no relacionado, reportalo y no intentes arreglar medio monorepo
+- En backend nuevo codigo: ViewSets + permisos por accion
+- En frontend/backoffice: alias `@/`
+- No hardcodees secretos
 
-## 7. Comandos de Test Selectivo Utiles
+## Tests selectivos utiles
 
 ```bash
-# Test frontend concreto
-npm test --prefix frontend -- src/features/algo/mi.test.tsx
-
-# Test backoffice concreto
-npm test --prefix backoffice -- src/features/algo/mi.test.tsx
-
-# Test backend concreto
-ENVIRONMENT=test pytest backend/mi_app/tests/test_views.py -q
+pnpm --filter frontend exec vitest run src/features/algo/mi.test.tsx
+pnpm --filter backoffice exec vitest run src/features/algo/mi.test.tsx
+cd backend && pytest mi_app/tests/test_views.py -q
 ```
 
-## 8. Checklist de Cierre (DoD)
+## Checklist de cierre
 
-Antes de entregar una tarea:
+1. Implementacion coherente con la arquitectura del repo
+2. Tests y type-check relevantes ejecutados
+3. Sin artefactos temporales
+4. `git status` sin ruido
+5. Resumen final con validaciones y riesgos
 
-1. Codigo implementado y consistente con la arquitectura del repo.
-2. Type-check y tests relevantes ejecutados.
-3. Sin artefactos temporales (`*.log`, `tmp*`, `*.tmp`, outputs manuales).
-4. `git status` limpio de ruido no relacionado.
-5. Resumen final con:
-   - archivos tocados,
-   - que se valido,
-   - riesgos o pendientes.
+## Si el entorno cloud falla
 
-## 9. Si el Entorno Cloud Falla
-
-Si no se puede ejecutar una parte (por ejemplo, falta servicio externo), no asumas exito:
-
-- Reporta el error tecnico exacto.
-- Valida la logica por lectura de codigo y pruebas unitarias disponibles.
-- Deja claro que quedo pendiente por limitacion del entorno.
+- Reporta el error tecnico exacto
+- Valida la logica por lectura de codigo y tests unitarios
+- No asumas exito si no pudiste ejecutar una parte importante

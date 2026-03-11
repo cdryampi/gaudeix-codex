@@ -4,7 +4,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import include, path, re_path
+from django.views.static import serve
 from rest_framework.routers import DefaultRouter
 from drf_spectacular.views import (
     SpectacularAPIView,
@@ -17,6 +18,8 @@ from gamification.urls import register_routes as register_gamification_routes
 from notifications.urls import register_routes as register_notifications_routes
 from core.urls import register_routes as register_core_routes
 from places.urls import register_routes as register_places_routes
+from automations.urls import register_routes as register_automation_routes
+from beach_safety.urls import register_routes as register_beach_safety_routes
 from media_files.urls import register_routes as register_media_routes
 from social.urls import register_routes as register_social_routes
 from users.urls import register_routes as register_users_routes
@@ -36,6 +39,8 @@ register_events_routes(router)
 register_gamification_routes(router)
 register_notifications_routes(router)
 register_places_routes(router)
+register_automation_routes(router)
+register_beach_safety_routes(router)
 register_media_routes(router)
 register_social_routes(router)
 register_users_routes(router)
@@ -78,3 +83,14 @@ urlpatterns = [
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += staticfiles_urlpatterns()
+
+# Serve media/static files explicitly in local Docker environments where DEBUG stays off
+elif getattr(settings, "SERVE_MEDIA_FILES", False) or getattr(settings, "SERVE_STATIC_FILES", False):
+    if getattr(settings, "SERVE_MEDIA_FILES", False):
+        urlpatterns += [
+            re_path(r"^media/(?P<path>.*)$", serve, {"document_root": settings.MEDIA_ROOT}),
+        ]
+    if getattr(settings, "SERVE_STATIC_FILES", False):
+        urlpatterns += [
+            re_path(r"^static/(?P<path>.*)$", serve, {"document_root": settings.STATIC_ROOT}),
+        ]

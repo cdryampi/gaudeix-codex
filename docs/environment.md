@@ -1,92 +1,114 @@
-# Guía de Variables de Entorno
+# Guia de variables de entorno
 
-Esta guía centraliza las variables de entorno utilizadas por los distintos módulos del proyecto y describe cómo deben gestionarse en los diferentes perfiles de despliegue. Sigue estas recomendaciones para garantizar configuraciones consistentes entre entornos locales, de staging y producción.
+Esta guia centraliza las variables de entorno del proyecto y deja clara una regla importante:
 
-## Convenciones Generales
+- **desarrollo local canonico**: backend e infraestructura por `docker compose`
+- **tests backend**: `config.settings.test`
+- **no usar `ENVIRONMENT=local` como flujo recomendado**
 
-- Cada módulo mantiene su propio archivo de configuración:
+## Convenciones generales
+
+- Cada modulo mantiene su configuracion:
   - `backend/.env`
   - `frontend/.env.local`
-- Los archivos `.env` **no** deben versionarse. Añádelos a los mecanismos de secrets correspondientes (GitHub Actions, Dokploy, etc.) y compártelos de manera segura.
-- Cuando una variable sea modificada, sincroniza su valor con los secrets de GitHub Actions (`Settings` → `Secrets and variables` → `Actions`). Define un secret por módulo con nombres explícitos como `BACKEND_ENV` y `FRONTEND_ENV` que contengan el contenido completo del archivo `.env`.
+  - `backoffice/.env.local`
+- Los `.env` no deben versionarse
+- Si una variable cambia y la usa CI o despliegue, sincronizala con los secrets correspondientes
 
 ## Backend (Django)
 
-| Variable                      | Obligatoria | Descripción                                                                             | Notas                                                                       |
-| ----------------------------- | ----------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| `DJANGO_SECRET_KEY`           | Sí          | Clave secreta usada para la firma criptográfica.                                        | Debe ser única por entorno.                                                 |
-| `DATABASE_URL`                | Opcional    | Cadena de conexión compatible con `django-environ` (`sqlite:///...`, `postgres://...`). | Cuando no se define, se generan los parámetros usando las variables `DB_*`. |
-| `DB_ENGINE`                   | Opcional    | Backend de base de datos de Django.                                                     | Por defecto `django.db.backends.postgresql`.                                |
-| `DB_NAME`                     | Opcional    | Nombre de la base de datos.                                                             | Ej. `migration` para desarrollo.                                            |
-| `DB_USER`                     | Opcional    | Usuario de la base de datos.                                                            | Ej. `postgres`.                                                             |
-| `DB_PASSWORD`                 | Opcional    | Contraseña del usuario.                                                                 | Mantenerla fuera del control de versiones.                                  |
-| `DB_HOST`                     | Opcional    | Host del servidor de base de datos.                                                     | Usar `localhost` en desarrollo o `db` dentro de Docker.                     |
-| `DB_PORT`                     | Opcional    | Puerto del servidor de base de datos.                                                   | Por defecto `5432`.                                                         |
-| `ALLOWED_HOSTS`               | Sí          | Lista separada por comas con los dominios permitidos.                                   | Incluir `localhost` en desarrollo.                                          |
-| `DEBUG`                       | Sí          | Activa el modo debug (`true/false`).                                                    | Mantener `false` fuera de desarrollo.                                       |
-| `DJANGO_ALLOWED_CORS_ORIGINS` | Opcional    | Dominios permitidos para CORS.                                                          | Útil para separar frontend/backoffice.                                      |
-| `EMAIL_URL`                   | Opcional    | Configuración SMTP en formato URL.                                                      | Requerido si se envían correos.                                             |
-| `REDIS_URL`                   | Opcional    | Conexión a Redis para caché/colas.                                                      | Necesario solo si el despliegue lo utiliza.                                 |
-| `FCM_CREDENTIALS_FILE`        | Opcional    | Ruta al JSON de Service Account de Firebase para Push Notifications (FCM/APNs). | Requerido para envío de notificaciones push reales.                           |
+Variables importantes:
 
+| Variable                      | Obligatoria             | Descripcion                  |
+| ----------------------------- | ----------------------- | ---------------------------- |
+| `DJANGO_SECRET_KEY`           | Si                      | Clave secreta de Django      |
+| `DATABASE_URL`                | Si en Docker/despliegue | Conexion a PostgreSQL        |
+| `DB_ENGINE`                   | Opcional                | Backend de BD                |
+| `DB_NAME`                     | Opcional                | Nombre de BD                 |
+| `DB_USER`                     | Opcional                | Usuario de BD                |
+| `DB_PASSWORD`                 | Opcional                | Password de BD               |
+| `DB_HOST`                     | Opcional                | Host de BD                   |
+| `DB_PORT`                     | Opcional                | Puerto de BD                 |
+| `ALLOWED_HOSTS`               | Si                      | Hosts permitidos             |
+| `DEBUG`                       | Si                      | Modo debug                   |
+| `DJANGO_ALLOWED_CORS_ORIGINS` | Opcional                | Origenes CORS                |
+| `REDIS_URL`                   | Opcional                | Conexion Redis               |
+| `CELERY_BROKER_URL`           | Opcional                | Broker Celery                |
+| `CELERY_RESULT_BACKEND`       | Opcional                | Backend de resultados Celery |
 
-## Frontend (React + Vite)
+## Frontend y backoffice
 
-> Todas las variables deben comenzar con el prefijo `VITE_` para estar disponibles en tiempo de compilación.
+Todas las variables publicas deben empezar por `VITE_`.
 
-| Variable                    | Obligatoria | Descripción                                                          | Notas                                             |
-| --------------------------- | ----------- | -------------------------------------------------------------------- | ------------------------------------------------- |
-| `VITE_API_BASE_URL`         | Sí          | URL base para las peticiones al backend.                             | Ajustar al host público o local según el perfil.  |
-| `VITE_PUBLIC_MAPS_KEY`      | Opcional    | Clave pública para proveedores de mapas (Mapbox, Google Maps, etc.). | Añadirla cuando se habiliten mapas.               |
-| `VITE_PUBLIC_SENTRY_DSN`    | Opcional    | DSN público para capturar errores en frontend.                       | Útil en staging/producción.                       |
-| `VITE_PUBLIC_FEATURE_FLAGS` | Opcional    | JSON o lista con flags de funcionalidad.                             | Permite activar/desactivar features sin redeploy. |
+| Variable            | Obligatoria | Descripcion          |
+| ------------------- | ----------- | -------------------- |
+| `VITE_API_BASE_URL` | Si          | URL base del backend |
 
-## Backoffice (React + Vite)
+## Mobile
 
-> Plantilla básica orientada a React Admin y consumiendo la misma API REST del backend.
+| Variable                   | Obligatoria | Descripcion          |
+| -------------------------- | ----------- | -------------------- |
+| `EXPO_PUBLIC_API_BASE_URL` | Si          | URL base del backend |
 
-| Variable            | Obligatoria | Descripción                              | Notas                                                                                                |
-| ------------------- | ----------- | ---------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| `VITE_API_BASE_URL` | Sí          | URL base para las peticiones al backend. | Usar el subdominio público del backend o la URL interna `http://backend:8000/api` en Docker Compose. |
+## Perfiles recomendados
 
-## Servicios de Terceros
+### Docker local
 
-| Servicio        | Variable                              | Obligatoria | Descripción                                                                                             |
-| --------------- | ------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------- |
-| GitHub Actions  | `GITHUB_PAT`                          | Opcional    | Token personal con permisos de lectura si se automatiza la creación de issues/releases desde pipelines. |
-| Dokploy         | `DOKPLOY_API_ENDPOINT`                | Sí          | Endpoint de la API para gestionar despliegues.                                                          |
-| Dokploy         | `DOKPLOY_API_KEY`                     | Sí          | Clave de autenticación para la API.                                                                     |
-| Dokploy         | `DOKPLOY_PROJECT_ID`                  | Opcional    | Identificador del proyecto si se gestiona múltiples despliegues.                                        |
-| Otros servicios | `SENTRY_DSN`, `MAPS_SECRET_KEY`, etc. | Opcional    | Variables sensibles según integraciones adicionales.                                                    |
+Es la opcion canonica para desarrollo y QA local.
 
-## Perfiles de Configuración
+Backend:
 
-### Desarrollo Jules
+```env
+ENVIRONMENT=production
+DATABASE_URL=postgresql://postgres:thos@db:5432/migration
+DB_ENGINE=django.db.backends.postgresql
+DB_NAME=migration
+DB_USER=postgres
+DB_PASSWORD=thos
+DB_HOST=db
+DB_PORT=5432
+ALLOWED_HOSTS=backend,localhost,127.0.0.1
+DEBUG=true
+DJANGO_ALLOWED_CORS_ORIGINS=http://localhost:4173,http://localhost:4174,http://localhost:5173,http://localhost:5174,http://127.0.0.1:4173,http://127.0.0.1:4174,http://127.0.0.1:5173,http://127.0.0.1:5174
+REDIS_URL=redis://redis:6379/0
+CELERY_BROKER_URL=redis://redis:6379/0
+CELERY_RESULT_BACKEND=redis://redis:6379/1
+```
 
-- **Backend**: utilizar PostgreSQL local declarando `DB_ENGINE=django.db.backends.postgresql`, `DB_NAME=migration`, `DB_USER=postgres`, `DB_PASSWORD=thos`, `DB_HOST=localhost`, `DB_PORT=5432`, `DEBUG=true`, `ALLOWED_HOSTS=localhost,127.0.0.1`.
-- **Frontend**: `VITE_API_BASE_URL=http://localhost:8000/api` (o el puerto configurado para el backend local).
-- **Servicios**: normalmente no se requieren claves reales; usar tokens de desarrollo cuando sea posible.
-- **Flujo de trabajo**: crear/actualizar `backend/.env` y `frontend/.env.local` localmente. Sincronizar estos archivos con los secrets de GitHub Actions solo cuando se necesite ejecutar pipelines que dependan de variables específicas.
+Frontend / backoffice:
 
-### Staging / Producción
+```env
+VITE_API_BASE_URL=http://localhost:8000/api/v1
+```
 
-- **Backend**: usar `DATABASE_URL` apuntando a PostgreSQL gestionado (`postgres://user:pass@host:5432/db`). Establecer `DEBUG=false` y `ALLOWED_HOSTS` con los dominios públicos (ej. `api.staging.gaudeix.cat`). Configurar `DJANGO_ALLOWED_CORS_ORIGINS` con las URLs del frontend/backoffice desplegados.
-- **Frontend**: `VITE_API_BASE_URL` debe apuntar al dominio público del backend (`https://api.staging.gaudeix.cat/api`). Añadir claves públicas (`VITE_PUBLIC_MAPS_KEY`, `VITE_PUBLIC_SENTRY_DSN`) según integraciones activas.
-- **Servicios**: proporcionar tokens reales (`GITHUB_PAT`, `SENTRY_DSN`, claves de terceros) y almacenarlos como secrets. Mantener rotación periódica.
-- **Flujo de trabajo**: mantener los `.env` actualizados en un gestor seguro y reflejarlos en los secrets de GitHub Actions para que los pipelines de build/test/deploy consuman los valores correctos.
+### Tests backend
 
-### Despliegue en Dokploy
+No hace falta `.env` especial. Usa:
 
-- **Backend/Frontend**: subir los archivos `.env` respectivos a la configuración de Dokploy o utilizar las interfaces de secrets del servicio para declararlos variable por variable.
-- **Infraestructura**: configurar `DOKPLOY_API_ENDPOINT`, `DOKPLOY_API_KEY` y `DOKPLOY_PROJECT_ID` en Dokploy y, si la automatización depende de GitHub Actions, duplicarlos también como secrets (`DOKPLOY_API_ENDPOINT`, `DOKPLOY_API_KEY`, `DOKPLOY_PROJECT_ID`).
-- **Pipeline**: asegurarse de que los pipelines de GitHub Actions tengan permisos para leer los secrets y desencadenar despliegues mediante la API de Dokploy cuando corresponda.
+```bash
+cd backend
+python manage.py check --settings=config.settings.test
+pytest
+```
 
-## Sincronización con GitHub Actions
+`config.settings.test` ya configura SQLite en memoria y Celery eager.
 
-1. Crea o actualiza los archivos `.env` locales según el perfil.
-2. Ve a GitHub → `Settings` → `Secrets and variables` → `Actions`.
-3. Define un secret por módulo (`BACKEND_ENV`, `FRONTEND_ENV`) y pega el contenido completo del `.env` correspondiente.
-4. Para servicios externos (Dokploy, GitHub PAT, etc.) define secrets individuales (`DOKPLOY_API_KEY`, `GITHUB_PAT`, ...).
-5. Actualiza la configuración de los workflows para que exporten los secrets a archivos temporales antes de ejecutar builds/tests.
+### Staging / produccion
 
-Mantén esta documentación actualizada cada vez que se añadan o modifiquen variables de entorno.
+- Backend con `DATABASE_URL` a PostgreSQL gestionado
+- `DEBUG=false`
+- `ALLOWED_HOSTS` con dominios publicos
+- `DJANGO_ALLOWED_CORS_ORIGINS` con frontend/backoffice desplegados
+- Frontend y backoffice con `VITE_API_BASE_URL` apuntando al backend publico
+
+## Reglas para agentes
+
+- No documentes ni recomiendes `ENVIRONMENT=local`
+- No montes un backend "rapido" fuera de Docker como flujo normal
+- Si el ticket requiere backend local sin Docker, dejalo explicitamente justificado y separado del flujo canonico
+
+## Sincronizacion con GitHub Actions
+
+1. Mantener los secrets necesarios para despliegues o jobs especiales
+2. Para tests backend de CI, preferir `config.settings.test` en vez de secretos de entorno local
+3. Para frontend/backoffice, solo exponer las variables `VITE_*` necesarias al build si el workflow lo requiere

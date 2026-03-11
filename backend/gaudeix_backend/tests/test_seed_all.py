@@ -7,6 +7,7 @@ import pytest
 from django.core.management import call_command
 from django.core.management.base import CommandError
 
+from automations.models import AutomationJob
 from core.models import Category
 from site_settings.models import SiteSettings
 from users.models import User
@@ -23,6 +24,15 @@ def test_seed_all_creates_expected_basics(settings, tmp_path, transactional_db):
     assert User.objects.count() >= 2
     assert Category.objects.filter(slug__in={"places", "events"}).count() >= 1
     assert SiteSettings.get_solo().site_name
+    assert (
+        AutomationJob.objects.filter(
+            template_slug__in={
+                "weather.refresh_municipality_forecast",
+                "beach_safety.evaluate_red_flag_proposal",
+            }
+        ).count()
+        == 2
+    )
 
 
 @pytest.mark.slow
