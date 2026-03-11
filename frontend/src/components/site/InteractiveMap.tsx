@@ -72,9 +72,18 @@ export function InteractiveMap({
     return normalized.filter(isPlaceVisibleInExplorer);
   }, [placesData]);
 
+  const symbolPathCircle =
+    typeof window !== "undefined" &&
+    typeof window.google !== "undefined" &&
+    window.google.maps?.SymbolPath?.CIRCLE
+      ? window.google.maps.SymbolPath.CIRCLE
+      : undefined;
+
   const markerAnchor =
-    typeof google !== "undefined" && typeof google.maps?.Point === "function"
-      ? new google.maps.Point(12, 24)
+    typeof window !== "undefined" &&
+    typeof window.google !== "undefined" &&
+    typeof window.google.maps?.Point === "function"
+      ? new window.google.maps.Point(12, 24)
       : undefined;
 
   useEffect(() => {
@@ -90,13 +99,13 @@ export function InteractiveMap({
       center={center}
       onClick={() => setSelectedPlace(null)}
     >
-      {window.google && (
+      {symbolPathCircle && (
         <>
           {/* Main Village Marker */}
           <MarkerF
             position={center}
             icon={{
-              path: google.maps.SymbolPath.CIRCLE,
+              path: symbolPathCircle,
               fillColor: "#00f2ea", // Accent color
               fillOpacity: 1,
               strokeColor: "#ffffff",

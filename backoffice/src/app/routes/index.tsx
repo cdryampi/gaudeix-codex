@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { AuthLayout } from "@/layouts/auth/AuthLayout";
 import DashboardLayout from "@/layouts/dashboard/DashboardLayout";
@@ -11,6 +11,8 @@ import { MediaPage } from "@/features/media/pages/MediaPage";
 import { EventsPage } from "@/features/events/pages/EventsPage";
 import { PlacesPage } from "@/features/places/pages/PlacesPage";
 import { BeachesPage } from "@/features/beaches/pages/BeachesPage";
+import { AutomationsPage } from "@/features/automations/pages/AutomationsPage";
+import { BeachSafetyPage } from "@/features/beach-safety/pages/BeachSafetyPage";
 import { LandingPage } from "@/features/landing/pages/LandingPage";
 import { TestFormPage } from "@/features/test/pages/TestFormPage";
 import { ROUTES } from "@/lib/config/constants";
@@ -99,6 +101,18 @@ export const router = createBrowserRouter([
       {
         path: "beaches",
         element: <BeachesPage />,
+      },
+      {
+        path: "automations",
+        element: <AutomationsPage />,
+      },
+      {
+        path: "automations/beach-safety",
+        element: <BeachSafetyPage />,
+      },
+      {
+        path: "beach-safety",
+        element: <Navigate to={ROUTES.BEACH_SAFETY} replace />,
       },
       {
         path: "categories",

@@ -294,11 +294,11 @@ export const HowToGetHere = () => {
             />
           )}
 
-          {window.google && !directionsResponse && (
+          {window.google?.maps?.SymbolPath && !directionsResponse && (
             <MarkerF
               position={center}
               icon={{
-                path: google.maps.SymbolPath.CIRCLE,
+                path: window.google.maps.SymbolPath.CIRCLE,
                 fillColor: "#00f2ea",
                 fillOpacity: 1,
                 strokeColor: "#ffffff",

@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   db:
     image: postgres:16-alpine
@@ -29,6 +27,11 @@ services:
       - "9000:9000"
       - "9001:9001"
 
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
   backend:
     build:
       context: ./backend
@@ -36,6 +39,7 @@ services:
     env_file:
       - ./backend/.env.docker.example
     environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:thos@db:5432/migration}
       DB_ENGINE: ${DB_ENGINE:-django.db.backends.postgresql}
       DB_NAME: ${DB_NAME:-migration}
       DB_USER: ${DB_USER:-postgres}
@@ -45,13 +49,74 @@ services:
       ALLOWED_HOSTS: ${ALLOWED_HOSTS:-backend,localhost,127.0.0.1}
       DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-dev-secret-key}
       ENVIRONMENT: ${ENVIRONMENT:-production}
-      DJANGO_ALLOWED_CORS_ORIGINS: ${DJANGO_ALLOWED_CORS_ORIGINS:-http://localhost:4173,http://localhost:4174}
+      DJANGO_ALLOWED_CORS_ORIGINS: ${DJANGO_ALLOWED_CORS_ORIGINS:-http://localhost:4173,http://localhost:4174,http://127.0.0.1:4173,http://127.0.0.1:4174,http://localhost:5173,http://localhost:5174,http://127.0.0.1:5173,http://127.0.0.1:5174}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL:-redis://redis:6379/0}
+      CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND:-redis://redis:6379/1}
     ports:
       - "8000:8000"
     depends_on:
       db:
         condition: service_healthy
       storage:
+        condition: service_started
+      redis:
+        condition: service_started
+
+  worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    env_file:
+      - ./backend/.env.docker.example
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:thos@db:5432/migration}
+      DB_ENGINE: ${DB_ENGINE:-django.db.backends.postgresql}
+      DB_NAME: ${DB_NAME:-migration}
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-thos}
+      DB_HOST: ${DB_HOST:-db}
+      DB_PORT: ${DB_PORT:-5432}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-backend,localhost,127.0.0.1}
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-dev-secret-key}
+      ENVIRONMENT: ${ENVIRONMENT:-production}
+      DJANGO_ALLOWED_CORS_ORIGINS: ${DJANGO_ALLOWED_CORS_ORIGINS:-http://localhost:4173,http://localhost:4174,http://127.0.0.1:4173,http://127.0.0.1:4174,http://localhost:5173,http://localhost:5174,http://127.0.0.1:5173,http://127.0.0.1:5174}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL:-redis://redis:6379/0}
+      CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND:-redis://redis:6379/1}
+    command: ["celery", "-A", "config", "worker", "--loglevel=info"]
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  beat:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    env_file:
+      - ./backend/.env.docker.example
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:thos@db:5432/migration}
+      DB_ENGINE: ${DB_ENGINE:-django.db.backends.postgresql}
+      DB_NAME: ${DB_NAME:-migration}
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-thos}
+      DB_HOST: ${DB_HOST:-db}
+      DB_PORT: ${DB_PORT:-5432}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-backend,localhost,127.0.0.1}
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-dev-secret-key}
+      ENVIRONMENT: ${ENVIRONMENT:-production}
+      DJANGO_ALLOWED_CORS_ORIGINS: ${DJANGO_ALLOWED_CORS_ORIGINS:-http://localhost:4173,http://localhost:4174,http://127.0.0.1:4173,http://127.0.0.1:4174,http://localhost:5173,http://localhost:5174,http://127.0.0.1:5173,http://127.0.0.1:5174}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL:-redis://redis:6379/0}
+      CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND:-redis://redis:6379/1}
+    command: ["celery", "-A", "config", "beat", "--loglevel=info"]
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
         condition: service_started
 
   frontend:
@@ -61,7 +126,7 @@ services:
     env_file:
       - ./frontend/.env.local.example
     environment:
-      VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:8000/api}
+      VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:8000/api/v1}
     ports:
       - "4173:4173"
     depends_on:
@@ -69,12 +134,12 @@ services:
 
   backoffice:
     build:
-      context: ./backoffice
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: backoffice/Dockerfile
     env_file:
       - ./backoffice/.env.local.example
     environment:
-      VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:8000/api}
+      VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:8000/api/v1}
     ports:
       - "4174:4174"
     depends_on:

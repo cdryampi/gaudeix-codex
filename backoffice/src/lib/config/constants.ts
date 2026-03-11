@@ -21,6 +21,8 @@ export const ROUTES = {
   EVENTS: "/dashboard/events",
   PLACES: "/dashboard/places",
   BEACHES: "/dashboard/beaches",
+  AUTOMATIONS: "/dashboard/automations",
+  BEACH_SAFETY: "/dashboard/automations/beach-safety",
   CATEGORIES: "/dashboard/categories",
   STATIC_PAGES: "/dashboard/static-pages",
   SOCIAL: "/dashboard/settings/social",
@@ -103,6 +105,16 @@ export const QUERY_KEYS = {
   BEACHES: {
     LIST: ["beaches", "list"],
     DETAIL: (slug: string) => ["beaches", "detail", slug],
+  },
+  BEACH_SAFETY: {
+    STATUS: ["beach-safety", "status"],
+    PROPOSALS: ["beach-safety", "proposals"],
+    RUNS: ["beach-safety", "runs"],
+  },
+  AUTOMATIONS: {
+    TEMPLATES: ["automations", "templates"],
+    JOBS: ["automations", "jobs"],
+    RUNS: (id: number) => ["automations", "jobs", id, "runs"],
   },
   STATIC_PAGES: {
     LIST: ["static-pages", "list"],
@@ -189,6 +201,30 @@ export const API_ENDPOINTS = {
   BEACHES: {
     LIST: "/beaches/",
     DETAIL: (slug: string) => `/beaches/${slug}/`,
+  },
+  AUTOMATION_TEMPLATES: {
+    LIST: "/automation-templates/",
+  },
+  AUTOMATIONS: {
+    LIST: "/automations/",
+    DETAIL: (id: string) => `/automations/${id}/`,
+    RUN_NOW: (id: string) => `/automations/${id}/run-now/`,
+    RUNS: (id: string) => `/automations/${id}/runs/`,
+  },
+  BEACH_SAFETY_STATUS: {
+    LIST: "/beach-safety-status/",
+    CURRENT: "/beach-safety-status/current/",
+    RUN_CHECK: "/beach-safety-status/run-check/",
+  },
+  BEACH_SAFETY_PROPOSALS: {
+    LIST: "/beach-safety-proposals/",
+    DETAIL: (id: string) => `/beach-safety-proposals/${id}/`,
+    APPROVE: (id: string) => `/beach-safety-proposals/${id}/approve/`,
+    REJECT: (id: string) => `/beach-safety-proposals/${id}/reject/`,
+  },
+  BEACH_SAFETY_RUNS: {
+    LIST: "/beach-safety-runs/",
+    DETAIL: (id: string) => `/beach-safety-runs/${id}/`,
   },
   STATIC_PAGES: {
     LIST: "/static-pages/",

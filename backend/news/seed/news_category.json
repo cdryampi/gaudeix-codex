@@ -1,0 +1,71 @@
+{
+  "root": {
+    "slug": "news",
+    "taxonomy": "news",
+    "icon": "newspaper",
+    "translations": {
+      "ca": "Noticies",
+      "es": "Noticias",
+      "en": "News",
+      "fr": "Actualites"
+    },
+    "descriptions": {
+      "ca": "Actualitat municipal, avisos i novetats de Cabrera de Mar.",
+      "es": "Actualidad municipal, avisos y novedades de Cabrera de Mar.",
+      "en": "Municipal updates, notices and news from Cabrera de Mar.",
+      "fr": "Actualites municipales, avis et nouveautes de Cabrera de Mar."
+    }
+  },
+  "subcategories": [
+    {
+      "slug": "actualitat",
+      "icon": "bell",
+      "translations": {
+        "ca": "Actualitat",
+        "es": "Actualidad",
+        "en": "Updates",
+        "fr": "Actualites"
+      },
+      "descriptions": {
+        "ca": "Novetats i informacions d'interes general.",
+        "es": "Novedades e informaciones de interes general.",
+        "en": "Updates and general interest information.",
+        "fr": "Nouveautes et informations d'interet general."
+      }
+    },
+    {
+      "slug": "avisos",
+      "icon": "triangle-alert",
+      "translations": {
+        "ca": "Avisos",
+        "es": "Avisos",
+        "en": "Alerts",
+        "fr": "Alertes"
+      },
+      "descriptions": {
+        "ca": "Avisos municipals i comunicacions de servei.",
+        "es": "Avisos municipales y comunicaciones de servicio.",
+        "en": "Municipal alerts and service communications.",
+        "fr": "Alertes municipales et communications de service."
+      }
+    },
+    {
+      "slug": "agenda-i-cultura",
+      "icon": "megaphone",
+      "translations": {
+        "ca": "Agenda i cultura",
+        "es": "Agenda y cultura",
+        "en": "Agenda and culture",
+        "fr": "Agenda et culture"
+      },
+      "descriptions": {
+        "ca": "Informacio editorial sobre agenda, cultura i vida local.",
+        "es": "Informacion editorial sobre agenda, cultura y vida local.",
+        "en": "Editorial updates about agenda, culture and local life.",
+        "fr": "Informations editoriales sur l'agenda, la culture et la vie locale."
+      }
+    }
+  ],
+  "singleton_pk": 1,
+  "assign_to_existing_news": true
+}
