@@ -24,6 +24,14 @@
     "is_active": true
   },
   {
+    "section": "explore",
+    "type": "custom",
+    "label": "Noticias",
+    "url": "/noticias",
+    "order": 3,
+    "is_active": true
+  },
+  {
     "section": "institutional",
     "type": "custom",
     "label": "Transparencia",

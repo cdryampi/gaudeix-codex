@@ -112,6 +112,16 @@ const fullFooterPayload = {
         category: null,
         static_page: null,
       },
+      {
+        id: 5,
+        section: "explore" as const,
+        order: 2,
+        type: "custom" as const,
+        label: "Noticias",
+        url: "/noticias",
+        category: null,
+        static_page: null,
+      },
     ],
     institutional: [
       {
@@ -174,6 +184,7 @@ describe("SiteFooter", () => {
     expect(screen.getByText(/portal oficial/i)).toBeInTheDocument();
     expect(screen.getByText(/playas/i)).toBeInTheDocument();
     expect(screen.getByText(/agenda/i)).toBeInTheDocument();
+    expect(screen.getByText(/noticias/i)).toBeInTheDocument();
     expect(screen.getByText(/oficina de turismo/i)).toBeInTheDocument();
     expect(screen.getByText(/transparencia viva/i)).toBeInTheDocument();
     expect(screen.getByText(/privacidad/i)).toBeInTheDocument();
@@ -242,6 +253,10 @@ describe("SiteFooter", () => {
     expect(
       screen.getByRole("link", { name: "Transparencia viva" }),
     ).toHaveAttribute("href", "https://cabrera.cat/transparencia-viva");
+    expect(screen.getByRole("link", { name: "Noticias" })).toHaveAttribute(
+      "href",
+      "/noticias",
+    );
     expect(
       screen.queryByText(/perfil del contratante/i),
     ).not.toBeInTheDocument();

@@ -23,7 +23,7 @@
     {
       "slug": "cultura",
       "icon": "clapperboard",
-      "featured_image": "events_cultura.png",
+      "featured_image": "event_cultural_dance.png",
       "metatitulo": "Cultura - Esdeveniments",
       "metadescripcion": "Activitats culturals, exposicions i xerrades a Cabrera de Mar.",
       "translations": {
@@ -42,7 +42,7 @@
     {
       "slug": "festes",
       "icon": "party-popper",
-      "featured_image": "events_festes.png",
+      "featured_image": "correfoc-festa-major.png",
       "metatitulo": "Festes i Tradicions",
       "metadescripcion": "Festes populars, tradicions i celebracions locals a Cabrera de Mar.",
       "translations": {
@@ -61,7 +61,7 @@
     {
       "slug": "infantil",
       "icon": "baby",
-      "featured_image": "events_infantil.png",
+      "featured_image": "event_kids_activity.png",
       "metatitulo": "Activitats Infantils",
       "metadescripcion": "Activitats pensades per als més petits de la casa a Cabrera de Mar.",
       "translations": {
@@ -80,7 +80,7 @@
     {
       "slug": "joves",
       "icon": "users",
-      "featured_image": "events_joves.png",
+      "featured_image": "volei-platja-estiu.png",
       "metatitulo": "Espai Jove - Activitats",
       "metadescripcion": "Espais i activitats per al jovent de Cabrera de Mar.",
       "translations": {
@@ -99,7 +99,7 @@
     {
       "slug": "esports",
       "icon": "trophy",
-      "featured_image": "events_esports.png",
+      "featured_image": "event_sports_race.png",
       "metatitulo": "Esports i Curses",
       "metadescripcion": "Esdeveniments esportius, curses i competicions a Cabrera de Mar.",
       "translations": {
@@ -118,7 +118,7 @@
     {
       "slug": "fires-i-mercats",
       "icon": "shopping-cart",
-      "featured_image": "events_fires_mercats.png",
+      "featured_image": "event_food_market.png",
       "metatitulo": "Fires i Mercats",
       "metadescripcion": "Mercats setmanals i fires d'artesania i proximitat a Cabrera de Mar.",
       "translations": {
@@ -137,7 +137,7 @@
     {
       "slug": "formacio",
       "icon": "graduation-cap",
-      "featured_image": "events_formacio.png",
+      "featured_image": "reforc_escolar.jpg",
       "metatitulo": "Cursos i Formació",
       "metadescripcion": "Cursos, tallers i oportunitats d'aprenentatge a Cabrera de Mar.",
       "translations": {
@@ -156,7 +156,7 @@
     {
       "slug": "musica",
       "icon": "music",
-      "featured_image": "events_musica.png",
+      "featured_image": "event_concert_jazz.png",
       "metatitulo": "Concerts i Música",
       "metadescripcion": "Concerts, recitals i festivals de música a Cabrera de Mar.",
       "translations": {

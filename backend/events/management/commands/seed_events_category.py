@@ -141,11 +141,19 @@ class Command(BaseCommand):
         # Check if image already exists
         image_file = ImageFile.objects.filter(original_name=image_name).first()
         if not image_file:
-            # Try to load from backend/seed/images
-            seed_images_dir = Path(__file__).resolve().parents[4] / "seed" / "images"
-            if not seed_images_dir.exists():
-                seed_images_dir = Path(__file__).resolve().parents[3] / "seed" / "images"
-            image_path = seed_images_dir / image_name
+            # Try to load from backend/seed_assets/events/images first
+            assets_dir = Path(__file__).resolve().parents[4] / "seed_assets" / "events" / "images"
+            if not assets_dir.exists():
+                assets_dir = Path(__file__).resolve().parents[3] / "seed_assets" / "events" / "images"
+            image_path = assets_dir / image_name
+            
+            if not image_path.exists():
+                # Fallback to backend/seed/images
+                seed_images_dir = Path(__file__).resolve().parents[4] / "seed" / "images"
+                if not seed_images_dir.exists():
+                    seed_images_dir = Path(__file__).resolve().parents[3] / "seed" / "images"
+                image_path = seed_images_dir / image_name
+
             if image_path.exists():
                 image_file = ensure_image_file(image_path).instance
                 self.stdout.write(self.style.SUCCESS(f"Created ImageFile for {image_name}"))

@@ -75,7 +75,7 @@ export function InteractiveMap({
   const googleMaps =
     typeof window !== "undefined" ? window.google?.maps : undefined;
 
-  const symbolPathCircle = googleMaps?.SymbolPath.CIRCLE;
+  const symbolPathCircle = googleMaps?.SymbolPath?.CIRCLE;
 
   const markerAnchor =
     typeof googleMaps?.Point === "function"

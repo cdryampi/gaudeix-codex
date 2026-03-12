@@ -63,5 +63,29 @@ class Command(BaseCommand):
             singleton.category = category
             singleton.save()
 
+        self._apply_featured_image(category, "festa-major-cabrera-2025.png")
+
         action = "Created" if created else "Updated"
         self.stdout.write(self.style.SUCCESS(f"{action} festes category: {category}"))
+
+    def _apply_featured_image(self, category: Category, image_name: str) -> None:
+        if category.featured_media and category.featured_media.original_name == image_name:
+            return
+
+        from core.seed_media import ensure_image_file
+        from pathlib import Path
+
+        image_path = (
+            Path(__file__).resolve().parents[3]
+            / "seed_assets"
+            / "festes"
+            / "images"
+            / image_name
+        )
+        if not image_path.exists():
+            return
+
+        image = ensure_image_file(image_path).instance
+        if category.featured_media_id != image.id:
+            category.featured_media = image
+            category.save(update_fields=["featured_media"])
