@@ -2,42 +2,94 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Start Backend (Django)",
+      "label": "Workspace Notice (Docker First)",
       "type": "shell",
-      "command": ".venv_win\\Scripts\\python.exe",
-      "args": ["manage.py", "runserver", "0.0.0.0:8000"],
-      "options": {
-        "cwd": "${workspaceFolder}/backend"
+      "command": "Write-Host \"Start Docker Desktop first, then run 'Docker: Bootstrap Canonical Local'. Use the Vite tasks only if you explicitly want UI hot reload against the Docker backend.\"",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
       },
-      "isBackground": true,
+      "runOptions": {
+        "runOn": "folderOpen"
+      }
+    },
+    {
+      "label": "Docker: Check Docker Desktop",
+      "type": "shell",
+      "command": "if (-not (Get-Command docker -ErrorAction SilentlyContinue)) { Write-Error \"Docker CLI not found. Install Docker Desktop and start it first.\"; exit 1 }; docker info *> $null; if ($LASTEXITCODE -ne 0) { Write-Error \"Docker Desktop is not running. Start Docker Desktop first and retry.\"; exit 1 }; Write-Host \"Docker Desktop is running.\"",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
       "problemMatcher": [],
       "presentation": {
         "reveal": "always",
         "panel": "dedicated",
-        "group": "dev"
+        "group": "docker"
       }
     },
     {
-      "label": "Start Backoffice (Vite)",
+      "label": "Docker: Up Canonical Stack",
       "type": "shell",
-      "command": "npm",
-      "args": ["run", "dev"],
+      "command": "docker compose up --build -d",
       "options": {
-        "cwd": "${workspaceFolder}/backoffice"
+        "cwd": "${workspaceFolder}"
       },
-      "isBackground": true,
       "problemMatcher": [],
       "presentation": {
         "reveal": "always",
         "panel": "dedicated",
-        "group": "dev"
+        "group": "docker"
       }
     },
     {
-      "label": "Start Frontend (Vite)",
+      "label": "Docker: Migrate Backend",
       "type": "shell",
-      "command": "npm",
-      "args": ["run", "dev"],
+      "command": "docker compose exec -T backend python manage.py migrate",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "docker"
+      }
+    },
+    {
+      "label": "Docker: Seed Canonical Demo",
+      "type": "shell",
+      "command": "docker compose exec -T backend python manage.py seed_all --noinput",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "docker"
+      }
+    },
+    {
+      "label": "Docker: Bootstrap Canonical Local",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "Docker: Check Docker Desktop",
+        "Docker: Up Canonical Stack",
+        "Docker: Migrate Backend",
+        "Docker: Seed Canonical Demo"
+      ],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "docker"
+      }
+    },
+    {
+      "label": "Frontend: Vite (Optional, Docker Backend)",
+      "type": "shell",
+      "command": "npm run dev",
       "options": {
         "cwd": "${workspaceFolder}/frontend"
       },
@@ -46,23 +98,22 @@
       "presentation": {
         "reveal": "always",
         "panel": "dedicated",
-        "group": "dev"
+        "group": "ui"
       }
     },
     {
-      "label": "Start All Services",
-      "dependsOn": [
-        "Start Backend (Django)",
-        "Start Backoffice (Vite)",
-        "Start Frontend (Vite)"
-      ],
+      "label": "Backoffice: Vite (Optional, Docker Backend)",
+      "type": "shell",
+      "command": "npm run dev",
+      "options": {
+        "cwd": "${workspaceFolder}/backoffice"
+      },
+      "isBackground": true,
       "problemMatcher": [],
       "presentation": {
         "reveal": "always",
-        "panel": "dedicated"
-      },
-      "runOptions": {
-        "runOn": "folderOpen"
+        "panel": "dedicated",
+        "group": "ui"
       }
     }
   ]

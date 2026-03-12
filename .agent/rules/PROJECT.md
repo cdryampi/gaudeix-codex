@@ -127,13 +127,10 @@ This project is **Spanish-first**.
 ### Critical Commands
 
 ```bash
-# Activate from project root
-.\.venv\Scripts\activate  # Windows
-source .venv/bin/activate      # Linux/Mac
-
-# Then navigate to backend
-cd backend
-python manage.py runserver
+# Start Docker Desktop first on Windows
+docker compose up --build -d
+docker compose exec -T backend python manage.py migrate
+docker compose exec -T backend python manage.py seed_all --noinput
 ```
 
 ---
@@ -195,25 +192,18 @@ Each module has its own `.env` in its root:
 
 ### Starting Development (All Services)
 
-**Windows**:
+**Canonical local workflow**:
 
 ```bash
-.\start_dev.bat
-```
+docker compose up --build -d
+docker compose exec -T backend python manage.py migrate
+docker compose exec -T backend python manage.py seed_all --noinput
 
-**Manual**:
-
-```bash
-# Terminal 1: Backend
-cd backend
-.\.venv\Scripts\activate
-python manage.py runserver
-
-# Terminal 2: Frontend
+# Optional Terminal 2: Frontend with hot reload against Docker backend
 cd frontend
 npm run dev
 
-# Terminal 3: Backoffice
+# Optional Terminal 3: Backoffice with hot reload against Docker backend
 cd backoffice
 npm run dev
 ```

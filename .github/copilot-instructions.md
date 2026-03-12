@@ -36,26 +36,30 @@ Backend follows modular Django apps (`users`, `social`, `media_files`, etc.). Ea
 
 ### Starting Services
 
-**VS Code Tasks** (auto-start on workspace open via `.vscode/tasks.json`):
-- All services start automatically when opening workspace
-- Task IDs: `shell: Start Backend (Django)`, `shell: Start Frontend (Vite)`, `shell: Start Backoffice (Vite)`
-- Backend uses `.venv_win\Scripts\python.exe` (Windows-specific virtual environment)
-- Access: Backend (http://localhost:8000), Frontend (http://localhost:5173), Backoffice (http://localhost:5174)
+**VS Code Tasks**:
+
+- Start Docker Desktop first on Windows before running any workspace task
+- Use `Docker: Bootstrap Canonical Local` as the default local bootstrap
+- Use `Frontend: Vite (Optional, Docker Backend)` and `Backoffice: Vite (Optional, Docker Backend)` only when you explicitly want hot reload against the Docker backend
+- The workspace now shows only a startup notice on folder open; it no longer auto-starts `runserver`
 
 **Manual start**:
+
 ```bash
 # From project root
-start_dev.bat  # Windows batch file to start all services
+docker compose up --build -d
+docker compose exec -T backend python manage.py migrate
+docker compose exec -T backend python manage.py seed_all --noinput
 
-# Or individually
-cd backend && .venv_win\Scripts\activate && python manage.py runserver 0.0.0.0:8000
+# Optional local Vite UI on top of the Docker backend
 cd frontend && npm run dev
 cd backoffice && npm run dev
 ```
 
 **Docker Compose**:
+
 ```bash
-docker-compose up --build
+docker compose up --build
 # Access: backend (8000), frontend (4173), backoffice (4174), MinIO console (9001)
 ```
 
@@ -72,9 +76,10 @@ pytest                                      # Run tests (uses SQLite in-memory)
 ENVIRONMENT=local python manage.py test     # Django test runner
 ```
 
-**Environment profiles**: Set `ENVIRONMENT=local` (SQLite), `test` (in-memory), or `production` (PostgreSQL via `DATABASE_URL` or `DB_*` vars). See `backend/config/settings/`.
+**Environment profiles**: Use Docker Compose with `ENVIRONMENT=production` for canonical local work. Reserve `ENVIRONMENT=test` for pytest. Avoid `ENVIRONMENT=local` as the default workflow. See `backend/config/settings/`.
 
 **Default seed users** (from `seed_users` command):
+
 - Admin: Ver variables de entorno `ADMIN_USER` / `ADMIN_PASSWORD`
 - System: Ver variables de entorno `SYSTEM_USER` / `SYSTEM_PASSWORD`
 - Otros usuarios: Consultar con el equipo o verificar en `.env` local
@@ -142,7 +147,7 @@ Example: `POST /api/v1/media/images/` with multipart/form-data, returns all vari
 - **Deployment**: `/docs/deployment.md` - Docker Compose setup, Dokploy integration
 - **Module documentation**: Each app has a `README.md` with API examples, usage patterns
 - **Git workflow**: Conventional Commits (`feat:`, `fix:`, `docs:`, `test:`), PRs required for `main`
-- **Tasks**: `.vscode/tasks.json` defines auto-start tasks for all services
+- **Tasks**: `.vscode/tasks.json` defines Docker-first bootstrap tasks plus optional Vite helpers
 - **LLM Translations**: Backend includes `llm_translations` app supporting OpenAI, Google Gemini, Anthropic, Mistral, Groq. API keys configured via env vars (`LLM_OPENAI_API_KEY`, etc.)
 
 ## Common Operations
@@ -167,7 +172,7 @@ Example: `POST /api/v1/media/images/` with multipart/form-data, returns all vari
 **Run Docker stack**:
 
 ```bash
-docker-compose up --build  # All services
+docker compose up --build  # All services
 # Access: backend (8000), frontend (4173), backoffice (4174), MinIO console (9001)
 ```
 

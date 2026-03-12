@@ -136,6 +136,7 @@ cp .env_backend backend/.env
 ```
 
 **Variables principales:**
+
 - `DATABASE_URL`: Conexión PostgreSQL
 - `DJANGO_SECRET_KEY`: Clave secreta de Django
 - `ADMIN_USER` / `ADMIN_PASSWORD`: Credenciales del superusuario (yampi/thos)
@@ -150,6 +151,7 @@ cp .env_backoffice backoffice/.env.local
 ```
 
 **Variables principales:**
+
 - `VITE_API_BASE_URL`: URL base del API (`http://localhost:8000/api/v1`)
 - `VITE_ADMIN_USER` / `VITE_ADMIN_PASSWORD`: Credenciales de test
 
@@ -162,6 +164,7 @@ cp .env_frontend frontend/.env.local
 ```
 
 **Variables principales:**
+
 - `VITE_API_BASE_URL`: URL base del API (`http://localhost:8000/api/v1` o `http://localhost:8000/api`)
 
 Más detalle: `frontend/README.md`
@@ -180,7 +183,7 @@ Password: thos
 
 El comando `python manage.py seed_users` creará automáticamente:
 
-- **Admin (Superusuario)**: 
+- **Admin (Superusuario)**:
   - Username: `yampi`
   - Password: `thos`
   - Permisos: Staff + Superuser
@@ -214,6 +217,7 @@ Antes de solicitar un merge, ejecuta estos comandos en la raíz del repositorio 
   pnpm --filter backoffice type-check && pnpm --filter backoffice test && pnpm --filter backoffice clean:js
   ```
 - **Backend** (tests + lint/format):
+
   ```bash
   cd backend && python3 -m pytest && ruff check . && ruff format --check .
   ```
@@ -305,13 +309,20 @@ El proyecto implementa un **sistema mejorado de subagentes** inspirado en Claude
 Para garantizar un entorno de desarrollo consistente en Windows:
 
 1.  **Entorno Virtual**:
-
     - Se utiliza `.venv_win` (no `.venv`) para el backend.
     - **IMPORTANTE**: Siempre que trabajes en local, debes activar este entorno antes de ejecutar comandos de Django.
 
 2.  **Inicio Rápido**:
+    - Inicia primero Docker Desktop en Windows.
+    - Desde la raíz del repo, ejecuta `docker compose up --build -d`.
+    - Si la base está vacía o has recreado volúmenes, ejecuta además:
 
-    - Ejecuta el script `start_dev.bat` en la raíz para levantar todos los servicios (Backend, Frontend, Backoffice) automáticamente.
+      ```bash
+      docker compose exec -T backend python manage.py migrate
+      docker compose exec -T backend python manage.py seed_all --noinput
+      ```
+
+    - Si usas VS Code, la tarea recomendada es `Docker: Bootstrap Canonical Local`.
 
 3.  **Automatización (.github)**:
     - Se han configurado workflows en `.github/workflows` para ejecutar pruebas y verificaciones automáticamente en cada push o Pull Request.
