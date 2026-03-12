@@ -18,6 +18,7 @@ from django.utils.dateparse import parse_datetime
 
 from core.models import Category, Tag
 from core.seed_media import ensure_media_from_manifest
+from core.seed_assets import SEED_ASSETS_ROOT
 from core.seed_manifest import load_seed_asset_manifest, render_dry_run
 from events.models import Event, EventCategorySingleton, EventDate
 from media_files.models import DocumentFile, ImageFile
@@ -49,7 +50,7 @@ class Command(BaseCommand):
     def _load_asset_manifest(self):
         return load_seed_asset_manifest(
             manifest_path=Path(__file__).resolve().parents[2] / "seed" / "events_assets.yaml",
-            assets_root=Path(__file__).resolve().parent,
+            assets_root=SEED_ASSETS_ROOT / "events",
             allowed_types={"image", "document"},
             allowed_attach_to={"featured_media", "attachment"},
         )

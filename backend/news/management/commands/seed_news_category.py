@@ -17,6 +17,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
 from core.models import Category
+from core.seed_media import ensure_image_file
 from news.models import News, NewsCategorySingleton
 
 
@@ -44,6 +45,7 @@ class Command(BaseCommand):
         icon = definition.get("icon", "")
         translations = definition.get("translations", {}) or {}
         descriptions = definition.get("descriptions", {}) or {}
+        featured_image_name = definition.get("featured_image")
 
         category, created = Category.objects.get_or_create(
             slug=slug,
@@ -73,6 +75,9 @@ class Command(BaseCommand):
                 category.descripcion = desc
                 category.save()
 
+        if featured_image_name:
+            self._apply_featured_image(category, featured_image_name)
+
         if created:
             self.stdout.write(self.style.SUCCESS(f"Created category '{slug}'"))
         else:
@@ -88,6 +93,7 @@ class Command(BaseCommand):
             names = entry.get("translations", {}) or {}
             descs = entry.get("descriptions", {}) or {}
             icon = entry.get("icon", "")
+            featured_image_name = entry.get("featured_image")
 
             category, created = Category.objects.get_or_create(
                 slug=slug,
@@ -122,6 +128,9 @@ class Command(BaseCommand):
                     category.descripcion = desc
                     changed = True
 
+            if featured_image_name:
+                self._apply_featured_image(category, featured_image_name)
+
             if changed:
                 category.save()
 
@@ -129,6 +138,32 @@ class Command(BaseCommand):
                 touched += 1
 
         return touched
+
+    def _apply_featured_image(self, category: Category, image_name: str) -> None:
+        image_file = category.featured_media
+        if image_file and image_file.original_name == image_name:
+            return
+
+        existing = None
+        if image_name:
+            from media_files.models import ImageFile
+
+            existing = ImageFile.objects.filter(original_name=image_name).first()
+
+        if existing is None:
+            image_path = (
+                Path(__file__).resolve().parents[3]
+                / "seed_assets"
+                / "media_files"
+                / "images"
+                / image_name
+            )
+            if image_path.exists():
+                existing = ensure_image_file(image_path).instance
+
+        if existing and category.featured_media_id != existing.id:
+            category.featured_media = existing
+            category.save(update_fields=["featured_media"])
 
     def _create_or_update_singleton(
         self, category: Category, pk: int

@@ -6,6 +6,7 @@ from pathlib import Path
 from django.core.management.base import BaseCommand, CommandError
 
 from core.seed_media import ensure_image_file, ensure_video_file
+from core.seed_assets import SEED_ASSETS_ROOT
 from core.seed_manifest import load_seed_asset_manifest, render_dry_run
 from site_settings.models import SiteSettings
 
@@ -96,7 +97,7 @@ class Command(BaseCommand):
     def _load_asset_manifest(self):
         return load_seed_asset_manifest(
             manifest_path=Path(__file__).resolve().parents[2] / "seed" / "site_settings_assets.yaml",
-            assets_root=Path(__file__).resolve().parent,
+            assets_root=SEED_ASSETS_ROOT / "site_settings",
             allowed_types={"image", "video"},
             allowed_attach_to={"logo", "favicon", "background_video"},
         )

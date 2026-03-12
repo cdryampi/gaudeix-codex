@@ -15,6 +15,7 @@ from django.db import transaction
 
 from core.models import Category
 from core.seed_media import ensure_media_from_manifest
+from core.seed_assets import SEED_ASSETS_ROOT
 from core.seed_manifest import load_seed_asset_manifest, render_dry_run
 from media_files.models import ImageFile
 from routes.models import Route, RouteCheckpoint, RouteCategorySingleton
@@ -36,7 +37,9 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         manifest_entries = self._load_asset_manifest()
         if options.get("dry_run"):
-            self.stdout.write(render_dry_run(manifest_entries, title="routes asset manifest"))
+            self.stdout.write(
+                render_dry_run(manifest_entries, title="routes asset manifest")
+            )
             return
 
         self.stdout.write(self.style.WARNING("Seeding sample routes."))
@@ -49,7 +52,7 @@ class Command(BaseCommand):
     def _load_asset_manifest(self):
         return load_seed_asset_manifest(
             manifest_path=Path(__file__).resolve().parents[2] / "seed" / "routes_assets.yaml",
-            assets_root=Path(__file__).resolve().parent,
+            assets_root=SEED_ASSETS_ROOT / "routes",
             allowed_types={"image"},
             allowed_attach_to={"featured_media", "gallery", "checkpoint_image"},
         )
@@ -77,7 +80,9 @@ class Command(BaseCommand):
         Route.objects.all().delete()
         self.stdout.write(self.style.SUCCESS(f"Removed {count} existing routes."))
 
-    def _create_routes(self, root_category: Category, images: dict[str, ImageFile]) -> None:
+    def _create_routes(
+        self, root_category: Category, images: dict[str, ImageFile]
+    ) -> None:
         routes_data = self._load_seed_routes()
 
         for data in routes_data:
@@ -93,14 +98,24 @@ class Command(BaseCommand):
                 category=root_category,
                 route_type=data.get("route_type", "walking"),
                 difficulty=data.get("difficulty", "moderate"),
-                distance_km=Decimal(str(data["distance_km"])) if data.get("distance_km") else None,
+                distance_km=Decimal(str(data["distance_km"]))
+                if data.get("distance_km")
+                else None,
                 duration_minutes=data.get("duration_minutes"),
                 elevation_gain=data.get("elevation_gain"),
                 elevation_loss=data.get("elevation_loss"),
-                start_latitude=Decimal(str(data["start_latitude"])) if data.get("start_latitude") else None,
-                start_longitude=Decimal(str(data["start_longitude"])) if data.get("start_longitude") else None,
-                end_latitude=Decimal(str(data["end_latitude"])) if data.get("end_latitude") else None,
-                end_longitude=Decimal(str(data["end_longitude"])) if data.get("end_longitude") else None,
+                start_latitude=Decimal(str(data["start_latitude"]))
+                if data.get("start_latitude")
+                else None,
+                start_longitude=Decimal(str(data["start_longitude"]))
+                if data.get("start_longitude")
+                else None,
+                end_latitude=Decimal(str(data["end_latitude"]))
+                if data.get("end_latitude")
+                else None,
+                end_longitude=Decimal(str(data["end_longitude"]))
+                if data.get("end_longitude")
+                else None,
                 is_circular=data.get("is_circular", False),
                 is_published=data.get("is_published", True),
                 is_featured=data.get("is_featured", False),
@@ -118,7 +133,11 @@ class Command(BaseCommand):
                     tag = Tag.objects.get(slug=tag_slug)
                     route.tags.add(tag)
                 except Tag.DoesNotExist:
-                    self.stdout.write(self.style.WARNING(f"    Warning: Tag '{tag_slug}' not found for route '{route}'"))
+                    self.stdout.write(
+                        self.style.WARNING(
+                            f"    Warning: Tag '{tag_slug}' not found for route '{route}'"
+                        )
+                    )
 
             gallery_filenames = data.get("gallery", [])
             if gallery_filenames:
@@ -129,7 +148,11 @@ class Command(BaseCommand):
                 ]
                 if gallery_imgs:
                     route.gallery.add(*gallery_imgs)
-                    self.stdout.write(self.style.SUCCESS(f"  → Added {len(gallery_imgs)} gallery images for '{route}'"))
+                    self.stdout.write(
+                        self.style.SUCCESS(
+                            f"  -> Added {len(gallery_imgs)} gallery images for '{route}'"
+                        )
+                    )
 
             self.stdout.write(self.style.SUCCESS(f"Created route '{route}'"))
 
@@ -161,10 +184,16 @@ class Command(BaseCommand):
                 route.instructions = values["instructions"]
             route.save()
 
-    def _create_checkpoints(self, route: Route, checkpoints: list[dict], images: dict[str, ImageFile]) -> None:
+    def _create_checkpoints(
+        self, route: Route, checkpoints: list[dict], images: dict[str, ImageFile]
+    ) -> None:
         for cp_data in checkpoints:
             image_filename = cp_data.get("image")
-            checkpoint_image = images.get(f"checkpoint_image:{image_filename}") if image_filename else None
+            checkpoint_image = (
+                images.get(f"checkpoint_image:{image_filename}")
+                if image_filename
+                else None
+            )
 
             RouteCheckpoint.objects.create(
                 route=route,
@@ -172,12 +201,20 @@ class Command(BaseCommand):
                 title=cp_data["title"],
                 description=cp_data.get("description", ""),
                 image=checkpoint_image,
-                latitude=Decimal(str(cp_data["latitude"])) if cp_data.get("latitude") else None,
-                longitude=Decimal(str(cp_data["longitude"])) if cp_data.get("longitude") else None,
+                latitude=Decimal(str(cp_data["latitude"]))
+                if cp_data.get("latitude")
+                else None,
+                longitude=Decimal(str(cp_data["longitude"]))
+                if cp_data.get("longitude")
+                else None,
                 is_active=True,
             )
         if checkpoints:
-            self.stdout.write(self.style.SUCCESS(f"  → Created {len(checkpoints)} checkpoints for '{route}'"))
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f"  -> Created {len(checkpoints)} checkpoints for '{route}'"
+                )
+            )
 
     def _ensure_media_files(self, manifest_entries) -> dict[str, ImageFile]:
         media_index = ensure_media_from_manifest(manifest_entries)

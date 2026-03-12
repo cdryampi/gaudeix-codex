@@ -15,6 +15,7 @@ from django.db import transaction
 
 from core.models import Category
 from core.seed_media import ensure_media_from_manifest
+from core.seed_assets import SEED_ASSETS_ROOT
 from core.seed_manifest import load_seed_asset_manifest, render_dry_run
 from events.models import Event
 from festes.models import Festa, FestaCategorySingleton, FestaEvent, Program, ProgramStatusChoices, Sponsor
@@ -46,7 +47,7 @@ class Command(BaseCommand):
     def _load_asset_manifest(self):
         return load_seed_asset_manifest(
             manifest_path=Path(__file__).resolve().parents[2] / "seed" / "festes_assets.yaml",
-            assets_root=Path(__file__).resolve().parent,
+            assets_root=SEED_ASSETS_ROOT / "festes",
             allowed_types={"image", "document"},
             allowed_attach_to={"featured_media", "program_pdf", "sponsor_logo", "gallery"},
         )

@@ -14,7 +14,8 @@
       "es": "Actualidad municipal, avisos y novedades de Cabrera de Mar.",
       "en": "Municipal updates, notices and news from Cabrera de Mar.",
       "fr": "Actualites municipales, avis et nouveautes de Cabrera de Mar."
-    }
+    },
+    "featured_image": "noticia_ple.png"
   },
   "subcategories": [
     {
@@ -31,7 +32,8 @@
         "es": "Novedades e informaciones de interes general.",
         "en": "Updates and general interest information.",
         "fr": "Nouveautes et informations d'interet general."
-      }
+      },
+      "featured_image": "noticia_ple.png"
     },
     {
       "slug": "avisos",
@@ -47,7 +49,8 @@
         "es": "Avisos municipales y comunicaciones de servicio.",
         "en": "Municipal alerts and service communications.",
         "fr": "Alertes municipales et communications de service."
-      }
+      },
+      "featured_image": "noticia_fira.png"
     },
     {
       "slug": "agenda-i-cultura",
@@ -63,7 +66,8 @@
         "es": "Informacion editorial sobre agenda, cultura y vida local.",
         "en": "Editorial updates about agenda, culture and local life.",
         "fr": "Informations editoriales sur l'agenda, la culture et la vie locale."
-      }
+      },
+      "featured_image": "noticia_fira.png"
     }
   ],
   "singleton_pk": 1,
