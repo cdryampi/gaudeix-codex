@@ -76,9 +76,9 @@ Flujo canonico despues de una DB vacia o reiniciada:
 docker compose up --build -d
 docker compose exec -T backend python manage.py migrate
 docker compose exec -T backend python manage.py seed_all --noinput
-docker compose exec -T backend python manage.py bootstrap_automations
-docker compose exec -T backend python manage.py seed_media_files
 ```
+
+`seed_all` ya incluye el bootstrap de automatizaciones y la sincronizacion segura de media demo. No encadenes despues `bootstrap_automations` ni `seed_media_files` salvo que el ticket pida depurar especificamente esos comandos.
 
 Comprobaciones minimas antes de seguir depurando frontend:
 

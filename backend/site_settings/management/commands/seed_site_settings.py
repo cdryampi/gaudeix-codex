@@ -1,14 +1,12 @@
 from __future__ import annotations
 
 import json
-import mimetypes
 from pathlib import Path
 
-from django.core.files.base import ContentFile
 from django.core.management.base import BaseCommand, CommandError
 
+from core.seed_media import ensure_image_file, ensure_video_file
 from core.seed_manifest import load_seed_asset_manifest, render_dry_run
-from media_files.models import ImageFile
 from site_settings.models import SiteSettings
 
 
@@ -81,12 +79,16 @@ class Command(BaseCommand):
         favicon_path = asset_map.get(("favicon", seed_data.get("favicon_file", "")))
         video_path = asset_map.get(("background_video", seed_data.get("background_video_file", "")))
 
-        if logo_path and not settings_obj.logo:
-            settings_obj.logo = self._create_image(logo_path, mimetypes.guess_type(logo_path.name)[0] or "image/png")
-        if favicon_path and not settings_obj.favicon:
-            settings_obj.favicon = self._create_image(favicon_path, mimetypes.guess_type(favicon_path.name)[0] or "image/png")
-        if video_path and not settings_obj.background_video:
-            settings_obj.background_video = self._create_video(video_path, mimetypes.guess_type(video_path.name)[0] or "video/mp4")
+        logo_media = ensure_image_file(logo_path).instance if logo_path else None
+        favicon_media = ensure_image_file(favicon_path).instance if favicon_path else None
+        video_media = ensure_video_file(video_path).instance if video_path else None
+
+        if logo_media and not settings_obj.logo:
+            settings_obj.logo = logo_media
+        if favicon_media and not settings_obj.favicon:
+            settings_obj.favicon = favicon_media
+        if video_media and not settings_obj.background_video:
+            settings_obj.background_video = video_media
 
         settings_obj.save()
         self.stdout.write(self.style.SUCCESS("Site settings seeded/updated"))
@@ -119,25 +121,3 @@ class Command(BaseCommand):
         if not isinstance(data, dict):
             raise CommandError(f"Expected a JSON object in {seed_path}")
         return data
-
-    def _create_image(self, path: Path, mime: str) -> ImageFile:
-        with path.open("rb") as fp:
-            data = fp.read()
-        content = ContentFile(data, name=path.name)
-        obj, _ = ImageFile.objects.get_or_create(
-            original_name=path.name,
-            defaults={"file": content, "mime_type": mime, "size_bytes": len(data)},
-        )
-        return obj
-
-    def _create_video(self, path: Path, mime: str):
-        with path.open("rb") as fp:
-            data = fp.read()
-        from media_files.models import VideoFile
-
-        content = ContentFile(data, name=path.name)
-        obj, _ = VideoFile.objects.get_or_create(
-            original_name=path.name,
-            defaults={"file": content, "mime_type": mime, "size_bytes": len(data)},
-        )
-        return obj

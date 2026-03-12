@@ -4,11 +4,10 @@ import json
 from pathlib import Path
 
 from django.core.management.base import BaseCommand, CommandError
-from django.core.files.base import ContentFile
 from django.db import transaction
 
+from core.seed_media import ensure_document_file, ensure_image_file
 from static_pages.models import StaticPage
-from media_files.models import ImageFile, DocumentFile
 
 
 class Command(BaseCommand):
@@ -45,12 +44,12 @@ class Command(BaseCommand):
         if not featured_media_id:
             sample_image_path = seed_dir / "sample_file_static_image.jpg"
             if sample_image_path.exists():
-                featured_media_id = self._create_sample_image(sample_image_path).id
+                featured_media_id = ensure_image_file(sample_image_path).instance.id
                 self.stdout.write(self.style.NOTICE(f"Sample image ready: {featured_media_id}"))
         if not attachment_id:
             sample_pdf_path = seed_dir / "sample_file_static_file.pdf"
             if sample_pdf_path.exists():
-                attachment_id = self._create_sample_document(sample_pdf_path).id
+                attachment_id = ensure_document_file(sample_pdf_path).instance.id
                 self.stdout.write(self.style.NOTICE(f"Sample document ready: {attachment_id}"))
 
         created = 0
@@ -117,31 +116,3 @@ class Command(BaseCommand):
         if not isinstance(pages, list):
             raise CommandError(f"Expected a 'pages' array in {seed_path}")
         return pages
-
-    def _create_sample_image(self, path: Path) -> ImageFile:
-        with path.open("rb") as fp:
-            data = fp.read()
-        content = ContentFile(data, name=path.name)
-        obj, _ = ImageFile.objects.get_or_create(
-            original_name=path.name,
-            defaults={
-                "file": content,
-                "mime_type": "image/jpeg",
-                "size_bytes": len(data),
-            },
-        )
-        return obj
-
-    def _create_sample_document(self, path: Path) -> DocumentFile:
-        with path.open("rb") as fp:
-            data = fp.read()
-        content = ContentFile(data, name=path.name)
-        obj, _ = DocumentFile.objects.get_or_create(
-            original_name=path.name,
-            defaults={
-                "file": content,
-                "mime_type": "application/pdf",
-                "size_bytes": len(data),
-            },
-        )
-        return obj

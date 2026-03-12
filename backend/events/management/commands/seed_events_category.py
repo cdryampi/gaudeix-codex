@@ -16,10 +16,9 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
 from core.models import Category
+from core.seed_media import ensure_image_file
 from media_files.models import ImageFile
 from events.models import Event, EventCategorySingleton
-import mimetypes
-from django.core.files import File
 
 
 class Command(BaseCommand):
@@ -148,13 +147,7 @@ class Command(BaseCommand):
                 seed_images_dir = Path(__file__).resolve().parents[3] / "seed" / "images"
             image_path = seed_images_dir / image_name
             if image_path.exists():
-                with image_path.open("rb") as f:
-                    image_file = ImageFile.objects.create(
-                        file=File(f, name=image_name),
-                        original_name=image_name,
-                        mime_type=mimetypes.guess_type(image_name)[0] or "image/png",
-                        size_bytes=image_path.stat().st_size,
-                    )
+                image_file = ensure_image_file(image_path).instance
                 self.stdout.write(self.style.SUCCESS(f"Created ImageFile for {image_name}"))
         
         if image_file and category.featured_media != image_file:

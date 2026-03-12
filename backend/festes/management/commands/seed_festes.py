@@ -7,15 +7,14 @@ Usage: python manage.py seed_festes [--dry-run]
 from __future__ import annotations
 
 import json
-import mimetypes
 from datetime import date
 from pathlib import Path
 
-from django.core.files import File
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
 from core.models import Category
+from core.seed_media import ensure_media_from_manifest
 from core.seed_manifest import load_seed_asset_manifest, render_dry_run
 from events.models import Event
 from festes.models import Festa, FestaCategorySingleton, FestaEvent, Program, ProgramStatusChoices, Sponsor
@@ -170,34 +169,13 @@ class Command(BaseCommand):
     def _ensure_media_files(self, manifest_entries) -> tuple[dict[str, ImageFile], dict[str, DocumentFile]]:
         image_map: dict[str, ImageFile] = {}
         doc_map: dict[str, DocumentFile] = {}
+        media_index = ensure_media_from_manifest(manifest_entries)
 
         for entry in manifest_entries:
             key = f"{entry.attach_to}:{entry.slug_or_key}"
             if entry.type == "image":
-                image_map[key] = self._create_image_file(entry.resolved_path)
+                image_map[key] = media_index.images[(entry.attach_to, entry.slug_or_key)]
             elif entry.type == "document":
-                doc_map[key] = self._create_document_file(entry.resolved_path)
+                doc_map[key] = media_index.documents[(entry.attach_to, entry.slug_or_key)]
 
         return image_map, doc_map
-
-    def _create_image_file(self, path: Path) -> ImageFile:
-        with path.open("rb") as source:
-            instance = ImageFile.objects.create(
-                file=File(source, name=path.name),
-                original_name=path.name,
-                mime_type=mimetypes.guess_type(path.name)[0] or "image/png",
-                size_bytes=path.stat().st_size,
-            )
-        self.stdout.write(self.style.SUCCESS(f"Seeded ImageFile from {path}"))
-        return instance
-
-    def _create_document_file(self, path: Path) -> DocumentFile:
-        with path.open("rb") as source:
-            instance = DocumentFile.objects.create(
-                file=File(source, name=path.name),
-                original_name=path.name,
-                mime_type="application/pdf",
-                size_bytes=path.stat().st_size,
-            )
-        self.stdout.write(self.style.SUCCESS(f"Seeded DocumentFile from {path}"))
-        return instance

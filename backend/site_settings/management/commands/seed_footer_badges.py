@@ -1,14 +1,12 @@
 from __future__ import annotations
 
 import json
-import mimetypes
 from pathlib import Path
 
-from django.core.files.base import ContentFile
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
-from media_files.models import ImageFile
+from core.seed_media import ensure_image_file
 from site_settings.models import FooterBadge, FooterSettings
 
 
@@ -32,7 +30,6 @@ class Command(BaseCommand):
             return
 
         footer_settings = FooterSettings.for_site_settings()
-        cleanup_count = self._cleanup_unreferenced_badge_files(items_data)
 
         with transaction.atomic():
             deleted_count, _ = footer_settings.badges.all().delete()
@@ -56,12 +53,6 @@ class Command(BaseCommand):
                 )
                 created_count += 1
 
-        if cleanup_count:
-            self.stdout.write(
-                self.style.WARNING(
-                    f"Deleted {cleanup_count} unreferenced badge asset files."
-                )
-            )
         self.stdout.write(
             self.style.SUCCESS(f"Seeded {created_count} footer badges.")
         )
@@ -88,38 +79,7 @@ class Command(BaseCommand):
         if not image_path.exists():
             raise CommandError(f"Badge asset not found: {image_path}")
 
-        with image_path.open("rb") as fp:
-            data = fp.read()
-
-        mime = mimetypes.guess_type(image_path.name)[0] or "image/png"
-        content = ContentFile(data, name=image_path.name)
-        image, _ = ImageFile.objects.get_or_create(
-            original_name=image_path.name,
-            defaults={"file": content, "mime_type": mime, "size_bytes": len(data)},
-        )
-        return image
-
-    def _cleanup_unreferenced_badge_files(self, items_data: list[dict]) -> int:
-        badges_root = self._badges_root()
-        if not badges_root.exists():
-            return 0
-
-        referenced_files = {
-            entry.get("image_file", "").strip()
-            for entry in items_data
-            if entry.get("image_file")
-        }
-        deleted_count = 0
-
-        for path in badges_root.iterdir():
-            if not path.is_file():
-                continue
-            if path.name in referenced_files:
-                continue
-            path.unlink()
-            deleted_count += 1
-
-        return deleted_count
+        return ensure_image_file(image_path).instance
 
     def _badges_root(self) -> Path:
         return Path(__file__).resolve().parents[2] / "seed" / "badges"

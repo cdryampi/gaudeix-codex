@@ -1,14 +1,13 @@
 from __future__ import annotations
 
 import json
-import mimetypes
 from pathlib import Path
 
-from django.core.files import File
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
 from core.models import Category
+from core.seed_media import ensure_media_from_manifest
 from core.seed_manifest import load_seed_asset_manifest, render_dry_run
 from media_files.models import ImageFile
 from places.models import Beach
@@ -60,10 +59,11 @@ class Command(BaseCommand):
         return category
 
     def _ensure_media_files(self, manifest_entries) -> dict[str, ImageFile]:
-        image_map: dict[str, ImageFile] = {}
-        for entry in manifest_entries:
-            image_map[entry.slug_or_key] = self._create_image_file(entry.resolved_path)
-        return image_map
+        media_index = ensure_media_from_manifest(manifest_entries)
+        return {
+            entry.slug_or_key: media_index.images[(entry.attach_to, entry.slug_or_key)]
+            for entry in manifest_entries
+        }
 
     def _clear_beaches(self) -> None:
         count = Beach.objects.count()
@@ -126,18 +126,3 @@ class Command(BaseCommand):
             beach.title = values.get("title", beach.title)
             beach.description = values.get("description", beach.description)
             beach.save()
-
-    def _create_image_file(self, path: Path) -> ImageFile:
-        existing = ImageFile.objects.filter(original_name=path.name).first()
-        if existing:
-            return existing
-
-        with path.open("rb") as source:
-            instance = ImageFile.objects.create(
-                file=File(source, name=path.name),
-                original_name=path.name,
-                mime_type=mimetypes.guess_type(path.name)[0] or "image/png",
-                size_bytes=path.stat().st_size,
-            )
-        self.stdout.write(self.style.SUCCESS(f"Seeded ImageFile from {path}"))
-        return instance

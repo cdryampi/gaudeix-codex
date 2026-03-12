@@ -7,21 +7,19 @@ Usage: python manage.py seed_events [--day-offset N] [--dry-run]
 from __future__ import annotations
 
 import json
-import mimetypes
 from datetime import datetime, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
-from django.core.files import File
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 
 from core.models import Category, Tag
+from core.seed_media import ensure_media_from_manifest
 from core.seed_manifest import load_seed_asset_manifest, render_dry_run
 from events.models import Event, EventCategorySingleton, EventDate
-from core.seed_utils import list_files_sorted
 from media_files.models import DocumentFile, ImageFile
 
 
@@ -245,33 +243,12 @@ class Command(BaseCommand):
     def _ensure_media_files(self, manifest_entries) -> tuple[dict[str, ImageFile], dict[str, DocumentFile]]:
         images_by_slug: dict[str, ImageFile] = {}
         docs_by_key: dict[str, DocumentFile] = {}
+        media_index = ensure_media_from_manifest(manifest_entries)
 
         for entry in manifest_entries:
             if entry.type == "image" and entry.attach_to == "featured_media":
-                images_by_slug[entry.slug_or_key] = self._create_image_file(entry.resolved_path)
+                images_by_slug[entry.slug_or_key] = media_index.images[(entry.attach_to, entry.slug_or_key)]
             elif entry.type == "document" and entry.attach_to == "attachment":
-                docs_by_key[entry.slug_or_key] = self._create_document_file(entry.resolved_path)
+                docs_by_key[entry.slug_or_key] = media_index.documents[(entry.attach_to, entry.slug_or_key)]
 
         return images_by_slug, docs_by_key
-
-    def _create_image_file(self, path: Path) -> ImageFile:
-        with path.open("rb") as source:
-            instance = ImageFile.objects.create(
-                file=File(source, name=path.name),
-                original_name=path.name,
-                mime_type=mimetypes.guess_type(path.name)[0] or "image/png",
-                size_bytes=path.stat().st_size,
-            )
-        self.stdout.write(self.style.SUCCESS(f"Seeded ImageFile from {path}"))
-        return instance
-
-    def _create_document_file(self, path: Path) -> DocumentFile:
-        with path.open("rb") as source:
-            instance = DocumentFile.objects.create(
-                file=File(source, name=path.name),
-                original_name=path.name,
-                mime_type=mimetypes.guess_type(path.name)[0] or "application/pdf",
-                size_bytes=path.stat().st_size,
-            )
-        self.stdout.write(self.style.SUCCESS(f"Seeded DocumentFile from {path}"))
-        return instance

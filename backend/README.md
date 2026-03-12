@@ -85,6 +85,8 @@ Comando recomendado (local o CI):
 python manage.py seed_all
 ```
 
+`seed_all` ya orquesta `seed_media_files` y `bootstrap_automations`, asi que no hace falta ejecutarlos despues en el bootstrap normal.
+
 Opciones estandar:
 
 ```bash

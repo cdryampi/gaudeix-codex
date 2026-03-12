@@ -7,14 +7,13 @@ Usage: python manage.py seed_places [--dry-run]
 from __future__ import annotations
 
 import json
-import mimetypes
 from pathlib import Path
 
-from django.core.files import File
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
 from core.models import Category
+from core.seed_media import ensure_media_from_manifest
 from core.seed_manifest import load_seed_asset_manifest, render_dry_run
 from media_files.models import DocumentFile, ImageFile
 from places.models import Place, PlaceCategorySingleton
@@ -124,38 +123,17 @@ class Command(BaseCommand):
         image_map: dict[str, ImageFile] = {}
         fallback_images: list[ImageFile] = []
         default_docs: list[DocumentFile] = []
+        media_index = ensure_media_from_manifest(manifest_entries)
 
         for entry in manifest_entries:
             if entry.type == "image" and entry.attach_to == "featured_media":
-                image_map[entry.slug_or_key] = self._create_image_file(entry.resolved_path)
+                image_map[entry.slug_or_key] = media_index.images[(entry.attach_to, entry.slug_or_key)]
             elif entry.type == "image" and entry.attach_to == "featured_media_fallback":
-                fallback_images.append(self._create_image_file(entry.resolved_path))
+                fallback_images.append(media_index.images[(entry.attach_to, entry.slug_or_key)])
             elif entry.type == "document" and entry.attach_to == "attachment_default":
-                default_docs.append(self._create_document_file(entry.resolved_path))
+                default_docs.append(media_index.documents[(entry.attach_to, entry.slug_or_key)])
 
         if not fallback_images:
             fallback_images = list(image_map.values())
 
         return image_map, fallback_images, default_docs
-
-    def _create_image_file(self, path: Path) -> ImageFile:
-        with path.open("rb") as source:
-            instance = ImageFile.objects.create(
-                file=File(source, name=path.name),
-                original_name=path.name,
-                mime_type=mimetypes.guess_type(path.name)[0] or "image/png",
-                size_bytes=path.stat().st_size,
-            )
-        self.stdout.write(self.style.SUCCESS(f"Seeded ImageFile from {path}"))
-        return instance
-
-    def _create_document_file(self, path: Path) -> DocumentFile:
-        with path.open("rb") as source:
-            instance = DocumentFile.objects.create(
-                file=File(source, name=path.name),
-                original_name=path.name,
-                mime_type=mimetypes.guess_type(path.name)[0] or "application/pdf",
-                size_bytes=path.stat().st_size,
-            )
-        self.stdout.write(self.style.SUCCESS(f"Seeded DocumentFile from {path}"))
-        return instance

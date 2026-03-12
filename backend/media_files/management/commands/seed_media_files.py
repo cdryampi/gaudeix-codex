@@ -1,13 +1,12 @@
 from __future__ import annotations
 
 import json
-import mimetypes
 from pathlib import Path
 
-from django.core.files import File
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
+from core.seed_media import ensure_document_file, ensure_image_file
 from core.seed_assets import resolve_seed_asset_dir
 from core.seed_utils import find_duplicate_manifest_paths
 from media_files.models import DocumentFile, ImageFile
@@ -26,7 +25,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.verbose_order = options.get("verbose_order", False)
         with transaction.atomic():
-            self._clear_data()
             manifest = self._load_manifest()
             self._seed_assets(manifest)
 
@@ -42,18 +40,6 @@ class Command(BaseCommand):
     @property
     def seed_manifest_path(self) -> Path:
         return Path(__file__).resolve().parents[2] / "seed" / "media_files.json"
-
-    def _clear_data(self) -> None:
-        """Remove existing records and rely on signals to clear files."""
-        image_count = ImageFile.objects.count()
-        doc_count = DocumentFile.objects.count()
-        ImageFile.objects.all().delete()
-        DocumentFile.objects.all().delete()
-        self.stdout.write(
-            self.style.SUCCESS(
-                f"Removed {image_count} image files and {doc_count} document files."
-            )
-        )
 
     def _load_manifest(self) -> dict:
         try:
@@ -115,20 +101,16 @@ class Command(BaseCommand):
                     )
                     continue
 
-                self._create_record(model, path)
+                result = self._ensure_record(model, path)
+                self.stdout.write(
+                    self.style.SUCCESS(
+                        f"{result.action.title()} {model.__name__} '{result.instance.original_name}' from {path.name}."
+                    )
+                )
 
-    def _create_record(self, model, path: Path) -> None:
-        mime_type, _ = mimetypes.guess_type(path.name)
-        with path.open("rb") as source:
-            file = File(source, name=path.name)
-            instance = model.objects.create(
-                file=file,
-                original_name=path.name,
-                mime_type=mime_type or "",
-                size_bytes=path.stat().st_size,
-            )
-        self.stdout.write(
-            self.style.SUCCESS(
-                f"Seeded {model.__name__} '{instance.original_name}' from {path.name}."
-            )
-        )
+    def _ensure_record(self, model, path: Path):
+        if model is ImageFile:
+            return ensure_image_file(path)
+        if model is DocumentFile:
+            return ensure_document_file(path)
+        raise CommandError(f"Unsupported media model: {model.__name__}")
