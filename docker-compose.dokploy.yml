@@ -6,10 +6,7 @@ services:
     command: >
       sh -c "python manage.py migrate --noinput &&
              python manage.py collectstatic --noinput &&
-             gunicorn gaudeix_backend.wsgi:application
-             --bind 0.0.0.0:8000
-             --workers $${GUNICORN_WORKERS:-3}
-             --timeout $${GUNICORN_TIMEOUT:-120}"
+             exec gunicorn gaudeix_backend.wsgi:application --bind 0.0.0.0:8000 --workers $${GUNICORN_WORKERS:-3} --timeout $${GUNICORN_TIMEOUT:-120}"
     environment:
       ENVIRONMENT: production
       DEBUG: "false"
@@ -76,6 +73,8 @@ services:
       - gaudeix_media:/app/media
     networks:
       - dokploy-network
+    healthcheck:
+      disable: true
     restart: unless-stopped
 
   beat:
@@ -111,6 +110,8 @@ services:
       - gaudeix_media:/app/media
     networks:
       - dokploy-network
+    healthcheck:
+      disable: true
     restart: unless-stopped
 
 volumes:
