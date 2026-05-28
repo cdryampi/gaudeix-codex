@@ -51,6 +51,7 @@ mistralai==1.2.4
 groq==0.13.0
 
 # Utilities
+Faker==40.1.2
 PyYAML==6.0.3
 packaging==25.0
 inflection==0.5.1
