@@ -12,6 +12,7 @@ __pycache__/
 .Python
 build/
 dist/
+.pages-dist/
 downloads/
 eggs/
 .eggs/

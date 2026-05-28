@@ -44,140 +44,145 @@ import { ScrapedNewsPage } from "@/features/scraper/pages/ScrapedNewsPage";
  * - /reset-password → AuthLayout + ResetPasswordPage
  * - /dashboard → DashboardLayout (protected)
  */
-export const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <LandingPage />,
-  },
-  {
-    path: "/test",
-    element: <TestFormPage />,
-  },
-  {
-    element: <AuthLayout />,
-    children: [
-      {
-        path: ROUTES.LOGIN,
-        element: <LoginPage />,
-      },
-      {
-        path: "/register",
-        element: <RegisterPage />,
-      },
-      {
-        path: "/reset-password",
-        element: <ResetPasswordPage />,
-      },
-    ],
-  },
-  {
-    path: ROUTES.DASHBOARD,
-    element: (
-      <ProtectedRoute>
-        <DashboardLayout />
-      </ProtectedRoute>
-    ),
-    children: [
-      {
-        index: true,
-        element: <DashboardHome />,
-      },
-      {
-        path: "users",
-        element: <UsersPage />,
-      },
-      {
-        path: "media",
-        element: <MediaPage />,
-      },
-      {
-        path: "events",
-        element: <EventsPage />,
-      },
-      {
-        path: "places",
-        element: <PlacesPage />,
-      },
-      {
-        path: "beaches",
-        element: <BeachesPage />,
-      },
-      {
-        path: "automations",
-        element: <AutomationsPage />,
-      },
-      {
-        path: "automations/beach-safety",
-        element: <BeachSafetyPage />,
-      },
-      {
-        path: "beach-safety",
-        element: <Navigate to={ROUTES.BEACH_SAFETY} replace />,
-      },
-      {
-        path: "categories",
-        element: <CategoriesPage />,
-      },
-      {
-        path: "social",
-        element: <SocialLinksPage />,
-      },
-      {
-        path: "static-pages",
-        element: <StaticPagesPage />,
-      },
-      {
-        path: "settings/site",
-        element: <SiteSettingsPage />,
-      },
-      {
-        path: "settings/video",
-        element: <VideoSettingsPage />,
-      },
-      {
-        path: "settings/header",
-        element: <HeaderMenuPage />,
-      },
-      {
-        path: "settings/footer",
-        element: <FooterSettingsPage />,
-      },
-      {
-        path: "settings/social",
-        element: <SocialLinksPage />,
-      },
-      {
-        path: "settings/llm",
-        element: <LLMSettingsPage />,
-      },
-      {
-        path: "notifications",
-        element: <SendNotificationPage />,
-      },
-      {
-        path: "routes",
-        element: <RoutesPage />,
-      },
-      {
-        path: "festes",
-        element: <FestesPage />,
-      },
-      {
-        path: "festes/programs",
-        element: <ProgramsPage />,
-      },
-      {
-        path: "festes/venues",
-        element: <VenuesPage />,
-      },
-      {
-        path: "news",
-        element: <NewsPage />,
-      },
-      {
-        path: "scraper",
-        element: <ScrapedNewsPage />,
-      },
-    ],
-  },
-]);
+const routerBasename = import.meta.env.BASE_URL.replace(/\/$/, "") || "/";
+
+export const router = createBrowserRouter(
+  [
+    {
+      path: "/",
+      element: <LandingPage />,
+    },
+    {
+      path: "/test",
+      element: <TestFormPage />,
+    },
+    {
+      element: <AuthLayout />,
+      children: [
+        {
+          path: ROUTES.LOGIN,
+          element: <LoginPage />,
+        },
+        {
+          path: "/register",
+          element: <RegisterPage />,
+        },
+        {
+          path: "/reset-password",
+          element: <ResetPasswordPage />,
+        },
+      ],
+    },
+    {
+      path: ROUTES.DASHBOARD,
+      element: (
+        <ProtectedRoute>
+          <DashboardLayout />
+        </ProtectedRoute>
+      ),
+      children: [
+        {
+          index: true,
+          element: <DashboardHome />,
+        },
+        {
+          path: "users",
+          element: <UsersPage />,
+        },
+        {
+          path: "media",
+          element: <MediaPage />,
+        },
+        {
+          path: "events",
+          element: <EventsPage />,
+        },
+        {
+          path: "places",
+          element: <PlacesPage />,
+        },
+        {
+          path: "beaches",
+          element: <BeachesPage />,
+        },
+        {
+          path: "automations",
+          element: <AutomationsPage />,
+        },
+        {
+          path: "automations/beach-safety",
+          element: <BeachSafetyPage />,
+        },
+        {
+          path: "beach-safety",
+          element: <Navigate to={ROUTES.BEACH_SAFETY} replace />,
+        },
+        {
+          path: "categories",
+          element: <CategoriesPage />,
+        },
+        {
+          path: "social",
+          element: <SocialLinksPage />,
+        },
+        {
+          path: "static-pages",
+          element: <StaticPagesPage />,
+        },
+        {
+          path: "settings/site",
+          element: <SiteSettingsPage />,
+        },
+        {
+          path: "settings/video",
+          element: <VideoSettingsPage />,
+        },
+        {
+          path: "settings/header",
+          element: <HeaderMenuPage />,
+        },
+        {
+          path: "settings/footer",
+          element: <FooterSettingsPage />,
+        },
+        {
+          path: "settings/social",
+          element: <SocialLinksPage />,
+        },
+        {
+          path: "settings/llm",
+          element: <LLMSettingsPage />,
+        },
+        {
+          path: "notifications",
+          element: <SendNotificationPage />,
+        },
+        {
+          path: "routes",
+          element: <RoutesPage />,
+        },
+        {
+          path: "festes",
+          element: <FestesPage />,
+        },
+        {
+          path: "festes/programs",
+          element: <ProgramsPage />,
+        },
+        {
+          path: "festes/venues",
+          element: <VenuesPage />,
+        },
+        {
+          path: "news",
+          element: <NewsPage />,
+        },
+        {
+          path: "scraper",
+          element: <ScrapedNewsPage />,
+        },
+      ],
+    },
+  ],
+  { basename: routerBasename },
+);

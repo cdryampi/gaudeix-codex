@@ -13,6 +13,7 @@
     "build:mobile": "pnpm --filter mobile build",
     "build:frontend": "cross-env NODE_OPTIONS=--max-old-space-size=8192 pnpm --filter frontend build",
     "build:backoffice": "cross-env NODE_OPTIONS=--max-old-space-size=8192 pnpm --filter backoffice build",
+    "build:pages": "cross-env VITE_API_BASE_URL=https://gaudeix.yampi.eu/api/v1 VITE_BASE_PATH=/gaudeix-codex/ pnpm --filter frontend build && cross-env VITE_API_BASE_URL=https://gaudeix.yampi.eu/api/v1 VITE_BASE_PATH=/gaudeix-codex/backoffice/ pnpm --filter backoffice build && node scripts/prepare-pages-artifact.mjs",
     "test": "pnpm --filter frontend test && pnpm --filter backoffice test",
     "test:ui": "pnpm --filter frontend test -- --ui",
     "test:run": "pnpm --filter frontend test && pnpm --filter backoffice test",
