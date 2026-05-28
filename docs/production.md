@@ -61,6 +61,8 @@ ADMIN_USER=<admin-user>
 ADMIN_PASSWORD=<admin-password>
 SYSTEM_USER=<system-user>
 SYSTEM_PASSWORD=<system-password>
+LLM_OPENROUTER_API_KEY=<openrouter-api-key>
+LLM_GEMINI_API_KEY=<gemini-api-key-if-used>
 ```
 
 Do not commit real secrets. Keep them in Dokploy and GitHub Actions only.

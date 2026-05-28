@@ -22,10 +22,10 @@ pytestmark = pytest.mark.django_db
 
 
 @pytest.fixture
-def local_config():
+def openrouter_config():
     config = LLMProviderConfig.get_solo()
-    config.provider = LLMProviderConfig.Provider.LOCAL
-    config.model_name = LLMProviderConfig.Model.MISTRAL_NEMO
+    config.provider = LLMProviderConfig.Provider.OPENROUTER
+    config.model_name = LLMProviderConfig.Model.OPENROUTER_FREE
     config.is_active = True
     config.temperature = 0.3
     config.max_tokens = 2000
@@ -34,7 +34,7 @@ def local_config():
 
 
 class TestTranslateText:
-    def test_translate_text_success_logs(self, local_config, monkeypatch):
+    def test_translate_text_success_logs(self, openrouter_config, monkeypatch):
         """translate_text should call provider and log success."""
 
         class FakeProvider:
@@ -44,7 +44,7 @@ class TestTranslateText:
                 return TranslationResult(
                     translated_text=f"{text}-{target_lang}",
                     tokens_used=42,
-                    provider="local",
+                    provider="openrouter",
                     model=model,
                 )
 
@@ -62,16 +62,16 @@ class TestTranslateText:
         assert log.translated_text == "Hola-en"
         assert log.tokens_used == 42
 
-    def test_translate_text_disabled_raises(self, local_config, monkeypatch):
-        local_config.is_active = False
-        local_config.save()
+    def test_translate_text_disabled_raises(self, openrouter_config, monkeypatch):
+        openrouter_config.is_active = False
+        openrouter_config.save()
 
         with pytest.raises(
             TranslationError, match="LLM translation is currently disabled"
         ):
             translate_text("Test", "ca", "en")
 
-    def test_translate_text_logs_error(self, local_config, monkeypatch):
+    def test_translate_text_logs_error(self, openrouter_config, monkeypatch):
         class FakeProvider:
             def translate(self, *args, **kwargs):
                 raise RuntimeError("LLM down")
@@ -162,6 +162,7 @@ def groq_config():
     return config
 
 
+@pytest.mark.skip(reason="Groq provider removed; OpenRouter and Gemini are supported")
 @pytest.mark.skipif(
     not pytest.importorskip("groq", reason="groq package not installed"),
     reason="groq package not installed",

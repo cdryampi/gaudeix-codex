@@ -7,7 +7,6 @@ export type LLMProviderConfig = {
   is_active: boolean;
   temperature: number;
   max_tokens: number;
-  local_api_url: string;
   credentials_configured: boolean;
   credentials_source: "db" | "env" | null;
   credentials: Record<
@@ -19,15 +18,16 @@ export type LLMProviderConfig = {
   >;
 };
 
-export type LLMProviderConfigUpdatePayload =
-  Partial<Pick<LLMProviderConfig, "provider" | "model_name" | "is_active" | "temperature" | "max_tokens" | "local_api_url">> & {
-    api_key?: string | null;
-    openai_api_key?: string | null;
-    gemini_api_key?: string | null;
-    anthropic_api_key?: string | null;
-    mistral_api_key?: string | null;
-    groq_api_key?: string | null;
-  };
+export type LLMProviderConfigUpdatePayload = Partial<
+  Pick<
+    LLMProviderConfig,
+    "provider" | "model_name" | "is_active" | "temperature" | "max_tokens"
+  >
+> & {
+  api_key?: string | null;
+  openrouter_api_key?: string | null;
+  gemini_api_key?: string | null;
+};
 
 export type TranslationLog = {
   id: number;

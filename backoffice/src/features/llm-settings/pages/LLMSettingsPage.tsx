@@ -40,47 +40,18 @@ import {
 } from "../types";
 
 const PROVIDERS = [
-  { value: "openai", label: "OpenAI" },
+  { value: "openrouter", label: "OpenRouter" },
   { value: "gemini", label: "Google Gemini" },
-  { value: "anthropic", label: "Anthropic Claude" },
-  { value: "mistral", label: "Mistral AI" },
-  { value: "groq", label: "Groq" },
-  { value: "local", label: "Local (Ollama / LM Studio)" },
 ];
 
 const MODELS_BY_PROVIDER: Record<
   string,
   Array<{ value: string; label: string }>
 > = {
-  openai: [
-    { value: "gpt-4o", label: "GPT-4o" },
-    { value: "gpt-4o-mini", label: "GPT-4o Mini" },
-    { value: "gpt-4-turbo", label: "GPT-4 Turbo" },
-  ],
+  openrouter: [{ value: "openrouter/free", label: "OpenRouter Free" }],
   gemini: [
     { value: "gemini-2.0-flash-exp", label: "Gemini 2.0 Flash" },
     { value: "gemini-1.5-pro", label: "Gemini 1.5 Pro" },
-  ],
-  anthropic: [
-    { value: "claude-3-5-sonnet-20241022", label: "Claude 3.5 Sonnet" },
-    { value: "claude-3-5-haiku-20241022", label: "Claude 3.5 Haiku" },
-  ],
-  mistral: [{ value: "mistral-large-latest", label: "Mistral Large" }],
-  groq: [
-    { value: "llama-3.3-70b-versatile", label: "Llama 3.3 70B" },
-    { value: "llama-3.1-8b-instant", label: "Llama 3.1 8B Instant" },
-    { value: "openai/gpt-oss-120b", label: "GPT OSS 120B" },
-    { value: "openai/gpt-oss-20b", label: "GPT OSS 20B" },
-  ],
-  local: [
-    { value: "llama3.2:latest", label: "Llama 3.2 (Local)" },
-    { value: "mistral:latest", label: "Mistral 7B (Local)" },
-    {
-      value: "mistralai/mistral-nemo-instruct-2407",
-      label: "Mistral Nemo Instruct (Local)",
-    },
-    { value: "qwen2.5:latest", label: "Qwen 2.5 (Local)" },
-    { value: "gemma2:latest", label: "Gemma 2 (Local)" },
   ],
 };
 
@@ -105,12 +76,8 @@ function toFormState(config: LLMProviderConfig): FormState {
 }
 
 type CredentialsDraft = {
-  openai_api_key: string;
+  openrouter_api_key: string;
   gemini_api_key: string;
-  anthropic_api_key: string;
-  mistral_api_key: string;
-  groq_api_key: string;
-  local_api_url: string;
 };
 
 type ApiError = {
@@ -128,12 +95,8 @@ export function LLMSettingsPage() {
   const [config, setConfig] = useState<LLMProviderConfig | null>(null);
   const [form, setForm] = useState<FormState | null>(null);
   const [credentialsDraft, setCredentialsDraft] = useState<CredentialsDraft>({
-    openai_api_key: "",
+    openrouter_api_key: "",
     gemini_api_key: "",
-    anthropic_api_key: "",
-    mistral_api_key: "",
-    groq_api_key: "",
-    local_api_url: "",
   });
   const [logs, setLogs] = useState<TranslationLog[]>([]);
   const [selectedLog, setSelectedLog] = useState<TranslationLog | null>(null);
@@ -172,10 +135,6 @@ export function LLMSettingsPage() {
         ]);
         setConfig(config);
         setForm(toFormState(config));
-        setCredentialsDraft((prev) => ({
-          ...prev,
-          local_api_url: config.local_api_url ?? "",
-        }));
         setLogs(logList);
       } catch (err) {
         console.error(err);
@@ -218,7 +177,6 @@ export function LLMSettingsPage() {
         data?.model_name?.[0] ||
         data?.provider?.[0] ||
         data?.api_key?.[0] ||
-        data?.local_api_url?.[0] ||
         "No se pudo guardar la configuración LLM";
       toast.error(String(msg));
     } finally {
@@ -242,7 +200,7 @@ export function LLMSettingsPage() {
     if (!form) return;
 
     const normalized = (credentialsDraft[field] ?? "").trim();
-    if (field !== "local_api_url" && !normalized) {
+    if (!normalized) {
       toast.error("Pega una API key para guardarla");
       return;
     }
@@ -256,11 +214,9 @@ export function LLMSettingsPage() {
       setForm(toFormState(updated));
       setCredentialsDraft((prev) => ({
         ...prev,
-        [field]: field === "local_api_url" ? (updated.local_api_url ?? "") : "",
+        [field]: "",
       }));
-      toast.success(
-        field === "local_api_url" ? "URL guardada" : "API key guardada",
-      );
+      toast.success("API key guardada");
     } catch (err: unknown) {
       console.error(err);
       const data = (err as ApiError)?.response?.data;
@@ -477,17 +433,17 @@ export function LLMSettingsPage() {
                   <div className="space-y-4">
                     <div className="grid gap-2 md:grid-cols-[160px_1fr_auto] md:items-end">
                       <div className="flex flex-col gap-1">
-                        <Label>OpenAI</Label>
-                        {getCredentialBadge("openai")}
+                        <Label>OpenRouter</Label>
+                        {getCredentialBadge("openrouter")}
                       </div>
                       <Input
                         type="password"
                         autoComplete="off"
-                        value={credentialsDraft.openai_api_key}
+                        value={credentialsDraft.openrouter_api_key}
                         onChange={(e) =>
                           setCredentialsDraft((prev) => ({
                             ...prev,
-                            openai_api_key: e.target.value,
+                            openrouter_api_key: e.target.value,
                           }))
                         }
                         placeholder="Pega la API key..."
@@ -495,7 +451,7 @@ export function LLMSettingsPage() {
                       <div className="flex justify-end gap-2">
                         <Button
                           type="button"
-                          onClick={() => saveCredential("openai_api_key")}
+                          onClick={() => saveCredential("openrouter_api_key")}
                           disabled={saving}
                         >
                           Guardar
@@ -503,7 +459,7 @@ export function LLMSettingsPage() {
                         <Button
                           type="button"
                           variant="outline"
-                          onClick={() => clearCredential("openai_api_key")}
+                          onClick={() => clearCredential("openrouter_api_key")}
                           disabled={saving}
                         >
                           Borrar
@@ -540,148 +496,6 @@ export function LLMSettingsPage() {
                           type="button"
                           variant="outline"
                           onClick={() => clearCredential("gemini_api_key")}
-                          disabled={saving}
-                        >
-                          Borrar
-                        </Button>
-                      </div>
-                    </div>
-
-                    <div className="grid gap-2 md:grid-cols-[160px_1fr_auto] md:items-end">
-                      <div className="flex flex-col gap-1">
-                        <Label>Anthropic</Label>
-                        {getCredentialBadge("anthropic")}
-                      </div>
-                      <Input
-                        type="password"
-                        autoComplete="off"
-                        value={credentialsDraft.anthropic_api_key}
-                        onChange={(e) =>
-                          setCredentialsDraft((prev) => ({
-                            ...prev,
-                            anthropic_api_key: e.target.value,
-                          }))
-                        }
-                        placeholder="Pega la API key..."
-                      />
-                      <div className="flex justify-end gap-2">
-                        <Button
-                          type="button"
-                          onClick={() => saveCredential("anthropic_api_key")}
-                          disabled={saving}
-                        >
-                          Guardar
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={() => clearCredential("anthropic_api_key")}
-                          disabled={saving}
-                        >
-                          Borrar
-                        </Button>
-                      </div>
-                    </div>
-
-                    <div className="grid gap-2 md:grid-cols-[160px_1fr_auto] md:items-end">
-                      <div className="flex flex-col gap-1">
-                        <Label>Mistral</Label>
-                        {getCredentialBadge("mistral")}
-                      </div>
-                      <Input
-                        type="password"
-                        autoComplete="off"
-                        value={credentialsDraft.mistral_api_key}
-                        onChange={(e) =>
-                          setCredentialsDraft((prev) => ({
-                            ...prev,
-                            mistral_api_key: e.target.value,
-                          }))
-                        }
-                        placeholder="Pega la API key..."
-                      />
-                      <div className="flex justify-end gap-2">
-                        <Button
-                          type="button"
-                          onClick={() => saveCredential("mistral_api_key")}
-                          disabled={saving}
-                        >
-                          Guardar
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={() => clearCredential("mistral_api_key")}
-                          disabled={saving}
-                        >
-                          Borrar
-                        </Button>
-                      </div>
-                    </div>
-
-                    <div className="grid gap-2 md:grid-cols-[160px_1fr_auto] md:items-end">
-                      <div className="flex flex-col gap-1">
-                        <Label>Groq</Label>
-                        {getCredentialBadge("groq")}
-                      </div>
-                      <Input
-                        type="password"
-                        autoComplete="off"
-                        value={credentialsDraft.groq_api_key}
-                        onChange={(e) =>
-                          setCredentialsDraft((prev) => ({
-                            ...prev,
-                            groq_api_key: e.target.value,
-                          }))
-                        }
-                        placeholder="Pega la API key..."
-                      />
-                      <div className="flex justify-end gap-2">
-                        <Button
-                          type="button"
-                          onClick={() => saveCredential("groq_api_key")}
-                          disabled={saving}
-                        >
-                          Guardar
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={() => clearCredential("groq_api_key")}
-                          disabled={saving}
-                        >
-                          Borrar
-                        </Button>
-                      </div>
-                    </div>
-
-                    <div className="grid gap-2 md:grid-cols-[160px_1fr_auto] md:items-end">
-                      <div className="flex flex-col gap-1">
-                        <Label>Local API URL</Label>
-                        {getCredentialBadge("local")}
-                      </div>
-                      <Input
-                        value={credentialsDraft.local_api_url}
-                        onChange={(e) =>
-                          setCredentialsDraft((prev) => ({
-                            ...prev,
-                            local_api_url: e.target.value,
-                          }))
-                        }
-                        placeholder="http://localhost:11434"
-                      />
-                      <div className="flex justify-end gap-2">
-                        <Button
-                          type="button"
-                          onClick={() => saveCredential("local_api_url")}
-                          disabled={saving}
-                        >
-                          Guardar
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={() => clearCredential("local_api_url")}
                           disabled={saving}
                         >
                           Borrar

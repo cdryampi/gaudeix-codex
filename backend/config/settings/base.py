@@ -22,12 +22,8 @@ env = environ.Env(
     DB_HOST=(str, "localhost"),
     DB_PORT=(str, "5432"),
     # LLM Translation API Keys
-    LLM_OPENAI_API_KEY=(str, ""),
+    LLM_OPENROUTER_API_KEY=(str, ""),
     LLM_GEMINI_API_KEY=(str, ""),
-    LLM_ANTHROPIC_API_KEY=(str, ""),
-    LLM_MISTRAL_API_KEY=(str, ""),
-    LLM_GROQ_API_KEY=(str, ""),
-    LLM_LOCAL_API_URL=(str, "http://localhost:11434"),
     FCM_CREDENTIALS_FILE=(str, ""),
     ASSET_LEGACY_DEPRECATION_RELEASE_WINDOW=(int, 2),
     REDIS_URL=(str, "redis://localhost:6379/0"),
@@ -258,12 +254,8 @@ CSRF_TRUSTED_ORIGINS = env.list(
 # ==============================================================================
 # LLM TRANSLATION SETTINGS
 # ==============================================================================
-LLM_OPENAI_API_KEY = env("LLM_OPENAI_API_KEY")
+LLM_OPENROUTER_API_KEY = env("LLM_OPENROUTER_API_KEY")
 LLM_GEMINI_API_KEY = env("LLM_GEMINI_API_KEY")
-LLM_ANTHROPIC_API_KEY = env("LLM_ANTHROPIC_API_KEY")
-LLM_MISTRAL_API_KEY = env("LLM_MISTRAL_API_KEY")
-LLM_GROQ_API_KEY = env("LLM_GROQ_API_KEY")
-LLM_LOCAL_API_URL = env("LLM_LOCAL_API_URL")
 
 # ==============================================================================
 # EXTERNAL SERVICES

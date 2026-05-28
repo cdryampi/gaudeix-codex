@@ -17,73 +17,24 @@ class LLMProviderConfig(SingletonModel):
     class Provider(models.TextChoices):
         """Supported LLM providers."""
 
-        OPENAI = "openai", _("OpenAI")
+        OPENROUTER = "openrouter", _("OpenRouter")
         GEMINI = "gemini", _("Google Gemini")
-        ANTHROPIC = "anthropic", _("Anthropic Claude")
-        MISTRAL = "mistral", _("Mistral AI")
-        GROQ = "groq", _("Groq")
-        LOCAL = "local", _("Local LLM (Ollama/LM Studio)")
 
     class Model(models.TextChoices):
         """Supported LLM models."""
 
-        # OpenAI models
-        GPT_4O = "gpt-4o", _("GPT-4o")
-        GPT_4O_MINI = "gpt-4o-mini", _("GPT-4o Mini")
-        GPT_4_TURBO = "gpt-4-turbo", _("GPT-4 Turbo")
+        # OpenRouter models
+        OPENROUTER_FREE = "openrouter/free", _("OpenRouter Free")
 
         # Gemini models
         GEMINI_2_FLASH = "gemini-2.0-flash-exp", _("Gemini 2.0 Flash")
         GEMINI_PRO = "gemini-1.5-pro", _("Gemini 1.5 Pro")
 
-        # Anthropic models
-        CLAUDE_SONNET = "claude-3-5-sonnet-20241022", _("Claude 3.5 Sonnet")
-        CLAUDE_HAIKU = "claude-3-5-haiku-20241022", _("Claude 3.5 Haiku")
-
-        # Mistral models
-        MISTRAL_LARGE = "mistral-large-latest", _("Mistral Large")
-
-        # Groq models (production - see console.groq.com/docs/models)
-        LLAMA_3_3_70B = "llama-3.3-70b-versatile", _("Llama 3.3 70B")
-        LLAMA_3_8B_INSTANT = "llama-3.1-8b-instant", _("Llama 3.1 8B Instant")
-        GPT_OSS_120B = "openai/gpt-oss-120b", _("GPT OSS 120B")
-        GPT_OSS_20B = "openai/gpt-oss-20b", _("GPT OSS 20B")
-        GROQ_COMPOUND = "groq/compound", _("Groq Compound")
-        GROQ_COMPOUND_MINI = "groq/compound-mini", _("Groq Compound Mini")
-
-        # Groq models (preview)
-        LLAMA_4_MAVERICK = (
-            "meta-llama/llama-4-maverick-17b-128e-instruct",
-            _("Llama 4 Maverick 17B 128E (Preview)"),
-        )
-        LLAMA_4_SCOUT = (
-            "meta-llama/llama-4-scout-17b-16e-instruct",
-            _("Llama 4 Scout 17B 16E (Preview)"),
-        )
-        KIMI_K2 = (
-            "moonshotai/kimi-k2-instruct-0905",
-            _("Kimi K2 Instruct 0905 (Preview)"),
-        )
-        QWEN3_32B = (
-            "qwen/qwen3-32b",
-            _("Qwen3 32B (Preview)"),
-        )
-
-        # Local models (Ollama/LM Studio compatible)
-        LLAMA_3_8B = "llama3.2:latest", _("Llama 3.2 (Local)")
-        MISTRAL_7B = "mistral:latest", _("Mistral 7B (Local)")
-        MISTRAL_NEMO = (
-            "mistralai/mistral-nemo-instruct-2407",
-            _("Mistral Nemo Instruct (Local)"),
-        )
-        QWEN_7B = "qwen2.5:latest", _("Qwen 2.5 (Local)")
-        GEMMA_7B = "gemma2:latest", _("Gemma 2 (Local)")
-
     provider = models.CharField(
         _("Provider"),
         max_length=20,
         choices=Provider.choices,
-        default=Provider.OPENAI,
+        default=Provider.OPENROUTER,
         help_text=_("LLM provider to use for translations"),
     )
 
@@ -91,7 +42,7 @@ class LLMProviderConfig(SingletonModel):
         _("Model Name"),
         max_length=50,
         choices=Model.choices,
-        default=Model.GPT_4O_MINI,
+        default=Model.OPENROUTER_FREE,
         help_text=_("Specific model to use for translations"),
     )
 
@@ -116,11 +67,11 @@ class LLMProviderConfig(SingletonModel):
         help_text=_("Maximum tokens for translation output"),
     )
 
-    openai_api_key = models.TextField(
-        _("OpenAI API Key"),
+    openrouter_api_key = models.TextField(
+        _("OpenRouter API Key"),
         blank=True,
         default="",
-        help_text=_("Optional. Overrides LLM_OPENAI_API_KEY env var."),
+        help_text=_("Optional. Overrides LLM_OPENROUTER_API_KEY env var."),
     )
 
     gemini_api_key = models.TextField(
@@ -128,34 +79,6 @@ class LLMProviderConfig(SingletonModel):
         blank=True,
         default="",
         help_text=_("Optional. Overrides LLM_GEMINI_API_KEY env var."),
-    )
-
-    anthropic_api_key = models.TextField(
-        _("Anthropic API Key"),
-        blank=True,
-        default="",
-        help_text=_("Optional. Overrides LLM_ANTHROPIC_API_KEY env var."),
-    )
-
-    mistral_api_key = models.TextField(
-        _("Mistral API Key"),
-        blank=True,
-        default="",
-        help_text=_("Optional. Overrides LLM_MISTRAL_API_KEY env var."),
-    )
-
-    groq_api_key = models.TextField(
-        _("Groq API Key"),
-        blank=True,
-        default="",
-        help_text=_("Optional. Overrides LLM_GROQ_API_KEY env var."),
-    )
-
-    local_api_url = models.URLField(
-        _("Local API URL"),
-        blank=True,
-        default="",
-        help_text=_("Optional. Overrides LLM_LOCAL_API_URL env var."),
     )
 
     class Meta:
