@@ -20,6 +20,14 @@ await cp(
   path.join(backofficeOutput, "404.html"),
 );
 
+const frontendRouteEntries = ["festes/programacio"];
+
+for (const route of frontendRouteEntries) {
+  const routeOutputDir = path.join(outputDir, route);
+  await mkdir(routeOutputDir, { recursive: true });
+  await cp(path.join(outputDir, "index.html"), path.join(routeOutputDir, "index.html"));
+}
+
 await writeFile(path.join(outputDir, ".nojekyll"), "");
 
 console.log(`Prepared GitHub Pages artifact at ${outputDir}`);
