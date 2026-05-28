@@ -3,7 +3,9 @@ export type HeroVideoData = {
   poster?: string;
 };
 
-export const HERO_VIDEO: HeroVideoData = {
-  src: "/media/video/gaudeix.mp4",
-};
+const publicAsset = (path: string) =>
+  `${import.meta.env.BASE_URL}${path.replace(/^\//, "")}`;
 
+export const HERO_VIDEO: HeroVideoData = {
+  src: publicAsset("media/video/gaudeix.mp4"),
+};

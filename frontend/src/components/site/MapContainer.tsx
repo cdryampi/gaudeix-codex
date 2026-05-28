@@ -4,7 +4,7 @@ import {
   useJsApiLoader,
   GoogleMapProps,
 } from "@react-google-maps/api";
-import { MapPin, Info } from "lucide-react";
+import { MapPin } from "lucide-react";
 
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as
   | string
@@ -99,9 +99,25 @@ export function MapContainer({
   className,
   ...props
 }: MapContainerProps) {
+  if (!GOOGLE_MAPS_API_KEY) {
+    return <MapFallback className={className} />;
+  }
+
+  return (
+    <LoadedMapContainer className={className} {...props}>
+      {children}
+    </LoadedMapContainer>
+  );
+}
+
+function LoadedMapContainer({
+  children,
+  className,
+  ...props
+}: MapContainerProps) {
   const { isLoaded, loadError } = useJsApiLoader({
     id: "gaudeix-google-maps",
-    googleMapsApiKey: GOOGLE_MAPS_API_KEY ?? "",
+    googleMapsApiKey: GOOGLE_MAPS_API_KEY as string,
   });
 
   const mapOptions = useMemo<google.maps.MapOptions>(
@@ -116,19 +132,8 @@ export function MapContainer({
     [props.options],
   );
 
-  if (!GOOGLE_MAPS_API_KEY || loadError) {
-    return (
-      <div
-        className={`flex items-center justify-center bg-slate-900 text-slate-500 ${className}`}
-      >
-        <div className="text-center px-10">
-          <MapPin className="h-12 w-12 mx-auto mb-4 opacity-20" />
-          <p className="font-bold uppercase tracking-widest text-[10px]">
-            Mapa no disponible
-          </p>
-        </div>
-      </div>
-    );
+  if (loadError) {
+    return <MapFallback className={className} />;
   }
 
   if (!isLoaded) {
@@ -157,6 +162,21 @@ export function MapContainer({
       >
         {children}
       </GoogleMap>
+    </div>
+  );
+}
+
+function MapFallback({ className }: { className?: string }) {
+  return (
+    <div
+      className={`flex items-center justify-center bg-slate-900 text-slate-500 ${className}`}
+    >
+      <div className="text-center px-10">
+        <MapPin className="h-12 w-12 mx-auto mb-4 opacity-20" />
+        <p className="font-bold uppercase tracking-widest text-[10px]">
+          Mapa no disponible
+        </p>
+      </div>
     </div>
   );
 }

@@ -26,6 +26,12 @@ import {
 
 type ProgrammingView = "list" | "calendar" | "map";
 
+const publicAsset = (path: string) =>
+  `${import.meta.env.BASE_URL}${path.replace(/^\//, "")}`;
+
+const posterOne = publicAsset("festa_cryptic_poster_1.png");
+const posterTwo = publicAsset("festa_cryptic_poster_2.png");
+
 const parseView = (value: string | null): ProgrammingView => {
   if (value === "calendar" || value === "map") {
     return value;
@@ -161,14 +167,14 @@ export const ProgrammingPage = () => {
                 <div className="flex gap-2">
                   <div className="w-12 h-16 rounded-lg bg-white/5 border border-white/10 overflow-hidden shadow-2xl transition-transform hover:scale-110">
                     <img
-                      src="/festa_cryptic_poster_1.png"
+                      src={posterOne}
                       alt="Poster 1"
                       className="w-full h-full object-cover grayscale opacity-60 hover:grayscale-0 hover:opacity-100"
                     />
                   </div>
                   <div className="w-12 h-16 rounded-lg bg-white/5 border border-white/10 overflow-hidden shadow-2xl transition-transform hover:scale-110">
                     <img
-                      src="/festa_cryptic_poster_2.png"
+                      src={posterTwo}
                       alt="Poster 2"
                       className="w-full h-full object-cover grayscale opacity-60 hover:grayscale-0 hover:opacity-100"
                     />
@@ -329,14 +335,14 @@ export const ProgrammingPage = () => {
             <div className="relative min-h-[400px]">
               <div className="pointer-events-none absolute left-0 top-0 -translate-x-1/2 opacity-5 mix-blend-screen overflow-hidden">
                 <img
-                  src="/festa_cryptic_poster_1.png"
+                  src={posterOne}
                   alt=""
                   className="w-[60vw] max-w-4xl rotate-12"
                 />
               </div>
               <div className="pointer-events-none absolute right-0 bottom-0 translate-x-1/4 opacity-5 mix-blend-screen overflow-hidden">
                 <img
-                  src="/festa_cryptic_poster_2.png"
+                  src={posterTwo}
                   alt=""
                   className="w-[50vw] max-w-3xl -rotate-12"
                 />

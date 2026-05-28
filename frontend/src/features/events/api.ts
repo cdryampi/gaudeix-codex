@@ -4,11 +4,16 @@ import { Event, EventListResponse } from "./types";
 export const getEvents = async (
   params?: Record<string, any>,
 ): Promise<EventListResponse | Event[]> => {
-  const queryString = params
-    ? "?" +
-      new URLSearchParams(
-        Object.entries(params).map(([k, v]) => [k, String(v)]),
-      ).toString()
+  const cleanParams = Object.fromEntries(
+    Object.entries(params ?? {}).filter(
+      ([, value]) => value !== undefined && value !== null && value !== "",
+    ),
+  );
+  const searchParams = new URLSearchParams(
+    Object.entries(cleanParams).map(([key, value]) => [key, String(value)]),
+  );
+  const queryString = searchParams.toString()
+    ? `?${searchParams.toString()}`
     : "";
   return apiGet<EventListResponse | Event[]>(`/events/${queryString}`);
 };
