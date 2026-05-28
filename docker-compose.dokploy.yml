@@ -25,7 +25,7 @@ services:
       FCM_CREDENTIALS_FILE: ${FCM_CREDENTIALS_FILE:-}
       SERVE_MEDIA_FILES: "true"
       SERVE_STATIC_FILES: "false"
-      ALLOWED_HOSTS: gaudeix.yampi.eu
+      ALLOWED_HOSTS: gaudeix.yampi.eu,127.0.0.1,localhost
       DJANGO_ALLOWED_CORS_ORIGINS: https://cdryampi.github.io
       DJANGO_CSRF_TRUSTED_ORIGINS: https://cdryampi.github.io,https://gaudeix.yampi.eu
       REDIS_URL: redis://app-redis:6379/0
@@ -63,7 +63,7 @@ services:
       FCM_CREDENTIALS_FILE: ${FCM_CREDENTIALS_FILE:-}
       SERVE_MEDIA_FILES: "false"
       SERVE_STATIC_FILES: "false"
-      ALLOWED_HOSTS: gaudeix.yampi.eu
+      ALLOWED_HOSTS: gaudeix.yampi.eu,127.0.0.1,localhost
       DJANGO_ALLOWED_CORS_ORIGINS: https://cdryampi.github.io
       DJANGO_CSRF_TRUSTED_ORIGINS: https://cdryampi.github.io,https://gaudeix.yampi.eu
       REDIS_URL: redis://app-redis:6379/0
@@ -100,7 +100,7 @@ services:
       FCM_CREDENTIALS_FILE: ${FCM_CREDENTIALS_FILE:-}
       SERVE_MEDIA_FILES: "false"
       SERVE_STATIC_FILES: "false"
-      ALLOWED_HOSTS: gaudeix.yampi.eu
+      ALLOWED_HOSTS: gaudeix.yampi.eu,127.0.0.1,localhost
       DJANGO_ALLOWED_CORS_ORIGINS: https://cdryampi.github.io
       DJANGO_CSRF_TRUSTED_ORIGINS: https://cdryampi.github.io,https://gaudeix.yampi.eu
       REDIS_URL: redis://app-redis:6379/0
