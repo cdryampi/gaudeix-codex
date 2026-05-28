@@ -10,6 +10,8 @@
     "test": "cross-env NODE_OPTIONS=--max-old-space-size=8192 vitest run",
     "test:watch": "cross-env NODE_OPTIONS=--max-old-space-size=8192 vitest",
     "type-check": "tsc --noEmit",
+    "lint": "eslint \"src\"",
+    "lint:fix": "eslint \"src\" --fix",
     "clean:js": "rimraf --glob src/**/*.js src/**/*.js.map",
     "cc": "rimraf node_modules/.vite && echo Cache limpiada"
   },

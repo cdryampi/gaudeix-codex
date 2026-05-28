@@ -1,0 +1,122 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: >
+      sh -c "python manage.py migrate --noinput &&
+             python manage.py collectstatic --noinput &&
+             gunicorn gaudeix_backend.wsgi:application
+             --bind 0.0.0.0:8000
+             --workers $${GUNICORN_WORKERS:-3}
+             --timeout $${GUNICORN_TIMEOUT:-120}"
+    environment:
+      ENVIRONMENT: production
+      DEBUG: "false"
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:?DJANGO_SECRET_KEY is required}
+      DATABASE_URL: ${DATABASE_URL:?DATABASE_URL is required}
+      ADMIN_USER: ${ADMIN_USER:-}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      SYSTEM_USER: ${SYSTEM_USER:-}
+      SYSTEM_PASSWORD: ${SYSTEM_PASSWORD:-}
+      LLM_OPENAI_API_KEY: ${LLM_OPENAI_API_KEY:-}
+      LLM_GEMINI_API_KEY: ${LLM_GEMINI_API_KEY:-}
+      LLM_ANTHROPIC_API_KEY: ${LLM_ANTHROPIC_API_KEY:-}
+      LLM_MISTRAL_API_KEY: ${LLM_MISTRAL_API_KEY:-}
+      LLM_GROQ_API_KEY: ${LLM_GROQ_API_KEY:-}
+      LLM_LOCAL_API_URL: ${LLM_LOCAL_API_URL:-http://localhost:11434}
+      FCM_CREDENTIALS_FILE: ${FCM_CREDENTIALS_FILE:-}
+      SERVE_MEDIA_FILES: "true"
+      SERVE_STATIC_FILES: "false"
+      ALLOWED_HOSTS: gaudeix.yampi.eu
+      DJANGO_ALLOWED_CORS_ORIGINS: https://cdryampi.github.io
+      DJANGO_CSRF_TRUSTED_ORIGINS: https://cdryampi.github.io,https://gaudeix.yampi.eu
+      REDIS_URL: redis://app-redis:6379/0
+      CELERY_BROKER_URL: redis://app-redis:6379/0
+      CELERY_RESULT_BACKEND: redis://app-redis:6379/1
+    volumes:
+      - gaudeix_media:/app/media
+      - gaudeix_static:/app/staticfiles
+    networks:
+      - dokploy-network
+    ports:
+      - "8000"
+    restart: unless-stopped
+
+  worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: celery -A config worker --loglevel=info
+    environment:
+      ENVIRONMENT: production
+      DEBUG: "false"
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:?DJANGO_SECRET_KEY is required}
+      DATABASE_URL: ${DATABASE_URL:?DATABASE_URL is required}
+      ADMIN_USER: ${ADMIN_USER:-}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      SYSTEM_USER: ${SYSTEM_USER:-}
+      SYSTEM_PASSWORD: ${SYSTEM_PASSWORD:-}
+      LLM_OPENAI_API_KEY: ${LLM_OPENAI_API_KEY:-}
+      LLM_GEMINI_API_KEY: ${LLM_GEMINI_API_KEY:-}
+      LLM_ANTHROPIC_API_KEY: ${LLM_ANTHROPIC_API_KEY:-}
+      LLM_MISTRAL_API_KEY: ${LLM_MISTRAL_API_KEY:-}
+      LLM_GROQ_API_KEY: ${LLM_GROQ_API_KEY:-}
+      LLM_LOCAL_API_URL: ${LLM_LOCAL_API_URL:-http://localhost:11434}
+      FCM_CREDENTIALS_FILE: ${FCM_CREDENTIALS_FILE:-}
+      SERVE_MEDIA_FILES: "false"
+      SERVE_STATIC_FILES: "false"
+      ALLOWED_HOSTS: gaudeix.yampi.eu
+      DJANGO_ALLOWED_CORS_ORIGINS: https://cdryampi.github.io
+      DJANGO_CSRF_TRUSTED_ORIGINS: https://cdryampi.github.io,https://gaudeix.yampi.eu
+      REDIS_URL: redis://app-redis:6379/0
+      CELERY_BROKER_URL: redis://app-redis:6379/0
+      CELERY_RESULT_BACKEND: redis://app-redis:6379/1
+    volumes:
+      - gaudeix_media:/app/media
+    networks:
+      - dokploy-network
+    restart: unless-stopped
+
+  beat:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: celery -A config beat --loglevel=info
+    environment:
+      ENVIRONMENT: production
+      DEBUG: "false"
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:?DJANGO_SECRET_KEY is required}
+      DATABASE_URL: ${DATABASE_URL:?DATABASE_URL is required}
+      ADMIN_USER: ${ADMIN_USER:-}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      SYSTEM_USER: ${SYSTEM_USER:-}
+      SYSTEM_PASSWORD: ${SYSTEM_PASSWORD:-}
+      LLM_OPENAI_API_KEY: ${LLM_OPENAI_API_KEY:-}
+      LLM_GEMINI_API_KEY: ${LLM_GEMINI_API_KEY:-}
+      LLM_ANTHROPIC_API_KEY: ${LLM_ANTHROPIC_API_KEY:-}
+      LLM_MISTRAL_API_KEY: ${LLM_MISTRAL_API_KEY:-}
+      LLM_GROQ_API_KEY: ${LLM_GROQ_API_KEY:-}
+      LLM_LOCAL_API_URL: ${LLM_LOCAL_API_URL:-http://localhost:11434}
+      FCM_CREDENTIALS_FILE: ${FCM_CREDENTIALS_FILE:-}
+      SERVE_MEDIA_FILES: "false"
+      SERVE_STATIC_FILES: "false"
+      ALLOWED_HOSTS: gaudeix.yampi.eu
+      DJANGO_ALLOWED_CORS_ORIGINS: https://cdryampi.github.io
+      DJANGO_CSRF_TRUSTED_ORIGINS: https://cdryampi.github.io,https://gaudeix.yampi.eu
+      REDIS_URL: redis://app-redis:6379/0
+      CELERY_BROKER_URL: redis://app-redis:6379/0
+      CELERY_RESULT_BACKEND: redis://app-redis:6379/1
+    volumes:
+      - gaudeix_media:/app/media
+    networks:
+      - dokploy-network
+    restart: unless-stopped
+
+volumes:
+  gaudeix_media:
+  gaudeix_static:
+
+networks:
+  dokploy-network:
+    external: true

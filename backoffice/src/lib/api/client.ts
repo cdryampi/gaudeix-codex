@@ -2,6 +2,8 @@ import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { envConfig } from "../config/env";
 import { authStorage } from "../storage/authStorage";
 
+const appBasePath = import.meta.env.BASE_URL.replace(/\/$/, "") || "";
+
 const client = axios.create({
   baseURL: envConfig.apiBaseUrl,
   headers: {
@@ -68,7 +70,7 @@ client.interceptors.response.use(
       } catch (refreshError) {
         // Refresh failed -> Logout user
         authStorage.clear();
-        window.location.href = "/login"; // Redirect to login
+        window.location.href = `${appBasePath}/login`;
         return Promise.reject(refreshError);
       }
     }
