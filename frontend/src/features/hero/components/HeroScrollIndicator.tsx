@@ -8,7 +8,7 @@ if (typeof window !== "undefined") {
 }
 
 export function HeroScrollIndicator({
-  triggerSelector = ".hero",
+  triggerSelector,
   mode = "overlay",
 }: {
   triggerSelector?: string;
@@ -23,6 +23,10 @@ export function HeroScrollIndicator({
     if (!indicatorRef.current || !dotRef.current) return;
 
     const ctx = gsap.context(() => {
+      const trigger = triggerSelector
+        ? document.querySelector(triggerSelector)
+        : indicatorRef.current?.closest("section");
+
       gsap.set(indicatorRef.current, { opacity: 1, y: 0 });
 
       gsap.to(indicatorRef.current, {
@@ -30,7 +34,7 @@ export function HeroScrollIndicator({
         y: -16,
         ease: "none",
         scrollTrigger: {
-          trigger: triggerSelector,
+          trigger: trigger ?? indicatorRef.current,
           start: "top top",
           end: "bottom top",
           scrub: true,
@@ -67,7 +71,10 @@ export function HeroScrollIndicator({
 
   return (
     <div className={wrapperClassName}>
-      <div ref={indicatorRef} className="flex flex-col items-center justify-center gap-3">
+      <div
+        ref={indicatorRef}
+        className="flex flex-col items-center justify-center gap-3"
+      >
         <div className="relative h-12 w-7 rounded-full border border-white/40 shadow-sm backdrop-blur-sm">
           <div
             ref={dotRef}
