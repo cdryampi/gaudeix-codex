@@ -8,7 +8,7 @@ from core.serializers import CategorySerializer
 from media_files.serializers import ImageFileSerializer, VideoFileSerializer
 from static_pages.serializers import StaticPageSerializer
 
-from .models import FooterBadge, FooterLink, FooterSettings, MenuItem, SiteSettings
+from .models import BuildJob, FooterBadge, FooterLink, FooterSettings, MenuItem, SiteSettings
 
 
 def is_allowed_link_value(value: str) -> bool:
@@ -127,8 +127,83 @@ class SiteSettingsSerializer(serializers.ModelSerializer):
             "alert_end_at",
             "is_alert_active",
             "current_weather",
+            "theme_config",
+            "theme_config_published",
         ]
-        read_only_fields = ["id", "current_weather"]
+        read_only_fields = ["id", "current_weather", "theme_config_published"]
+
+    def validate_theme_config(self, value):
+        if not isinstance(value, dict):
+            raise serializers.ValidationError(_("La configuració de tema ha de ser un objecte JSON."))
+
+        allowed_keys = {
+            "primary",
+            "secondary",
+            "accent",
+            "background_light",
+            "background_dark",
+            "surface",
+            "surface_muted",
+            "text_primary",
+            "text_secondary",
+            "radius_scale",
+            "shadow_preset",
+            "theme_preset",
+        }
+
+        import re
+        hex_color_regex = re.compile(r"^#[0-9A-Fa-f]{6}$")
+
+        for k, v in value.items():
+            if k not in allowed_keys:
+                raise serializers.ValidationError(_(f"Clau de tema no permesa: {k}"))
+
+            if k in {
+                "primary",
+                "secondary",
+                "accent",
+                "background_light",
+                "background_dark",
+                "surface",
+                "surface_muted",
+                "text_primary",
+                "text_secondary",
+            }:
+                if v and not hex_color_regex.match(str(v)):
+                    raise serializers.ValidationError(
+                        _(f"El color per a {k} ha de ser un format HEX de 6 caràcters vàlid (ex: #ffffff).")
+                    )
+
+            if k == "radius_scale" and v is not None:
+                try:
+                    float(v)
+                except ValueError:
+                    raise serializers.ValidationError(_("radius_scale ha de ser un número vàlid."))
+
+            if k == "shadow_preset" and v is not None:
+                if v not in {"none", "sm", "md", "lg"}:
+                    raise serializers.ValidationError(
+                        _("shadow_preset ha de ser un dels següents: none, sm, md, lg.")
+                    )
+
+            if k == "theme_preset" and v is not None:
+                if v not in {"classic", "modern", "vibrant", "oceanic", "sunset"}:
+                    raise serializers.ValidationError(_("theme_preset no vàlid."))
+
+        return value
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        request = self.context.get("request")
+
+        # Si no hi ha request o el request és d'un usuari no autenticat,
+        # retornem la configuració de tema publicada sota el camp theme_config.
+        if not request or not request.user or not request.user.is_authenticated:
+            data["theme_config"] = (
+                data.get("theme_config_published") or data.get("theme_config") or {}
+            )
+
+        return data
 
     def get_current_weather(self, obj):
         from django.utils import timezone
@@ -595,3 +670,26 @@ class FooterPublicSerializer(serializers.ModelSerializer):
     def get_badges(self, obj):
         badges = obj.badges.filter(is_active=True).order_by("order", "id")
         return FooterPublicBadgeSerializer(badges, many=True, context=self.context).data
+
+
+class BuildJobSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BuildJob
+        fields = [
+            "id",
+            "status",
+            "created_at",
+            "started_at",
+            "finished_at",
+            "error_message",
+            "theme_config",
+        ]
+        read_only_fields = [
+            "id",
+            "status",
+            "created_at",
+            "started_at",
+            "finished_at",
+            "error_message",
+            "theme_config",
+        ]

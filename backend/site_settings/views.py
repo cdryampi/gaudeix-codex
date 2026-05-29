@@ -50,6 +50,33 @@ class SiteSettingsViewSet(viewsets.ModelViewSet):
         self.perform_update(serializer)
         return Response(serializer.data)
 
+    @action(detail=False, methods=["post"], url_path="publish")
+    def publish(self, request):
+        from .models import BuildJob
+        from .serializers import BuildJobSerializer
+        from .tasks import trigger_frontend_build_task
+
+        instance = self.get_object()
+        job = BuildJob.objects.create(
+            status="pending",
+            theme_config=instance.theme_config or {}
+        )
+
+        # Trigger the Celery task
+        trigger_frontend_build_task.delay(job.id)
+
+        serializer = BuildJobSerializer(job, context={"request": request})
+        return Response(serializer.data)
+
+    @action(detail=False, methods=["get"], url_path="builds")
+    def builds(self, request):
+        from .models import BuildJob
+        from .serializers import BuildJobSerializer
+
+        queryset = BuildJob.objects.all().order_by("-created_at")[:50]
+        serializer = BuildJobSerializer(queryset, many=True, context={"request": request})
+        return Response(serializer.data)
+
 
 class MenuItemViewSet(viewsets.ModelViewSet):
     serializer_class = MenuItemSerializer

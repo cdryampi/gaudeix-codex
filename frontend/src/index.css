@@ -1,22 +1,27 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #0f4c81;
-  --color-secondary: #0d8f8c;
-  --color-accent: #ffb24d;
-  --color-background-light: #f5f8fb;
-  --color-background-dark: #0c2f4f;
-  --color-surface: #ffffff;
-  --color-surface-muted: #e9f4f7;
-  --color-text-primary: #14324a;
-  --color-text-secondary: #587185;
+  --color-primary: var(--primary, #0f4c81);
+  --color-secondary: var(--secondary, #0d8f8c);
+  --color-accent: var(--accent, #ffb24d);
+  --color-background-light: var(--background-light, #f5f8fb);
+  --color-background-dark: var(--background-dark, #0c2f4f);
+  --color-surface: var(--surface, #ffffff);
+  --color-surface-muted: var(--surface-muted, #e9f4f7);
+  --color-text-primary: var(--text-primary, #14324a);
+  --color-text-secondary: var(--text-secondary, #587185);
   --color-border-soft: #d6e4ec;
   --color-border-strong: #bfd4df;
 
   --font-display: "Plus Jakarta Sans", sans-serif;
-  --font-interface: "Manrope", "Segoe UI", "Helvetica Neue", Arial, system-ui, sans-serif;
-  --shadow-card: 0 30px 60px rgba(10, 35, 60, 0.04), 0 4px 12px rgba(10, 35, 60, 0.02);
-  --shadow-soft: 0 20px 40px rgba(10, 35, 60, 0.03);
+  --font-interface:
+    "Manrope", "Segoe UI", "Helvetica Neue", Arial, system-ui, sans-serif;
+  --shadow-card: var(
+    --shadow-active,
+    0 30px 60px rgba(10, 35, 60, 0.04),
+    0 4px 12px rgba(10, 35, 60, 0.02)
+  );
+  --shadow-soft: var(--shadow-active, 0 20px 40px rgba(10, 35, 60, 0.03));
 }
 
 @layer base {
@@ -27,8 +32,16 @@
   body {
     font-family: var(--font-interface);
     background:
-      radial-gradient(circle at top left, rgba(67, 197, 197, 0.08), transparent 40%),
-      radial-gradient(circle at top right, rgba(255, 178, 77, 0.08), transparent 30%),
+      radial-gradient(
+        circle at top left,
+        rgba(67, 197, 197, 0.08),
+        transparent 40%
+      ),
+      radial-gradient(
+        circle at top right,
+        rgba(255, 178, 77, 0.08),
+        transparent 30%
+      ),
       #f8fafc;
     @apply text-[color:var(--color-text-primary)] antialiased overflow-x-hidden;
   }
@@ -38,6 +51,7 @@
   h3,
   h4 {
     font-family: var(--font-display);
+    text-wrap: balance;
   }
 
   h1 {
@@ -79,12 +93,16 @@
   }
 
   .card-surface {
-    @apply rounded-[2.5rem] bg-white/95 backdrop-blur-md;
+    border-radius: calc(var(--radius-scale, 1) * 2.5rem);
+    background-color: var(--color-surface, rgba(255, 255, 255, 0.95));
+    backdrop-filter: blur(12px);
     box-shadow: var(--shadow-card);
   }
 
   .card-surface-muted {
-    @apply rounded-[2.5rem] bg-slate-50/80 backdrop-blur-md;
+    border-radius: calc(var(--radius-scale, 1) * 2.5rem);
+    background-color: var(--color-surface-muted, rgba(248, 250, 252, 0.8));
+    backdrop-filter: blur(12px);
     box-shadow: var(--shadow-soft);
   }
 
@@ -98,14 +116,30 @@
   }
 
   .hero-shell {
-    @apply rounded-[2.25rem] border border-white/25 bg-[linear-gradient(145deg,rgba(10,67,108,0.82),rgba(16,119,146,0.68)_55%,rgba(255,196,104,0.28))] text-white;
-    box-shadow: 0 34px 80px rgba(9, 45, 71, 0.28);
+    border-radius: calc(var(--radius-scale, 1) * 2.25rem);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: linear-gradient(
+      145deg,
+      rgba(10, 67, 108, 0.82),
+      rgba(16, 119, 146, 0.68) 55%,
+      rgba(255, 196, 104, 0.28)
+    );
+    color: white;
+    box-shadow: var(--shadow-card);
   }
 
   .hero-panel {
     background:
-      radial-gradient(circle at top right, rgba(255, 255, 255, 0.14), transparent 36%),
-      linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+      radial-gradient(
+        circle at top right,
+        rgba(255, 255, 255, 0.14),
+        transparent 36%
+      ),
+      linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.08),
+        rgba(255, 255, 255, 0.02)
+      );
   }
 
   .municipal-grid {
@@ -113,20 +147,42 @@
   }
 
   .filter-shell {
-    @apply rounded-[2rem] border border-white/70 bg-white/88 p-4 md:p-5 backdrop-blur-sm;
+    border-radius: calc(var(--radius-scale, 1) * 2rem);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    background-color: rgba(255, 255, 255, 0.88);
+    padding: 1.25rem;
+    backdrop-filter: blur(8px);
     box-shadow: var(--shadow-soft);
   }
 
   .coast-section {
     background:
-      linear-gradient(180deg, rgba(248, 250, 252, 0) 0%, rgba(255, 255, 255, 1) 15%, rgba(255, 255, 255, 1) 100%),
-      radial-gradient(circle at top right, rgba(13, 143, 140, 0.08), transparent 40%);
+      linear-gradient(
+        180deg,
+        rgba(248, 250, 252, 0) 0%,
+        rgba(255, 255, 255, 1) 15%,
+        rgba(255, 255, 255, 1) 100%
+      ),
+      radial-gradient(
+        circle at top right,
+        rgba(13, 143, 140, 0.08),
+        transparent 40%
+      );
   }
 
   .sand-section {
     background:
-      linear-gradient(180deg, rgba(248, 250, 252, 0) 0%, rgba(255, 255, 255, 1) 15%, rgba(255, 255, 255, 1) 100%),
-      radial-gradient(circle at top left, rgba(255, 178, 77, 0.08), transparent 40%);
+      linear-gradient(
+        180deg,
+        rgba(248, 250, 252, 0) 0%,
+        rgba(255, 255, 255, 1) 15%,
+        rgba(255, 255, 255, 1) 100%
+      ),
+      radial-gradient(
+        circle at top left,
+        rgba(255, 178, 77, 0.08),
+        transparent 40%
+      );
   }
 
   .page-shell-offset {
@@ -139,7 +195,12 @@
 
   .section-divider {
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(15, 76, 129, 0.24), transparent);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(15, 76, 129, 0.24),
+      transparent
+    );
   }
 }
 
@@ -149,4 +210,18 @@
 }
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+/* Modern Web Guidance utilities */
+.defer-render {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 500px;
+}
+
+input:user-invalid {
+  border-color: #ef4444;
+}
+
+input:user-invalid:focus-visible {
+  box-shadow: 0 0 0 2px #ef4444;
 }
