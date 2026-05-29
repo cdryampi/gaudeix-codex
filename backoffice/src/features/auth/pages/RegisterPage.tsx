@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AuthCard } from "../components/AuthCard";
 import { useAuthForm } from "../hooks/useAuthForm";
-import { API_CONFIG, API_ENDPOINTS } from "@/lib/config/constants";
 import { LogIn } from "lucide-react";
 
 const registerSchema = z
@@ -26,12 +25,7 @@ export const RegisterPage = () => {
     useAuthForm({
       schema: registerSchema,
       defaultValues: { email: "", password: "", repeat_password: "" },
-      onSubmit: async (data) => {
-        console.log("Register attempt:", data);
-        console.log(
-          "Target URL:",
-          `${API_CONFIG.BASE_URL}${API_ENDPOINTS.AUTH.REGISTER}`
-        );
+      onSubmit: async () => {
         // Placeholder for actual register logic
       },
     });

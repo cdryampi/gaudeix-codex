@@ -1,9 +1,10 @@
 import { NotificationDraft, NotificationLog } from "./types";
 
 export const sendNotification = async (
-  draft: NotificationDraft,
+  _draft: NotificationDraft,
 ): Promise<boolean> => {
-  console.log("Sending notification:", draft);
+  void _draft;
+  // TODO: implementar llamada real al endpoint de notificaciones
   await new Promise((resolve) => setTimeout(resolve, 1000));
   return true;
 };

@@ -28,15 +28,17 @@ export class ApiRequestError extends Error {
 
 function normalizeApiBaseUrl(value: string): string {
   const trimmed = value.replace(/\/+$/, "");
+  // Compatibilidad: si la URL base termina en /api, añade /v1
   if (trimmed.endsWith("/api")) return `${trimmed}/v1`;
   return trimmed;
 }
 
+// Fallback a localhost cuando VITE_API_BASE_URL no está definida o es inválida.
+// Esto permite que el frontend funcione en desarrollo sin configuración extra.
 export function getValidBaseUrl(url: string | undefined): string {
   const fallbackUrl = "http://localhost:8000/api/v1";
 
   if (!url) {
-    // eslint-disable-next-line no-console
     console.error(
       "VITE_API_BASE_URL is not defined. Falling back to default: " +
         fallbackUrl,
@@ -48,7 +50,6 @@ export function getValidBaseUrl(url: string | undefined): string {
     new URL(url);
     return normalizeApiBaseUrl(url);
   } catch {
-    // eslint-disable-next-line no-console
     console.error(
       `VITE_API_BASE_URL is invalid: "${url}". Falling back to default: ` +
         fallbackUrl,
@@ -63,6 +64,8 @@ function getUrl(path: string): string {
   return `${API_BASE_URL}${path.startsWith("/") ? "" : "/"}${path}`;
 }
 
+// Intenta parsear el cuerpo del error como JSON; si falla, devuelve texto plano.
+// Algunos errores Django/DRF devuelven HTML plano en lugar de JSON.
 async function parseErrorBody(resp: Response): Promise<unknown> {
   const text = await resp.text().catch(() => "");
   if (!text) return undefined;
@@ -74,6 +77,8 @@ async function parseErrorBody(resp: Response): Promise<unknown> {
   }
 }
 
+// Sistema de notificación de errores de API a través de listeners.
+// Permite que componentes UI (toast, banner) se suscriban sin acoplar la lógica de fetch.
 type ErrorListener = (error: ApiRequestError) => void;
 const errorListeners = new Set<ErrorListener>();
 
@@ -89,7 +94,6 @@ function notifyApiError(error: ApiRequestError) {
     try {
       listener(error);
     } catch (e) {
-      // eslint-disable-next-line no-console
       console.error("Error in API error listener", e);
     }
   });

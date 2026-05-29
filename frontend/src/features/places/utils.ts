@@ -10,6 +10,8 @@ export function getPlaceDetailPath(
   return `/lugares/${place.slug}`;
 }
 
+// Las playas se excluyen del explorador general porque tienen
+// su propia landing y navegación específica en /playas.
 export function isPlaceVisibleInExplorer(place: Pick<Place, "template_key">) {
   return place.template_key !== "beaches";
 }
