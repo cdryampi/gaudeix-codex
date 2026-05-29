@@ -1,18 +1,41 @@
 import apiClient from "@/lib/api/client";
 import { API_ENDPOINTS } from "@/lib/config/constants";
-import { SiteSettings, SiteSettingsPayload } from "../types";
+import { SiteSettings, SiteSettingsPayload, BuildJob } from "../types";
 
 export const siteSettingsApi = {
   async get() {
-    const response = await apiClient.get<SiteSettings>(API_ENDPOINTS.STATIC_PAGES.LIST.replace("static-pages", "site-settings"));
+    const response = await apiClient.get<SiteSettings>(
+      API_ENDPOINTS.STATIC_PAGES.LIST.replace("static-pages", "site-settings"),
+    );
     return normalize(response.data);
   },
   async update(payload: SiteSettingsPayload) {
     const response = await apiClient.patch<SiteSettings>(
-      API_ENDPOINTS.STATIC_PAGES.DETAIL(String(1)).replace("static-pages", "site-settings"),
-      payload
+      API_ENDPOINTS.STATIC_PAGES.DETAIL(String(1)).replace(
+        "static-pages",
+        "site-settings",
+      ),
+      payload,
     );
     return normalize(response.data);
+  },
+  async publish() {
+    const response = await apiClient.post<BuildJob>(
+      API_ENDPOINTS.STATIC_PAGES.LIST.replace(
+        "static-pages",
+        "site-settings/publish",
+      ),
+    );
+    return response.data;
+  },
+  async getBuilds() {
+    const response = await apiClient.get<BuildJob[]>(
+      API_ENDPOINTS.STATIC_PAGES.LIST.replace(
+        "static-pages",
+        "site-settings/builds",
+      ),
+    );
+    return response.data;
   },
 };
 
@@ -43,5 +66,7 @@ function normalize(data: SiteSettings): SiteSettings {
     legal_page_id: data.legal_page?.id ?? null,
     inclusion_page: data.inclusion_page ?? null,
     inclusion_page_id: data.inclusion_page?.id ?? null,
+    theme_config: data.theme_config ?? {},
+    theme_config_published: data.theme_config_published ?? {},
   };
 }

@@ -185,6 +185,20 @@ class SiteSettings(SingletonModel):
         verbose_name=_("Descripció interna del vídeo"), blank=True, default=""
     )
 
+    # Personalització visual
+    theme_config = models.JSONField(
+        verbose_name=_("Configuració de tema (esborrany)"),
+        blank=True,
+        default=dict,
+        help_text=_("Configuració visual activa en format JSON."),
+    )
+    theme_config_published = models.JSONField(
+        verbose_name=_("Configuració de tema (publicat)"),
+        blank=True,
+        default=dict,
+        help_text=_("Configuració visual publicada en format JSON."),
+    )
+
     # Avisos globales / Mantenimiento
     alert_enabled = models.BooleanField(
         default=False,
@@ -601,3 +615,33 @@ class FooterBadge(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class BuildJob(models.Model):
+    """Treball de compilació i publicació del tema."""
+
+    class StatusChoices(models.TextChoices):
+        PENDING = "pending", _("Pendent")
+        RUNNING = "running", _("En progrés")
+        SUCCESS = "success", _("Completat")
+        FAILED = "failed", _("Fallit")
+
+    status = models.CharField(
+        max_length=20,
+        choices=StatusChoices.choices,
+        default=StatusChoices.PENDING,
+        verbose_name=_("Estat"),
+    )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Creat el"))
+    started_at = models.DateTimeField(null=True, blank=True, verbose_name=_("Iniciat el"))
+    finished_at = models.DateTimeField(null=True, blank=True, verbose_name=_("Finalitzat el"))
+    error_message = models.TextField(blank=True, default="", verbose_name=_("Missatge d'error"))
+    theme_config = models.JSONField(default=dict, verbose_name=_("Configuració de tema"))
+
+    class Meta:
+        verbose_name = _("Build Job")
+        verbose_name_plural = _("Build Jobs")
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"BuildJob #{self.pk} - {self.get_status_display()}"

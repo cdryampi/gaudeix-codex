@@ -1,5 +1,30 @@
 import { StaticPage } from "@/features/static-pages/types";
 
+export type ThemeConfig = {
+  primary?: string;
+  secondary?: string;
+  accent?: string;
+  background_light?: string;
+  background_dark?: string;
+  surface?: string;
+  surface_muted?: string;
+  text_primary?: string;
+  text_secondary?: string;
+  radius_scale?: number;
+  shadow_preset?: "none" | "sm" | "md" | "lg";
+  theme_preset?: "classic" | "modern" | "vibrant" | "oceanic" | "sunset";
+};
+
+export type BuildJob = {
+  id: number;
+  status: "pending" | "running" | "success" | "failed";
+  created_at: string;
+  started_at?: string | null;
+  finished_at?: string | null;
+  error_message?: string;
+  theme_config: ThemeConfig;
+};
+
 export type LinkedImage = {
   id: number;
   original_name: string;
@@ -57,6 +82,8 @@ export type SiteSettings = {
   alert_start_at?: string | null;
   alert_end_at?: string | null;
   is_alert_active?: boolean;
+  theme_config?: ThemeConfig;
+  theme_config_published?: ThemeConfig;
 };
 
 export type LinkedVideo = {
@@ -127,7 +154,10 @@ export type FooterLegalBlock = {
   privacy_page?: Pick<StaticPage, "id" | "slug" | "template" | "titulo"> | null;
   cookies_page?: Pick<StaticPage, "id" | "slug" | "template" | "titulo"> | null;
   legal_page?: Pick<StaticPage, "id" | "slug" | "template" | "titulo"> | null;
-  inclusion_page?: Pick<StaticPage, "id" | "slug" | "template" | "titulo"> | null;
+  inclusion_page?: Pick<
+    StaticPage,
+    "id" | "slug" | "template" | "titulo"
+  > | null;
 };
 
 export type FooterPublicPayload = {
@@ -163,6 +193,12 @@ export type FooterPublicPayload = {
     youtube_url: string;
   };
   legal: FooterLegalBlock;
-  links: Record<FooterLinkSection, Omit<FooterLink, "footer_settings_id" | "is_active" | "category_id" | "static_page_id">[]>;
+  links: Record<
+    FooterLinkSection,
+    Omit<
+      FooterLink,
+      "footer_settings_id" | "is_active" | "category_id" | "static_page_id"
+    >[]
+  >;
   badges: Omit<FooterBadge, "footer_settings_id" | "is_active" | "image_id">[];
 };

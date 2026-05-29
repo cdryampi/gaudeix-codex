@@ -1,3 +1,18 @@
+export interface ThemeConfig {
+  primary?: string;
+  secondary?: string;
+  accent?: string;
+  background_light?: string;
+  background_dark?: string;
+  surface?: string;
+  surface_muted?: string;
+  text_primary?: string;
+  text_secondary?: string;
+  radius_scale?: number;
+  shadow_preset?: "none" | "sm" | "md" | "lg";
+  theme_preset?: "classic" | "modern" | "vibrant" | "oceanic" | "sunset";
+}
+
 export interface SiteSettings {
   id: number;
   site_name: string;
@@ -18,6 +33,7 @@ export interface SiteSettings {
     precip_prob: number;
     datetime: string;
   } | null;
+  theme_config?: ThemeConfig;
 }
 
 export interface LinkedImage {

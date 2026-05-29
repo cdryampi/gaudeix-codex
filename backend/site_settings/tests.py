@@ -393,3 +393,96 @@ def test_seed_footer_badges_is_idempotent_and_links_seed_images():
         == first_image_count
     )
     assert FooterBadge.objects.filter(is_active=False, image__isnull=False).count() == first_count
+
+
+def test_theme_validation(auth_client):
+    url = reverse("site-settings-detail", kwargs={"pk": 1})
+
+    # 1. Test color hexadecimal validation
+    resp_invalid_color = auth_client.patch(
+        url,
+        {"theme_config": {"primary": "invalid_color"}},
+        format="json",
+    )
+    assert resp_invalid_color.status_code == status.HTTP_400_BAD_REQUEST
+    assert "theme_config" in resp_invalid_color.data
+
+    # 2. Test forbidden key validation
+    resp_forbidden_key = auth_client.patch(
+        url,
+        {"theme_config": {"hacker_key": "#ffffff"}},
+        format="json",
+    )
+    assert resp_forbidden_key.status_code == status.HTTP_400_BAD_REQUEST
+    assert "theme_config" in resp_forbidden_key.data
+
+    # 3. Test valid validation
+    valid_theme = {
+        "primary": "#1e3a8a",
+        "secondary": "#0f766e",
+        "accent": "#f59e0b",
+        "theme_preset": "classic",
+        "radius_scale": 1.2,
+        "shadow_preset": "md",
+    }
+    resp_ok = auth_client.patch(
+        url,
+        {"theme_config": valid_theme},
+        format="json",
+    )
+    assert resp_ok.status_code == status.HTTP_200_OK
+    assert resp_ok.data["theme_config"]["primary"] == "#1e3a8a"
+
+
+def test_theme_representation_swap(auth_client):
+    settings_obj = SiteSettings.get_solo()
+    settings_obj.theme_config = {"primary": "#000000"}  # draft
+    settings_obj.theme_config_published = {"primary": "#ffffff"}  # published
+    settings_obj.save()
+
+    # 1. Unauthenticated request (Public client)
+    client = APIClient()
+    url = reverse("site-settings-list")
+    resp_public = client.get(url)
+    assert resp_public.status_code == status.HTTP_200_OK
+    # Should get published theme in theme_config
+    assert resp_public.data["theme_config"]["primary"] == "#ffffff"
+
+    # 2. Authenticated request (Backoffice client)
+    resp_private = auth_client.get(url)
+    assert resp_private.status_code == status.HTTP_200_OK
+    # Should get draft theme in theme_config, and published under theme_config_published
+    assert resp_private.data["theme_config"]["primary"] == "#000000"
+    assert resp_private.data["theme_config_published"]["primary"] == "#ffffff"
+
+
+def test_publish_action_and_celery_task(auth_client):
+    from site_settings.models import BuildJob
+
+    settings_obj = SiteSettings.get_solo()
+    settings_obj.theme_config = {"primary": "#7c3aed"}  # Purple draft
+    settings_obj.theme_config_published = {"primary": "#10b981"}  # Green published
+    settings_obj.save()
+
+    # Trigger publication action
+    url = reverse("site-settings-publish")
+    resp = auth_client.post(url)
+    assert resp.status_code == status.HTTP_200_OK
+    assert resp.data["status"] in {"pending", "success"}  # success if celery is eager
+
+    # Verify a BuildJob is created
+    assert BuildJob.objects.count() == 1
+    job = BuildJob.objects.first()
+    assert job.theme_config["primary"] == "#7c3aed"
+
+    # Since CELERY_TASK_ALWAYS_EAGER = True in tests, the task runs synchronously
+    # Verify theme_config_published was updated to match theme_config
+    settings_obj.refresh_from_db()
+    assert settings_obj.theme_config_published["primary"] == "#7c3aed"
+
+    # Retrieve build history
+    url_history = reverse("site-settings-builds")
+    resp_history = auth_client.get(url_history)
+    assert resp_history.status_code == status.HTTP_200_OK
+    assert len(resp_history.data) == 1
+    assert resp_history.data[0]["theme_config"]["primary"] == "#7c3aed"
