@@ -34,5 +34,19 @@
     "cookies_page": "cookies",
     "legal_page": "legal_notice",
     "inclusion_page": "inclusion"
+  },
+  "theme_config": {
+    "primary": "#2563eb",
+    "secondary": "#1d4ed8",
+    "accent": "#f59e0b",
+    "background_light": "#f8fafc",
+    "background_dark": "#0f172a",
+    "surface": "#ffffff",
+    "surface_muted": "#f1f5f9",
+    "text_primary": "#0f172a",
+    "text_secondary": "#475569",
+    "radius_scale": 1.0,
+    "shadow_preset": "md",
+    "theme_preset": "classic"
   }
 }

@@ -91,6 +91,10 @@ class Command(BaseCommand):
         if video_media and not settings_obj.background_video:
             settings_obj.background_video = video_media
 
+        theme_config = seed_data.get("theme_config")
+        if theme_config and not settings_obj.theme_config:
+            settings_obj.theme_config = theme_config
+
         settings_obj.save()
         self.stdout.write(self.style.SUCCESS("Site settings seeded/updated"))
 

@@ -9,6 +9,13 @@ class SiteSettingsAdmin(SingletonModelAdmin):
     fieldsets = (
         ("Identitat", {"fields": ("site_name", "tagline", "logo", "logo_dark", "favicon")}),
         (
+            "Tema visual",
+            {
+                "description": "Configuració del tema del portal públic. Editar 'theme_config' (esborrany) i publicar des de l'API.",
+                "fields": ("theme_config", "theme_config_published"),
+            },
+        ),
+        (
             "Contacte",
             {
                 "fields": (
