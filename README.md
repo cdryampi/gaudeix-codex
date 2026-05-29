@@ -62,40 +62,11 @@ Esta arquitectura fue elegida para facilitar la escalabilidad horizontal, aceler
 ## 4. Filosofía de Desarrollo
 
 - **Desacoplamiento total entre backend y frontend**: la interacción ocurre exclusivamente mediante APIs REST.
-- **Google AI actúa como Director Técnico**: diseña arquitectura, define prompts y estrategias, y revisa la calidad.
-- **Jules actúa como equipo de programadores** responsable de generar código y artefactos.
 - **La documentación viva es el pilar de control** y se mantiene actualizada para guiar cada decisión.
-- **Subagentes especializados** complementan al equipo para tareas concretas de generación, auditoría, pruebas e integración.
+- **`/docs` es la fuente de verdad** para decisiones técnicas, flujos de trabajo y definiciones de producto.
+- **Las instrucciones activas para agentes** viven en `AGENTS.md`, `AGENTS_CLOUD.md` y `.agents/skills/modern-web-guidance/SKILL.md`.
 
-## 5. Sistema de Dirección Técnica
-
-El modelo operativo establece que **Google AI** diseña la arquitectura, promueve estrategias, detalla prompts y valida entregables sin generar código directamente. **Jules** ejecuta las implementaciones siguiendo dichas directrices, manteniendo una trazabilidad clara y documentada.
-
-- `/docs` es siempre la fuente de verdad para decisiones técnicas, flujos de trabajo y definiciones de producto.
-- `/agents` documenta los subagentes disponibles, sus roles y reglas de interacción.
-- Las revisiones de calidad siguen los criterios definidos por el Director Técnico, asegurando coherencia entre la visión y las implementaciones.
-
-## 6. Subagentes
-
-Los subagentes son roles especializados definidos en `/agents` que extienden las capacidades del equipo principal para garantizar entregables de alta calidad.
-
-- **Tipos de subagentes:** generador, auditor, tester, integrador y otros roles que se activen según las necesidades del proyecto.
-- **Delegación de tareas:** el Director Técnico asigna tareas concretas a cada subagente, proporcionando contexto y criterios de aceptación alineados con `/docs`.
-- **Interacción con Jules:** los subagentes colaboran con Jules aportando entregables específicos (código, revisiones, pruebas, integraciones) que luego se consolidan bajo la supervisión del Director Técnico.
-
-## 7. Workflow Operativo
-
-El flujo de trabajo real del proyecto sigue los pasos definidos por el Director Técnico:
-
-1. **Preparación:** revisar actualizaciones en `/docs`, estado de `/agents` y riesgos abiertos.
-2. **Análisis:** sintetizar el estado actual del proyecto utilizando la documentación oficial.
-3. **Planificación:** establecer objetivos, tareas y responsables, alineados con la arquitectura y prioridades.
-4. **Delegación:** emitir prompts precisos para Jules y subagentes, citando documentación relevante.
-5. **Revisión:** validar entregables contra los criterios definidos y registrar observaciones.
-6. **Iteración:** solicitar ajustes necesarios y mantener la trazabilidad de cambios.
-7. **Cierre:** documentar resultados, actualizar aprendizajes y sincronizar la documentación viva.
-
-## 8. Estructura del Repositorio
+## 5. Estructura del Repositorio
 
 La estructura actual del repositorio (sujeta a expansión conforme se creen los módulos planificados) es la siguiente:
 
@@ -106,9 +77,9 @@ La estructura actual del repositorio (sujeta a expansión conforme se creen los 
 ├── backend/
 ├── frontend/
 ├── backoffice/
+├── mobile/
 ├── docs/
-├── agents/
-└── chatGPT/
+└── .agents/
 ```
 
 El `docker-compose.yml` orquesta backend, frontend, backoffice, PostgreSQL y almacenamiento de objetos para desarrollo y pruebas locales. Revisa `docs/deployment.md` para detalles de ejecución y configuración.
@@ -202,7 +173,7 @@ Consulta la [guía de variables de entorno](docs/environment.md) para conocer lo
 - Los issues listos para migrar el proceso de publicación están descritos en [`docs/migration_issues.md`](docs/migration_issues.md), con títulos, cuerpos y combinaciones de labels sugeridas.
 - Crea o sincroniza las labels del repositorio con la guía de [`docs/GITHUB_LABELS.md`](docs/GITHUB_LABELS.md) antes de registrar los issues.
 
-## 9. Cómo Contribuir (para humanos y para IA)
+## 6. Cómo Contribuir (para humanos y para IA)
 
 ### Checklist mínima de validación pre-merge
 
@@ -222,89 +193,19 @@ Antes de solicitar un merge, ejecuta estos comandos en la raíz del repositorio 
   cd backend && python3 -m pytest && ruff check . && ruff format --check .
   ```
 
-- Consulta primero `/docs` para entender alcance, prioridades, dependencias y reglas vigentes.
-- Revisa `/agents` para identificar subagentes relevantes y comprender sus responsabilidades.
-- Define estrategias y prompts claros antes de delegar, citando la documentación oficial y especificando criterios de aceptación.
-- Coordina revisiones técnicas con el Director Técnico, asegurando que cada entrega cumpla los estándares establecidos.
-- Al iniciar una contribución, sincroniza el contexto, documenta hallazgos relevantes y registra el cierre de cada iteración en la documentación correspondiente.
+- Consulta primero `/docs` y `AGENTS.md` para entender alcance, prioridades, dependencias y reglas vigentes.
+- Usa la ruta Docker-first documentada en `AGENTS.md` cuando el ticket dependa de backend, datos, colas, automatizaciones o media.
+- Ejecuta la validación adecuada al stack modificado antes de solicitar merge.
+- Al iniciar una contribución, sincroniza el contexto, documenta hallazgos relevantes y registra el cierre cuando cambie documentación operativa.
 
-## 10. Sistema de Subagentes (Actualizado Nov 2025)
-
-El proyecto implementa un **sistema mejorado de subagentes** inspirado en Claude/GitHub Copilot que permite trabajo colaborativo eficiente entre **Google AI** (Director Técnico) y **Jules** (equipo de desarrollo).
-
-### 🎯 Componentes Clave
-
-- **`/agents/shared_context.md`** - Estado centralizado del proyecto, stack técnico y estándares
-- **`/chatGPT/SUBAGENT_INVOCATION_TEMPLATES.md`** - Templates estructurados para delegar tareas
-- **`/chatGPT/WORKFLOW_GUIDE.md`** - Guía completa de workflow y coordinación
-- **`/docs/SUBAGENT_IMPLEMENTATION_GUIDE.md`** - Guía práctica de uso del sistema
-
-### 📋 Subagentes Disponibles
-
-| Subagente                 | Rol            | Área        | Documentación                                           |
-| ------------------------- | -------------- | ----------- | ------------------------------------------------------- |
-| Generador Backend         | Implementación | API REST    | [generador_backend.md](./agents/generador_backend.md)   |
-| Generador Frontend        | Implementación | SPA React   | [generador_frontend.md](./agents/generador_frontend.md) |
-| Generador Infraestructura | Implementación | DevOps      | [generador_infra.md](./agents/generador_infra.md)       |
-| Auditor Backend           | Calidad        | Backend     | [auditor_backend.md](./agents/auditor_backend.md)       |
-| Auditor Frontend          | Calidad        | Frontend    | [auditor_frontend.md](./agents/auditor_frontend.md)     |
-| Tester Backend            | Testing        | Backend     | [tester_backend.md](./agents/tester_backend.md)         |
-| Tester Frontend           | Testing        | Frontend    | [tester_frontend.md](./agents/tester_frontend.md)       |
-| Integrador                | Coordinación   | Releases    | [integrador.md](./agents/integrador.md)                 |
-| GitHub Agent              | Operaciones    | Repositorio | [github_agent.md](./agents/github_agent.md)             |
-
-### 🚀 Características del Sistema
-
-✅ **Prompts especializados** por tipo de subagente con contexto completo
-✅ **Templates reutilizables** para tareas comunes (endpoints, componentes, tests, etc.)
-✅ **Contexto compartido** centralizado con estado del proyecto siempre actualizado
-✅ **Workflows documentados** para delegación simple y compleja
-✅ **Criterios de validación** claros y verificables para cada entregable
-✅ **Preparado para automatización** futura con `runSubagent`
-
-### 📖 Inicio Rápido
-
-**Para Director Técnico (Google AI)**:
-
-1. Lee [`/agents/shared_context.md`](./agents/shared_context.md) para contexto del proyecto
-2. Consulta [`/chatGPT/WORKFLOW_GUIDE.md`](./chatGPT/WORKFLOW_GUIDE.md) para workflow
-3. Usa templates de [`/chatGPT/SUBAGENT_INVOCATION_TEMPLATES.md`](./chatGPT/SUBAGENT_INVOCATION_TEMPLATES.md)
-
-**Para Subagentes (Jules)**:
-
-1. Lee [`/agents/shared_context.md`](./agents/shared_context.md) siempre antes de empezar
-2. Consulta tu definición en [`/agents/{tu_subagente}.md`](./agents/)
-3. Sigue el workflow interno documentado
-4. Auto-valida contra criterios antes de retornar
-
-### 📊 Comparación con Sistema Anterior
-
-| Aspecto                    | Antes                         | Ahora                                              |
-| -------------------------- | ----------------------------- | -------------------------------------------------- |
-| Contexto del proyecto      | Distribuido en múltiples docs | Centralizado en `shared_context.md`                |
-| Templates de delegación    | Genéricos                     | Especializados por tipo y complejidad              |
-| Definiciones de subagentes | Básicas (input/output)        | Completas (prompt sistema, herramientas, workflow) |
-| Criterios de aceptación    | Vagos                         | Específicos y verificables                         |
-| Workflow                   | Informal                      | Documentado con ejemplos                           |
-| Preparación futura         | No considerada                | Lista para `runSubagent`                           |
-
-### 🔗 Documentación Completa
-
-- **Análisis técnico completo**: [`/docs/SUBAGENT_SYSTEM_IMPROVEMENTS.md`](./docs/SUBAGENT_SYSTEM_IMPROVEMENTS.md)
-- **Guía de implementación**: [`/docs/SUBAGENT_IMPLEMENTATION_GUIDE.md`](./docs/SUBAGENT_IMPLEMENTATION_GUIDE.md)
-- **Casos de uso prácticos**: Ver guía de implementación sección "Casos de Uso"
-
-## 11. Requisitos a cumplir
+## 7. Requisitos a cumplir
 
 - Mantener el desacoplamiento total entre backend y frontend mediante comunicación exclusiva vía APIs REST.
 - Diseñar módulos escalables y versionados que faciliten la evolución independiente de cada capa.
-- Respetar la gobernanza del proyecto: **Google AI** dirige; **Jules** y los subagentes implementan.
-- Consultar siempre `/docs` y `/agents` como fuentes de verdad antes de tomar decisiones técnicas.
-- **NUEVO**: Usar `/agents/shared_context.md` como referencia principal del estado del proyecto.
-- **NUEVO**: Aplicar templates de `/chatGPT/SUBAGENT_INVOCATION_TEMPLATES.md` para delegaciones.
+- Consultar siempre `/docs`, `AGENTS.md` y `AGENTS_CLOUD.md` como fuentes de verdad antes de tomar decisiones técnicas.
 - Incluir pruebas, migraciones, despliegues automatizados y observabilidad como parte integral de la plataforma modernizada.
 
-## 12. Configuración Local y Automatización
+## 8. Configuración Local y Automatización
 
 Para garantizar un entorno de desarrollo consistente en Windows:
 

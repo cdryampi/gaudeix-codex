@@ -27,6 +27,8 @@ interface InteractiveMapProps {
   onMarkerClick?: (placeId: number) => void;
 }
 
+// Mapa visual de template_key del backend a color + icono del mapa.
+// Cada categoría de lugar tiene un color e icono distintivo en el marcador.
 const CATEGORY_THEME: Record<string, { color: string; icon: any }> = {
   restaurants: { color: "#f97316", icon: Utensils },
   accommodations: { color: "#3b82f6", icon: Hotel },

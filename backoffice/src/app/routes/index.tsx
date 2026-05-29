@@ -38,7 +38,6 @@ import { ScrapedNewsPage } from "@/features/scraper/pages/ScrapedNewsPage";
  * Structure:
  * - / → Landing Page
  * - /test → Test Form Page (public)
- * - /login-debug → Debug Login Page (HTML básico)
  * - /login → AuthLayout + LoginPage
  * - /register → AuthLayout + RegisterPage
  * - /reset-password → AuthLayout + ResetPasswordPage

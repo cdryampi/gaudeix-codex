@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuthForm } from "../hooks/useAuthForm";
-import { API_CONFIG, API_ENDPOINTS } from "@/lib/config/constants";
 import { ArrowLeft, Mail } from "lucide-react";
 
 const resetSchema = z.object({
@@ -16,12 +15,7 @@ export const ResetPasswordPage = () => {
     useAuthForm({
       schema: resetSchema,
       defaultValues: { email: "" },
-      onSubmit: async (data) => {
-        console.log("Reset password attempt:", data);
-        console.log(
-          "Target URL:",
-          `${API_CONFIG.BASE_URL}${API_ENDPOINTS.AUTH.PASSWORD_RESET}`
-        );
+      onSubmit: async () => {
         // Placeholder for actual reset logic
       },
     });
@@ -39,10 +33,7 @@ export const ResetPasswordPage = () => {
 
       <form onSubmit={handleSubmit} className="space-y-5" autoComplete="on">
         <div className="space-y-2">
-          <Label
-            htmlFor="email"
-            className="text-gray-700 dark:text-gray-300"
-          >
+          <Label htmlFor="email" className="text-gray-700 dark:text-gray-300">
             Correo electrónico
           </Label>
           <div className="relative">

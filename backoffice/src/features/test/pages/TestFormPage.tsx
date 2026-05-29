@@ -23,7 +23,7 @@ export function TestFormPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -37,7 +37,6 @@ export function TestFormPage() {
     // Simular envío de formulario
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    console.log("Formulario enviado:", formData);
     setSubmitted(true);
     setIsLoading(false);
   };
