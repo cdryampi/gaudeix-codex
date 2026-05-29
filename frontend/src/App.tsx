@@ -421,7 +421,51 @@ function SessionInitializer() {
   return null;
 }
 
+import { CabritaPremiumMaintenance } from "@/components/feedback/CabritaPremiumMaintenance";
+import { subscribeToApiErrors, API_BASE_URL } from "@/lib/api";
+
 export default function App() {
+  const [isMaintenance, setIsMaintenance] = useState(false);
+
+  useEffect(() => {
+    // 1. Chequeo inicial rápido al cargar el frontend
+    const runHealthCheck = async () => {
+      try {
+        const resp = await fetch(`${API_BASE_URL}/categories/`, {
+          method: "GET",
+          headers: { Accept: "application/json" },
+        });
+        if (!resp.ok && (resp.status === 503 || resp.status === 502)) {
+          setIsMaintenance(true);
+        }
+      } catch {
+        // Error de conexión de red (backend caído)
+        setIsMaintenance(true);
+      }
+    };
+
+    void runHealthCheck();
+
+    // 2. Suscripción global a errores de la API en caliente durante la navegación
+    const unsubscribe = subscribeToApiErrors((error) => {
+      if (
+        error.isNetworkError ||
+        error.status === 503 ||
+        error.status === 502
+      ) {
+        setIsMaintenance(true);
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
+  if (isMaintenance) {
+    return <CabritaPremiumMaintenance />;
+  }
+
   return (
     <MainLayout>
       <SessionInitializer />

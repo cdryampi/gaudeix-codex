@@ -38,7 +38,8 @@ export function getValidBaseUrl(url: string | undefined): string {
   if (!url) {
     // eslint-disable-next-line no-console
     console.error(
-      "VITE_API_BASE_URL is not defined. Falling back to default: " + fallbackUrl
+      "VITE_API_BASE_URL is not defined. Falling back to default: " +
+        fallbackUrl,
     );
     return fallbackUrl;
   }
@@ -49,7 +50,8 @@ export function getValidBaseUrl(url: string | undefined): string {
   } catch {
     // eslint-disable-next-line no-console
     console.error(
-      `VITE_API_BASE_URL is invalid: "${url}". Falling back to default: ` + fallbackUrl
+      `VITE_API_BASE_URL is invalid: "${url}". Falling back to default: ` +
+        fallbackUrl,
     );
     return fallbackUrl;
   }
@@ -70,6 +72,27 @@ async function parseErrorBody(resp: Response): Promise<unknown> {
   } catch {
     return text;
   }
+}
+
+type ErrorListener = (error: ApiRequestError) => void;
+const errorListeners = new Set<ErrorListener>();
+
+export function subscribeToApiErrors(listener: ErrorListener) {
+  errorListeners.add(listener);
+  return () => {
+    errorListeners.delete(listener);
+  };
+}
+
+function notifyApiError(error: ApiRequestError) {
+  errorListeners.forEach((listener) => {
+    try {
+      listener(error);
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error("Error in API error listener", e);
+    }
+  });
 }
 
 async function requestJson<T>(
@@ -93,22 +116,29 @@ async function requestJson<T>(
       body: data !== undefined ? JSON.stringify(data) : undefined,
     });
   } catch (error) {
-    throw new ApiRequestError(`Network error on ${method} ${url}`, {
+    const apiError = new ApiRequestError(`Network error on ${method} ${url}`, {
       method,
       url,
       isNetworkError: true,
       data: error,
     });
+    notifyApiError(apiError);
+    throw apiError;
   }
 
   if (!resp.ok) {
     const errorData = await parseErrorBody(resp);
-    throw new ApiRequestError(`${method} ${url} failed (${resp.status})`, {
-      method,
-      url,
-      status: resp.status,
-      data: errorData,
-    });
+    const apiError = new ApiRequestError(
+      `${method} ${url} failed (${resp.status})`,
+      {
+        method,
+        url,
+        status: resp.status,
+        data: errorData,
+      },
+    );
+    notifyApiError(apiError);
+    throw apiError;
   }
 
   if (resp.status === 204) return {} as T;

@@ -3,6 +3,7 @@
 Este backlog replica el proceso de publicación usado en el repositorio de referencia y lo adapta al stack unificado (backend, frontend y backoffice en un mismo `docker-compose` con subdominios y despliegue en Dokploy). Cada ítem está listo para crearse como issue en GitHub, con labels sugeridas y criterios de aceptación.
 
 ## Cómo usar este backlog
+
 1. Verifica que las labels existan (usa la guía de [`docs/GITHUB_LABELS.md`](./GITHUB_LABELS.md) para crearlas si faltan).
 2. Crea cada issue con el título y el cuerpo indicados; aplica las labels sugeridas.
 3. Ajusta tamaños (`size/*`) y estados (`status/*`) según el contexto real.
@@ -10,6 +11,7 @@ Este backlog replica el proceso de publicación usado en el repositorio de refer
 ## Issues propuestos
 
 ### 1) Compose unificado con subdominios
+
 - **Título**: "Infra: Compose unificado backend/frontend/backoffice con subdominios"
 - **Labels sugeridas**: `type/feature`, `area/infra`, `priority/P1-high`, `size/M`, `status/ready`
 - **Cuerpo sugerido**:
@@ -24,6 +26,7 @@ Este backlog replica el proceso de publicación usado en el repositorio de refer
     - Servicios listos para Dokploy (puertos, certificados y dependencia entre servicios).
 
 ### 2) Variables de entorno extendidas (incluyendo backoffice)
+
 - **Título**: "Docs: Variables de entorno para backend/frontend/backoffice con subdominios"
 - **Labels sugeridas**: `type/docs`, `area/docs`, `priority/P1-high`, `size/S`, `status/ready`
 - **Cuerpo sugerido**:
@@ -37,6 +40,7 @@ Este backlog replica el proceso de publicación usado en el repositorio de refer
     - Referencia cruzada desde README y/o notas de despliegue.
 
 ### 3) Pipeline de publicación en Dokploy
+
 - **Título**: "Infra: Pipeline de despliegue en Dokploy para stack unificado"
 - **Labels sugeridas**: `type/feature`, `area/infra`, `priority/P1-high`, `size/M`, `status/ready`
 - **Cuerpo sugerido**:
@@ -50,6 +54,7 @@ Este backlog replica el proceso de publicación usado en el repositorio de refer
     - Checklist de verificación tras el despliegue (endpoints y front/backoffice accesibles por subdominio).
 
 ### 4) CI básica para el stack
+
 - **Título**: "DevOps: CI mínima para backend, frontend y backoffice"
 - **Labels sugeridas**: `type/chore`, `area/devops`, `priority/P2-medium`, `size/M`, `status/ready`
 - **Cuerpo sugerido**:
@@ -62,19 +67,8 @@ Este backlog replica el proceso de publicación usado en el repositorio de refer
     - Workflows en `.github/workflows` validados en CI.
     - Matriz de estados visible en PRs.
 
-### 5) Sistema de subagentes alineado al stack
-- **Título**: "Docs: Ajustar sistema de subagentes al compose unificado"
-- **Labels sugeridas**: `type/docs`, `area/docs`, `priority/P2-medium`, `size/S`, `status/ready`
-- **Cuerpo sugerido**:
-  - **Objetivo**: Confirmar que los perfiles de subagentes cubren casos del compose (subdominios, CORS, Dokploy) y agregar ejemplos de prompts si faltan.
-  - **Tareas**:
-    - Revisar `/agents` y `/docs/AGENTS_OVERVIEW.md` para reflejar el flujo de publicación.
-    - Añadir prompts de ejemplo por dominio (backend, frontend, backoffice, infra).
-    - Registrar dependencias entre subagentes (generador → auditor → tester → integrador).
-  - **Criterios de aceptación**:
-    - Documentos actualizados y enlazados desde el README o índice.
+### 5) Auditoría de CORS y subdominios
 
-### 6) Auditoría de CORS y subdominios
 - **Título**: "Backend: Auditoría de CORS/JWT para subdominios del stack"
 - **Labels sugeridas**: `type/spike`, `area/backend`, `priority/P1-high`, `size/S`, `status/ready`
 - **Cuerpo sugerido**:
