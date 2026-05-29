@@ -54,6 +54,7 @@ export const FormMessage = forwardRef<
   return (
     <p
       ref={ref}
+      role="alert"
       className={`text-sm text-red-600 dark:text-red-500 ${className || ""}`}
       {...props}
     >

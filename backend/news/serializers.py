@@ -1,7 +1,11 @@
 from django.conf import settings
 from rest_framework import serializers
 from parler_rest.serializers import TranslatableModelSerializer, TranslatedFieldsField
-from media_files.serializers import ImageFileSerializer, DocumentFileSerializer
+from media_files.serializers import (
+    DocumentFileSerializer,
+    ImageFileSerializer,
+    build_media_url,
+)
 from media_files.models import ImageFile, DocumentFile
 from core.models import Category
 from .models import News
@@ -96,7 +100,7 @@ class NewsSerializer(TranslatableModelSerializer):
     def get_image_url(self, obj: News) -> str:
         if not obj.featured_media_id:
             return ""
-        return obj.featured_media.file.url if obj.featured_media.file else ""
+        return build_media_url(obj.featured_media.file, self.context.get("request"))
 
     def save(self, **kwargs):
         # Handle top-level fields for base language automatically if sent in root

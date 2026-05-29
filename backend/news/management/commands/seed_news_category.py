@@ -140,26 +140,14 @@ class Command(BaseCommand):
         return touched
 
     def _apply_featured_image(self, category: Category, image_name: str) -> None:
-        image_file = category.featured_media
-        if image_file and image_file.original_name == image_name:
-            return
-
-        existing = None
-        if image_name:
-            from media_files.models import ImageFile
-
-            existing = ImageFile.objects.filter(original_name=image_name).first()
-
-        if existing is None:
-            image_path = (
-                Path(__file__).resolve().parents[3]
-                / "seed_assets"
-                / "media_files"
-                / "images"
-                / image_name
-            )
-            if image_path.exists():
-                existing = ensure_image_file(image_path).instance
+        image_path = (
+            Path(__file__).resolve().parents[3]
+            / "seed_assets"
+            / "media_files"
+            / "images"
+            / image_name
+        )
+        existing = ensure_image_file(image_path).instance if image_path.exists() else None
 
         if existing and category.featured_media_id != existing.id:
             category.featured_media = existing

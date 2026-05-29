@@ -10,7 +10,11 @@ from parler_rest.serializers import TranslatableModelSerializer, TranslatedField
 from core.models import Category, Tag
 from core.serializers import TagSerializer
 from media_files.models import DocumentFile, ImageFile
-from media_files.serializers import DocumentFileSerializer, ImageFileSerializer
+from media_files.serializers import (
+    DocumentFileSerializer,
+    ImageFileSerializer,
+    build_media_url,
+)
 
 from .models import Route, RouteWaypoint, RouteCheckpoint
 from .utils.parsers import parse_track_file
@@ -80,11 +84,7 @@ class RouteCheckpointSerializer(serializers.ModelSerializer):
 
     def get_image_url(self, obj) -> str:
         if obj.image and obj.image.file:
-            request = self.context.get('request')
-            url = obj.image.file.url
-            if request:
-                return request.build_absolute_uri(url)
-            return url
+            return build_media_url(obj.image.file, self.context.get("request"))
         return ""
 
 
@@ -236,11 +236,7 @@ class RouteSerializer(TranslatableModelSerializer):
 
     def get_image_url(self, obj) -> str:
         if obj.featured_media and obj.featured_media.file:
-            request = self.context.get('request')
-            url = obj.featured_media.file.url
-            if request:
-                return request.build_absolute_uri(url)
-            return url
+            return build_media_url(obj.featured_media.file, self.context.get("request"))
         return ""
 
     def get_duration_formatted(self, obj) -> str:

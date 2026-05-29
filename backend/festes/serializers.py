@@ -16,9 +16,9 @@ from media_files.models import (  # pyright: ignore[reportImplicitRelativeImport
 from media_files.serializers import (  # pyright: ignore[reportImplicitRelativeImport]
     DocumentFileSerializer,
     ImageFileSerializer,
+    build_media_url,
 )
 from events.serializers import EventSerializer  # pyright: ignore[reportImplicitRelativeImport]
-from events.models import Event  # pyright: ignore[reportImplicitRelativeImport]
 
 from .models import Festa, Program, Sponsor, Venue, FestaEvent
 
@@ -217,9 +217,9 @@ class FestaSerializer(TranslatableModelSerializer):
     def get_image_url(self, obj) -> str:
         first_poster = obj.posters.first()
         if first_poster and getattr(first_poster, "file", None):
-            return first_poster.file.url
+            return build_media_url(first_poster.file, self.context.get("request"))
         if obj.featured_media and getattr(obj.featured_media, "file", None):
-            return obj.featured_media.file.url
+            return build_media_url(obj.featured_media.file, self.context.get("request"))
         return ""
 
     def get_duration_days(self, obj) -> int:

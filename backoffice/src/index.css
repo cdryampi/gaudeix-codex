@@ -16,6 +16,15 @@
   .dark body {
     @apply bg-slate-950 text-slate-100;
   }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    text-wrap: balance;
+  }
 }
 
 /* Custom Scrollbar */
@@ -52,4 +61,18 @@
 
 .tiptap blockquote {
   @apply border-l-4 border-slate-300 dark:border-slate-600 pl-4 italic;
+}
+
+/* Modern Web Guidance utilities */
+.defer-render {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 500px;
+}
+
+input:user-invalid {
+  border-color: #ef4444;
+}
+
+input:user-invalid:focus-visible {
+  box-shadow: 0 0 0 2px #ef4444;
 }

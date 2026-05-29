@@ -7,6 +7,29 @@ from . import utils
 from .models import DocumentFile, ImageFile, VideoFile
 
 
+def build_media_url(path: object, request=None) -> str:
+    if not path:
+        return ""
+
+    value = getattr(path, "name", path)
+    if not value:
+        return ""
+
+    url = str(value)
+    if not (url.startswith("http://") or url.startswith("https://") or url.startswith("/")):
+        try:
+            url = default_storage.url(url)
+        except Exception:
+            url = f"/media/{url.lstrip('/')}"
+
+    if request and url.startswith("/"):
+        try:
+            return request.build_absolute_uri(url)
+        except Exception:
+            return url
+    return url
+
+
 class ImageFileSerializer(serializers.ModelSerializer):
     """Serializer para ImageFile con validaciones y URLs absolutas para variantes."""
 
@@ -54,31 +77,16 @@ class ImageFileSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
     def get_thumbnail_url(self, obj: ImageFile) -> str:
-        if not obj.variant_thumbnail:
-            return ""
-        try:
-            return self.context["request"].build_absolute_uri(default_storage.url(obj.variant_thumbnail))
-        except Exception:
-            return default_storage.url(obj.variant_thumbnail)
+        return build_media_url(obj.variant_thumbnail, self.context.get("request"))
 
     def to_representation(self, instance):
         rep = super().to_representation(instance)
         request = self.context.get("request")
 
-        def build_url(path: str) -> str:
-            if not path:
-                return ""
-            url = default_storage.url(path)
-            if request:
-                try:
-                    return request.build_absolute_uri(url)
-                except Exception:
-                    return url
-            return url
-
-        rep["variant_thumbnail"] = build_url(instance.variant_thumbnail)
-        rep["variant_medium"] = build_url(instance.variant_medium)
-        rep["variant_large"] = build_url(instance.variant_large)
+        rep["file"] = build_media_url(instance.file, request)
+        rep["variant_thumbnail"] = build_media_url(instance.variant_thumbnail, request)
+        rep["variant_medium"] = build_media_url(instance.variant_medium, request)
+        rep["variant_large"] = build_media_url(instance.variant_large, request)
         return rep
 
 
@@ -119,6 +127,11 @@ class DocumentFileSerializer(serializers.ModelSerializer):
             validated_data["size_bytes"] = file.size
         return super().create(validated_data)
 
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        rep["file"] = build_media_url(instance.file, self.context.get("request"))
+        return rep
+
 
 class VideoFileSerializer(serializers.ModelSerializer):
     """Serializer para VideoFile."""
@@ -156,3 +169,8 @@ class VideoFileSerializer(serializers.ModelSerializer):
             validated_data["mime_type"] = getattr(file, "content_type", "") or ""
             validated_data["size_bytes"] = file.size
         return super().create(validated_data)
+
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        rep["file"] = build_media_url(instance.file, self.context.get("request"))
+        return rep

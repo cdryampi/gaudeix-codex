@@ -69,9 +69,6 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS(f"{action} festes category: {category}"))
 
     def _apply_featured_image(self, category: Category, image_name: str) -> None:
-        if category.featured_media and category.featured_media.original_name == image_name:
-            return
-
         from core.seed_media import ensure_image_file
         from pathlib import Path
 

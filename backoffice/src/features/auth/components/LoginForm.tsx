@@ -82,9 +82,13 @@ export function LoginForm() {
             placeholder="admin"
             {...register("username")}
             color={errors.username ? "failure" : "gray"}
+            aria-invalid={!!errors.username || undefined}
           />
           {errors.username && (
-            <p className="mt-1 text-sm text-red-600 dark:text-red-500">
+            <p
+              className="mt-1 text-sm text-red-600 dark:text-red-500"
+              role="alert"
+            >
               {errors.username.message}
             </p>
           )}
@@ -100,9 +104,13 @@ export function LoginForm() {
             placeholder="••••••••"
             {...register("password")}
             color={errors.password ? "failure" : "gray"}
+            aria-invalid={!!errors.password || undefined}
           />
           {errors.password && (
-            <p className="mt-1 text-sm text-red-600 dark:text-red-500">
+            <p
+              className="mt-1 text-sm text-red-600 dark:text-red-500"
+              role="alert"
+            >
               {errors.password.message}
             </p>
           )}

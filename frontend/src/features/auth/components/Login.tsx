@@ -11,7 +11,10 @@ import { notifications as toast } from "@/lib/notifications";
 
 import { useAuthStore } from "../store";
 
-export function Login({ onToggleRegister, onTogglePasswordReset }: {
+export function Login({
+  onToggleRegister,
+  onTogglePasswordReset,
+}: {
   onToggleRegister: () => void;
   onTogglePasswordReset: () => void;
 }) {
@@ -21,9 +24,17 @@ export function Login({ onToggleRegister, onTogglePasswordReset }: {
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+
+  const usernameError =
+    !username && touched.username ? "El usuario es requerido" : null;
+  const passwordError =
+    !password && touched.password ? "La contraseña es requerida" : null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setTouched({ username: true, password: true });
+    if (!username || !password) return;
     try {
       await login(username, password);
       toast.success("¡Bienvenido de nuevo!");
@@ -51,7 +62,10 @@ export function Login({ onToggleRegister, onTogglePasswordReset }: {
 
         <div className="space-y-4">
           <div>
-            <label htmlFor="username" className="mb-2 block text-sm font-medium text-gray-900">
+            <label
+              htmlFor="username"
+              className="mb-2 block text-sm font-medium text-gray-900"
+            >
               Usuario o email
             </label>
             <div className="relative">
@@ -63,16 +77,35 @@ export function Login({ onToggleRegister, onTogglePasswordReset }: {
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
+                onBlur={() => setTouched((p) => ({ ...p, username: true }))}
                 placeholder="Introduce tu usuario o email"
-                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 pl-10 text-sm text-gray-900 focus:border-puerto-rico-500 focus:ring-puerto-rico-500"
+                className={`block w-full rounded-lg border p-2.5 pl-10 text-sm text-gray-900 focus:border-puerto-rico-500 focus:ring-puerto-rico-500 ${
+                  usernameError
+                    ? "border-red-500 bg-red-50"
+                    : "border-gray-300 bg-gray-50"
+                }`}
+                aria-invalid={!!usernameError || undefined}
+                aria-describedby={usernameError ? "username-error" : undefined}
                 required
                 disabled={isLoading}
               />
             </div>
+            {usernameError && (
+              <p
+                id="username-error"
+                className="mt-1 text-sm text-red-600"
+                role="alert"
+              >
+                {usernameError}
+              </p>
+            )}
           </div>
 
           <div>
-            <label htmlFor="password" className="mb-2 block text-sm font-medium text-gray-900">
+            <label
+              htmlFor="password"
+              className="mb-2 block text-sm font-medium text-gray-900"
+            >
               Contraseña
             </label>
             <div className="relative">
@@ -84,12 +117,28 @@ export function Login({ onToggleRegister, onTogglePasswordReset }: {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                onBlur={() => setTouched((p) => ({ ...p, password: true }))}
                 placeholder="••••••••"
-                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 pl-10 text-sm text-gray-900 focus:border-puerto-rico-500 focus:ring-puerto-rico-500"
+                className={`block w-full rounded-lg border p-2.5 pl-10 text-sm text-gray-900 focus:border-puerto-rico-500 focus:ring-puerto-rico-500 ${
+                  passwordError
+                    ? "border-red-500 bg-red-50"
+                    : "border-gray-300 bg-gray-50"
+                }`}
+                aria-invalid={!!passwordError || undefined}
+                aria-describedby={passwordError ? "password-error" : undefined}
                 required
                 disabled={isLoading}
               />
             </div>
+            {passwordError && (
+              <p
+                id="password-error"
+                className="mt-1 text-sm text-red-600"
+                role="alert"
+              >
+                {passwordError}
+              </p>
+            )}
           </div>
         </div>
 

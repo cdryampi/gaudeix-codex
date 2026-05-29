@@ -69,9 +69,6 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS(f"{action} routes category: {category}"))
 
     def _apply_featured_image(self, category: Category, image_name: str) -> None:
-        if category.featured_media and category.featured_media.original_name == image_name:
-            return
-
         image_path = (
             Path(__file__).resolve().parents[3]
             / "seed_assets"

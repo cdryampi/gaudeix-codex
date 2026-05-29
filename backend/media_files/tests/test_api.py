@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import pytest
 from django.contrib.auth import get_user_model
-from django.urls import reverse
 from rest_framework import status
 
 from .conftest import make_test_document, make_test_image
@@ -30,8 +29,11 @@ def test_create_image_file_via_api(auth_client, media_storage):
     data = response.json()
     assert data["original_name"].endswith("test.jpg")
     assert data["size_bytes"] > 0
+    assert data["file"].startswith("http://testserver/media/")
     assert data["variant_thumbnail"] != ""
+    assert data["variant_thumbnail"].startswith("http://testserver/media/")
     assert data["thumbnail_url"] != ""
+    assert data["thumbnail_url"].startswith("http://testserver/media/")
 
 
 @pytest.mark.django_db
@@ -46,6 +48,7 @@ def test_create_document_file_via_api(auth_client, media_storage):
     assert response.status_code == status.HTTP_201_CREATED
     data = response.json()
     assert data["original_name"].endswith("test.pdf")
+    assert data["file"].startswith("http://testserver/media/")
 
 
 @pytest.mark.django_db

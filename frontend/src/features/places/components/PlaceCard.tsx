@@ -44,6 +44,7 @@ export const PlaceCard = ({
             "/placeholder-place.jpg"
           }
           alt={place.title}
+          loading="lazy"
           className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
         />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(8,24,37,0),rgba(8,24,37,0.22)_100%)]" />

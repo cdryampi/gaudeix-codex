@@ -1,5 +1,18 @@
 # Instrucciones para Agentes AI - Gaudeix Codex
 
+## Modern Web Guidance
+
+This project uses **Modern Web Guidance** for web best practices. The skill is located at `.agents/skills/modern-web-guidance/SKILL.md`.
+
+**Baseline target**: Baseline 2024 (widely available across modern browsers)
+
+When implementing UI features, consult the skill for:
+
+- Performance optimization (image priority, task breaking, content visibility)
+- Accessibility patterns (form validation, error announcements)
+- Modern CSS (text-wrap balance, accent-color, container queries)
+- UX patterns (native dialogs, animations, dark mode)
+
 ## Entorno Cloud/Linux
 
 Si trabajas en Codex Web/Cloud, Jules o runners Linux, lee primero `AGENTS_CLOUD.md`.
@@ -144,12 +157,20 @@ Haz:
 - Solo **Lucide React** para iconos
 - shadcn/ui para componentes
 - Variables `VITE_*`
+- Usar `fetchPriority="high"` en imágenes LCP
+- Usar `content-visibility: auto` en listas largas
+- Usar `text-wrap: balance` en headings
+- Usar `:user-invalid` para validación de formularios
+- Usar `<dialog closedby>` para modales nativos
+- Usar `scheduler.yield()` para tareas largas
 
 Evita:
 
 - Acceso directo a DB
 - Importaciones relativas largas
 - Dejar `.js` compilados dentro de `src/`
+- JavaScript innecesario para funcionalidad nativa del navegador
+- Animaciones que bloqueen el hilo principal
 
 ## Mobile
 

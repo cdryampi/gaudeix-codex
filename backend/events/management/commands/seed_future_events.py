@@ -1,17 +1,16 @@
 
 from __future__ import annotations
 
-import mimetypes
 from datetime import timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
-from django.core.files import File
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.utils import timezone
 
 from core.models import Category
+from core.seed_media import ensure_image_file
 from events.models import Event
 from media_files.models import ImageFile
 from core.seed_utils import build_seed_context
@@ -320,17 +319,6 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS(f"Successfully created {created_count} future events for Cabrera de Mar."))
 
     def _get_or_create_image(self, path: Path) -> ImageFile:
-        # Check if exists by original name to avoid duplicates
-        existing = ImageFile.objects.filter(original_name=path.name).first()
-        if existing:
-            return existing
-
-        with path.open("rb") as source:
-            instance = ImageFile.objects.create(
-                file=File(source, name=path.name),
-                original_name=path.name,
-                mime_type=mimetypes.guess_type(path.name)[0] or "image/png",
-                size_bytes=path.stat().st_size,
-            )
+        instance = ensure_image_file(path).instance
         self.stdout.write(self.style.SUCCESS(f"Imported image: {path.name}"))
         return instance
