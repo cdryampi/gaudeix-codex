@@ -202,16 +202,19 @@ describe("MyComponent", () => {
 
 ## Autenticación
 
-La autenticación está configurada como placeholder. Para implementar autenticación real:
+La autenticación real contra el backend ya está implementada:
 
-1. Actualizar `src/app/providers/AuthProvider.tsx` con llamadas reales a la API
-2. Configurar tokens en `src/lib/api/client.ts`
-3. Implementar refresh token logic si es necesario
+1. **Login**: `src/app/providers/AuthProvider.tsx` usa `authApi.login()` → `POST /api/v1/auth/login/`
+2. **Logout**: `authApi.logout()` → `POST /api/v1/auth/logout/`
+3. **JWT**: Tokens almacenados en localStorage y adjuntados automáticamente via interceptor axios
+4. **Refresh**: Interceptor maneja `401` → `POST /api/v1/auth/token/refresh/` automáticamente
+5. **Sesión**: Persiste entre recargas (restaura usuario desde API al montar)
+6. **Rutas protegidas**: `ProtectedRoute` redirige a login si no hay sesión válida
+7. Configurar tokens en `src/lib/api/client.ts`
+8. Implementar refresh token logic si es necesario
 
 ## Próximos Pasos
 
-- [ ] Implementar lógica de autenticación real
-- [ ] Conectar con API backend
 - [ ] Implementar CRUD completo para cada feature
 - [ ] Añadir más componentes de Flowbite React según necesidad
 - [ ] Implementar manejo de errores global
@@ -231,8 +234,8 @@ El Backoffice puede reutilizar componentes visuales del `frontend/` directamente
 
 ### Componentes actualmente compartidos
 
-| Componente | Ruta en Frontend | Usado en Backoffice |
-|---|---|---|
+| Componente           | Ruta en Frontend                                        | Usado en Backoffice                          |
+| -------------------- | ------------------------------------------------------- | -------------------------------------------- |
 | `EventDetailContent` | `src/features/agenda/components/EventDetailContent.tsx` | `EventPreview.tsx` — vista previa de eventos |
 
 ### Ejemplo de importación
@@ -245,6 +248,7 @@ import { EventDetailContent } from "@frontend/features/agenda/components/EventDe
 ### Prop `isPreview`
 
 Todos los componentes compartidos aceptan la prop `isPreview?: boolean`. Cuando es `true`:
+
 - Se ocultan enlaces de navegación (`<Link>` a rutas del frontend).
 - Los botones interactivos (Favorito, Check-in, Compartir) muestran feedback de simulación.
 - Los hrefs externos (Google Maps, documentos) apuntan a `"#"` en lugar de URLs reales.
