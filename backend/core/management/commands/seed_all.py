@@ -29,6 +29,7 @@ SEED_PIPELINE: list[tuple[str, str, str]] = [
     ("festes_category", "seed_festes_category", "Seeding festes category..."),
     ("festes", "seed_festes", "Seeding festes..."),
     ("news_category", "seed_news_category", "Seeding news category..."),
+    ("news", "seed_news", "Seeding news..."),
     ("gamification", "seed_gamification", "Seeding gamification..."),
     ("automations", "bootstrap_automations", "Bootstrapping automations..."),
 ]
