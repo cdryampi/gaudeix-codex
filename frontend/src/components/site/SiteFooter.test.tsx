@@ -4,10 +4,11 @@ import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { SiteFooter } from "./SiteFooter";
-import { getFooterPublic } from "@/features/site-settings/api/footerApi";
+import { getFooterPublic } from "@/features/site-settings/api";
 
-vi.mock("@/features/site-settings/api/footerApi", () => ({
+vi.mock("@/features/site-settings/api", () => ({
   getFooterPublic: vi.fn(),
+  getSiteSettings: vi.fn(),
 }));
 
 function renderFooter() {

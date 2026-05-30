@@ -7,7 +7,7 @@ import * as eventsApi from "@/features/events/api";
 import * as categoriesApi from "@/features/categories/api";
 import * as newsApi from "@/features/news/api";
 import * as socialApi from "@/features/social/api";
-import * as footerApi from "@/features/site-settings/api/footerApi";
+import * as footerApi from "@/features/site-settings/api";
 
 // Mock the Google Maps API that's used by InteractiveMap component
 vi.stubGlobal("google", {
@@ -39,8 +39,9 @@ vi.mock("@/features/news/api", () => ({
   listNewsItems: vi.fn(),
 }));
 
-vi.mock("@/features/site-settings/api/footerApi", () => ({
+vi.mock("@/features/site-settings/api", () => ({
   getFooterPublic: vi.fn(),
+  getSiteSettings: vi.fn(),
 }));
 
 const queryClient = new QueryClient({
@@ -57,7 +58,7 @@ const renderApp = (initialEntries = ["/"]) => {
       <MemoryRouter initialEntries={initialEntries}>
         <App />
       </MemoryRouter>
-    </QueryClientProvider>
+    </QueryClientProvider>,
   );
 };
 
@@ -83,6 +84,17 @@ describe("App Smoke Tests", () => {
     });
 
     vi.mocked(newsApi.listNewsItems).mockResolvedValue([]);
+    vi.mocked(footerApi.getSiteSettings).mockResolvedValue({
+      id: 1,
+      site_name: "Cabrera de Mar",
+      tagline: "",
+      address: "",
+      phone: "",
+      contact_email: "",
+      latitude: null,
+      longitude: null,
+      maps_base_url: "",
+    });
     vi.mocked(footerApi.getFooterPublic).mockResolvedValue({
       id: 1,
       eyebrow: "",
@@ -133,9 +145,7 @@ describe("App Smoke Tests", () => {
     renderApp(["/"]);
 
     await waitFor(() => {
-      expect(
-        screen.getAllByText(/Cabrera de Mar/i)[0],
-      ).toBeInTheDocument();
+      expect(screen.getAllByText(/Cabrera de Mar/i)[0]).toBeInTheDocument();
     });
   });
 

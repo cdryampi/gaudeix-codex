@@ -13,7 +13,7 @@ import {
 
 import logoCabrera from "@/assets/logo/logo-cabrera-white.png";
 import { cn } from "@/lib/utils";
-import { getFooterPublic } from "@/features/site-settings/api/footerApi";
+import { getFooterPublic } from "@/features/site-settings/api";
 import {
   FooterBadge,
   FooterLegalBlock,
@@ -100,11 +100,8 @@ function buildLegalItems(legal: FooterLegalBlock | undefined) {
     legal.cookies_page,
     legal.inclusion_page,
   ].filter(
-    (
-      page,
-    ): page is NonNullable<
-      FooterLegalBlock[keyof FooterLegalBlock]
-    > => Boolean(page),
+    (page): page is NonNullable<FooterLegalBlock[keyof FooterLegalBlock]> =>
+      Boolean(page),
   );
 }
 
@@ -120,7 +117,12 @@ function FooterNavLink({
 
   if (isExternalUrl(href)) {
     return (
-      <a href={href} target="_blank" rel="noopener noreferrer" className={className}>
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={className}
+      >
         {children}
       </a>
     );
@@ -219,7 +221,7 @@ export function SiteFooter() {
         <div className="grid gap-12 border-b border-[color:var(--color-border-soft)] pb-12 md:gap-14 lg:grid-cols-[1.3fr_0.9fr_0.9fr]">
           <div className="space-y-6">
             <div className="space-y-4">
-                <span className="inline-flex items-center rounded-full border border-[color:var(--color-border-soft)] bg-white/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+              <span className="inline-flex items-center rounded-full border border-[color:var(--color-border-soft)] bg-white/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
                 {eyebrow}
               </span>
 
