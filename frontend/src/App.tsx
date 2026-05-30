@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Routes, Route, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { ThemeProvider } from "@/hooks/useTheme";
 import {
   CalendarDays,
   ChevronRight,
@@ -485,34 +486,39 @@ export default function App() {
 
   return (
     <ErrorBoundary>
-      <MainLayout>
-        <SessionInitializer />
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/agenda" element={<AgendaPage />} />
-          <Route path="/agenda/:slug" element={<EventDetailPage />} />
-          <Route path="/lugares" element={<PlacesPage />} />
-          <Route path="/lugares/:slug" element={<LegacyBeachPlaceRedirect />} />
-          <Route path="/playas/:slug" element={<BeachDetailPage />} />
-          <Route path="/categorias" element={<CategoriesPage />} />
-          <Route path="/categorias/:slug" element={<CategoryDetailPage />} />
-          <Route path="/rankings" element={<RankingsPage />} />
-          <Route path="/como-llegar" element={<ComoLlegarPage />} />
-          <Route path="/noticias/:slug" element={<NewsDetailPage />} />
-          <Route path="/mis-favoritos" element={<FavoritesPage />} />
-          <Route path="/rutas" element={<RoutesPage />} />
-          <Route path="/rutas/roadmap" element={<RoadmapPage />} />
-          <Route path="/rutas/:slug" element={<RouteDetailPage />} />
-          <Route path="/festes" element={<FestesPage />} />
-          <Route path="/festes/programacio" element={<ProgrammingPage />} />
-          <Route path="/festes/:slug" element={<FestaDetailPage />} />
-          <Route path="/noticias" element={<NewsPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/password-reset" element={<PasswordResetPage />} />
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
-      </MainLayout>
+      <ThemeProvider>
+        <MainLayout>
+          <SessionInitializer />
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/agenda" element={<AgendaPage />} />
+            <Route path="/agenda/:slug" element={<EventDetailPage />} />
+            <Route path="/lugares" element={<PlacesPage />} />
+            <Route
+              path="/lugares/:slug"
+              element={<LegacyBeachPlaceRedirect />}
+            />
+            <Route path="/playas/:slug" element={<BeachDetailPage />} />
+            <Route path="/categorias" element={<CategoriesPage />} />
+            <Route path="/categorias/:slug" element={<CategoryDetailPage />} />
+            <Route path="/rankings" element={<RankingsPage />} />
+            <Route path="/como-llegar" element={<ComoLlegarPage />} />
+            <Route path="/noticias/:slug" element={<NewsDetailPage />} />
+            <Route path="/mis-favoritos" element={<FavoritesPage />} />
+            <Route path="/rutas" element={<RoutesPage />} />
+            <Route path="/rutas/roadmap" element={<RoadmapPage />} />
+            <Route path="/rutas/:slug" element={<RouteDetailPage />} />
+            <Route path="/festes" element={<FestesPage />} />
+            <Route path="/festes/programacio" element={<ProgrammingPage />} />
+            <Route path="/festes/:slug" element={<FestaDetailPage />} />
+            <Route path="/noticias" element={<NewsPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/password-reset" element={<PasswordResetPage />} />
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </MainLayout>
+      </ThemeProvider>
     </ErrorBoundary>
   );
 }

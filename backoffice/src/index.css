@@ -2,19 +2,56 @@
 @import "tailwindcss";
 @config "../tailwind.config.js";
 
+:root {
+  --primary: hsl(209, 79%, 28%);
+  --secondary: hsl(178, 83%, 31%);
+  --accent: hsl(35, 100%, 65%);
+  --background-light: hsl(210, 40%, 98%);
+  --background-dark: hsl(209, 73%, 9%);
+  --surface: hsl(0, 0%, 100%);
+  --surface-muted: hsl(207, 30%, 95%);
+  --text-primary: hsl(206, 58%, 18%);
+  --text-secondary: hsl(207, 20%, 43%);
+  --border-soft: hsl(207, 30%, 92%);
+  --border-strong: hsl(207, 20%, 85%);
+}
+
+.dark {
+  --primary: hsl(209, 85%, 45%);
+  --secondary: hsl(178, 80%, 42%);
+  --accent: hsl(35, 95%, 58%);
+  --background-light: hsl(209, 73%, 9%);
+  --surface: hsl(209, 60%, 14%);
+  --surface-muted: hsl(209, 50%, 18%);
+  --text-primary: hsl(210, 20%, 95%);
+  --text-secondary: hsl(208, 15%, 78%);
+  --border-soft: hsl(209, 40%, 18%);
+  --border-strong: hsl(209, 30%, 24%);
+}
+
 @theme {
   --font-sans: "Source Sans 3", "Inter", system-ui, sans-serif;
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+  --color-background-light: var(--background-light);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-border-soft: var(--border-soft);
+  --color-border-strong: var(--border-strong);
 }
 
 /* Base Styles */
 @layer base {
   body {
-    @apply bg-slate-100 text-slate-900 font-sans antialiased;
+    @apply bg-background-light text-text-primary font-sans antialiased transition-colors duration-400;
     letter-spacing: 0.01em;
   }
 
   .dark body {
-    @apply bg-slate-950 text-slate-100;
+    @apply bg-background-light text-text-primary;
   }
 
   h1,

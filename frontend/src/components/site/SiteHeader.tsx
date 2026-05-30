@@ -18,6 +18,7 @@ import {
   type MenuTreeItem,
 } from "@/features/site-settings/api/menuApi";
 import logoCabrera from "@/assets/logo/logo-cabrera-white.png";
+import { ThemeToggle } from "@/components/site/ThemeToggle";
 
 function resolveUrl(item: MenuTreeItem): string {
   if (item.type === "category" && item.category?.slug) {
@@ -43,7 +44,9 @@ function toHeaderNavItems(items: MenuTreeItem[]): HeaderNavItem[] {
   return items.map((item) => ({
     label: resolveLabel(item),
     href: resolveUrl(item),
-    children: item.children?.length ? toHeaderNavItems(item.children) : undefined,
+    children: item.children?.length
+      ? toHeaderNavItems(item.children)
+      : undefined,
   }));
 }
 
@@ -70,19 +73,23 @@ export function SiteHeader({
   });
 
   const navItems: HeaderNavItem[] =
-    apiMenuTree && apiMenuTree.length > 0 ? toHeaderNavItems(apiMenuTree) : HEADER_NAV;
+    apiMenuTree && apiMenuTree.length > 0
+      ? toHeaderNavItems(apiMenuTree)
+      : HEADER_NAV;
 
   return (
     <>
       <header
-        className={`relative z-30 w-full transition-all duration-500 ${isTransparent
-          ? "border-b border-transparent bg-transparent text-white"
-          : "border-b border-slate-100/60 bg-white/95 backdrop-blur-md shadow-sm"
-          }`}
+        className={`relative z-30 w-full transition-all duration-500 ${
+          isTransparent
+            ? "border-b border-transparent bg-transparent text-white"
+            : "border-b border-slate-100/60 bg-white/95 backdrop-blur-md shadow-sm"
+        }`}
       >
         <div
-          className={`page-container flex items-center justify-between gap-4 transition-all duration-500 ${isCondensed ? "h-14" : "h-16 md:h-20"
-            }`}
+          className={`page-container flex items-center justify-between gap-4 transition-all duration-500 ${
+            isCondensed ? "h-14" : "h-16 md:h-20"
+          }`}
         >
           <Link to="/" className="flex shrink-0 items-center group">
             <div className="transition-transform duration-300 group-hover:scale-105">
@@ -99,10 +106,11 @@ export function SiteHeader({
               <div key={item.label} className="group relative">
                 <Link
                   to={item.href || "#"}
-                  className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold transition-all ${isTransparent
-                    ? "text-white/60 hover:bg-white/5 hover:text-white"
-                    : "text-slate-600 hover:bg-slate-100/80 hover:text-slate-900"
-                    }`}
+                  className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold transition-all ${
+                    isTransparent
+                      ? "text-white/60 hover:bg-white/5 hover:text-white"
+                      : "text-slate-600 hover:bg-slate-100/80 hover:text-slate-900"
+                  }`}
                 >
                   {item.label}
                   {item.children ? (
@@ -131,12 +139,14 @@ export function SiteHeader({
           </nav>
 
           <div className="flex shrink-0 items-center gap-3">
+            <ThemeToggle isTransparent={isTransparent} />
             <Link
               to="/como-llegar"
-              className={`hidden items-center gap-2 rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-widest transition-all md:flex ${isTransparent
-                ? "bg-white/10 text-white hover:bg-white/20 hover:scale-[1.02]"
-                : "bg-slate-100 text-slate-800 hover:bg-slate-200"
-                }`}
+              className={`hidden items-center gap-2 rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-widest transition-all md:flex ${
+                isTransparent
+                  ? "bg-white/10 text-white hover:bg-white/20 hover:scale-[1.02]"
+                  : "bg-slate-100 text-slate-800 hover:bg-slate-200"
+              }`}
             >
               <Navigation className="h-3.5 w-3.5 opacity-80" />
               Como llegar
@@ -146,18 +156,24 @@ export function SiteHeader({
               <>
                 <Link
                   to="/mis-favoritos"
-                  className={`flex h-9 w-9 items-center justify-center rounded-full transition-all ${isTransparent
-                    ? "bg-white/10 text-white hover:bg-white/20"
-                    : "bg-rose-50 text-rose-500 hover:bg-rose-100"
-                    }`}
+                  className={`flex h-9 w-9 items-center justify-center rounded-full transition-all ${
+                    isTransparent
+                      ? "bg-white/10 text-white hover:bg-white/20"
+                      : "bg-rose-50 text-rose-500 hover:bg-rose-100"
+                  }`}
                   title="Mis Favoritos"
                 >
-                  <Heart className={`h-4 w-4 ${isTransparent ? "text-white" : "text-rose-500"}`} />
+                  <Heart
+                    className={`h-4 w-4 ${isTransparent ? "text-white" : "text-rose-500"}`}
+                  />
                 </Link>
                 <div className="hidden items-center gap-2 md:flex">
                   <div
-                    className={`group relative flex h-9 cursor-pointer items-center justify-center gap-2 rounded-full px-3.5 transition-all ${isTransparent ? "bg-white/10 text-white hover:bg-white/20" : "bg-slate-100 text-slate-700"
-                      }`}
+                    className={`group relative flex h-9 cursor-pointer items-center justify-center gap-2 rounded-full px-3.5 transition-all ${
+                      isTransparent
+                        ? "bg-white/10 text-white hover:bg-white/20"
+                        : "bg-slate-100 text-slate-700"
+                    }`}
                   >
                     <User className="h-3.5 w-3.5" />
                     <span className="text-[10px] font-bold uppercase tracking-wider">
@@ -188,8 +204,11 @@ export function SiteHeader({
             ) : (
               <Link
                 to="/login"
-                className={`hidden h-9 items-center gap-2 rounded-full px-5 text-xs font-bold transition-all md:flex hover:scale-[1.02] ${isTransparent ? "bg-white text-slate-900 shadow-xl" : "bg-slate-900 text-white hover:bg-slate-800"
-                  }`}
+                className={`hidden h-9 items-center gap-2 rounded-full px-5 text-xs font-bold transition-all md:flex hover:scale-[1.02] ${
+                  isTransparent
+                    ? "bg-white text-slate-900 shadow-xl"
+                    : "bg-slate-900 text-white hover:bg-slate-800"
+                }`}
               >
                 <LogIn className="h-3.5 w-3.5" />
                 Entrar
@@ -198,10 +217,11 @@ export function SiteHeader({
 
             <button
               onClick={() => setMobileOpen(true)}
-              className={`flex h-9 w-9 items-center justify-center rounded-full transition-all lg:hidden ${isTransparent
-                ? "bg-white/10 text-white hover:bg-white/16"
-                : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-                }`}
+              className={`flex h-9 w-9 items-center justify-center rounded-full transition-all lg:hidden ${
+                isTransparent
+                  ? "bg-white/10 text-white hover:bg-white/16"
+                  : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+              }`}
               aria-label="Abrir menú"
             >
               <Menu className="h-4.5 w-4.5" />
@@ -226,7 +246,9 @@ export function SiteHeader({
                   className="h-7 w-auto brightness-0"
                 />
                 <div className="flex flex-col">
-                  <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Cabrera de Mar</span>
+                  <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
+                    Cabrera de Mar
+                  </span>
                 </div>
               </div>
               <button
@@ -254,8 +276,9 @@ export function SiteHeader({
                         >
                           {item.label}
                           <ChevronDown
-                            className={`h-4 w-4 text-slate-400 transition-transform duration-300 ${mobileExpanded === item.label ? "rotate-180" : ""
-                              }`}
+                            className={`h-4 w-4 text-slate-400 transition-transform duration-300 ${
+                              mobileExpanded === item.label ? "rotate-180" : ""
+                            }`}
                           />
                         </button>
                         {mobileExpanded === item.label ? (
@@ -288,10 +311,17 @@ export function SiteHeader({
             </nav>
 
             <div className="space-y-4 border-t border-slate-50 p-8 bg-slate-50/30">
-              <div className="flex items-center justify-center gap-4 py-2">
-                <button className="text-[11px] font-black tracking-widest text-slate-900">ES</button>
-                <div className="h-4 w-px bg-slate-200" />
-                <button className="text-[11px] font-bold tracking-widest text-slate-400">CA</button>
+              <div className="flex items-center justify-between py-2">
+                <div className="flex items-center gap-4">
+                  <button className="text-[11px] font-black tracking-widest text-slate-900">
+                    ES
+                  </button>
+                  <div className="h-4 w-px bg-slate-200" />
+                  <button className="text-[11px] font-bold tracking-widest text-slate-400">
+                    CA
+                  </button>
+                </div>
+                <ThemeToggle />
               </div>
 
               <Link
