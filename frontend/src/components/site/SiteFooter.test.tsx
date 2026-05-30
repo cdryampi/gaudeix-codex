@@ -185,7 +185,9 @@ describe("SiteFooter", () => {
     expect(screen.getByText(/playas/i)).toBeInTheDocument();
     expect(screen.getByText(/agenda/i)).toBeInTheDocument();
     expect(screen.getByText(/noticias/i)).toBeInTheDocument();
-    expect(screen.getByText(/oficina de turismo/i)).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: /oficina de turismo/i }),
+    ).toBeInTheDocument();
     expect(screen.getByText(/transparencia viva/i)).toBeInTheDocument();
     expect(screen.getByText(/privacidad/i)).toBeInTheDocument();
     expect(screen.getByText(/cookies/i)).toBeInTheDocument();

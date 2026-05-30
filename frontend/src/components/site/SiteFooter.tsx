@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import {
@@ -21,6 +21,7 @@ import {
   FooterPublicPayload,
   LinkedImage,
 } from "@/features/site-settings/types";
+import { IncidentReportModal } from "@/components/site/IncidentReportModal";
 
 type SocialItem = {
   key: string;
@@ -100,11 +101,8 @@ function buildLegalItems(legal: FooterLegalBlock | undefined) {
     legal.cookies_page,
     legal.inclusion_page,
   ].filter(
-    (
-      page,
-    ): page is NonNullable<
-      FooterLegalBlock[keyof FooterLegalBlock]
-    > => Boolean(page),
+    (page): page is NonNullable<FooterLegalBlock[keyof FooterLegalBlock]> =>
+      Boolean(page),
   );
 }
 
@@ -120,7 +118,12 @@ function FooterNavLink({
 
   if (isExternalUrl(href)) {
     return (
-      <a href={href} target="_blank" rel="noopener noreferrer" className={className}>
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={className}
+      >
         {children}
       </a>
     );
@@ -164,6 +167,16 @@ function FooterBadgeLink({ badge }: { badge: FooterBadge }) {
 }
 
 export function SiteFooter() {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalType, setModalType] = useState<
+    "contact" | "error" | "accessibility"
+  >("contact");
+
+  const handleOpenModal = (type: "contact" | "error" | "accessibility") => {
+    setModalType(type);
+    setModalOpen(true);
+  };
+
   const { data } = useQuery({
     queryKey: ["footer-public"],
     queryFn: getFooterPublic,
@@ -216,10 +229,10 @@ export function SiteFooter() {
   return (
     <footer className="mt-20 border-t border-[color:var(--color-border-soft)] bg-[#f6f4ee] text-[color:var(--color-text-primary)]">
       <div className="page-container py-14 md:py-18">
-        <div className="grid gap-12 border-b border-[color:var(--color-border-soft)] pb-12 md:gap-14 lg:grid-cols-[1.3fr_0.9fr_0.9fr]">
+        <div className="grid gap-12 border-b border-[color:var(--color-border-soft)] pb-12 md:gap-14 lg:grid-cols-[1.2fr_0.8fr_0.8fr_0.8fr]">
           <div className="space-y-6">
             <div className="space-y-4">
-                <span className="inline-flex items-center rounded-full border border-[color:var(--color-border-soft)] bg-white/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+              <span className="inline-flex items-center rounded-full border border-[color:var(--color-border-soft)] bg-white/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
                 {eyebrow}
               </span>
 
@@ -312,6 +325,38 @@ export function SiteFooter() {
               </ul>
             ) : null}
           </div>
+
+          <div className="space-y-5">
+            <h4 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
+              Servicios y Canales
+            </h4>
+            <ul className="space-y-3">
+              <li>
+                <button
+                  onClick={() => handleOpenModal("contact")}
+                  className="text-sm leading-6 text-primary dark:text-sky-400 font-semibold transition-colors hover:text-slate-900 cursor-pointer text-left"
+                >
+                  Contactar Oficina de Turismo
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => handleOpenModal("error")}
+                  className="text-sm text-slate-600 dark:text-slate-400 leading-6 transition-colors hover:text-slate-900 cursor-pointer text-left"
+                >
+                  Reportar error de contenido
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => handleOpenModal("accessibility")}
+                  className="text-sm text-slate-600 dark:text-slate-400 leading-6 transition-colors hover:text-slate-900 cursor-pointer text-left"
+                >
+                  Reportar barrera de accesibilidad
+                </button>
+              </li>
+            </ul>
+          </div>
         </div>
 
         {badges.length ? (
@@ -344,6 +389,11 @@ export function SiteFooter() {
           ) : null}
         </div>
       </div>
+      <IncidentReportModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        type={modalType}
+      />
     </footer>
   );
 }
