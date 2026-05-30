@@ -13,11 +13,12 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { Plus } from "lucide-react";
+import { Plus, Download, CalendarDays, Table2 } from "lucide-react";
 import { Pagination } from "@/components/ui/pagination";
 import { EventDialog } from "../components/EventDialog";
 import { EventsFilters, DateRangePreset } from "../components/EventsFilters";
 import { EventsTable } from "../components/EventsTable";
+import { EventsCalendarView } from "../components/EventsCalendarView";
 import { CreateEventDTO, Event } from "../types";
 import { eventsApi } from "../api/events";
 import { categoriesApi } from "@/features/categories/api/categories";
@@ -26,7 +27,6 @@ import { envConfig } from "@/lib/config/env";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { EventPreview } from "../components/EventPreview";
 import { EventPdfDialog } from "../components/EventPdfDialog";
-import { Download } from "lucide-react";
 
 export function EventsPage() {
   const [events, setEvents] = useState<Event[]>([]);
@@ -48,6 +48,9 @@ export function EventsPage() {
   const [isFeatured, setIsFeatured] = useState<boolean | null>(null);
   const [isFree, setIsFree] = useState<boolean | null>(null);
   const [datePreset, setDatePreset] = useState<DateRangePreset>("all");
+
+  // View mode
+  const [viewMode, setViewMode] = useState<"table" | "calendar">("table");
 
   // Pagination
   const [page, setPage] = useState(1);
@@ -205,6 +208,25 @@ export function EventsPage() {
         actions={
           <div className="flex gap-2">
             <Button
+              variant={viewMode === "calendar" ? "default" : "outline"}
+              size="sm"
+              onClick={() =>
+                setViewMode(viewMode === "table" ? "calendar" : "table")
+              }
+            >
+              {viewMode === "table" ? (
+                <>
+                  <CalendarDays className="mr-2 h-4 w-4" />
+                  Vista Calendario
+                </>
+              ) : (
+                <>
+                  <Table2 className="mr-2 h-4 w-4" />
+                  Vista Tabla
+                </>
+              )}
+            </Button>
+            <Button
               variant="outline"
               onClick={() => setIsPdfDialogOpen(true)}
               size="sm"
@@ -259,39 +281,55 @@ export function EventsPage() {
         }}
       />
 
-      <Card className="border-border bg-card">
-        <CardContent className="p-0">
-          {loading ? (
-            <div className="flex h-48 items-center justify-center text-muted-foreground">
-              Cargando eventos...
-            </div>
-          ) : error ? (
-            <div className="flex h-48 items-center justify-center text-destructive">
-              {error}
-            </div>
-          ) : (
-            <EventsTable
-              events={paginated}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-              onPreview={setPreviewEvent}
-            />
-          )}
-        </CardContent>
-      </Card>
+      {viewMode === "table" ? (
+        <>
+          <Card className="border-border bg-card">
+            <CardContent className="p-0">
+              {loading ? (
+                <div className="flex h-48 items-center justify-center text-muted-foreground">
+                  Cargando eventos...
+                </div>
+              ) : error ? (
+                <div className="flex h-48 items-center justify-center text-destructive">
+                  {error}
+                </div>
+              ) : (
+                <EventsTable
+                  events={paginated}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                  onPreview={setPreviewEvent}
+                />
+              )}
+            </CardContent>
+          </Card>
 
-      <div className="mt-4 flex flex-col gap-2 text-sm text-muted-foreground md:flex-row md:items-center md:justify-between">
-        <span>
-          Página {page} de {totalPages} • {filtered.length} resultados
-        </span>
-        <div className="w-full md:w-auto">
-          <Pagination
-            page={page}
-            totalPages={totalPages}
-            onPageChange={setPage}
-          />
-        </div>
-      </div>
+          <div className="mt-4 flex flex-col gap-2 text-sm text-muted-foreground md:flex-row md:items-center md:justify-between">
+            <span>
+              Página {page} de {totalPages} • {filtered.length} resultados
+            </span>
+            <div className="w-full md:w-auto">
+              <Pagination
+                page={page}
+                totalPages={totalPages}
+                onPageChange={setPage}
+              />
+            </div>
+          </div>
+        </>
+      ) : (
+        <Card className="border-border bg-card">
+          <CardContent className="p-0">
+            {loading ? (
+              <div className="flex h-48 items-center justify-center text-muted-foreground">
+                Cargando eventos...
+              </div>
+            ) : (
+              <EventsCalendarView events={filtered} onEdit={handleEdit} />
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       <EventDialog
         open={isDialogOpen}

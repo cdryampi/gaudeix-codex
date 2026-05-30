@@ -31,6 +31,9 @@ import { ProgramsPage } from "@/features/festes/pages/ProgramsPage";
 import { VenuesPage } from "@/features/festes/pages/VenuesPage";
 import { NewsPage } from "@/features/news/pages/NewsPage";
 import { ScrapedNewsPage } from "@/features/scraper/pages/ScrapedNewsPage";
+import { RestaurantsPage } from "@/features/restaurants/pages/RestaurantsPage";
+import { AccommodationsPage } from "@/features/accommodations/pages/AccommodationsPage";
+import { NotFoundPage } from "@/pages/NotFoundPage";
 
 /**
  * Application routing configuration
@@ -83,6 +86,10 @@ export const router = createBrowserRouter(
         {
           index: true,
           element: <DashboardHome />,
+        },
+        {
+          path: "*",
+          element: <NotFoundPage />,
         },
         {
           path: "users",
@@ -151,6 +158,14 @@ export const router = createBrowserRouter(
         {
           path: "settings/llm",
           element: <LLMSettingsPage />,
+        },
+        {
+          path: "restaurants",
+          element: <RestaurantsPage />,
+        },
+        {
+          path: "accommodations",
+          element: <AccommodationsPage />,
         },
         {
           path: "notifications",

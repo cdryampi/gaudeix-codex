@@ -77,6 +77,11 @@ urlpatterns = [
         SpectacularRedocView.as_view(url_name="schema"),
         name="redoc",
     ),
+    path(
+        "api/docs/",
+        SpectacularRedocView.as_view(url_name="schema"),
+        name="developer-docs",
+    ),
 ]
 
 # Serve media files in development

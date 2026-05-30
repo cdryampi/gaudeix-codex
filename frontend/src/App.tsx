@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Routes, Route, Navigate, Link } from "react-router-dom";
+import { Routes, Route, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import {
   CalendarDays,
@@ -22,6 +22,7 @@ import { filterEvents, DateRangeFilter } from "@/features/agenda/utils";
 import LoginPage from "@/pages/LoginPage";
 import RegisterPage from "@/pages/RegisterPage";
 import PasswordResetPage from "@/pages/PasswordResetPage";
+import { NotFoundPage } from "@/pages/NotFoundPage";
 import { NewsDetailPage } from "@/features/news/pages/NewsDetailPage";
 import { EventDetailPage } from "@/features/agenda/pages/EventDetailPage";
 import { AgendaPage } from "@/features/agenda/pages/AgendaPage";
@@ -422,7 +423,11 @@ function SessionInitializer() {
 }
 
 import { CabritaPremiumMaintenance } from "@/components/feedback/CabritaPremiumMaintenance";
+import { ErrorBoundary } from "@/components/feedback/ErrorBoundary";
 import { subscribeToApiErrors, API_BASE_URL } from "@/lib/api";
+import { notifications as toast } from "@/lib/notifications";
+
+const FORCED_LOGOUT_TOAST_ID = "forced-logout";
 
 export default function App() {
   const [isMaintenance, setIsMaintenance] = useState(false);
@@ -446,7 +451,7 @@ export default function App() {
 
     void runHealthCheck();
 
-    // 2. Suscripción global a errores de la API en caliente durante la navegación
+    // 2. Suscripción global a errores de la API
     const unsubscribe = subscribeToApiErrors((error) => {
       if (
         error.isNetworkError ||
@@ -454,6 +459,18 @@ export default function App() {
         error.status === 502
       ) {
         setIsMaintenance(true);
+        return;
+      }
+
+      // Forzar cierre de sesión si el backend rechaza la autenticación
+      if (error.status === 401 || error.status === 403) {
+        const state = useAuthStore.getState();
+        if (state.isAuthenticated) {
+          state.logout();
+          toast.error("Tu sesión ha expirado. Inicia sesión de nuevo.", {
+            id: FORCED_LOGOUT_TOAST_ID,
+          });
+        }
       }
     });
 
@@ -467,33 +484,35 @@ export default function App() {
   }
 
   return (
-    <MainLayout>
-      <SessionInitializer />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/agenda" element={<AgendaPage />} />
-        <Route path="/agenda/:slug" element={<EventDetailPage />} />
-        <Route path="/lugares" element={<PlacesPage />} />
-        <Route path="/lugares/:slug" element={<LegacyBeachPlaceRedirect />} />
-        <Route path="/playas/:slug" element={<BeachDetailPage />} />
-        <Route path="/categorias" element={<CategoriesPage />} />
-        <Route path="/categorias/:slug" element={<CategoryDetailPage />} />
-        <Route path="/rankings" element={<RankingsPage />} />
-        <Route path="/como-llegar" element={<ComoLlegarPage />} />
-        <Route path="/noticias/:slug" element={<NewsDetailPage />} />
-        <Route path="/mis-favoritos" element={<FavoritesPage />} />
-        <Route path="/rutas" element={<RoutesPage />} />
-        <Route path="/rutas/roadmap" element={<RoadmapPage />} />
-        <Route path="/rutas/:slug" element={<RouteDetailPage />} />
-        <Route path="/festes" element={<FestesPage />} />
-        <Route path="/festes/programacio" element={<ProgrammingPage />} />
-        <Route path="/festes/:slug" element={<FestaDetailPage />} />
-        <Route path="/noticias" element={<NewsPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/password-reset" element={<PasswordResetPage />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </MainLayout>
+    <ErrorBoundary>
+      <MainLayout>
+        <SessionInitializer />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/agenda" element={<AgendaPage />} />
+          <Route path="/agenda/:slug" element={<EventDetailPage />} />
+          <Route path="/lugares" element={<PlacesPage />} />
+          <Route path="/lugares/:slug" element={<LegacyBeachPlaceRedirect />} />
+          <Route path="/playas/:slug" element={<BeachDetailPage />} />
+          <Route path="/categorias" element={<CategoriesPage />} />
+          <Route path="/categorias/:slug" element={<CategoryDetailPage />} />
+          <Route path="/rankings" element={<RankingsPage />} />
+          <Route path="/como-llegar" element={<ComoLlegarPage />} />
+          <Route path="/noticias/:slug" element={<NewsDetailPage />} />
+          <Route path="/mis-favoritos" element={<FavoritesPage />} />
+          <Route path="/rutas" element={<RoutesPage />} />
+          <Route path="/rutas/roadmap" element={<RoadmapPage />} />
+          <Route path="/rutas/:slug" element={<RouteDetailPage />} />
+          <Route path="/festes" element={<FestesPage />} />
+          <Route path="/festes/programacio" element={<ProgrammingPage />} />
+          <Route path="/festes/:slug" element={<FestaDetailPage />} />
+          <Route path="/noticias" element={<NewsPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/password-reset" element={<PasswordResetPage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </MainLayout>
+    </ErrorBoundary>
   );
 }

@@ -34,7 +34,7 @@ class Command(BaseCommand):
             image_map = self._ensure_images()
             self._create_news(root_category, image_map)
 
-    def _ensure_root_category(self) -> Category:
+    def _ensure_root_category(self):
         from core.models import Category
         category, _ = Category.objects.get_or_create(slug="news", defaults={"nombre": "News"})
         singleton, _ = NewsCategorySingleton.objects.get_or_create(pk=1, defaults={"category": category})

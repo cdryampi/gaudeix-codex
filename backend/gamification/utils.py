@@ -63,9 +63,19 @@ def _month_bounds(value: datetime) -> tuple[datetime, datetime]:
 
 
 @transaction.atomic
-def award_event_checkin(*, user, event) -> EventCheckin:
+def award_event_checkin(*, user, event, event_date=None) -> EventCheckin:
     if EventCheckin.objects.filter(user=user, event=event).exists():
         raise ValueError("User already checked in for this event")
+
+    if event_date is not None:
+        if event_date.event_id != event.id:
+            raise ValueError("Event date does not belong to the specified event")
+
+        now = timezone.now()
+        window_start = event_date.start_at - timezone.timedelta(minutes=30)
+        window_end = event_date.end_at or (event_date.start_at + timezone.timedelta(hours=3))
+        if not (window_start <= now <= window_end):
+            raise ValueError("Check-in is only allowed within the session time window")
 
     now = timezone.now()
     month_start, month_end = _month_bounds(now)
@@ -78,6 +88,7 @@ def award_event_checkin(*, user, event) -> EventCheckin:
     checkin = EventCheckin.objects.create(
         user=user,
         event=event,
+        event_date=event_date,
         points_awarded=event.points_value,
     )
 
