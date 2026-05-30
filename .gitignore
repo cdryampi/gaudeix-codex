@@ -113,3 +113,6 @@ docker-compose.override.yml
 
 #codex tmp files
 .codex-tmp-issues/
+
+# Temporary assets and issue screenshots
+tmp_assets/
