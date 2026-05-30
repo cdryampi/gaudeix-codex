@@ -3,7 +3,11 @@ import { Calendar, MapPin } from "lucide-react";
 
 import { MotionReveal } from "@/components/animated/MotionReveal";
 import { AnimatedCardGrid } from "@/components/animated/AnimatedCardGrid";
-import { DataCard, PageHero, SectionHeader } from "@/components/site/primitives";
+import {
+  DataCard,
+  PageHero,
+  SectionHeader,
+} from "@/components/site/primitives";
 import { PlaceCard } from "@/features/places/components/PlaceCard";
 import { EventCard } from "@/features/agenda/components/EventCard";
 import { CategoryLayoutProps } from "../types";
@@ -18,7 +22,10 @@ export default function DefaultCategoryLayout({
   isLoadingEvents,
 }: CategoryLayoutProps) {
   return (
-    <main className="min-h-screen bg-background-light page-shell-offset" data-testid="category-layout-default">
+    <main
+      className="min-h-screen bg-background-light page-shell-offset transition-colors duration-400"
+      data-testid="category-layout-default"
+    >
       <PageHero
         eyebrow="Categoria publica"
         title={category.nombre}
@@ -71,9 +78,12 @@ export default function DefaultCategoryLayout({
           </section>
         ) : null}
 
-        {places.length === 0 && events.length === 0 && !isLoadingPlaces && !isLoadingEvents ? (
-          <div className="card-surface flex flex-col items-center justify-center gap-4 py-20 text-center">
-            <p className="text-xl font-semibold text-slate-500">
+        {places.length === 0 &&
+        events.length === 0 &&
+        !isLoadingPlaces &&
+        !isLoadingEvents ? (
+          <div className="card-surface flex flex-col items-center justify-center gap-4 py-20 text-center border border-border-soft transition-colors duration-400">
+            <p className="text-xl font-semibold text-text-secondary">
               No hay contenido disponible en esta categoria todavia.
             </p>
             <Link
@@ -88,8 +98,16 @@ export default function DefaultCategoryLayout({
         {places.length > 0 || events.length > 0 ? (
           <MotionReveal>
             <div className="grid gap-4 md:grid-cols-2">
-              <DataCard label="Lugares relacionados" value={places.length} icon={MapPin} />
-              <DataCard label="Eventos relacionados" value={events.length} icon={Calendar} />
+              <DataCard
+                label="Lugares relacionados"
+                value={places.length}
+                icon={MapPin}
+              />
+              <DataCard
+                label="Eventos relacionados"
+                value={events.length}
+                icon={Calendar}
+              />
             </div>
           </MotionReveal>
         ) : null}

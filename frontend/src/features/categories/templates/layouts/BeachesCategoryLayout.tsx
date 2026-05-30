@@ -98,7 +98,7 @@ export default function BeachesCategoryLayout({
           <>
             <Link
               to="/categorias/beaches"
-              className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-900 transition-colors hover:bg-slate-100"
+              className="inline-flex items-center gap-2 rounded-full bg-surface px-6 py-3 text-sm font-semibold text-text-primary border border-border-soft transition-colors hover:bg-surface-muted"
             >
               <Map className="h-4 w-4 text-primary" />
               Abrir mapa completo
@@ -125,10 +125,10 @@ export default function BeachesCategoryLayout({
         }
         aside={
           <div className="space-y-4">
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-white/60">
               Mediterráneo en estado puro
             </p>
-            <p className="text-sm leading-6 text-slate-700">
+            <p className="text-sm leading-6 text-white/85">
               Organiza tu día de playa con toda la información sobre accesos,
               servicios y características del entorno. Una experiencia costera
               accesible y cuidada.
@@ -183,7 +183,7 @@ export default function BeachesCategoryLayout({
               {[1, 2].map((item) => (
                 <div
                   key={item}
-                  className="card-surface h-[420px] animate-pulse bg-slate-100"
+                  className="card-surface h-[420px] animate-pulse bg-surface-muted border border-border-soft"
                 />
               ))}
             </div>
@@ -194,12 +194,12 @@ export default function BeachesCategoryLayout({
               ))}
             </AnimatedCardGrid>
           ) : (
-            <ContentCard className="p-10 text-center">
-              <Palmtree className="mx-auto mb-4 h-12 w-12 text-cyan-300" />
-              <p className="text-lg font-semibold text-slate-900">
+            <ContentCard className="p-10 text-center border border-border-soft bg-surface">
+              <Palmtree className="mx-auto mb-4 h-12 w-12 text-cyan-500" />
+              <p className="text-lg font-semibold text-text-primary">
                 Aún no hay playas publicadas para esta categoría.
               </p>
-              <p className="mt-2 text-sm text-slate-500">
+              <p className="mt-2 text-sm text-text-secondary">
                 La plantilla ya está preparada y mostrará comparativa en cuanto
                 existan exactamente dos.
               </p>
@@ -232,7 +232,7 @@ export default function BeachesCategoryLayout({
               <>
                 <Link
                   to="/categorias/beaches"
-                  className="inline-flex items-center gap-2 rounded-full bg-white px-7 py-4 text-sm font-bold text-slate-900 shadow-xl transition-all hover:scale-105 hover:bg-slate-50"
+                  className="inline-flex items-center gap-2 rounded-full bg-surface px-7 py-4 text-sm font-bold text-text-primary border border-border-soft shadow-xl transition-all hover:scale-105 hover:bg-surface-muted"
                 >
                   Ver playas en el mapa
                   <ArrowRight className="h-4 w-4" />
@@ -273,7 +273,7 @@ function BeachShowcaseCard({ beach }: { beach: Beach }) {
   return (
     <article
       data-animated-card
-      className="group overflow-hidden rounded-[2.5rem] border border-slate-200/60 bg-white shadow-sm transition-all hover:scale-[1.02] hover:shadow-xl hover:shadow-slate-200/50"
+      className="group overflow-hidden rounded-[2.5rem] border border-border-soft bg-surface shadow-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-xl"
     >
       <div className="relative aspect-[16/10] overflow-hidden">
         <img
@@ -282,7 +282,7 @@ function BeachShowcaseCard({ beach }: { beach: Beach }) {
           className="h-full w-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent" />
-        <div className="absolute left-5 top-5 inline-flex items-center gap-2 rounded-full bg-white/92 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-cyan-700 shadow-sm">
+        <div className="absolute left-5 top-5 inline-flex items-center gap-2 rounded-full bg-surface/92 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-cyan-600 dark:text-cyan-400 shadow-sm">
           <Waves className="h-3.5 w-3.5" />
           {BEACH_TYPE_LABELS[beach.beach_type]}
         </div>
@@ -293,7 +293,7 @@ function BeachShowcaseCard({ beach }: { beach: Beach }) {
       </div>
 
       <div className="space-y-5 p-6">
-        <p className="text-sm leading-6 text-slate-600">
+        <p className="text-sm leading-6 text-text-secondary">
           {beach.environment_summary ||
             beach.description.replace(/<[^>]+>/g, "").slice(0, 150)}
         </p>
@@ -320,7 +320,7 @@ function BeachShowcaseCard({ beach }: { beach: Beach }) {
         <div className="flex flex-wrap gap-3 pt-2">
           <Link
             to={`/playas/${beach.slug}`}
-            className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-slate-800"
+            className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-primary/90"
           >
             Ver detalle
             <ArrowRight className="h-4 w-4" />
@@ -329,7 +329,7 @@ function BeachShowcaseCard({ beach }: { beach: Beach }) {
             href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${beach.title} ${beach.location_text}`)}`}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-2 rounded-full border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
+            className="inline-flex items-center gap-2 rounded-full border border-border-soft px-5 py-3 text-sm font-semibold text-text-secondary transition-colors hover:bg-surface-muted hover:text-text-primary"
           >
             <Navigation className="h-4 w-4 text-primary" />
             Cómo llegar
@@ -394,15 +394,15 @@ function BeachComparisonTable({ beaches }: { beaches: Beach[] }) {
   ];
 
   return (
-    <div className="overflow-hidden rounded-[2rem] border border-slate-200/70 bg-white shadow-[0_24px_70px_rgba(9,32,52,0.08)]">
-      <div className="grid grid-cols-[180px_minmax(0,1fr)_minmax(0,1fr)] border-b border-slate-200/70 bg-slate-50/70">
-        <div className="px-5 py-4 text-xs font-bold uppercase tracking-[0.18em] text-slate-500">
+    <div className="overflow-hidden rounded-[2rem] border border-border-soft bg-surface shadow-[0_24px_70px_rgba(9,32,52,0.08)]">
+      <div className="grid grid-cols-[180px_minmax(0,1fr)_minmax(0,1fr)] border-b border-border-soft bg-surface-muted/50">
+        <div className="px-5 py-4 text-xs font-bold uppercase tracking-[0.18em] text-text-secondary/70">
           Criterio
         </div>
-        <div className="px-5 py-4 text-lg font-semibold text-slate-900">
+        <div className="px-5 py-4 text-lg font-semibold text-text-primary">
           {left.title}
         </div>
-        <div className="px-5 py-4 text-lg font-semibold text-slate-900">
+        <div className="px-5 py-4 text-lg font-semibold text-text-primary">
           {right.title}
         </div>
       </div>
@@ -410,15 +410,15 @@ function BeachComparisonTable({ beaches }: { beaches: Beach[] }) {
       {rows.map((row) => (
         <div
           key={row.label}
-          className="grid grid-cols-[180px_minmax(0,1fr)_minmax(0,1fr)] border-b border-slate-100 last:border-b-0"
+          className="grid grid-cols-[180px_minmax(0,1fr)_minmax(0,1fr)] border-b border-border-soft/60 last:border-b-0"
         >
-          <div className="bg-slate-50/50 px-5 py-4 text-sm font-semibold text-slate-500">
+          <div className="bg-surface-muted/30 px-5 py-4 text-sm font-semibold text-text-secondary">
             {row.label}
           </div>
-          <div className="px-5 py-4 text-sm leading-6 text-slate-700">
+          <div className="px-5 py-4 text-sm leading-6 text-text-secondary">
             {row.values[0]}
           </div>
-          <div className="px-5 py-4 text-sm leading-6 text-slate-700">
+          <div className="px-5 py-4 text-sm leading-6 text-text-secondary">
             {row.values[1]}
           </div>
         </div>
@@ -429,11 +429,11 @@ function BeachComparisonTable({ beaches }: { beaches: Beach[] }) {
 
 function InlineMeta({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl bg-slate-50 px-4 py-3">
-      <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">
+    <div className="rounded-2xl bg-surface-muted border border-border-soft px-4 py-3">
+      <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-text-secondary/70">
         {label}
       </p>
-      <p className="mt-1 text-sm font-semibold text-slate-900">{value}</p>
+      <p className="mt-1 text-sm font-semibold text-text-primary">{value}</p>
     </div>
   );
 }
@@ -445,14 +445,14 @@ function ChipRow({ title, chips }: { title: string; chips: string[] }) {
 
   return (
     <div className="space-y-2">
-      <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">
+      <p className="text-xs font-bold uppercase tracking-[0.18em] text-text-secondary">
         {title}
       </p>
       <div className="flex flex-wrap gap-2">
         {chips.map((chip) => (
           <span
             key={chip}
-            className="inline-flex items-center rounded-full bg-cyan-50 px-3 py-1 text-xs font-semibold text-cyan-700"
+            className="inline-flex items-center rounded-full bg-cyan-50/10 border border-cyan-500/20 px-3 py-1 text-xs font-semibold text-cyan-600 dark:text-cyan-400"
           >
             {chip}
           </span>

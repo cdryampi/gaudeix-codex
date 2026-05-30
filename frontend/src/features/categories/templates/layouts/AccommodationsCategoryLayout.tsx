@@ -3,7 +3,11 @@ import { Clock, Filter, MapPin, Phone } from "lucide-react";
 
 import { MotionReveal } from "@/components/animated/MotionReveal";
 import { AnimatedCardGrid } from "@/components/animated/AnimatedCardGrid";
-import { FilterBar, PageHero, SectionHeader } from "@/components/site/primitives";
+import {
+  FilterBar,
+  PageHero,
+  SectionHeader,
+} from "@/components/site/primitives";
 import { PlaceCard } from "@/features/places/components/PlaceCard";
 import { CategoryLayoutProps } from "../types";
 import { Accommodation } from "@/features/places/types";
@@ -33,7 +37,10 @@ export default function AccommodationsCategoryLayout({
   );
 
   return (
-    <main className="min-h-screen bg-background-light page-shell-offset" data-testid="category-layout-accommodations">
+    <main
+      className="min-h-screen bg-background-light page-shell-offset"
+      data-testid="category-layout-accommodations"
+    >
       <PageHero
         eyebrow="Alojamiento"
         title={category.nombre}
@@ -46,13 +53,20 @@ export default function AccommodationsCategoryLayout({
         ]}
         metrics={[
           { label: "Alojamientos", value: accommodations.length },
-          { label: "Filtro", value: starFilter === "all" ? "Todos" : `${starFilter} estrellas` },
+          {
+            label: "Filtro",
+            value: starFilter === "all" ? "Todos" : `${starFilter} estrellas`,
+          },
           { label: "Plan", value: "Dormir y desplazarte mejor" },
         ]}
         media={
           image ? (
             <div className="aspect-[4/3] overflow-hidden">
-              <img src={image} alt={category.nombre} className="h-full w-full object-cover" />
+              <img
+                src={image}
+                alt={category.nombre}
+                className="h-full w-full object-cover"
+              />
             </div>
           ) : undefined
         }
@@ -62,15 +76,18 @@ export default function AccommodationsCategoryLayout({
         <MotionReveal>
           <FilterBar>
             <div className="flex flex-col gap-4">
-              <div className="flex items-center gap-2 text-sm font-semibold text-slate-900">
+              <div className="flex items-center gap-2 text-sm font-semibold text-text-primary">
                 <Filter className="h-4 w-4 text-primary" />
                 Filtra por categoria de estrellas
               </div>
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => setStarFilter("all")}
-                  className={`rounded-full px-4 py-2 text-sm font-semibold ${starFilter === "all" ? "bg-primary text-white" : "bg-white text-slate-600"
-                    }`}
+                  className={`rounded-full px-4 py-2 text-sm font-semibold border border-border-soft transition-all duration-200 ${
+                    starFilter === "all"
+                      ? "bg-primary text-white"
+                      : "bg-surface text-text-secondary hover:bg-surface-muted hover:text-text-primary"
+                  }`}
                 >
                   Todos ({places.length})
                 </button>
@@ -79,8 +96,11 @@ export default function AccommodationsCategoryLayout({
                     <button
                       key={stars}
                       onClick={() => setStarFilter(stars as StarFilter)}
-                      className={`rounded-full px-4 py-2 text-sm font-semibold ${starFilter === stars ? "bg-primary text-white" : "bg-white text-slate-600"
-                        }`}
+                      className={`rounded-full px-4 py-2 text-sm font-semibold border border-border-soft transition-all duration-200 ${
+                        starFilter === stars
+                          ? "bg-primary text-white"
+                          : "bg-surface text-text-secondary hover:bg-surface-muted hover:text-text-primary"
+                      }`}
                     >
                       {stars} estrellas
                     </button>
@@ -110,9 +130,21 @@ export default function AccommodationsCategoryLayout({
         {places.length > 0 ? (
           <MotionReveal>
             <div className="grid gap-6 md:grid-cols-3">
-              <InfoTile icon={Clock} title="Horarios tipicos" text="Check-in desde las 14:00 y salida hasta las 11:00, segun cada establecimiento." />
-              <InfoTile icon={MapPin} title="Ubicacion" text="Opciones bien conectadas para explorar el municipio y su entorno con comodidad." />
-              <InfoTile icon={Phone} title="Reservas" text="Consulta cada ficha para contactar directamente o acceder al sistema de reserva." />
+              <InfoTile
+                icon={Clock}
+                title="Horarios tipicos"
+                text="Check-in desde las 14:00 y salida hasta las 11:00, segun cada establecimiento."
+              />
+              <InfoTile
+                icon={MapPin}
+                title="Ubicacion"
+                text="Opciones bien conectadas para explorar el municipio y su entorno con comodidad."
+              />
+              <InfoTile
+                icon={Phone}
+                title="Reservas"
+                text="Consulta cada ficha para contactar directamente o acceder al sistema de reserva."
+              />
             </div>
           </MotionReveal>
         ) : null}
@@ -131,10 +163,10 @@ function InfoTile({
   text: string;
 }) {
   return (
-    <div className="card-surface p-7">
+    <div className="card-surface p-7 border border-border-soft">
       <Icon className="h-7 w-7 text-primary" />
-      <h3 className="mt-4 text-lg font-semibold text-slate-900">{title}</h3>
-      <p className="mt-2 text-sm text-slate-600">{text}</p>
+      <h3 className="mt-4 text-lg font-semibold text-text-primary">{title}</h3>
+      <p className="mt-2 text-sm text-text-secondary">{text}</p>
     </div>
   );
 }

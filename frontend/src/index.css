@@ -1,5 +1,32 @@
 @import "tailwindcss";
 
+:root {
+  --primary: hsl(209, 79%, 28%);
+  --secondary: hsl(178, 83%, 31%);
+  --accent: hsl(35, 100%, 65%);
+  --background-light: hsl(210, 40%, 98%);
+  --background-dark: hsl(209, 73%, 9%);
+  --surface: hsl(0, 0%, 100%);
+  --surface-muted: hsl(207, 30%, 95%);
+  --text-primary: hsl(206, 58%, 18%);
+  --text-secondary: hsl(207, 20%, 43%);
+  --border-soft: hsl(207, 30%, 92%);
+  --border-strong: hsl(207, 20%, 85%);
+}
+
+.dark {
+  --primary: hsl(209, 85%, 45%);
+  --secondary: hsl(178, 80%, 42%);
+  --accent: hsl(35, 95%, 58%);
+  --background-light: hsl(209, 73%, 9%);
+  --surface: hsl(209, 60%, 14%);
+  --surface-muted: hsl(209, 50%, 18%);
+  --text-primary: hsl(210, 20%, 95%);
+  --text-secondary: hsl(208, 15%, 78%);
+  --border-soft: hsl(209, 40%, 18%);
+  --border-strong: hsl(209, 30%, 24%);
+}
+
 @theme {
   --color-primary: var(--primary, #0f4c81);
   --color-secondary: var(--secondary, #0d8f8c);
@@ -10,8 +37,8 @@
   --color-surface-muted: var(--surface-muted, #e9f4f7);
   --color-text-primary: var(--text-primary, #14324a);
   --color-text-secondary: var(--text-secondary, #587185);
-  --color-border-soft: #d6e4ec;
-  --color-border-strong: #bfd4df;
+  --color-border-soft: var(--border-soft, #d6e4ec);
+  --color-border-strong: var(--border-strong, #bfd4df);
 
   --font-display: "Plus Jakarta Sans", sans-serif;
   --font-interface:
@@ -42,8 +69,23 @@
         rgba(255, 178, 77, 0.08),
         transparent 30%
       ),
-      #f8fafc;
-    @apply text-[color:var(--color-text-primary)] antialiased overflow-x-hidden;
+      var(--color-background-light);
+    @apply text-[color:var(--color-text-primary)] antialiased overflow-x-hidden transition-colors duration-400;
+  }
+
+  .dark body {
+    background:
+      radial-gradient(
+        circle at top left,
+        rgba(13, 143, 140, 0.04),
+        transparent 40%
+      ),
+      radial-gradient(
+        circle at top right,
+        rgba(255, 178, 77, 0.04),
+        transparent 30%
+      ),
+      var(--color-background-light);
   }
 
   h1,

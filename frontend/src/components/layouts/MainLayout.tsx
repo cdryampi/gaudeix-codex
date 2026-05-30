@@ -81,7 +81,7 @@ export function MainLayout({ children }: MainLayoutProps) {
   const shellTransparent = isHome && !isScrolled;
 
   return (
-    <div className="min-h-screen bg-background-light text-slate-900 selection:bg-accent selection:text-slate-950">
+    <div className="min-h-screen bg-background-light text-text-primary selection:bg-accent selection:text-slate-950 transition-colors duration-400">
       <div className="floating-shell">
         <FestaAnnouncementBar />
         <SiteTopbar isTransparent={shellTransparent} />

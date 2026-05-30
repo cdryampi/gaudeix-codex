@@ -49,7 +49,7 @@ export function CategoryDetailPage() {
   // Loading state while fetching category
   if (loadingCategory) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="min-h-screen flex items-center justify-center bg-background-light transition-colors duration-400">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
       </div>
     );
@@ -58,7 +58,7 @@ export function CategoryDetailPage() {
   // Category not found
   if (!category) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-white">
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-background-light transition-colors duration-400 text-text-primary">
         <h1 className="text-2xl font-bold">Categoría no encontrada</h1>
         <Link to="/categorias" className="text-primary hover:underline">
           Volver a categorías
@@ -88,15 +88,18 @@ export function CategoryDetailPage() {
  */
 function CategoryLayoutSkeleton() {
   return (
-    <div className="animate-pulse min-h-screen bg-slate-50">
+    <div className="animate-pulse min-h-screen bg-background-light transition-colors duration-400">
       {/* Hero skeleton */}
-      <div className="h-[50vh] bg-slate-200" />
+      <div className="h-[50vh] bg-surface-muted border-b border-border-soft" />
       {/* Content skeleton */}
       <div className="container mx-auto px-6 py-16">
-        <div className="h-8 w-64 bg-slate-200 rounded-full mb-8" />
+        <div className="h-8 w-64 bg-surface-muted rounded-full mb-8" />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-64 bg-slate-100 rounded-3xl" />
+            <div
+              key={i}
+              className="h-64 bg-surface border border-border-soft rounded-3xl"
+            />
           ))}
         </div>
       </div>

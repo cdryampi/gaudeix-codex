@@ -4,7 +4,11 @@ import { Link } from "react-router-dom";
 
 import { MotionReveal } from "@/components/animated/MotionReveal";
 import { AnimatedCardGrid } from "@/components/animated/AnimatedCardGrid";
-import { FilterBar, PageHero, SectionHeader } from "@/components/site/primitives";
+import {
+  FilterBar,
+  PageHero,
+  SectionHeader,
+} from "@/components/site/primitives";
 import { PlaceCard } from "@/features/places/components/PlaceCard";
 import { CategoryLayoutProps } from "../types";
 
@@ -29,7 +33,10 @@ export default function NatureCategoryLayout({
     }));
 
   return (
-    <main className="min-h-screen bg-background-light page-shell-offset" data-testid="category-layout-nature">
+    <main
+      className="min-h-screen bg-background-light page-shell-offset"
+      data-testid="category-layout-nature"
+    >
       <PageHero
         eyebrow="Naturaleza y territorio"
         title={category.nombre}
@@ -42,13 +49,20 @@ export default function NatureCategoryLayout({
         ]}
         metrics={[
           { label: "Lugares", value: places.length },
-          { label: "Vista activa", value: viewMode === "grid" ? "Recorrido" : "Galeria" },
+          {
+            label: "Vista activa",
+            value: viewMode === "grid" ? "Recorrido" : "Galeria",
+          },
           { label: "Plan", value: "Explora y abre mapa" },
         ]}
         media={
           image ? (
             <div className="aspect-[4/3] overflow-hidden">
-              <img src={image} alt={category.nombre} className="h-full w-full object-cover" />
+              <img
+                src={image}
+                alt={category.nombre}
+                className="h-full w-full object-cover"
+              />
             </div>
           ) : undefined
         }
@@ -59,18 +73,24 @@ export default function NatureCategoryLayout({
           <FilterBar>
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div>
-                <p className="text-sm font-semibold text-slate-900">Recorre el entorno a tu ritmo</p>
-                <p className="text-sm text-slate-500">
-                  Alterna entre una lectura tipo guia y una galeria visual para inspirarte antes de la visita.
+                <p className="text-sm font-semibold text-text-primary">
+                  Recorre el entorno a tu ritmo
+                </p>
+                <p className="text-sm text-text-secondary">
+                  Alterna entre una lectura tipo guia y una galeria visual para
+                  inspirarte antes de la visita.
                 </p>
               </div>
 
               <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2 rounded-full bg-slate-100 p-1">
+                <div className="flex items-center gap-2 rounded-full bg-surface-muted border border-border-soft p-1">
                   <button
                     onClick={() => setViewMode("grid")}
-                    className={`rounded-full px-4 py-2 text-sm font-semibold ${viewMode === "grid" ? "bg-white text-primary shadow-sm" : "text-slate-500"
-                      }`}
+                    className={`rounded-full px-4 py-2 text-sm font-semibold transition-all duration-200 ${
+                      viewMode === "grid"
+                        ? "bg-surface text-primary shadow-sm"
+                        : "text-text-secondary hover:text-text-primary"
+                    }`}
                   >
                     <span className="inline-flex items-center gap-2">
                       <Grid3X3 className="h-4 w-4" />
@@ -79,8 +99,11 @@ export default function NatureCategoryLayout({
                   </button>
                   <button
                     onClick={() => setViewMode("gallery")}
-                    className={`rounded-full px-4 py-2 text-sm font-semibold ${viewMode === "gallery" ? "bg-white text-primary shadow-sm" : "text-slate-500"
-                      }`}
+                    className={`rounded-full px-4 py-2 text-sm font-semibold transition-all duration-200 ${
+                      viewMode === "gallery"
+                        ? "bg-surface text-primary shadow-sm"
+                        : "text-text-secondary hover:text-text-primary"
+                    }`}
                   >
                     <span className="inline-flex items-center gap-2">
                       <Camera className="h-4 w-4" />
@@ -91,7 +114,7 @@ export default function NatureCategoryLayout({
 
                 <Link
                   to={`/categorias/${category.slug}`}
-                  className="inline-flex items-center gap-2 rounded-full border border-primary/12 bg-primary/5 px-4 py-2.5 text-sm font-semibold text-primary"
+                  className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-2.5 text-sm font-semibold text-primary transition-all hover:bg-primary/20"
                 >
                   <Map className="h-4 w-4" />
                   Ver mapa
@@ -105,7 +128,11 @@ export default function NatureCategoryLayout({
           <MotionReveal>
             <SectionHeader
               eyebrow="Explora"
-              title={viewMode === "grid" ? `${places.length} lugares para descubrir` : "Galeria inspiracional"}
+              title={
+                viewMode === "grid"
+                  ? `${places.length} lugares para descubrir`
+                  : "Galeria inspiracional"
+              }
               description="Una plantilla mas luminosa y ordenada para patrimonio, naturaleza y recorridos de descubrimiento."
             />
           </MotionReveal>
@@ -123,7 +150,7 @@ export default function NatureCategoryLayout({
                   key={img.url}
                   data-animated-card
                   onClick={() => setSelectedImage(img.url)}
-                  className="group relative aspect-square overflow-hidden rounded-[1.75rem] border border-white/70 bg-slate-200 shadow-[0_14px_40px_rgba(14,42,66,0.12)]"
+                  className="group relative aspect-square overflow-hidden rounded-[1.75rem] border border-border-soft bg-surface transition-all duration-300"
                 >
                   <img
                     src={img.url}
@@ -132,7 +159,9 @@ export default function NatureCategoryLayout({
                   />
                   <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent,rgba(8,24,37,0.65))]" />
                   <div className="absolute inset-x-0 bottom-0 p-4 text-left">
-                    <p className="text-sm font-semibold text-white">{img.title}</p>
+                    <p className="text-sm font-semibold text-white">
+                      {img.title}
+                    </p>
                   </div>
                 </button>
               ))}
@@ -143,16 +172,16 @@ export default function NatureCategoryLayout({
         {category.slug === "beaches" ? (
           <MotionReveal>
             {places.length === 2 ? (
-              <section className="card-surface space-y-6 p-6 md:p-8">
+              <section className="card-surface space-y-6 p-6 md:p-8 border border-border-soft">
                 <SectionHeader
                   eyebrow="Comparativa"
                   title="Compara las dos playas publicadas"
                   description="Vista rapida para decidir cual visitar segun ubicacion y contacto disponible."
                 />
                 <div className="overflow-x-auto">
-                  <table className="min-w-full text-left text-sm text-slate-700">
+                  <table className="min-w-full text-left text-sm text-text-secondary">
                     <thead>
-                      <tr className="border-b border-slate-200 text-xs uppercase tracking-[0.14em] text-slate-500">
+                      <tr className="border-b border-border-soft text-xs uppercase tracking-[0.14em] text-text-secondary/70">
                         <th className="px-3 py-3">Playa</th>
                         <th className="px-3 py-3">Ubicacion</th>
                         <th className="px-3 py-3">Telefono</th>
@@ -160,8 +189,13 @@ export default function NatureCategoryLayout({
                     </thead>
                     <tbody>
                       {places.map((place) => (
-                        <tr key={place.id} className="border-b border-slate-100 last:border-b-0">
-                          <td className="px-3 py-3 font-semibold text-slate-900">{place.title}</td>
+                        <tr
+                          key={place.id}
+                          className="border-b border-border-soft/60 last:border-b-0"
+                        >
+                          <td className="px-3 py-3 font-semibold text-text-primary">
+                            {place.title}
+                          </td>
                           <td className="px-3 py-3">{place.location_text}</td>
                           <td className="px-3 py-3">{place.phone || "-"}</td>
                         </tr>
@@ -171,7 +205,7 @@ export default function NatureCategoryLayout({
                 </div>
               </section>
             ) : (
-              <section className="card-surface space-y-4 p-6 md:p-8">
+              <section className="card-surface space-y-4 p-6 md:p-8 border border-border-soft">
                 <SectionHeader
                   eyebrow="Seleccion editorial"
                   title="El equipo municipal destaca las mejores opciones para hoy"
@@ -184,8 +218,8 @@ export default function NatureCategoryLayout({
 
         {places.length === 0 && !isLoadingPlaces ? (
           <div className="py-24 text-center">
-            <TreePine className="mx-auto mb-6 h-16 w-16 text-slate-300" />
-            <p className="text-xl font-bold text-slate-400">
+            <TreePine className="mx-auto mb-6 h-16 w-16 text-text-secondary/40" />
+            <p className="text-xl font-bold text-text-secondary">
               No hay lugares en esta categoria todavia.
             </p>
           </div>
@@ -194,10 +228,14 @@ export default function NatureCategoryLayout({
 
       {selectedImage ? (
         <div
-          className="fixed inset-0 z-[1200] flex items-center justify-center bg-slate-950/92 p-8"
+          className="fixed inset-0 z-[1200] flex items-center justify-center bg-background-dark/95 p-8"
           onClick={() => setSelectedImage(null)}
         >
-          <img src={selectedImage} alt="" className="max-h-full max-w-full rounded-2xl object-contain" />
+          <img
+            src={selectedImage}
+            alt=""
+            className="max-h-full max-w-full rounded-2xl object-contain"
+          />
         </div>
       ) : null}
     </main>
