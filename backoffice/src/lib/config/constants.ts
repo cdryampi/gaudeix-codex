@@ -21,6 +21,8 @@ export const ROUTES = {
   EVENTS: "/dashboard/events",
   PLACES: "/dashboard/places",
   BEACHES: "/dashboard/beaches",
+  RESTAURANTS: "/dashboard/restaurants",
+  ACCOMMODATIONS: "/dashboard/accommodations",
   AUTOMATIONS: "/dashboard/automations",
   BEACH_SAFETY: "/dashboard/automations/beach-safety",
   CATEGORIES: "/dashboard/categories",

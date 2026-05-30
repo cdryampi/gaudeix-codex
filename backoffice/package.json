@@ -16,6 +16,9 @@
     "cc": "rimraf node_modules/.vite && echo Cache limpiada"
   },
   "dependencies": {
+    "@fullcalendar/daygrid": "^6.1.20",
+    "@fullcalendar/interaction": "^6.1.20",
+    "@fullcalendar/react": "^6.1.20",
     "@googlemaps/js-api-loader": "^2.0.2",
     "@hookform/resolvers": "^5.2.2",
     "@tailwindcss/typography": "^0.5.19",

@@ -219,9 +219,44 @@ AUTH_USER_MODEL = "users.User"
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "Gaudeix Codex API",
-    "DESCRIPTION": "API for Gaudeix Codex project",
+    "DESCRIPTION": (
+        "API pública del portal municipal de Cabrera de Mar. "
+        "Proporciona acceso a eventos, lugares, rutas, noticias, "
+        "playas y contenido multimedia del municipio.\n\n"
+        "## Autenticación\n"
+        "La mayoría de endpoints de lectura son públicos. "
+        "Los endpoints de escritura requieren autenticación "
+        "mediante token JWT (Bearer).\n\n"
+        "## Versionado\n"
+        "La API está versionada bajo `/api/v1/`. "
+        "Los cambios breaking se comunicarán con antelación."
+    ),
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
+    "CONTACT": {
+        "name": "Ajuntament de Cabrera de Mar",
+        "email": "info@cabrerademar.cat",
+        "url": "https://www.cabrerademar.cat",
+    },
+    "LICENSE": {
+        "name": "MIT",
+    },
+    "TAGS": [
+        {"name": "events", "description": "Eventos y actividades culturales"},
+        {"name": "places", "description": "Lugares de interés, restaurantes y alojamientos"},
+        {"name": "routes", "description": "Rutas de senderismo y cicloturismo"},
+        {"name": "festes", "description": "Festes Majors y programación festiva"},
+        {"name": "news", "description": "Noticias y avisos municipales"},
+        {"name": "beaches", "description": "Playas del municipio"},
+        {"name": "categories", "description": "Categorías y taxonomías"},
+        {"name": "users", "description": "Gestión de usuarios y autenticación"},
+        {"name": "media", "description": "Archivos multimedia (imágenes, documentos)"},
+    ],
+    "SWAGGER_UI_SETTINGS": {
+        "deepLinking": True,
+        "persistAuthorization": True,
+        "displayOperationId": True,
+    },
 }
 CORS_ALLOWED_ORIGINS = env.list(
     "DJANGO_ALLOWED_CORS_ORIGINS",

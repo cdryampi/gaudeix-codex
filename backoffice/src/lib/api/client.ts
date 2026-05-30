@@ -70,6 +70,12 @@ client.interceptors.response.use(
       } catch (refreshError) {
         // Refresh failed -> Logout user
         authStorage.clear();
+        try {
+          const { toast } = await import("sonner");
+          toast.error("Tu sesión ha expirado. Inicia sesión de nuevo.");
+        } catch {
+          // sonner not available, fallback silent
+        }
         window.location.href = `${appBasePath}/login`;
         return Promise.reject(refreshError);
       }

@@ -64,6 +64,13 @@ class EventCheckin(models.Model):
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     event = models.ForeignKey("events.Event", on_delete=models.CASCADE)
+    event_date = models.ForeignKey(
+        "events.EventDate",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        help_text=_("Specific session the user attended"),
+    )
     checked_in_at = models.DateTimeField(auto_now_add=True)
     points_awarded = models.PositiveIntegerField()
 
@@ -72,4 +79,6 @@ class EventCheckin(models.Model):
         ordering = ("-checked_in_at", "-id")
 
     def __str__(self) -> str:
+        if self.event_date_id:
+            return f"{self.user} checked in {self.event} on {self.event_date.start_at}"
         return f"{self.user} checked in {self.event}"

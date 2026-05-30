@@ -145,6 +145,75 @@ class CategoryViewSet(viewsets.ModelViewSet):
         )
 
 
+class DashboardViewSet(viewsets.ViewSet):
+    """
+    Aggregated dashboard metrics for the backoffice.
+    Returns system-wide stats and recent activity feed.
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def list(self, request):
+        from django.contrib.auth import get_user_model
+        from events.models import Event
+        from places.models import Place
+        from notifications.models import Notification
+
+        User = get_user_model()
+
+        total_users = User.objects.count()
+        active_events = Event.objects.filter(is_published=True).count()
+        total_places = Place.objects.filter(is_published=True).count()
+        pending_notifications = Notification.objects.filter(read=False).count()
+
+        recent_events = list(
+            Event.objects.filter(is_published=True)
+            .order_by("-fecha_creacion")[:5]
+        )
+        recent_places = list(
+            Place.objects.filter(is_published=True)
+            .order_by("-fecha_creacion")[:5]
+        )
+        recent_users = list(User.objects.order_by("-date_joined")[:5])
+
+        activity = []
+
+        for event in recent_events:
+            activity.append({
+                "id": f"event_{event.id}",
+                "type": "event_created",
+                "message": f"Evento creado: {event.slug}",
+                "timestamp": event.fecha_creacion.isoformat(),
+            })
+
+        for place in recent_places:
+            activity.append({
+                "id": f"place_{place.id}",
+                "type": "place_updated",
+                "message": f"Lugar actualizado: {place.slug}",
+                "timestamp": place.fecha_creacion.isoformat(),
+            })
+
+        for user in recent_users:
+            activity.append({
+                "id": f"user_{user.id}",
+                "type": "user_joined",
+                "message": f"Nuevo usuario: {user.get_full_name() or user.username}",
+                "timestamp": user.date_joined.isoformat(),
+            })
+
+        activity.sort(key=lambda x: x["timestamp"], reverse=True)
+        activity = activity[:10]
+
+        return Response({
+            "totalUsers": total_users,
+            "activeEvents": active_events,
+            "totalPlaces": total_places,
+            "pendingNotifications": pending_notifications,
+            "recentActivity": activity,
+        })
+
+
 class TagViewSet(viewsets.ModelViewSet):
     """
     API endpoints for tags (core).

@@ -56,5 +56,5 @@ class EventCheckinSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = EventCheckin
-        fields = ["id", "event", "checked_in_at", "points_awarded"]
+        fields = ["id", "event", "event_date", "checked_in_at", "points_awarded"]
         read_only_fields = fields

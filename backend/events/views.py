@@ -19,7 +19,7 @@ from gamification.models import EventCheckin
 from gamification.serializers import EventCheckinSerializer
 from gamification.utils import award_event_checkin, get_or_create_user_points
 
-from .models import Event, UserFavoriteEvent
+from .models import Event, EventDate, UserFavoriteEvent
 
 from .serializers import EventDetailSerializer, EventSerializer
 from .utils import get_upcoming_events
@@ -267,8 +267,22 @@ class EventViewSet(viewsets.ModelViewSet):
     )
     def checkin(self, request, slug=None):
         event = self.get_object()
+        event_date_id = request.data.get("event_date_id")
+
+        event_date = None
+        if event_date_id is not None:
+            try:
+                event_date = event.dates.get(id=event_date_id)
+            except EventDate.DoesNotExist:
+                return Response(
+                    {"detail": "Event date not found for this event"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
         try:
-            checkin = award_event_checkin(user=request.user, event=event)
+            checkin = award_event_checkin(
+                user=request.user, event=event, event_date=event_date
+            )
         except ValueError as exc:
             return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
 
