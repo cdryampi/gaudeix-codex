@@ -267,3 +267,55 @@ input:user-invalid {
 input:user-invalid:focus-visible {
   box-shadow: 0 0 0 2px #ef4444;
 }
+
+/* Premium CTA mesh gradient keyframe animations */
+@keyframes mesh-pulse-1 {
+  0%,
+  100% {
+    transform: translate(0%, 0%) scale(1);
+  }
+  33% {
+    transform: translate(6%, -12%) scale(1.15);
+  }
+  66% {
+    transform: translate(-6%, 10%) scale(0.92);
+  }
+}
+
+@keyframes mesh-pulse-2 {
+  0%,
+  100% {
+    transform: translate(0%, 0%) scale(1);
+  }
+  50% {
+    transform: translate(-10%, 6%) scale(1.08);
+  }
+}
+
+.animate-mesh-1 {
+  animation: mesh-pulse-1 14s ease-in-out infinite;
+}
+
+.animate-mesh-2 {
+  animation: mesh-pulse-2 18s ease-in-out infinite;
+}
+
+.cta-glowing-ring::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.18),
+    rgba(255, 255, 255, 0.04)
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
