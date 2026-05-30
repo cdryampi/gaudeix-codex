@@ -3,7 +3,11 @@ import { Clock, DollarSign, Filter, Phone } from "lucide-react";
 
 import { MotionReveal } from "@/components/animated/MotionReveal";
 import { AnimatedCardGrid } from "@/components/animated/AnimatedCardGrid";
-import { FilterBar, PageHero, SectionHeader } from "@/components/site/primitives";
+import {
+  FilterBar,
+  PageHero,
+  SectionHeader,
+} from "@/components/site/primitives";
 import { PlaceCard } from "@/features/places/components/PlaceCard";
 import { CategoryLayoutProps } from "../types";
 import { Restaurant } from "@/features/places/types";
@@ -33,7 +37,10 @@ export default function RestaurantsCategoryLayout({
       : restaurants.filter((r) => r.cuisine_type === cuisineFilter);
 
   return (
-    <main className="min-h-screen bg-background-light page-shell-offset" data-testid="category-layout-restaurants">
+    <main
+      className="min-h-screen bg-background-light page-shell-offset"
+      data-testid="category-layout-restaurants"
+    >
       <PageHero
         eyebrow="Gastronomia local"
         title={category.nombre}
@@ -46,13 +53,20 @@ export default function RestaurantsCategoryLayout({
         ]}
         metrics={[
           { label: "Restaurantes", value: restaurants.length },
-          { label: "Filtro", value: cuisineFilter === "all" ? "Todos" : cuisineFilter },
+          {
+            label: "Filtro",
+            value: cuisineFilter === "all" ? "Todos" : cuisineFilter,
+          },
           { label: "Experiencia", value: "Comer, reservar y descubrir" },
         ]}
         media={
           image ? (
             <div className="aspect-[4/3] overflow-hidden">
-              <img src={image} alt={category.nombre} className="h-full w-full object-cover" />
+              <img
+                src={image}
+                alt={category.nombre}
+                className="h-full w-full object-cover"
+              />
             </div>
           ) : undefined
         }
@@ -62,15 +76,18 @@ export default function RestaurantsCategoryLayout({
         <MotionReveal>
           <FilterBar>
             <div className="flex flex-col gap-4">
-              <div className="flex items-center gap-2 text-sm font-semibold text-slate-900">
+              <div className="flex items-center gap-2 text-sm font-semibold text-text-primary">
                 <Filter className="h-4 w-4 text-primary" />
                 Filtra por tipo de cocina
               </div>
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => setCuisineFilter("all")}
-                  className={`rounded-full px-4 py-2 text-sm font-semibold ${cuisineFilter === "all" ? "bg-primary text-white" : "bg-white text-slate-600"
-                    }`}
+                  className={`rounded-full px-4 py-2 text-sm font-semibold border border-border-soft transition-all duration-200 ${
+                    cuisineFilter === "all"
+                      ? "bg-primary text-white"
+                      : "bg-surface text-text-secondary hover:bg-surface-muted hover:text-text-primary"
+                  }`}
                 >
                   Todos ({restaurants.length})
                 </button>
@@ -78,8 +95,11 @@ export default function RestaurantsCategoryLayout({
                   <button
                     key={cuisine}
                     onClick={() => setCuisineFilter(cuisine)}
-                    className={`rounded-full px-4 py-2 text-sm font-semibold capitalize ${cuisineFilter === cuisine ? "bg-primary text-white" : "bg-white text-slate-600"
-                      }`}
+                    className={`rounded-full px-4 py-2 text-sm font-semibold capitalize border border-border-soft transition-all duration-200 ${
+                      cuisineFilter === cuisine
+                        ? "bg-primary text-white"
+                        : "bg-surface text-text-secondary hover:bg-surface-muted hover:text-text-primary"
+                    }`}
                   >
                     {cuisine}
                   </button>
@@ -108,9 +128,21 @@ export default function RestaurantsCategoryLayout({
         {places.length > 0 ? (
           <MotionReveal>
             <div className="grid gap-6 md:grid-cols-3">
-              <InfoTile icon={Clock} title="Horarios tipicos" text="Comidas 13:00 - 16:00 y cenas 20:00 - 23:00 según establecimiento." />
-              <InfoTile icon={Phone} title="Reservas" text="Conviene reservar con antelacion durante fines de semana y fechas señaladas." />
-              <InfoTile icon={DollarSign} title="Precios orientativos" text="Consulta cada ficha para ver web, contacto y detalles del establecimiento." />
+              <InfoTile
+                icon={Clock}
+                title="Horarios tipicos"
+                text="Comidas 13:00 - 16:00 y cenas 20:00 - 23:00 según establecimiento."
+              />
+              <InfoTile
+                icon={Phone}
+                title="Reservas"
+                text="Conviene reservar con antelacion durante fines de semana y fechas señaladas."
+              />
+              <InfoTile
+                icon={DollarSign}
+                title="Precios orientativos"
+                text="Consulta cada ficha para ver web, contacto y detalles del establecimiento."
+              />
             </div>
           </MotionReveal>
         ) : null}
@@ -129,10 +161,10 @@ function InfoTile({
   text: string;
 }) {
   return (
-    <div className="card-surface p-7">
+    <div className="card-surface p-7 border border-border-soft">
       <Icon className="h-7 w-7 text-primary" />
-      <h3 className="mt-4 text-lg font-semibold text-slate-900">{title}</h3>
-      <p className="mt-2 text-sm text-slate-600">{text}</p>
+      <h3 className="mt-4 text-lg font-semibold text-text-primary">{title}</h3>
+      <p className="mt-2 text-sm text-text-secondary">{text}</p>
     </div>
   );
 }

@@ -31,15 +31,18 @@ export function FeaturedCategoryCard({
   const isInternal = category.href.startsWith("/");
 
   const Content = (
-    <div className="group relative flex h-full flex-col overflow-hidden rounded-[2.5rem] bg-white text-slate-900 shadow-sm ring-1 ring-slate-100 transition-all duration-500 hover:shadow-[0_32px_80px_rgba(15,76,129,0.08)] hover:ring-slate-200">
-      <div className="relative aspect-[4/3] overflow-hidden bg-slate-100">
-        {!loaded ? <div className="absolute inset-0 animate-pulse bg-slate-200" /> : null}
+    <div className="group relative flex h-full flex-col overflow-hidden rounded-[2.5rem] bg-surface text-text-primary shadow-sm border border-border-soft transition-all duration-500 hover:shadow-[0_32px_80px_rgba(15,76,129,0.08)] hover:border-border-strong">
+      <div className="relative aspect-[4/3] overflow-hidden bg-surface-muted">
+        {!loaded ? (
+          <div className="absolute inset-0 animate-pulse bg-surface-muted" />
+        ) : null}
         <img
           src={image}
           alt=""
           loading="lazy"
-          className={`h-full w-full object-cover transition-transform duration-1000 ease-out group-hover:scale-105 ${loaded ? "opacity-100" : "scale-[1.02] opacity-0"
-            }`}
+          className={`h-full w-full object-cover transition-transform duration-1000 ease-out group-hover:scale-105 ${
+            loaded ? "opacity-100" : "scale-[1.02] opacity-0"
+          }`}
           onLoad={() => setLoaded(true)}
           onError={(e) => {
             e.currentTarget.src = PLACEHOLDER_IMAGE;
@@ -51,31 +54,42 @@ export function FeaturedCategoryCard({
       </div>
 
       <div className="relative flex flex-1 flex-col p-6 md:p-8">
-        <div className="absolute -top-9 right-8 flex h-[4.7rem] w-[4.7rem] items-center justify-center rounded-[1.15rem] border border-slate-200/90 bg-white text-primary shadow-[0_18px_44px_rgba(15,76,129,0.12)] transition-transform duration-500 ease-out group-hover:-translate-y-2">
+        <div className="absolute -top-9 right-8 flex h-[4.7rem] w-[4.7rem] items-center justify-center rounded-[1.15rem] border border-border-soft bg-surface text-primary shadow-[0_18px_44px_rgba(15,76,129,0.12)] transition-all duration-500 ease-out group-hover:-translate-y-2">
           {IconComponent ? (
             <IconComponent className="h-7 w-7 stroke-[2.1]" />
           ) : iconName ? (
-            <CategoryBrandIcon iconName={iconName} className="h-9 w-9 text-primary" />
+            <CategoryBrandIcon
+              iconName={iconName}
+              className="h-9 w-9 text-primary"
+            />
           ) : (
             <ImageIcon className="h-7 w-7 stroke-[2.1]" />
           )}
         </div>
 
-        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">
+        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-text-secondary/70">
           {category.taxonomy || "Municipio"}
         </span>
 
         <div className="mt-3 flex-1 space-y-3">
-          <h3 className="text-2xl font-bold leading-tight transition-colors group-hover:text-primary">{category.title}</h3>
+          <h3 className="text-2xl font-bold leading-tight transition-colors group-hover:text-primary">
+            {category.title}
+          </h3>
           {category.description ? (
-            <p className="line-clamp-3 text-sm leading-relaxed text-slate-500">{category.description}</p>
+            <p className="line-clamp-3 text-sm leading-relaxed text-text-secondary">
+              {category.description}
+            </p>
           ) : null}
         </div>
 
         <div className="mt-8 flex items-center gap-2 text-sm font-bold text-primary">
           <span className="relative overflow-hidden">
-            <span className="block transition-transform duration-500 group-hover:-translate-y-full">Explorar categoria</span>
-            <span className="absolute inset-0 block translate-y-full text-secondary transition-transform duration-500 group-hover:translate-y-0">Explorar categoria</span>
+            <span className="block transition-transform duration-500 group-hover:-translate-y-full">
+              Explorar categoria
+            </span>
+            <span className="absolute inset-0 block translate-y-full text-secondary transition-transform duration-500 group-hover:translate-y-0">
+              Explorar categoria
+            </span>
           </span>
           <ChevronRight className="h-4 w-4 transition-transform duration-500 group-hover:translate-x-1 group-hover:text-secondary" />
         </div>
@@ -83,7 +97,8 @@ export function FeaturedCategoryCard({
     </div>
   );
 
-  const containerClasses = "block h-full cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-[2.5rem]";
+  const containerClasses =
+    "block h-full cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-[2.5rem]";
 
   if (isInternal) {
     return (

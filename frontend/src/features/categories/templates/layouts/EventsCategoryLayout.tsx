@@ -4,7 +4,11 @@ import { Link } from "react-router-dom";
 
 import { MotionReveal } from "@/components/animated/MotionReveal";
 import { AnimatedCardGrid } from "@/components/animated/AnimatedCardGrid";
-import { FilterBar, PageHero, SectionHeader } from "@/components/site/primitives";
+import {
+  FilterBar,
+  PageHero,
+  SectionHeader,
+} from "@/components/site/primitives";
 import { EventCard } from "@/features/agenda/components/EventCard";
 import { CategoryLayoutProps } from "../types";
 import { Event } from "@/features/events/types";
@@ -36,11 +40,13 @@ export default function EventsCategoryLayout({
 
     upcoming.sort(
       (a, b) =>
-        new Date(a.start_at || 0).getTime() - new Date(b.start_at || 0).getTime(),
+        new Date(a.start_at || 0).getTime() -
+        new Date(b.start_at || 0).getTime(),
     );
     past.sort(
       (a, b) =>
-        new Date(b.start_at || 0).getTime() - new Date(a.start_at || 0).getTime(),
+        new Date(b.start_at || 0).getTime() -
+        new Date(a.start_at || 0).getTime(),
     );
 
     return { upcomingEvents: upcoming, pastEvents: past };
@@ -54,7 +60,10 @@ export default function EventsCategoryLayout({
         : events;
 
   return (
-    <main className="min-h-screen bg-background-light page-shell-offset" data-testid="category-layout-events">
+    <main
+      className="min-h-screen bg-background-light page-shell-offset"
+      data-testid="category-layout-events"
+    >
       <PageHero
         eyebrow="Agenda tematizada"
         title={category.nombre}
@@ -68,12 +77,24 @@ export default function EventsCategoryLayout({
         metrics={[
           { label: "Total eventos", value: events.length },
           { label: "Proximos", value: upcomingEvents.length },
-          { label: "Filtro", value: timeFilter === "upcoming" ? "Proximos" : timeFilter === "past" ? "Pasados" : "Todos" },
+          {
+            label: "Filtro",
+            value:
+              timeFilter === "upcoming"
+                ? "Proximos"
+                : timeFilter === "past"
+                  ? "Pasados"
+                  : "Todos",
+          },
         ]}
         media={
           image ? (
             <div className="aspect-[4/3] overflow-hidden">
-              <img src={image} alt={category.nombre} className="h-full w-full object-cover" />
+              <img
+                src={image}
+                alt={category.nombre}
+                className="h-full w-full object-cover"
+              />
             </div>
           ) : undefined
         }
@@ -85,24 +106,33 @@ export default function EventsCategoryLayout({
             <div className="flex flex-wrap gap-3">
               <button
                 onClick={() => setTimeFilter("upcoming")}
-                className={`inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold ${timeFilter === "upcoming" ? "bg-primary text-white" : "bg-white text-slate-600"
-                  }`}
+                className={`inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold border border-border-soft transition-all duration-200 ${
+                  timeFilter === "upcoming"
+                    ? "bg-primary text-white"
+                    : "bg-surface text-text-secondary hover:bg-surface-muted hover:text-text-primary"
+                }`}
               >
                 <CalendarDays className="h-4 w-4" />
                 Proximos ({upcomingEvents.length})
               </button>
               <button
                 onClick={() => setTimeFilter("past")}
-                className={`inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold ${timeFilter === "past" ? "bg-primary text-white" : "bg-white text-slate-600"
-                  }`}
+                className={`inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold border border-border-soft transition-all duration-200 ${
+                  timeFilter === "past"
+                    ? "bg-primary text-white"
+                    : "bg-surface text-text-secondary hover:bg-surface-muted hover:text-text-primary"
+                }`}
               >
                 <History className="h-4 w-4" />
                 Pasados ({pastEvents.length})
               </button>
               <button
                 onClick={() => setTimeFilter("all")}
-                className={`inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold ${timeFilter === "all" ? "bg-primary text-white" : "bg-white text-slate-600"
-                  }`}
+                className={`inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold border border-border-soft transition-all duration-200 ${
+                  timeFilter === "all"
+                    ? "bg-primary text-white"
+                    : "bg-surface text-text-secondary hover:bg-surface-muted hover:text-text-primary"
+                }`}
               >
                 <Clock className="h-4 w-4" />
                 Todos ({events.length})
@@ -120,7 +150,7 @@ export default function EventsCategoryLayout({
               action={
                 <Link
                   to="/agenda"
-                  className="inline-flex items-center gap-2 rounded-full border border-primary/12 bg-white/80 px-4 py-2 text-sm font-semibold text-primary"
+                  className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-2 text-sm font-semibold text-primary transition-all hover:bg-primary/20"
                 >
                   <Calendar className="h-4 w-4" />
                   Ver agenda completa
@@ -137,8 +167,8 @@ export default function EventsCategoryLayout({
             </AnimatedCardGrid>
           ) : (
             <div className="py-24 text-center">
-              <Calendar className="mx-auto mb-6 h-16 w-16 text-slate-300" />
-              <p className="text-xl font-bold text-slate-400">
+              <Calendar className="mx-auto mb-6 h-16 w-16 text-text-secondary/40" />
+              <p className="text-xl font-bold text-text-secondary">
                 No hay eventos en esta categoria para el filtro actual.
               </p>
             </div>
