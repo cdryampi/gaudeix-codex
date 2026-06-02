@@ -260,11 +260,13 @@
   contain-intrinsic-size: 0 500px;
 }
 
-input:user-invalid {
+input:user-invalid,
+textarea:user-invalid {
   border-color: #ef4444;
 }
 
-input:user-invalid:focus-visible {
+input:user-invalid:focus-visible,
+textarea:user-invalid:focus-visible {
   box-shadow: 0 0 0 2px #ef4444;
 }
 
