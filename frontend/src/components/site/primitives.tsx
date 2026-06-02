@@ -177,7 +177,7 @@ export function PageHero({
 
           <div className="space-y-4">
             {media ? (
-              <div className="card-surface overflow-hidden border-white/20 bg-white/12 text-white shadow-[0_28px_80px_rgba(10,38,61,0.2)]">
+              <div className="card-surface overflow-hidden !border-white/20 !bg-white/12 text-white shadow-[0_28px_80px_rgba(10,38,61,0.2)]">
                 {media}
               </div>
             ) : null}
@@ -185,7 +185,7 @@ export function PageHero({
               <div
                 className={cn(
                   "card-surface p-6",
-                  isImmersive ? "border-white/20 bg-white/12 text-white" : "",
+                  isImmersive ? "!border-white/20 !bg-white/12 text-white" : "",
                 )}
               >
                 {aside}
