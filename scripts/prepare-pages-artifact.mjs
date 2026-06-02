@@ -20,7 +20,20 @@ await cp(
   path.join(backofficeOutput, "404.html"),
 );
 
-const frontendRouteEntries = ["festes/programacio", "historias"];
+const frontendRouteEntries = [
+  "agenda",
+  "categorias",
+  "como-llegar",
+  "festes",
+  "festes/programacio",
+  "historias",
+  "lugares",
+  "mis-favoritos",
+  "noticias",
+  "rankings",
+  "rutas",
+  "rutas/roadmap",
+];
 
 for (const route of frontendRouteEntries) {
   const routeOutputDir = path.join(outputDir, route);
