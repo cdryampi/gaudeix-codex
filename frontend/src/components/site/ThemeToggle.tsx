@@ -3,11 +3,13 @@ import { Moon, Sun } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface ThemeToggleProps {
+  id?: string;
   className?: string;
   isTransparent?: boolean;
 }
 
 export function ThemeToggle({
+  id,
   className,
   isTransparent = false,
 }: ThemeToggleProps) {
@@ -24,13 +26,14 @@ export function ThemeToggle({
 
   return (
     <button
+      id={id}
       onClick={toggleTheme}
       type="button"
       className={cn(
         "relative flex h-10 w-10 items-center justify-center rounded-full transition-all duration-300 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
         isTransparent
           ? "bg-white/10 text-white hover:bg-white/20 hover:scale-105"
-          : "bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700",
+          : "bg-surface-muted text-text-secondary hover:bg-surface-muted/80 hover:text-text-primary",
         className,
       )}
       aria-label={isDark ? "Cambiar a modo claro" : "Cambiar a modo oscuro"}
@@ -63,3 +66,4 @@ export function ThemeToggle({
     </button>
   );
 }
+ThemeToggle.displayName = "ThemeToggle";

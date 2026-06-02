@@ -5,8 +5,7 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.tokens import default_token_generator
-from django.utils.encoding import force_bytes
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.http import urlsafe_base64_decode
 
 User = get_user_model()
 
@@ -119,17 +118,17 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
         """
         if attrs['new_password'] != attrs['new_password_confirm']:
             raise serializers.ValidationError({"new_password": "Password fields didn't match."})
-        
+
         # Validate token
         try:
             uid = urlsafe_base64_decode(attrs['uid']).decode()
             user = User.objects.get(pk=uid)
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
             raise serializers.ValidationError({"uid": "Invalid user ID."})
-        
+
         if not default_token_generator.check_token(user, attrs['token']):
             raise serializers.ValidationError({"token": "Invalid or expired token."})
-        
+
         attrs['user'] = user
         return attrs
 
@@ -162,7 +161,7 @@ class LoginSerializer(serializers.Serializer):
         Supports login with username or email.
         """
         from django.contrib.auth import authenticate
-        
+
         username_or_email = attrs.get('username')
         password = attrs.get('password')
 

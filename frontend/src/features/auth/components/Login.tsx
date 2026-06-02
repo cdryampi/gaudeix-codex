@@ -79,7 +79,7 @@ export function Login({
                 onChange={(e) => setUsername(e.target.value)}
                 onBlur={() => setTouched((p) => ({ ...p, username: true }))}
                 placeholder="Introduce tu usuario o email"
-                className={`block w-full rounded-lg border p-2.5 pl-10 text-sm text-gray-900 focus:border-puerto-rico-500 focus:ring-puerto-rico-500 ${
+                className={`block w-full rounded-lg border p-2.5 pl-10 text-sm text-gray-900 focus:border-primary focus:ring-primary ${
                   usernameError
                     ? "border-red-500 bg-red-50"
                     : "border-gray-300 bg-gray-50"
@@ -119,7 +119,7 @@ export function Login({
                 onChange={(e) => setPassword(e.target.value)}
                 onBlur={() => setTouched((p) => ({ ...p, password: true }))}
                 placeholder="••••••••"
-                className={`block w-full rounded-lg border p-2.5 pl-10 text-sm text-gray-900 focus:border-puerto-rico-500 focus:ring-puerto-rico-500 ${
+                className={`block w-full rounded-lg border p-2.5 pl-10 text-sm text-gray-900 focus:border-primary focus:ring-primary ${
                   passwordError
                     ? "border-red-500 bg-red-50"
                     : "border-gray-300 bg-gray-50"
@@ -145,7 +145,7 @@ export function Login({
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full rounded-lg bg-puerto-rico-500 px-5 py-3 text-center text-sm font-medium text-white hover:bg-puerto-rico-600 focus:outline-none focus:ring-4 focus:ring-puerto-rico-300 disabled:cursor-not-allowed disabled:opacity-50"
+          className="w-full rounded-lg bg-primary px-5 py-3 text-center text-sm font-medium text-white hover:bg-primary-dark focus:outline-none focus:ring-4 focus:ring-primary-light disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isLoading ? "Iniciando sesión..." : "Iniciar sesión"}
         </button>
@@ -154,14 +154,14 @@ export function Login({
           <button
             type="button"
             onClick={onTogglePasswordReset}
-            className="font-medium text-puerto-rico-600 hover:text-puerto-rico-700"
+            className="font-medium text-primary hover:text-primary-dark"
           >
             ¿Olvidaste tu contraseña?
           </button>
           <button
             type="button"
             onClick={onToggleRegister}
-            className="font-medium text-puerto-rico-600 hover:text-puerto-rico-700"
+            className="font-medium text-primary hover:text-primary-dark"
           >
             Crear cuenta
           </button>

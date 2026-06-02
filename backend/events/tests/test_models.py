@@ -91,8 +91,8 @@ def test_create_event_with_dates(media_root, events_singleton):
     start1 = timezone.now() + timezone.timedelta(days=1)
     start2 = timezone.now() + timezone.timedelta(days=2)
 
-    d1 = EventDate.objects.create(event=event, start_at=start1)
-    d2 = EventDate.objects.create(event=event, start_at=start2)
+    EventDate.objects.create(event=event, start_at=start1)
+    EventDate.objects.create(event=event, start_at=start2)
 
     assert event.dates.count() == 2
 
@@ -156,7 +156,7 @@ def test_delete_event_date_updates_cache(events_singleton):
 
     event = Event.objects.create(title="Festival")
     d1 = EventDate.objects.create(event=event, start_at=start1)
-    d2 = EventDate.objects.create(event=event, start_at=start2)
+    EventDate.objects.create(event=event, start_at=start2)
 
     # Initial state: nearest date is d1
     event.refresh_from_db()

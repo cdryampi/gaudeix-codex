@@ -14,27 +14,42 @@ test.describe("Places Feature", () => {
     ).toBeVisible();
 
     const searchInput = page.getByPlaceholder("Buscar lugares...");
+    await searchInput.scrollIntoViewIfNeeded();
     await expect(searchInput).toBeVisible();
 
-    await expect(page.getByRole("button", { name: "Vista mapa" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Vista lista" })).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: "Vista mapa" }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: "Vista lista" }),
+    ).toBeVisible();
 
+    await page.locator('button[aria-label="Vista lista"]').click();
     const placeCards = page.locator('a[href^="/lugares/"]');
+    await placeCards.first().scrollIntoViewIfNeeded();
     await expect(placeCards.first()).toBeVisible({ timeout: 10000 });
   });
 
   test("should filter by category", async ({ page }) => {
-    const restaurantFilter = page.getByRole("button", { name: "Restaurantes" });
+    const restaurantFilter = page
+      .locator("button")
+      .filter({ hasText: "Restaurantes" });
+    await restaurantFilter.scrollIntoViewIfNeeded();
     await restaurantFilter.click();
 
     await expect(page).toHaveURL(/category=restaurants/);
   });
 
   test("should navigate to details", async ({ page }) => {
+    const listToggle = page.locator('button[aria-label="Vista lista"]');
+    await listToggle.scrollIntoViewIfNeeded();
+    await listToggle.click();
     const firstPlace = page.locator('a:has-text("Detalles")').first();
+    await firstPlace.scrollIntoViewIfNeeded();
     await expect(firstPlace).toBeVisible();
 
-    await firstPlace.click();
+    await firstPlace.focus();
+    await page.keyboard.press("Enter");
 
     await expect(page).toHaveURL(/\/lugares\/.+/);
 

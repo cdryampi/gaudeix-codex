@@ -7,6 +7,8 @@ import {
 import { MapPin } from "lucide-react";
 import { Place } from "@/features/places/types";
 
+/* eslint-disable react-refresh/only-export-components */
+
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as
   | string
   | undefined;

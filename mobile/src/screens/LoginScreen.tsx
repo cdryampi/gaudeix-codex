@@ -1,5 +1,12 @@
-import React, { useState } from 'react';
-import { View, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform, Alert } from 'react-native';
+import React from 'react';
+import {
+  View,
+  ScrollView,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
+  Alert,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -16,8 +23,12 @@ type LoginScreenProps = {
 
 export const LoginScreen = ({ navigation }: LoginScreenProps) => {
   const { login, isLoading, error: authError } = useAuthStore();
-  
-  const { control, handleSubmit, formState: { errors } } = useForm<LoginFormData>({
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       username: '',
@@ -32,10 +43,10 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
       // But for explicit action, we can also navigate or let the store update trigger it.
       // In this app structure, we rely on the RootNavigator to switch stacks or screens based on auth state.
       // However, since we are using a stack, we might need to replace manually if not using a switch navigator pattern.
-      // The current RootNavigator just puts screens in a stack. 
+      // The current RootNavigator just puts screens in a stack.
       // Let's assume on success, we navigate to Main.
       navigation.replace('Main');
-    } catch (e) {
+    } catch {
       // Error is handled by store and displayed below
     }
   };
@@ -46,16 +57,16 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <KeyboardAvoidingView 
+      <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         className="flex-1"
       >
-        <ScrollView 
+        <ScrollView
           contentContainerClassName="flex-grow px-6 py-8"
           keyboardShouldPersistTaps="handled"
         >
           {/* Header */}
-          <TouchableOpacity 
+          <TouchableOpacity
             onPress={() => navigation.goBack()}
             className="mb-8 w-10 h-10 items-center justify-center rounded-full bg-gray-100"
           >
@@ -124,7 +135,9 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
             </View>
 
             {/* Forgot Password Link */}
-            <TouchableOpacity onPress={() => Alert.alert('Info', 'Funcionalidad de recuperación próximamente')}>
+            <TouchableOpacity
+              onPress={() => Alert.alert('Info', 'Funcionalidad de recuperación próximamente')}
+            >
               <Text color="primary" variant="body" weight="semibold" className="text-right">
                 ¿Olvidaste tu contraseña?
               </Text>
@@ -141,31 +154,41 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
           </View>
 
           {/* Actions */}
-          <Button 
-            variant="primary" 
-            size="lg" 
+          <Button
+            variant="primary"
+            size="lg"
             onPress={handleSubmit(onSubmit)}
             disabled={isLoading}
             className="mb-6"
           >
             {isLoading ? (
-              <Text color="inverse" weight="bold">Iniciando sesión...</Text>
+              <Text color="inverse" weight="bold">
+                Iniciando sesión...
+              </Text>
             ) : (
-              <Text color="inverse" weight="bold">Iniciar Sesión</Text>
+              <Text color="inverse" weight="bold">
+                Iniciar Sesión
+              </Text>
             )}
           </Button>
 
           <View className="flex-row justify-center mb-8">
             <Text color="secondary">¿No tienes cuenta? </Text>
             <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-              <Text color="primary" weight="bold">Regístrate</Text>
+              <Text color="primary" weight="bold">
+                Regístrate
+              </Text>
             </TouchableOpacity>
           </View>
 
           {/* Social Auth Divider */}
           <View className="flex-row items-center mb-6">
             <View className="flex-1 h-px bg-gray-200" />
-            <Text variant="label" weight="bold" className="mx-4 text-gray-400 uppercase tracking-widest">
+            <Text
+              variant="label"
+              weight="bold"
+              className="mx-4 text-gray-400 uppercase tracking-widest"
+            >
               O inicia con
             </Text>
             <View className="flex-1 h-px bg-gray-200" />
@@ -173,20 +196,28 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
 
           {/* Social Buttons */}
           <View className="flex-row space-x-4">
-            <TouchableOpacity 
+            <TouchableOpacity
               onPress={() => handleSocialLogin('Google')}
               className="flex-1 flex-row items-center justify-center h-14 border-2 border-gray-100 rounded-xl bg-white"
             >
-              <Text variant="body" weight="bold">G</Text>
-              <Text variant="body" weight="bold" className="ml-2">Google</Text>
+              <Text variant="body" weight="bold">
+                G
+              </Text>
+              <Text variant="body" weight="bold" className="ml-2">
+                Google
+              </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity 
+            <TouchableOpacity
               onPress={() => handleSocialLogin('Apple')}
               className="flex-1 flex-row items-center justify-center h-14 border-2 border-gray-100 rounded-xl bg-white"
             >
-              <Text variant="body" weight="bold"></Text>
-              <Text variant="body" weight="bold" className="ml-2">Apple</Text>
+              <Text variant="body" weight="bold">
+                
+              </Text>
+              <Text variant="body" weight="bold" className="ml-2">
+                Apple
+              </Text>
             </TouchableOpacity>
           </View>
 
@@ -196,7 +227,6 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
               Al iniciar sesión, aceptas nuestra Política de Privacidad y Términos de Uso.
             </Text>
           </View>
-
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>

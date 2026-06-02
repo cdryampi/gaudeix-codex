@@ -5,10 +5,9 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from solo.models import SingletonModel
 
-from media_files.models import ImageFile, DocumentFile, VideoFile
+from media_files.models import ImageFile, VideoFile
 from static_pages.models import StaticPage
 from core.models import Category
-from .models_weather import MunicipalityWeather
 
 
 class SiteSettings(SingletonModel):
@@ -294,14 +293,6 @@ class SiteSettings(SingletonModel):
                 WeatherService.update_forecast()
             except Exception:
                 pass
-
-    class Meta:
-        verbose_name = _("Site Settings")
-        verbose_name_plural = _("Site Settings")
-
-    def __str__(self):
-        return self.site_name or "Site Settings"
-
 
 class MenuItem(models.Model):
     """Elemento de menú configurable para header/footer."""

@@ -1,14 +1,11 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { z } from "zod";
-import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { useAuth } from "@/app/providers/useAuth";
 import { ROUTES } from "@/lib/config/constants";
-import { AlertCircle, ArrowRight, Lock } from "lucide-react";
+import { AlertCircle, ArrowRight, Eye, EyeOff } from "lucide-react";
 import { Alert } from "flowbite-react";
 
 const loginSchema = z.object({
@@ -31,6 +28,7 @@ export const LoginPage = () => {
     Partial<Record<keyof LoginFormData, string>>
   >({});
   const [loginError, setLoginError] = useState<string>("");
+  const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -85,7 +83,7 @@ export const LoginPage = () => {
   }, [isAuthenticated, navigate]);
 
   return (
-    <div className="w-full space-y-6 animate-in fade-in duration-500">
+    <div className="w-full space-y-6">
       <div className="space-y-2 text-center">
         <h2 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">
           Bienvenido de nuevo
@@ -110,7 +108,7 @@ export const LoginPage = () => {
             >
               Usuario o Email
             </Label>
-            <Input
+            <input
               id="username"
               name="username"
               type="text"
@@ -119,10 +117,10 @@ export const LoginPage = () => {
               onChange={handleChange}
               disabled={isLoading}
               autoComplete="username"
-              className="bg-white"
+              className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-900 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all duration-200"
             />
             {errors.username && (
-              <p className="text-sm text-red-500 font-medium">
+              <p className="text-sm text-red-500 font-medium mt-1">
                 {errors.username}
               </p>
             )}
@@ -143,47 +141,64 @@ export const LoginPage = () => {
                 ¿Olvidaste tu contraseña?
               </Link>
             </div>
-            <div className="relative">
-              <Input
+            <div className="relative flex items-center w-full">
+              <input
                 id="password"
                 name="password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 placeholder="••••••••"
                 value={formData.password}
                 onChange={handleChange}
                 disabled={isLoading}
                 autoComplete="current-password"
-                className="bg-white pr-10"
+                className="w-full h-11 pl-4 pr-10 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-900 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all duration-200"
               />
-              <Lock className="absolute right-3 top-3 h-4 w-4 text-gray-400" />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+                tabIndex={-1}
+              >
+                {showPassword ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
+              </button>
             </div>
             {errors.password && (
-              <p className="text-sm text-red-500 font-medium">
+              <p className="text-sm text-red-500 font-medium mt-1">
                 {errors.password}
               </p>
             )}
           </div>
         </div>
 
-        <div className="flex items-center space-x-2">
-          <Switch
+        <label
+          htmlFor="remember"
+          className="flex items-center gap-2.5 cursor-pointer select-none group"
+        >
+          <input
+            type="checkbox"
             id="remember"
             checked={formData.remember}
-            onCheckedChange={handleRememberChange}
+            onChange={(e) => handleRememberChange(e.target.checked)}
+            className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-900 accent-primary-600 focus:ring-2 focus:ring-primary-500/20 transition-colors"
           />
-          <Label
-            htmlFor="remember"
-            className="font-normal text-gray-600 dark:text-gray-400"
-          >
+          <span className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-800 dark:group-hover:text-gray-300 transition-colors">
             Mantener sesión iniciada
-          </Label>
-        </div>
+          </span>
+        </label>
 
-        <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
+        <Button
+          type="submit"
+          className="w-full h-11 rounded-xl font-semibold text-sm"
+          disabled={isLoading}
+        >
           {isLoading ? (
             "Verificando..."
           ) : (
-            <span className="flex items-center gap-2">
+            <span className="flex items-center justify-center gap-2">
               Iniciar Sesión <ArrowRight className="h-4 w-4" />
             </span>
           )}
@@ -193,7 +208,7 @@ export const LoginPage = () => {
       <div className="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">
         <p>
           ¿No tienes acceso?{" "}
-          <span className="text-primary-600 font-medium">
+          <span className="text-primary-600 font-medium hover:underline cursor-pointer">
             Contacta al administrador
           </span>
         </p>

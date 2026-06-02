@@ -62,17 +62,10 @@ export const authStorage = {
   /**
    * Save complete session (tokens + user)
    */
-  saveSession(
-    tokens: { access: string; refresh: string },
-    user: User,
-    remember: boolean = true
-  ): void {
+  saveSession(tokens: { access: string; refresh: string }, user: User): void {
     this.setAccessToken(tokens.access);
     this.setRefreshToken(tokens.refresh);
     this.setUser(user);
-    
-    // If remember is false, could use sessionStorage instead
-    // For now, we always use localStorage
   },
 
   /**

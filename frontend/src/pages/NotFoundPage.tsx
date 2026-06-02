@@ -1,7 +1,10 @@
 import { Link } from "react-router-dom";
 import { Home, Frown } from "lucide-react";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export function NotFoundPage() {
+  const { t } = useTranslation();
+
   return (
     <main className="flex min-h-[calc(100vh-200px)] items-center justify-center px-4">
       <div className="mx-auto max-w-md text-center">
@@ -17,12 +20,9 @@ export function NotFoundPage() {
         </div>
 
         <h1 className="mb-3 text-3xl font-bold text-slate-900">
-          Página no encontrada
+          {t("Página no encontrada")}
         </h1>
-        <p className="mb-8 text-lg text-slate-600">
-          La página que buscas no existe o ha sido movida. Revisa la URL o
-          vuelve al inicio.
-        </p>
+        <p className="mb-8 text-lg text-slate-600">{t("not_found_desc")}</p>
 
         <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
           <Link
@@ -30,13 +30,13 @@ export function NotFoundPage() {
             className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-white shadow-lg transition-all hover:bg-primary/90 hover:shadow-xl"
           >
             <Home className="h-4 w-4" />
-            Volver al inicio
+            {t("Volver al inicio")}
           </Link>
           <a
             href="mailto:info@cabrerademar.cat"
             className="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition-all hover:bg-slate-50"
           >
-            Reportar problema
+            {t("Reportar problema")}
           </a>
         </div>
       </div>

@@ -1,11 +1,13 @@
 import { cn } from "@/lib/utils";
 import { DynamicLucideIcon } from "@/components/atoms/LucideIcon";
-import agendaIcon from "@/assets/category-icons/agenda.svg?raw";
-import beachesIcon from "@/assets/category-icons/beaches.svg?raw";
-import cultureIcon from "@/assets/category-icons/culture.svg?raw";
-import heritageIcon from "@/assets/category-icons/heritage.svg?raw";
-import natureIcon from "@/assets/category-icons/nature.svg?raw";
-import routesIcon from "@/assets/category-icons/routes.svg?raw";
+import agendaIcon from "@/assets/category-icons/agenda.png";
+import beachesIcon from "@/assets/category-icons/beaches.png";
+import cultureIcon from "@/assets/category-icons/culture.png";
+import heritageIcon from "@/assets/category-icons/heritage.png";
+import natureIcon from "@/assets/category-icons/nature.png";
+import routesIcon from "@/assets/category-icons/routes.png";
+
+/* eslint-disable react-refresh/only-export-components */
 
 export type CategoryBrandIconKey =
   | "routes"
@@ -16,12 +18,16 @@ export type CategoryBrandIconKey =
   | "heritage";
 
 const ICON_NAME_TO_KEY: Record<string, CategoryBrandIconKey> = {
+  route: "routes",
   mountain: "routes",
   navigation: "routes",
   leaf: "nature",
+  festes: "agenda",
   "party-popper": "agenda",
   sparkles: "agenda",
+  waves: "beaches",
   umbrella: "beaches",
+  "guided-visits": "culture",
   flag: "culture",
   castle: "heritage",
   landmark: "heritage",
@@ -60,14 +66,12 @@ export function CategoryBrandIcon({
 
   if (key) {
     return (
-      <span
-        aria-hidden="true"
+      <img
+        src={BRAND_ICONS[key]}
+        alt=""
         data-category-brand-icon={key}
-        className={cn(
-          "inline-flex shrink-0 [&_svg]:h-full [&_svg]:w-full [&_svg]:overflow-visible [&_svg]:stroke-current [&_svg]:[stroke-width:1.85]",
-          className,
-        )}
-        dangerouslySetInnerHTML={{ __html: BRAND_ICONS[key] }}
+        className={cn("inline-flex shrink-0 object-contain", className)}
+        aria-hidden="true"
       />
     );
   }

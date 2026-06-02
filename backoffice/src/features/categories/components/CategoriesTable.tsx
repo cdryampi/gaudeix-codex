@@ -2,7 +2,7 @@ import { Category } from "../types";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Edit, Trash2 } from "lucide-react";
-import { getCategoryIcon } from "../constants/icons";
+import { getCategoryIconSrc } from "../constants/icons";
 
 type Props = {
   categories: Category[];
@@ -18,25 +18,44 @@ export function CategoriesTable({ categories, onEdit, onDelete }: Props) {
       <table className="min-w-full divide-y divide-border text-sm">
         <thead className="bg-muted/50">
           <tr>
-            <th className="px-4 py-2 text-left font-semibold text-foreground">Slug</th>
-            <th className="px-4 py-2 text-left font-semibold text-foreground">Icono</th>
-            <th className="px-4 py-2 text-left font-semibold text-foreground">Nombre</th>
-            <th className="px-4 py-2 text-left font-semibold text-foreground">Padre</th>
-            <th className="px-4 py-2 text-left font-semibold text-foreground">Taxonomía</th>
-            <th className="px-4 py-2 text-right font-semibold text-foreground">Acciones</th>
+            <th className="px-4 py-2 text-left font-semibold text-foreground">
+              Slug
+            </th>
+            <th className="px-4 py-2 text-left font-semibold text-foreground">
+              Icono
+            </th>
+            <th className="px-4 py-2 text-left font-semibold text-foreground">
+              Nombre
+            </th>
+            <th className="px-4 py-2 text-left font-semibold text-foreground">
+              Padre
+            </th>
+            <th className="px-4 py-2 text-left font-semibold text-foreground">
+              Taxonomía
+            </th>
+            <th className="px-4 py-2 text-right font-semibold text-foreground">
+              Acciones
+            </th>
           </tr>
         </thead>
         <tbody className="divide-y divide-border">
           {categories.map((cat) => {
-            const IconComponent = getCategoryIcon(cat.icon);
+            const iconSrc = getCategoryIconSrc(cat.icon);
             const parent = cat.parent ? parentMap.get(cat.parent) : null;
             return (
               <tr key={cat.id} className="hover:bg-muted/40">
-                <td className="px-4 py-2 font-medium text-foreground">{cat.slug}</td>
+                <td className="px-4 py-2 font-medium text-foreground">
+                  {cat.slug}
+                </td>
                 <td className="px-4 py-2">
-                  {IconComponent ? (
+                  {iconSrc ? (
                     <div className="flex h-9 w-9 items-center justify-center rounded-md border border-border/60 bg-muted/30">
-                      <IconComponent className="h-4 w-4" />
+                      <img
+                        src={iconSrc}
+                        alt=""
+                        className="h-5 w-5 object-contain"
+                        aria-hidden="true"
+                      />
                     </div>
                   ) : (
                     <span className="text-muted-foreground">-</span>
@@ -45,20 +64,29 @@ export function CategoriesTable({ categories, onEdit, onDelete }: Props) {
                 <td className="px-4 py-2">
                   <div className="font-medium">{cat.nombre}</div>
                   {cat.descripcion && (
-                    <div className="text-xs text-muted-foreground line-clamp-2">{cat.descripcion}</div>
+                    <div className="text-xs text-muted-foreground line-clamp-2">
+                      {cat.descripcion}
+                    </div>
                   )}
                 </td>
                 <td className="px-4 py-2">
                   {parent ? (
                     <div className="text-sm text-foreground">
-                      {parent.nombre} <span className="text-muted-foreground">({parent.slug})</span>
+                      {parent.nombre}{" "}
+                      <span className="text-muted-foreground">
+                        ({parent.slug})
+                      </span>
                     </div>
                   ) : (
                     <span className="text-muted-foreground">-</span>
                   )}
                 </td>
                 <td className="px-4 py-2">
-                  {cat.taxonomy ? <Badge variant="secondary">{cat.taxonomy}</Badge> : <span>-</span>}
+                  {cat.taxonomy ? (
+                    <Badge variant="secondary">{cat.taxonomy}</Badge>
+                  ) : (
+                    <span>-</span>
+                  )}
                 </td>
                 <td className="px-4 py-2 text-right">
                   <div className="flex justify-end gap-1">
@@ -87,7 +115,10 @@ export function CategoriesTable({ categories, onEdit, onDelete }: Props) {
           })}
           {categories.length === 0 && (
             <tr>
-              <td colSpan={6} className="px-4 py-6 text-center text-muted-foreground">
+              <td
+                colSpan={6}
+                className="px-4 py-6 text-center text-muted-foreground"
+              >
                 No hay categorías.
               </td>
             </tr>

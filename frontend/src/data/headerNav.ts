@@ -11,6 +11,7 @@ export const HEADER_NAV: HeaderNavItem[] = [
     href: "/categorias",
     children: [
       { label: "Categorías", href: "/categorias" },
+      { label: "Historias", href: "/historias" },
       { label: "Patrimonio", href: "/lugares?category=heritage" },
       { label: "Naturaleza", href: "/lugares?category=nature" },
       { label: "Playas", href: "/categorias/beaches" },

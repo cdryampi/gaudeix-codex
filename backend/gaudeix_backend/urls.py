@@ -30,6 +30,7 @@ from news.urls import register_routes as register_news_routes
 from routes.urls import register_routes as register_routes_routes
 from festes.urls import register_routes as register_festes_routes
 from scraper.urls import register_routes as register_scraper_routes
+from storytelling.urls import register_routes as register_storytelling_routes
 from .views import health_check, landing
 
 # Register DRF router routes
@@ -51,6 +52,7 @@ register_news_routes(router)
 register_routes_routes(router)
 register_festes_routes(router)
 register_scraper_routes(router)
+register_storytelling_routes(router)
 
 urlpatterns = [
     path("", landing, name="landing"),

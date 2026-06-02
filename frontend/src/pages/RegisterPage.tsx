@@ -17,7 +17,7 @@ export default function RegisterPage() {
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center">
       <Register onToggleLogin={() => navigate("/login")} />
       <div className="text-center mt-4">
-        <Link to="/" className="text-sm text-gray-500 hover:text-puerto-rico-600">
+        <Link to="/" className="text-sm text-gray-500 hover:text-primary">
           Volver al inicio
         </Link>
       </div>

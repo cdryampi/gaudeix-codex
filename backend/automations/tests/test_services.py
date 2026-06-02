@@ -13,7 +13,7 @@ from automations.services import (
     dispatch_due_automations,
     execute_job,
 )
-from beach_safety.models import BeachSafetyProposal, BeachSafetyStatus
+from beach_safety.models import BeachSafetyProposal
 from site_settings.models_weather import MunicipalityWeather
 
 

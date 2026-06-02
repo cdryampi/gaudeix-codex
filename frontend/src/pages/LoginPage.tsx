@@ -20,7 +20,7 @@ export default function LoginPage() {
         onTogglePasswordReset={() => navigate("/password-reset")}
       />
       <div className="text-center mt-4">
-        <Link to="/" className="text-sm text-gray-500 hover:text-puerto-rico-600">
+        <Link to="/" className="text-sm text-gray-500 hover:text-primary">
           Volver al inicio
         </Link>
       </div>

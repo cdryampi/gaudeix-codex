@@ -1,4 +1,3 @@
-import apiClient from '@/lib/api/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/lib/config/constants';
 import { Event } from './index';
@@ -14,12 +13,12 @@ export interface EventDetail extends Event {
   longitude?: number;
   has_checkin?: boolean;
   is_favorite?: boolean;
-  attachments?: Array<{
+  attachments?: {
     id: string;
     title: string;
     file: string;
     file_type: string;
-  }>;
+  }[];
 }
 
 export const eventDetailApi = {
@@ -33,7 +32,8 @@ export const eventDetailApi = {
       title: 'Fiesta Mayor 2026',
       slug: 'fiesta-mayor-2026',
       summary: 'La celebración más grande del año con música y actividades.',
-      description: 'Disfruta de la mejor fiesta del año con actividades para toda la familia. Tendremos conciertos, talleres, gastronomía local y mucho más. No te pierdas el gran cierre con fuegos artificiales.\n\nHorario:\n10:00 - Apertura\n12:00 - Vermut popular\n20:00 - Conciertos',
+      description:
+        'Disfruta de la mejor fiesta del año con actividades para toda la familia. Tendremos conciertos, talleres, gastronomía local y mucho más. No te pierdas el gran cierre con fuegos artificiales.\n\nHorario:\n10:00 - Apertura\n12:00 - Vermut popular\n20:00 - Conciertos',
       start_at: new Date(Date.now() + 86400000).toISOString(),
       end_at: new Date(Date.now() + 172800000).toISOString(),
       location_text: 'Plaza del Ayuntamiento',
@@ -44,9 +44,7 @@ export const eventDetailApi = {
       tags: ['Fiesta', 'Música', 'Familiar'],
       has_checkin: false,
       is_favorite: false,
-      attachments: [
-        { id: '1', title: 'Programa Completo', file: 'url', file_type: 'pdf' }
-      ]
+      attachments: [{ id: '1', title: 'Programa Completo', file: 'url', file_type: 'pdf' }],
     };
   },
 
@@ -58,7 +56,7 @@ export const eventDetailApi = {
   toggleFavorite: async (id: string): Promise<void> => {
     // await apiClient.post(`/events/${id}/favorite/`);
     return new Promise(resolve => setTimeout(resolve, 500));
-  }
+  },
 };
 
 // Hooks

@@ -8,6 +8,7 @@ import * as categoriesApi from "@/features/categories/api";
 import * as newsApi from "@/features/news/api";
 import * as socialApi from "@/features/social/api";
 import * as footerApi from "@/features/site-settings/api";
+import * as storytellingApi from "@/features/storytelling/api";
 
 // Mock the Google Maps API that's used by InteractiveMap component
 vi.stubGlobal("google", {
@@ -37,6 +38,11 @@ vi.mock("@/features/categories/api", () => ({
 
 vi.mock("@/features/news/api", () => ({
   listNewsItems: vi.fn(),
+}));
+
+vi.mock("@/features/storytelling/api", () => ({
+  listStories: vi.fn(),
+  getStory: vi.fn(),
 }));
 
 vi.mock("@/features/site-settings/api", () => ({
@@ -84,6 +90,7 @@ describe("App Smoke Tests", () => {
     });
 
     vi.mocked(newsApi.listNewsItems).mockResolvedValue([]);
+    vi.mocked(storytellingApi.listStories).mockResolvedValue([]);
     vi.mocked(footerApi.getSiteSettings).mockResolvedValue({
       id: 1,
       site_name: "Cabrera de Mar",

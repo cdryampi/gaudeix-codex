@@ -6,7 +6,7 @@ import { es } from 'date-fns/locale';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-import { Text, Avatar, Button, Icon, Badge } from '@/components/atoms';
+import { Text, Avatar, Button, Icon } from '@/components/atoms';
 import { EventCard } from '@/components/molecules';
 import { StatCard } from '@/features/profile/components/StatCard';
 import { useUserProfile } from '@/features/profile/api';
@@ -15,7 +15,7 @@ import { RootStackParamList } from '@/navigation/types';
 
 export const ProfileScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const { user, isAuthenticated } = useAuthStore();
+  const { isAuthenticated } = useAuthStore();
   const { data: profile, isLoading } = useUserProfile();
 
   // Guest View
@@ -31,16 +31,18 @@ export const ProfileScreen = () => {
         <Text variant="body" color="secondary" className="text-center mb-8">
           Inicia sesión para guardar tus favoritos, acumular puntos y participar en el ranking.
         </Text>
-        
-        <Button 
-          variant="primary" 
+
+        <Button
+          variant="primary"
           className="w-full mb-4"
           onPress={() => navigation.navigate('Login')}
         >
-          <Text color="inverse" weight="bold">Iniciar Sesión</Text>
+          <Text color="inverse" weight="bold">
+            Iniciar Sesión
+          </Text>
         </Button>
-        <Button 
-          variant="outline" 
+        <Button
+          variant="outline"
           className="w-full"
           onPress={() => navigation.navigate('Register')}
         >
@@ -65,7 +67,9 @@ export const ProfileScreen = () => {
         <TouchableOpacity>
           <Icon icon="⚙️" size="md" />
         </TouchableOpacity>
-        <Text variant="title" weight="bold">Mi Perfil</Text>
+        <Text variant="title" weight="bold">
+          Mi Perfil
+        </Text>
         <TouchableOpacity>
           <Icon icon="🔔" size="md" />
         </TouchableOpacity>
@@ -75,29 +79,30 @@ export const ProfileScreen = () => {
         {/* Identity */}
         <View className="items-center mb-8">
           <View className="relative mb-4">
-            <Avatar 
-              initials={profile.user.name.substring(0, 2).toUpperCase()} 
-              size="xl" 
+            <Avatar
+              initials={profile.user.name.substring(0, 2).toUpperCase()}
+              size="xl"
               className="bg-primary/10"
             />
             <View className="absolute bottom-0 right-0 bg-white rounded-full p-1 shadow-sm">
               <Icon icon="✅" size="sm" />
             </View>
           </View>
-          
+
           <Text variant="heading" weight="bold" className="mb-1 text-2xl">
             {profile.user.name}
           </Text>
-          
+
           <View className="flex-row items-center bg-green-50 px-3 py-1 rounded-full mb-2">
             <Text className="text-xs mr-1">🌱</Text>
             <Text variant="caption" className="text-green-700 font-bold uppercase tracking-wide">
               {profile.stats.level} Nivel {profile.stats.level_number}
             </Text>
           </View>
-          
+
           <Text variant="caption" color="secondary">
-            Miembro desde {format(new Date(profile.stats.member_since), 'MMMM yyyy', { locale: es })}
+            Miembro desde{' '}
+            {format(new Date(profile.stats.member_since), 'MMMM yyyy', { locale: es })}
           </Text>
         </View>
 
@@ -107,7 +112,9 @@ export const ProfileScreen = () => {
             <Text weight="bold">Editar Perfil</Text>
           </Button>
           <Button variant="primary" className="flex-1" onPress={() => {}}>
-            <Text color="inverse" weight="bold">Compartir</Text>
+            <Text color="inverse" weight="bold">
+              Compartir
+            </Text>
           </Button>
         </View>
 
@@ -132,14 +139,18 @@ export const ProfileScreen = () => {
         {/* Favorites */}
         <View>
           <View className="flex-row items-center justify-between mb-4">
-            <Text variant="title" weight="bold">Favoritos</Text>
+            <Text variant="title" weight="bold">
+              Favoritos
+            </Text>
             <TouchableOpacity>
-              <Text variant="body" color="secondary">Ver todos</Text>
+              <Text variant="body" color="secondary">
+                Ver todos
+              </Text>
             </TouchableOpacity>
           </View>
-          
+
           <ScrollView horizontal showsHorizontalScrollIndicator={false} className="-mx-6 px-6">
-            {profile.favorites.map((event) => (
+            {profile.favorites.map(event => (
               <View key={event.id} className="w-64 mr-4">
                 <EventCard
                   title={event.title}

@@ -29,7 +29,7 @@ class Command(BaseCommand):
             defaults={
                 "nombre": "Routes",
                 "taxonomy": Category.TaxonomyChoices.ROUTES,
-                "icon": "route",
+                "icon": "routes",
             },
         )
 
@@ -38,8 +38,8 @@ class Command(BaseCommand):
             if category.taxonomy != Category.TaxonomyChoices.ROUTES:
                 category.taxonomy = Category.TaxonomyChoices.ROUTES
                 updated = True
-            if not category.icon:
-                category.icon = "route"
+            if category.icon != "routes":
+                category.icon = "routes"
                 updated = True
             if updated:
                 category.save()

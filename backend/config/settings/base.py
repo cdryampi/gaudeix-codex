@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+from datetime import timedelta
 from pathlib import Path
 
+import django.conf.global_settings as global_settings
 import environ
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -98,6 +100,7 @@ INSTALLED_APPS = [
     "routes.apps.RoutesConfig",
     "festes.apps.FestesConfig",
     "scraper.apps.ScraperConfig",
+    "storytelling",
 ]
 
 SITE_ID = 1
@@ -107,6 +110,7 @@ MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -152,9 +156,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-from django.utils.translation import gettext_lazy as _
-import django.conf.global_settings as global_settings
-
 LANGUAGE_CODE = env("DJANGO_LANGUAGE_CODE", default="ca")
 
 # Get list of languages from env, default to ca, es, en, fr
@@ -196,8 +197,6 @@ REST_FRAMEWORK = {
         "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
     ),
 }
-
-from datetime import timedelta
 
 REST_AUTH = {
     "USE_JWT": True,

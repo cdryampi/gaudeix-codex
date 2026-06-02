@@ -14,10 +14,10 @@ export const ProgramAtAGlance = ({ festa }: ProgramAtAGlanceProps) => {
       : festa.events?.length || 0;
 
   return (
-    <section className="bg-[#EEF5ED] py-16 lg:py-20 border-b border-[#D7E8D3]">
+    <section className="bg-green-50 py-16 lg:py-20 border-b border-green-100">
       <div className="container mx-auto px-6 max-w-5xl">
         <div className="text-center mb-12">
-          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#4A8B3C] mb-4 block">
+          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-green mb-4 block">
             At a Glance
           </span>
           <h2 className="text-2xl md:text-3xl lg:text-4xl font-black text-slate-900 tracking-tighter leading-[1.15] uppercase max-w-3xl mx-auto">
@@ -53,7 +53,7 @@ export const ProgramAtAGlance = ({ festa }: ProgramAtAGlanceProps) => {
               href={festa.program_pdf.file}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-3 h-14 px-10 rounded-full bg-[#5CAD4A] text-white text-[12px] font-black uppercase tracking-widest hover:bg-[#4A8B3C] transition-colors shadow-xl shadow-[#5CAD4A]/20 hover:shadow-2xl hover:-translate-y-0.5"
+              className="inline-flex items-center justify-center gap-3 h-14 px-10 rounded-full bg-green text-white text-[12px] font-black uppercase tracking-widest hover:bg-green-600 transition-colors shadow-xl shadow-green/20 hover:shadow-2xl hover:-translate-y-0.5"
             >
               <Download className="w-4 h-4" />
               Descarregar Programa (PDF)

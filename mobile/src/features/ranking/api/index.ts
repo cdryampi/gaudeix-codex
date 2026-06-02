@@ -1,4 +1,3 @@
-import apiClient from '@/lib/api/client';
 import { useQuery } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/lib/config/constants';
 
@@ -42,21 +41,26 @@ export const rankingApi = {
       rank: 12,
       events_completed: 18,
       is_current_user: true,
-      avatar: 'CG'
+      avatar: 'CG',
     };
 
     return {
-      results: [...mockUsers, ...Array(6).fill(null).map((_, i) => ({
-        id: `mock-${i+6}`,
-        name: `User ${i+6}`,
-        points: 2000 - (i * 100),
-        rank: i + 6,
-        events_completed: 20,
-        avatar: `U${i+6}`
-      }))],
-      user_rank: currentUser
+      results: [
+        ...mockUsers,
+        ...Array(6)
+          .fill(null)
+          .map((_, i) => ({
+            id: `mock-${i + 6}`,
+            name: `User ${i + 6}`,
+            points: 2000 - i * 100,
+            rank: i + 6,
+            events_completed: 20,
+            avatar: `U${i + 6}`,
+          })),
+      ],
+      user_rank: currentUser,
     };
-  }
+  },
 };
 
 // Hooks
