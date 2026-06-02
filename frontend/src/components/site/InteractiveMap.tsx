@@ -96,6 +96,7 @@ export function InteractiveMap({
       className="h-full w-full"
       center={center}
       onClick={() => setSelectedPlace(null)}
+      places={places}
     >
       {symbolPathCircle !== undefined && (
         <>
