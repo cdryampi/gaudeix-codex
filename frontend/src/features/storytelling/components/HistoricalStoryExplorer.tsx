@@ -158,6 +158,9 @@ const FALLBACK_STORIES: Story[] = [
   },
 ];
 
+const publicMediaUrl = (path: string) =>
+  `${import.meta.env.BASE_URL}${path.replace(/^\/+/, "")}`;
+
 export function HistoricalStoryExplorer() {
   const { t } = useTranslation();
   const [activeStage, setActiveStage] = useState<string>("Laietania");
@@ -329,21 +332,21 @@ export function HistoricalStoryExplorer() {
       <div className="absolute inset-0 overflow-hidden pointer-events-none select-none z-0">
         {/* 1. Relieve de Mitra - Esquina superior izquierda */}
         <img
-          src="/media/mitra_deco.png"
+          src={publicMediaUrl("media/mitra_deco.png")}
           alt="Relieve de Mitra"
           className="absolute top-16 left-8 md:left-24 w-32 md:w-44 max-w-xs object-contain filter sepia-[10%] rotate-[-6deg] hidden sm:block"
           style={{ opacity: 0.32 }}
         />
         {/* 2. Columna - Lateral derecho superior/medio */}
         <img
-          src="/media/columna_deco.png"
+          src={publicMediaUrl("media/columna_deco.png")}
           alt="Columna romana rota"
           className="absolute top-[25%] right-6 md:right-16 w-28 md:w-36 max-w-xs object-contain filter sepia-[10%] rotate-[8deg]"
           style={{ opacity: 0.32 }}
         />
         {/* 3. Terrazas agrícolas laietanas - Esquina inferior derecha */}
         <img
-          src="/media/cultivo_deco.png"
+          src={publicMediaUrl("media/cultivo_deco.png")}
           alt="Terrazas agrícolas laietanas"
           className="absolute bottom-8 right-8 md:right-24 w-40 md:w-56 max-w-xs object-contain filter sepia-[10%] rotate-[-4deg]"
           style={{ opacity: 0.32 }}
@@ -478,12 +481,12 @@ export function HistoricalStoryExplorer() {
                 <img
                   src={
                     currentStageData.id === "Laietania"
-                      ? "/media/laietania_sketch.png"
+                      ? publicMediaUrl("media/laietania_sketch.png")
                       : currentStageData.id === "Ilturo"
-                        ? "/media/ilturo_sketch.png"
+                        ? publicMediaUrl("media/ilturo_sketch.png")
                         : currentStageData.id === "Edad Media"
-                          ? "/media/burriac_sketch.png"
-                          : "/media/modernidad_sketch.png"
+                          ? publicMediaUrl("media/burriac_sketch.png")
+                          : publicMediaUrl("media/modernidad_sketch.png")
                   }
                   alt={currentStageData.title}
                   className="max-h-[340px] w-full object-contain"
@@ -539,12 +542,12 @@ export function HistoricalStoryExplorer() {
                 <img
                   src={
                     currentStageData.id === "Laietania"
-                      ? "/media/laietania_sketch.png"
+                      ? publicMediaUrl("media/laietania_sketch.png")
                       : currentStageData.id === "Ilturo"
-                        ? "/media/ilturo_sketch.png"
+                        ? publicMediaUrl("media/ilturo_sketch.png")
                         : currentStageData.id === "Edad Media"
-                          ? "/media/burriac_sketch.png"
-                          : "/media/modernidad_sketch.png"
+                          ? publicMediaUrl("media/burriac_sketch.png")
+                          : publicMediaUrl("media/modernidad_sketch.png")
                   }
                   alt={currentStageData.title}
                   className="w-full h-full object-cover sepia-[20%] hover:sepia-0 group-hover:scale-105 transition-all duration-700 pointer-events-none"
