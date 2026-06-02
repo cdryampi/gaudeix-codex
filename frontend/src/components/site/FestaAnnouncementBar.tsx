@@ -4,8 +4,10 @@ import { Star, ChevronRight, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getFestes } from "@/features/festes/api";
 import { Festa } from "@/features/festes/types";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export function FestaAnnouncementBar() {
+  const { t } = useTranslation();
   const [isVisible, setIsVisible] = useState(true);
 
   const { data: festes } = useQuery({
@@ -49,20 +51,23 @@ export function FestaAnnouncementBar() {
   return (
     <div
       role="banner"
-      className={`relative w-full bg-accent text-slate-950 px-4 py-2 sm:px-8 flex items-center justify-center gap-3 overflow-hidden ${
+      className={`relative w-full bg-text-primary text-white px-4 py-2 sm:px-8 flex items-center justify-center gap-3 overflow-hidden border-b border-white/5 ${
         shouldAnimate ? "animate-in slide-in-from-top fade-in duration-500" : ""
       }`}
     >
-      {/* Decorative Stars */}
-      <Star className="hidden sm:block h-3 w-3 animate-pulse" />
+      {/* Decorative gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-transparent to-secondary/20 pointer-events-none" />
 
-      <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-3 text-center">
-        <span className="text-[10px] font-black uppercase tracking-widest bg-slate-950 text-accent px-2 py-0.5 rounded">
-          {festa.is_current ? "Festa Actual" : "Recente / Destacada"}
+      {/* Decorative Star */}
+      <Star className="hidden sm:block h-3.5 w-3.5 text-accent fill-accent/20 animate-pulse shrink-0 relative z-10" />
+
+      <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 text-center relative z-10">
+        <span className="text-[9px] font-black uppercase tracking-[0.15em] bg-accent text-slate-950 px-2.5 py-0.5 rounded-full shadow-sm shrink-0">
+          {festa.is_current ? t("Festa Actual") : t("Recente / Destacada")}
         </span>
-        <p className="text-[11px] sm:text-xs font-bold leading-tight">
-          Ja pots consultar el programa de la{" "}
-          <span className="font-black underline decoration-2 underline-offset-2">
+        <p className="text-[11px] sm:text-xs font-semibold leading-tight text-white/90">
+          {t("announcement_prefix")}{" "}
+          <span className="font-extrabold text-white underline decoration-accent decoration-2 underline-offset-2">
             {festa.title}
           </span>
         </p>
@@ -70,17 +75,17 @@ export function FestaAnnouncementBar() {
 
       <Link
         to={`/festes/${festa.slug}`}
-        className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest pl-2 hover:translate-x-1 transition-transform group outline-none focus-visible:ring-2 focus-visible:ring-slate-950 rounded-lg p-1"
-        aria-label={`Veure programa de ${festa.title}`}
+        className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest pl-2 text-accent hover:text-white transition-colors group outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-lg p-1 relative z-10"
+        aria-label={`${t("Veure programa de ")}${festa.title}`}
       >
-        Veure Programa
-        <ChevronRight className="h-4 w-4" />
+        {t("Veure Programa")}
+        <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
       </Link>
 
       <button
         onClick={() => setIsVisible(false)}
-        className="absolute right-2 sm:right-4 p-1 hover:bg-slate-950/10 rounded-full transition-colors outline-none focus-visible:ring-2 focus-visible:ring-slate-950"
-        aria-label="Tancar anunci"
+        className="absolute right-2 sm:right-4 p-1 hover:bg-white/10 text-white/60 hover:text-white rounded-full transition-colors outline-none focus-visible:ring-2 focus-visible:ring-white z-10"
+        aria-label={t("Tancar anunci")}
       >
         <X className="h-4 w-4" />
       </button>

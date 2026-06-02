@@ -386,7 +386,7 @@ class TestPasswordReset:
 
     def test_password_reset_request_public_access(self):
         """Test password reset request is accessible without authentication."""
-        user = User.objects.create_user(
+        User.objects.create_user(
             username="testuser", email="test@example.com", password="pass123"
         )
 
@@ -489,7 +489,7 @@ class TestUserList:
     def test_regular_user_sees_only_self(self):
         """Test regular user can only see themselves in list."""
         user1 = User.objects.create_user(username="user1", password="pass123")
-        user2 = User.objects.create_user(username="user2", password="pass123")
+        User.objects.create_user(username="user2", password="pass123")
 
         client = APIClient()
         client.force_authenticate(user=user1)
@@ -505,8 +505,8 @@ class TestUserList:
         admin = User.objects.create_user(
             username="admin", password="pass123", is_staff=True
         )
-        user1 = User.objects.create_user(username="user1", password="pass123")
-        user2 = User.objects.create_user(username="user2", password="pass123")
+        User.objects.create_user(username="user1", password="pass123")
+        User.objects.create_user(username="user2", password="pass123")
 
         client = APIClient()
         client.force_authenticate(user=admin)
@@ -522,7 +522,7 @@ class TestLogin:
 
     def test_login_success(self):
         """Test successful login with valid credentials."""
-        user = User.objects.create_user(
+        User.objects.create_user(
             username="testuser", email="test@example.com", password="TestPass123!"
         )
 
@@ -541,7 +541,7 @@ class TestLogin:
 
     def test_login_invalid_credentials(self):
         """Test login fails with invalid credentials."""
-        user = User.objects.create_user(username="testuser", password="TestPass123!")
+        User.objects.create_user(username="testuser", password="TestPass123!")
 
         client = APIClient()
         url = reverse("login")
@@ -563,7 +563,7 @@ class TestLogin:
 
     def test_login_inactive_user(self):
         """Test login fails for inactive user."""
-        user = User.objects.create_user(
+        User.objects.create_user(
             username="testuser", password="TestPass123!", is_active=False
         )
 
@@ -617,7 +617,7 @@ class TestLogin:
 
     def test_login_with_email_success(self):
         """Test successful login using email instead of username."""
-        user = User.objects.create_user(
+        User.objects.create_user(
             username="testuser", email="test@example.com", password="TestPass123!"
         )
 
@@ -638,7 +638,7 @@ class TestLogin:
 
     def test_login_with_email_wrong_password(self):
         """Test login with email fails with wrong password."""
-        user = User.objects.create_user(
+        User.objects.create_user(
             username="testuser", email="test@example.com", password="TestPass123!"
         )
 

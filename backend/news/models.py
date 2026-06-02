@@ -97,7 +97,7 @@ class News(ContentBase, TranslatableModel):
                 title = (
                     self.safe_translation_getter("title", any_language=True) or "news"
                 )
-            except:
+            except Exception:
                 title = "news"
 
             self.slug = slugify(title) or "news"

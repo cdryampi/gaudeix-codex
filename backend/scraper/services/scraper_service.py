@@ -12,7 +12,6 @@ from typing import List, Optional, Set
 import requests
 from django.utils import timezone
 
-from scraper.base_parser import BaseNewsParser, ScrapedNewsData
 from scraper.models import ScrapedNews, ScraperSource, ScrapeJob
 from scraper.parser_registry import ParserRegistry
 

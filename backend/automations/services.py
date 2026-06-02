@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from dataclasses import asdict
 from datetime import datetime, timedelta
 
 from django.core.exceptions import ValidationError

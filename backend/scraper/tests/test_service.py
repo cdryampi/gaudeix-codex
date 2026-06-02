@@ -187,7 +187,7 @@ class TestScrapeSourceWorkflow:
 
             service = ScraperService(delay=0)
             # Don't skip existing to force update
-            result = service.scrape_source(
+            service.scrape_source(
                 "cabrera-de-mar", max_pages=1, skip_existing=False
             )
 

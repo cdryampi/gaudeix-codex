@@ -1,7 +1,7 @@
 """
 URL configuration for the Users app.
 """
-from django.urls import path, include
+from django.urls import path
 from rest_framework.routers import DefaultRouter
 from .views import (
     UserViewSet,
@@ -13,7 +13,7 @@ from .views import (
 def register_routes(router: DefaultRouter):
     """
     Registers the Users app routes with the provided router.
-    
+
     Args:
         router (DefaultRouter): The main application router.
     """

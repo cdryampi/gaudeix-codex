@@ -15,10 +15,7 @@ import { Event } from "@/features/events/types";
 
 type TimeFilter = "upcoming" | "past" | "all";
 
-export default function EventsCategoryLayout({
-  category,
-  events,
-}: CategoryLayoutProps) {
+function EventsCategoryLayout({ category, events }: CategoryLayoutProps) {
   const [timeFilter, setTimeFilter] = useState<TimeFilter>("upcoming");
 
   const image =
@@ -60,7 +57,7 @@ export default function EventsCategoryLayout({
         : events;
 
   return (
-    <main
+    <div
       className="min-h-screen bg-background-light page-shell-offset"
       data-testid="category-layout-events"
     >
@@ -105,6 +102,7 @@ export default function EventsCategoryLayout({
           <FilterBar>
             <div className="flex flex-wrap gap-3">
               <button
+                id="btn-events-filter-upcoming"
                 onClick={() => setTimeFilter("upcoming")}
                 className={`inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold border border-border-soft transition-all duration-200 ${
                   timeFilter === "upcoming"
@@ -116,6 +114,7 @@ export default function EventsCategoryLayout({
                 Proximos ({upcomingEvents.length})
               </button>
               <button
+                id="btn-events-filter-past"
                 onClick={() => setTimeFilter("past")}
                 className={`inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold border border-border-soft transition-all duration-200 ${
                   timeFilter === "past"
@@ -127,6 +126,7 @@ export default function EventsCategoryLayout({
                 Pasados ({pastEvents.length})
               </button>
               <button
+                id="btn-events-filter-all"
                 onClick={() => setTimeFilter("all")}
                 className={`inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold border border-border-soft transition-all duration-200 ${
                   timeFilter === "all"
@@ -150,6 +150,7 @@ export default function EventsCategoryLayout({
               action={
                 <Link
                   to="/agenda"
+                  id="btn-events-agenda-full"
                   className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-2 text-sm font-semibold text-primary transition-all hover:bg-primary/20"
                 >
                   <Calendar className="h-4 w-4" />
@@ -175,6 +176,8 @@ export default function EventsCategoryLayout({
           )}
         </section>
       </div>
-    </main>
+    </div>
   );
 }
+EventsCategoryLayout.displayName = "EventsCategoryLayout";
+export default EventsCategoryLayout;

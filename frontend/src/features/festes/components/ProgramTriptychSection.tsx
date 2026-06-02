@@ -44,7 +44,7 @@ export const ProgramTriptychSection = ({
       <div className="max-w-[90rem] mx-auto px-6 lg:px-8 flex flex-col items-center justify-center relative z-10">
         {/* Editorial Header */}
         <div className="max-w-3xl text-center mb-16 mx-auto flex flex-col items-center">
-          <p className="text-xs font-bold tracking-[0.2em] text-[#4A8B3C] uppercase mb-4">
+          <p className="text-xs font-bold tracking-[0.2em] text-green uppercase mb-4">
             EL PROGRAMA
           </p>
           <h2 className="text-5xl md:text-6xl lg:text-7xl font-black text-slate-900 leading-[0.9] tracking-tight text-center uppercase">
@@ -100,7 +100,7 @@ export const ProgramTriptychSection = ({
         <div className="relative z-30 flex flex-col sm:flex-row items-center justify-center gap-6 mx-auto w-full max-w-2xl px-4">
           <Link
             to="/festes/programacio"
-            className="flex-1 min-w-[200px] flex items-center justify-center gap-2 bg-[#4A8B3C] text-white px-8 py-4 rounded-full font-bold uppercase tracking-wider text-sm shadow-[0_8px_30px_rgb(74,139,60,0.3)] hover:bg-[#3d7531] hover:scale-105 hover:-translate-y-1 transition-all duration-300"
+            className="flex-1 min-w-[200px] flex items-center justify-center gap-2 bg-green-600 text-white px-8 py-4 rounded-full font-bold uppercase tracking-wider text-sm shadow-[0_8px_30px_rgb(74,139,60,0.3)] hover:bg-green-700 hover:scale-105 hover:-translate-y-1 transition-all duration-300"
           >
             <FileText className="h-5 w-5" />
             OBRIR FULLETÓ VIRTUAL
@@ -111,7 +111,7 @@ export const ProgramTriptychSection = ({
               href={festa.program_pdf!.file}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1 min-w-[200px] flex items-center justify-center gap-2 bg-transparent border-2 border-[#4A8B3C] text-[#4A8B3C] px-8 py-4 rounded-full font-bold uppercase tracking-wider text-sm hover:bg-[#4A8B3C]/5 hover:scale-105 hover:-translate-y-1 transition-all duration-300"
+              className="flex-1 min-w-[200px] flex items-center justify-center gap-2 bg-transparent border-2 border-green text-green px-8 py-4 rounded-full font-bold uppercase tracking-wider text-sm hover:bg-green-600/5 hover:scale-105 hover:-translate-y-1 transition-all duration-300"
             >
               <Download className="h-5 w-5" />
               DESCARREGAR VERSIÓ IMPRIMIBLE

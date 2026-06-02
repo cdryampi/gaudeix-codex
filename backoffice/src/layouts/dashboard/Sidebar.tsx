@@ -27,6 +27,7 @@ import {
   Download,
   Utensils,
   Building2,
+  BookOpen,
 } from "lucide-react";
 import { ROUTES } from "@/lib/config/constants";
 
@@ -53,6 +54,7 @@ const contentNavigation: NavItem[] = [
   { name: "Festes", href: ROUTES.FESTES, icon: PartyPopper },
   { name: "Categorías", href: ROUTES.CATEGORIES, icon: FolderOpen },
   { name: "Comentarios", href: "/comentarios", icon: MessageSquare },
+  { name: "Storytelling", href: ROUTES.STORYTELLING, icon: BookOpen },
 ];
 
 const marketingNavigation: NavItem[] = [

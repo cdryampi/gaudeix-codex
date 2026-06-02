@@ -57,12 +57,18 @@ export function Register({ onToggleLogin }: { onToggleLogin: () => void }) {
 
         <div className="space-y-4">
           <div>
-            <label htmlFor="username" className="mb-2 block text-sm font-medium text-gray-900">
+            <label
+              htmlFor="username"
+              className="mb-2 block text-sm font-medium text-gray-900"
+            >
               Nombre de usuario
             </label>
             <div className="relative">
               <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                <UserIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                <UserIcon
+                  className="h-5 w-5 text-gray-400"
+                  aria-hidden="true"
+                />
               </div>
               <input
                 id="username"
@@ -70,7 +76,7 @@ export function Register({ onToggleLogin }: { onToggleLogin: () => void }) {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="usuario123"
-                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 pl-10 text-sm text-gray-900 focus:border-puerto-rico-500 focus:ring-puerto-rico-500"
+                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 pl-10 text-sm text-gray-900 focus:border-primary focus:ring-primary"
                 required
                 minLength={3}
                 disabled={isLoading}
@@ -79,7 +85,10 @@ export function Register({ onToggleLogin }: { onToggleLogin: () => void }) {
           </div>
 
           <div>
-            <label htmlFor="email" className="mb-2 block text-sm font-medium text-gray-900">
+            <label
+              htmlFor="email"
+              className="mb-2 block text-sm font-medium text-gray-900"
+            >
               Email
             </label>
             <div className="relative">
@@ -92,7 +101,7 @@ export function Register({ onToggleLogin }: { onToggleLogin: () => void }) {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="tu@email.com"
-                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 pl-10 text-sm text-gray-900 focus:border-puerto-rico-500 focus:ring-puerto-rico-500"
+                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 pl-10 text-sm text-gray-900 focus:border-primary focus:ring-primary"
                 required
                 disabled={isLoading}
               />
@@ -100,7 +109,10 @@ export function Register({ onToggleLogin }: { onToggleLogin: () => void }) {
           </div>
 
           <div>
-            <label htmlFor="name" className="mb-2 block text-sm font-medium text-gray-900">
+            <label
+              htmlFor="name"
+              className="mb-2 block text-sm font-medium text-gray-900"
+            >
               Nombre completo
             </label>
             <input
@@ -109,14 +121,17 @@ export function Register({ onToggleLogin }: { onToggleLogin: () => void }) {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Juan Pérez"
-              className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-puerto-rico-500 focus:ring-puerto-rico-500"
+              className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary focus:ring-primary"
               required
               disabled={isLoading}
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="mb-2 block text-sm font-medium text-gray-900">
+            <label
+              htmlFor="password"
+              className="mb-2 block text-sm font-medium text-gray-900"
+            >
               Contraseña
             </label>
             <div className="relative">
@@ -129,7 +144,7 @@ export function Register({ onToggleLogin }: { onToggleLogin: () => void }) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 pl-10 text-sm text-gray-900 focus:border-puerto-rico-500 focus:ring-puerto-rico-500"
+                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 pl-10 text-sm text-gray-900 focus:border-primary focus:ring-primary"
                 required
                 minLength={8}
                 disabled={isLoading}
@@ -138,7 +153,10 @@ export function Register({ onToggleLogin }: { onToggleLogin: () => void }) {
           </div>
 
           <div>
-            <label htmlFor="password_confirm" className="mb-2 block text-sm font-medium text-gray-900">
+            <label
+              htmlFor="password_confirm"
+              className="mb-2 block text-sm font-medium text-gray-900"
+            >
               Confirmar contraseña
             </label>
             <div className="relative">
@@ -151,7 +169,7 @@ export function Register({ onToggleLogin }: { onToggleLogin: () => void }) {
                 value={passwordConfirm}
                 onChange={(e) => setPasswordConfirm(e.target.value)}
                 placeholder="••••••••"
-                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 pl-10 text-sm text-gray-900 focus:border-puerto-rico-500 focus:ring-puerto-rico-500"
+                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 pl-10 text-sm text-gray-900 focus:border-primary focus:ring-primary"
                 required
                 minLength={8}
                 disabled={isLoading}
@@ -168,7 +186,7 @@ export function Register({ onToggleLogin }: { onToggleLogin: () => void }) {
         <button
           type="submit"
           disabled={isLoading || password !== passwordConfirm}
-          className="w-full rounded-lg bg-puerto-rico-500 px-5 py-3 text-center text-sm font-medium text-white hover:bg-puerto-rico-600 focus:outline-none focus:ring-4 focus:ring-puerto-rico-300 disabled:cursor-not-allowed disabled:opacity-50"
+          className="w-full rounded-lg bg-primary px-5 py-3 text-center text-sm font-medium text-white hover:bg-primary-dark focus:outline-none focus:ring-4 focus:ring-primary-light disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isLoading ? "Creando cuenta..." : "Crear cuenta"}
         </button>
@@ -177,7 +195,7 @@ export function Register({ onToggleLogin }: { onToggleLogin: () => void }) {
           <button
             type="button"
             onClick={onToggleLogin}
-            className="font-medium text-puerto-rico-600 hover:text-puerto-rico-700"
+            className="font-medium text-primary hover:text-primary-dark"
           >
             ¿Ya tienes cuenta? Inicia sesión
           </button>

@@ -14,10 +14,7 @@ import { Restaurant } from "@/features/places/types";
 
 type CuisineFilter = "all" | string;
 
-export default function RestaurantsCategoryLayout({
-  category,
-  places,
-}: CategoryLayoutProps) {
+function RestaurantsCategoryLayout({ category, places }: CategoryLayoutProps) {
   const [cuisineFilter, setCuisineFilter] = useState<CuisineFilter>("all");
   const image =
     category?.featured_media?.variant_large || category?.featured_media?.file;
@@ -37,7 +34,7 @@ export default function RestaurantsCategoryLayout({
       : restaurants.filter((r) => r.cuisine_type === cuisineFilter);
 
   return (
-    <main
+    <div
       className="min-h-screen bg-background-light page-shell-offset"
       data-testid="category-layout-restaurants"
     >
@@ -82,6 +79,7 @@ export default function RestaurantsCategoryLayout({
               </div>
               <div className="flex flex-wrap gap-2">
                 <button
+                  id="btn-restaurants-filter-all"
                   onClick={() => setCuisineFilter("all")}
                   className={`rounded-full px-4 py-2 text-sm font-semibold border border-border-soft transition-all duration-200 ${
                     cuisineFilter === "all"
@@ -94,6 +92,7 @@ export default function RestaurantsCategoryLayout({
                 {cuisineTypes.map((cuisine) => (
                   <button
                     key={cuisine}
+                    id={`btn-restaurants-filter-${cuisine.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
                     onClick={() => setCuisineFilter(cuisine)}
                     className={`rounded-full px-4 py-2 text-sm font-semibold capitalize border border-border-soft transition-all duration-200 ${
                       cuisineFilter === cuisine
@@ -147,9 +146,10 @@ export default function RestaurantsCategoryLayout({
           </MotionReveal>
         ) : null}
       </div>
-    </main>
+    </div>
   );
 }
+RestaurantsCategoryLayout.displayName = "RestaurantsCategoryLayout";
 
 function InfoTile({
   icon: Icon,
@@ -168,3 +168,6 @@ function InfoTile({
     </div>
   );
 }
+InfoTile.displayName = "InfoTile";
+
+export default RestaurantsCategoryLayout;

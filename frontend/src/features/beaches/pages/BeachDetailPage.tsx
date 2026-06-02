@@ -323,10 +323,10 @@ export function BeachDetailPage() {
                     {recommendations.map((item) => (
                       <div
                         key={item.label}
-                        className="flex items-center gap-3 rounded-2xl bg-cyan-50/80 border border-cyan-100 px-4 py-3 text-sm font-semibold text-cyan-800 transition-colors hover:bg-cyan-100"
+                        className="flex items-center gap-3 rounded-2xl bg-secondary/5 border border-secondary/10 px-4 py-3 text-sm font-semibold text-secondary transition-colors hover:bg-secondary/10"
                       >
                         <div className="flex items-center justify-center w-8 h-8 rounded-full bg-white shadow-sm">
-                          <item.icon className="h-4 w-4 text-cyan-600" />
+                          <item.icon className="h-4 w-4 text-secondary" />
                         </div>
                         {item.label}
                       </div>

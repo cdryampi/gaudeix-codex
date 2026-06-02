@@ -38,6 +38,7 @@ export const ROUTES = {
   FESTES: "/dashboard/festes",
   NEWS: "/dashboard/news",
   SCRAPER: "/dashboard/scraper",
+  STORYTELLING: "/dashboard/storytelling",
 } as const;
 
 /**
@@ -166,6 +167,10 @@ export const QUERY_KEYS = {
   NEWS: {
     LIST: ["news", "list"],
     DETAIL: (id: string) => ["news", "detail", id],
+  },
+  STORYTELLING: {
+    LIST: ["storytelling", "list"],
+    DETAIL: (slug: string) => ["storytelling", "detail", slug],
   },
 } as const;
 
@@ -298,6 +303,10 @@ export const API_ENDPOINTS = {
     LIST: "/news/",
     DETAIL: (id: string) => `/news/${id}/`,
     DELETE_BY_ID: (id: string) => `/news/by-id/${id}/`,
+  },
+  STORYTELLING: {
+    LIST: "/stories/",
+    DETAIL: (slug: string) => `/stories/${slug}/`,
   },
 } as const;
 

@@ -14,7 +14,7 @@ import { CategoryLayoutProps } from "../types";
 
 type ViewMode = "grid" | "gallery";
 
-export default function NatureCategoryLayout({
+function NatureCategoryLayout({
   category,
   places,
   isLoadingPlaces,
@@ -33,7 +33,7 @@ export default function NatureCategoryLayout({
     }));
 
   return (
-    <main
+    <div
       className="min-h-screen bg-background-light page-shell-offset"
       data-testid="category-layout-nature"
     >
@@ -85,6 +85,7 @@ export default function NatureCategoryLayout({
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-2 rounded-full bg-surface-muted border border-border-soft p-1">
                   <button
+                    id="btn-nature-view-grid"
                     onClick={() => setViewMode("grid")}
                     className={`rounded-full px-4 py-2 text-sm font-semibold transition-all duration-200 ${
                       viewMode === "grid"
@@ -98,6 +99,7 @@ export default function NatureCategoryLayout({
                     </span>
                   </button>
                   <button
+                    id="btn-nature-view-gallery"
                     onClick={() => setViewMode("gallery")}
                     className={`rounded-full px-4 py-2 text-sm font-semibold transition-all duration-200 ${
                       viewMode === "gallery"
@@ -114,6 +116,7 @@ export default function NatureCategoryLayout({
 
                 <Link
                   to={`/categorias/${category.slug}`}
+                  id="btn-nature-map-view"
                   className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-2.5 text-sm font-semibold text-primary transition-all hover:bg-primary/20"
                 >
                   <Map className="h-4 w-4" />
@@ -148,6 +151,7 @@ export default function NatureCategoryLayout({
               {galleryImages.map((img) => (
                 <button
                   key={img.url}
+                  id={`btn-nature-gallery-img-${img.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
                   data-animated-card
                   onClick={() => setSelectedImage(img.url)}
                   className="group relative aspect-square overflow-hidden rounded-[1.75rem] border border-border-soft bg-surface transition-all duration-300"
@@ -228,6 +232,7 @@ export default function NatureCategoryLayout({
 
       {selectedImage ? (
         <div
+          id="nature-lightbox-overlay"
           className="fixed inset-0 z-[1200] flex items-center justify-center bg-background-dark/95 p-8"
           onClick={() => setSelectedImage(null)}
         >
@@ -238,6 +243,8 @@ export default function NatureCategoryLayout({
           />
         </div>
       ) : null}
-    </main>
+    </div>
   );
 }
+NatureCategoryLayout.displayName = "NatureCategoryLayout";
+export default NatureCategoryLayout;

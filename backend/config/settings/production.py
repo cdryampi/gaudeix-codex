@@ -10,7 +10,7 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 
 DATABASES = {
-    "default": env.db("DATABASE_URL"),
+    "default": env.db("DATABASE_URL"),  # noqa: F405
 }
 
 if DATABASES["default"]["ENGINE"] != "django.db.backends.postgresql":

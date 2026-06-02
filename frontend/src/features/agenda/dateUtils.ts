@@ -15,33 +15,68 @@ export function isTomorrow(date: Date, now = new Date()) {
   return d.getTime() === t.getTime();
 }
 
-export function getWhenLabel(date: Date, now = new Date()): "Hoy" | "Mañana" | null {
-  if (isToday(date, now)) return "Hoy";
-  if (isTomorrow(date, now)) return "Mañana";
+import { useLanguageStore } from "../site-settings/languageStore";
+
+export function getWhenLabel(date: Date, now = new Date()): string | null {
+  const lang = useLanguageStore.getState().language;
+  if (isToday(date, now)) {
+    const map: Record<string, string> = {
+      ca: "Avui",
+      es: "Hoy",
+      en: "Today",
+      fr: "Aujourd'hui",
+    };
+    return map[lang] || "Hoy";
+  }
+  if (isTomorrow(date, now)) {
+    const map: Record<string, string> = {
+      ca: "Demà",
+      es: "Mañana",
+      en: "Tomorrow",
+      fr: "Demain",
+    };
+    return map[lang] || "Mañana";
+  }
   return null;
 }
 
-// i18n: preparado para cambiar locale fácilmente (es-ES / ca-ES).
-const DEFAULT_LOCALE = "es-ES";
-
-export function formatDay(date: Date, locale = DEFAULT_LOCALE) {
-  return new Intl.DateTimeFormat(locale, { day: "2-digit" }).format(date);
+function getCurrentLocale() {
+  const lang = useLanguageStore.getState().language;
+  const map: Record<string, string> = {
+    ca: "ca-ES",
+    es: "es-ES",
+    en: "en-US",
+    fr: "fr-FR",
+  };
+  return map[lang] || "es-ES";
 }
 
-export function formatMonthShort(date: Date, locale = DEFAULT_LOCALE) {
-  return new Intl.DateTimeFormat(locale, { month: "short" }).format(date).replace(".", "");
+export function formatDay(date: Date, locale?: string) {
+  return new Intl.DateTimeFormat(locale || getCurrentLocale(), {
+    day: "2-digit",
+  }).format(date);
 }
 
-export function formatTime(date: Date, locale = DEFAULT_LOCALE) {
-  return new Intl.DateTimeFormat(locale, { hour: "2-digit", minute: "2-digit" }).format(date);
+export function formatMonthShort(date: Date, locale?: string) {
+  return new Intl.DateTimeFormat(locale || getCurrentLocale(), {
+    month: "short",
+  })
+    .format(date)
+    .replace(".", "");
 }
 
-export function formatDateTime(dateString: string, locale = DEFAULT_LOCALE) {
+export function formatTime(date: Date, locale?: string) {
+  return new Intl.DateTimeFormat(locale || getCurrentLocale(), {
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(date);
+}
+
+export function formatDateTime(dateString: string, locale?: string) {
   const date = new Date(dateString);
-  return new Intl.DateTimeFormat(locale, {
+  return new Intl.DateTimeFormat(locale || getCurrentLocale(), {
     day: "2-digit",
     month: "short",
     year: "numeric",
   }).format(date);
 }
-

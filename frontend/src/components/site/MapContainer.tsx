@@ -6,6 +6,8 @@ import {
 } from "@react-google-maps/api";
 import { MapPin } from "lucide-react";
 
+/* eslint-disable react-refresh/only-export-components */
+
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as
   | string
   | undefined;

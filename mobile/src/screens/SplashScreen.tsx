@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, Image, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Text } from '@/components/atoms';
 import { useAuthStore } from '@/stores/authStore';
@@ -41,9 +41,11 @@ export const SplashScreen = ({ navigation }: SplashScreenProps) => {
     <View className="flex-1 bg-primary items-center justify-center">
       {/* Logo placeholder - replace with actual image asset when available */}
       <View className="w-32 h-32 bg-white rounded-full items-center justify-center mb-6 shadow-lg">
-        <Text variant="heading" className="text-primary text-4xl">G</Text>
+        <Text variant="heading" className="text-primary text-4xl">
+          G
+        </Text>
       </View>
-      
+
       <Text variant="heading" color="inverse" className="mb-2 text-center">
         Gaudeix
       </Text>

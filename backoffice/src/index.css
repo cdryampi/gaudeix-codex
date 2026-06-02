@@ -3,30 +3,30 @@
 @config "../tailwind.config.js";
 
 :root {
-  --primary: hsl(209, 79%, 28%);
-  --secondary: hsl(178, 83%, 31%);
-  --accent: hsl(35, 100%, 65%);
+  --primary: hsl(222, 60%, 18%);
+  --secondary: hsl(176, 85%, 26%);
+  --accent: hsl(32, 95%, 53%);
   --background-light: hsl(210, 40%, 98%);
-  --background-dark: hsl(209, 73%, 9%);
+  --background-dark: hsl(224, 71%, 4%);
   --surface: hsl(0, 0%, 100%);
-  --surface-muted: hsl(207, 30%, 95%);
-  --text-primary: hsl(206, 58%, 18%);
-  --text-secondary: hsl(207, 20%, 43%);
-  --border-soft: hsl(207, 30%, 92%);
-  --border-strong: hsl(207, 20%, 85%);
+  --surface-muted: hsl(210, 30%, 95%);
+  --text-primary: hsl(222, 47%, 11%);
+  --text-secondary: hsl(215, 20%, 43%);
+  --border-soft: hsl(214, 32%, 91%);
+  --border-strong: hsl(214, 25%, 84%);
 }
 
 .dark {
-  --primary: hsl(209, 85%, 45%);
-  --secondary: hsl(178, 80%, 42%);
-  --accent: hsl(35, 95%, 58%);
-  --background-light: hsl(209, 73%, 9%);
-  --surface: hsl(209, 60%, 14%);
-  --surface-muted: hsl(209, 50%, 18%);
-  --text-primary: hsl(210, 20%, 95%);
-  --text-secondary: hsl(208, 15%, 78%);
-  --border-soft: hsl(209, 40%, 18%);
-  --border-strong: hsl(209, 30%, 24%);
+  --primary: hsl(217, 91%, 60%);
+  --secondary: hsl(172, 80%, 48%);
+  --accent: hsl(32, 95%, 58%);
+  --background-light: hsl(224, 71%, 4%);
+  --surface: hsl(222, 47%, 9%);
+  --surface-muted: hsl(222, 35%, 14%);
+  --text-primary: hsl(210, 40%, 98%);
+  --text-secondary: hsl(215, 20%, 75%);
+  --border-soft: hsl(222, 30%, 16%);
+  --border-strong: hsl(222, 25%, 22%);
 }
 
 @theme {

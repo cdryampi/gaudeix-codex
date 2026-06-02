@@ -62,7 +62,7 @@
     {
       "slug": "nature",
       "taxonomy": "template",
-      "icon": "leaf",
+      "icon": "nature",
       "featured_image": "places_nature.png",
       "metatitulo": "Natura - Cabrera de Mar",
       "metadescripcion": "Espais naturals, rutes de senderisme i paisatges increïbles.",
@@ -82,7 +82,7 @@
     {
       "slug": "heritage",
       "taxonomy": "template",
-      "icon": "landmark",
+      "icon": "heritage",
       "featured_image": "places_heritage.png",
       "metatitulo": "Patrimoni - Cabrera de Mar",
       "metadescripcion": "Descobreix la història i el llegat cultural de la nostra vila.",
@@ -102,7 +102,7 @@
     {
       "slug": "beaches",
       "taxonomy": "template",
-      "icon": "waves",
+      "icon": "beaches",
       "featured_image": "places_beaches.png",
       "metatitulo": "Platges - Cabrera de Mar",
       "metadescripcion": "Relaxa't a les nostres platges de sorra daurada i aigües cristal·lines.",
@@ -122,7 +122,7 @@
     {
       "slug": "culture",
       "taxonomy": "template",
-      "icon": "palette",
+      "icon": "culture",
       "featured_image": "places_culture.png",
       "metatitulo": "Cultura - Cabrera de Mar",
       "metadescripcion": "Museus, galeries d'art i expressions culturals de Cabrera.",

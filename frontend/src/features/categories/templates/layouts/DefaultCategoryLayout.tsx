@@ -14,7 +14,7 @@ import { CategoryLayoutProps } from "../types";
 import { Place } from "@/features/places/types";
 import { Event } from "@/features/events/types";
 
-export default function DefaultCategoryLayout({
+function DefaultCategoryLayout({
   category,
   places,
   events,
@@ -22,7 +22,7 @@ export default function DefaultCategoryLayout({
   isLoadingEvents,
 }: CategoryLayoutProps) {
   return (
-    <main
+    <div
       className="min-h-screen bg-background-light page-shell-offset transition-colors duration-400"
       data-testid="category-layout-default"
     >
@@ -88,6 +88,7 @@ export default function DefaultCategoryLayout({
             </p>
             <Link
               to="/categorias"
+              id="btn-default-layout-back"
               className="rounded-full bg-primary px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-secondary"
             >
               Volver a categorias
@@ -112,6 +113,8 @@ export default function DefaultCategoryLayout({
           </MotionReveal>
         ) : null}
       </div>
-    </main>
+    </div>
   );
 }
+DefaultCategoryLayout.displayName = "DefaultCategoryLayout";
+export default DefaultCategoryLayout;

@@ -30,7 +30,6 @@ interface EventDetailContentProps {
 
 export function EventDetailContent({
   event,
-  isAuthenticated,
   isFavoritePending,
   isCheckinPending,
   onFavorite,
@@ -228,7 +227,7 @@ export function EventDetailContent({
             <div className="space-y-12">
               {/* Date */}
               <div className="flex gap-8">
-                <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[2rem] bg-puerto-rico-50 text-primary shadow-inner">
+                <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[2rem] bg-secondary/10 text-secondary shadow-inner">
                   <Calendar className="h-10 w-10" />
                 </div>
                 <div>
@@ -267,7 +266,7 @@ export function EventDetailContent({
                             />
                             {formatDateTime(d.start_at)}
                             {isNext && (
-                              <span className="text-[8px] px-2 py-0.5 rounded-full bg-puerto-rico-50">
+                              <span className="text-[8px] px-2 py-0.5 rounded-full bg-secondary/10 text-secondary font-black">
                                 Próxima
                               </span>
                             )}
@@ -281,7 +280,7 @@ export function EventDetailContent({
 
               {/* Time */}
               <div className="flex gap-8">
-                <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[2rem] bg-puerto-rico-50 text-primary shadow-inner">
+                <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[2rem] bg-secondary/10 text-secondary shadow-inner">
                   <Clock className="h-10 w-10" />
                 </div>
                 <div>
@@ -296,7 +295,7 @@ export function EventDetailContent({
 
               {/* Location */}
               <div className="flex gap-8">
-                <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[2rem] bg-puerto-rico-50 text-primary shadow-inner">
+                <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[2rem] bg-secondary/10 text-secondary shadow-inner">
                   <MapPin className="h-10 w-10" />
                 </div>
                 <div className="flex-1">
@@ -323,7 +322,7 @@ export function EventDetailContent({
 
               {/* Price */}
               <div className="flex gap-8">
-                <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[2rem] bg-puerto-rico-50 text-primary shadow-inner">
+                <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[2rem] bg-secondary/10 text-secondary shadow-inner">
                   <Ticket className="h-10 w-10" />
                 </div>
                 <div>

@@ -8,7 +8,7 @@ test.describe("Routes & Navigation Feature", () => {
   test("should display route planner interface", async ({ page }) => {
     await expect(page.getByText("Tu viaje a")).toBeVisible();
     await expect(
-      page.getByRole("button", { name: "Usar mi ubicación" }),
+      page.getByRole("button", { name: /Usar mi ubicaci/i }),
     ).toBeVisible();
   });
 
@@ -21,7 +21,7 @@ test.describe("Routes & Navigation Feature", () => {
     ];
 
     for (const mode of modes) {
-      await expect(page.getByRole("button", { name: mode })).toBeVisible();
+      await expect(page.getByRole("heading", { name: mode })).toBeVisible();
     }
   });
 
@@ -31,12 +31,10 @@ test.describe("Routes & Navigation Feature", () => {
     context,
     page,
   }) => {
-    // Grant permission denied
     await context.grantPermissions([]);
 
-    // We can't easily force "denied" state in Playwright without specific context options setup
-    // But we can check if the button is clickable
-    const locateBtn = page.getByRole("button", { name: "Usar mi ubicación" });
-    await expect(locateBtn).toBeEnabled();
+    await expect(
+      page.getByRole("button", { name: /Ubicaci[oó]n bloqueada/i }),
+    ).toBeVisible();
   });
 });

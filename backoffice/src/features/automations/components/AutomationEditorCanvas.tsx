@@ -3,7 +3,6 @@ import {
   CirclePlay,
   Maximize2,
   PauseCircle,
-  Plus,
   Sparkles,
   ZoomIn,
   ZoomOut,
@@ -18,7 +17,6 @@ import type {
   AutomationEditorBranch,
   AutomationEditorNode,
   AutomationJob,
-  AutomationRun,
   AutomationRunStepResult,
   AutomationTemplate,
 } from "../types";

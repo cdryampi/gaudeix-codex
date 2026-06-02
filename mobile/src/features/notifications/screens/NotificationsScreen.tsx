@@ -30,8 +30,6 @@ export const NotificationsScreen = () => {
     n => activeFilter === 'all' || n.type === activeFilter
   );
 
-  const unreadCount = notifications?.filter(n => !n.is_read).length || 0;
-
   return (
     <SafeAreaView className="flex-1 bg-white" edges={['top']}>
       {/* Header */}
@@ -40,7 +38,9 @@ export const NotificationsScreen = () => {
           <TouchableOpacity className="mr-4">
             <Text className="text-xl">←</Text>
           </TouchableOpacity>
-          <Text variant="title" weight="bold">Avisos Gaudeix</Text>
+          <Text variant="title" weight="bold">
+            Avisos Gaudeix
+          </Text>
         </View>
         <TouchableOpacity>
           <Text className="text-xl">⚙️</Text>
@@ -55,7 +55,12 @@ export const NotificationsScreen = () => {
       >
         {/* Hero Section */}
         <View className="px-6 py-6">
-          <Text variant="label" color="secondary" weight="bold" className="uppercase tracking-widest mb-1">
+          <Text
+            variant="label"
+            color="secondary"
+            weight="bold"
+            className="uppercase tracking-widest mb-1"
+          >
             CENTRO DE NOTIFICACIONES
           </Text>
           <Text variant="heading" weight="bold" className="mb-6">
@@ -82,7 +87,7 @@ export const NotificationsScreen = () => {
 
           {/* Filters */}
           <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mb-6">
-            {FILTERS.map((filter) => (
+            {FILTERS.map(filter => (
               <View key={filter.id} className="mr-2">
                 <Chip
                   label={filter.label}
@@ -100,10 +105,12 @@ export const NotificationsScreen = () => {
             ) : filteredNotifications?.length === 0 ? (
               <View className="items-center py-12">
                 <Text className="text-4xl mb-4">📭</Text>
-                <Text variant="body" color="secondary">No hay notificaciones</Text>
+                <Text variant="body" color="secondary">
+                  No hay notificaciones
+                </Text>
               </View>
             ) : (
-              filteredNotifications?.map((notification) => (
+              filteredNotifications?.map(notification => (
                 <NotificationCard
                   key={notification.id}
                   notification={notification}

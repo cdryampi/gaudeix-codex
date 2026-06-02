@@ -5,7 +5,7 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Footprints, Bike, Mountain, Filter } from "lucide-react";
+import { ArrowLeft, Mountain, Filter } from "lucide-react";
 
 import { getRoutes } from "../api";
 import { Route, RouteDifficulty, RouteType } from "../types";

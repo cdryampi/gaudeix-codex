@@ -138,7 +138,7 @@ def test_sponsor_filter_by_festa_id(
         end_date=festa.end_date,
         year=2026,
     )
-    other_sponsor = Sponsor.objects.create(
+    Sponsor.objects.create(
         festa=other_festa,
         name="Other Sponsor",
         tier="silver",
@@ -168,7 +168,7 @@ def test_sponsor_filter_by_festa_slug(
         end_date=festa.end_date,
         year=2026,
     )
-    other_sponsor = Sponsor.objects.create(
+    Sponsor.objects.create(
         festa=other_festa,
         name="Other Sponsor",
         tier="silver",

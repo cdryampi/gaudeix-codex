@@ -221,18 +221,34 @@ function getLinkDestination(link: FooterLink): string {
 function getLegalSummary(publicData?: FooterPublicPayload | null) {
   if (!publicData) return [];
   return [
-    { key: "privacy", label: "Privacidad", page: publicData.legal.privacy_page },
+    {
+      key: "privacy",
+      label: "Privacidad",
+      page: publicData.legal.privacy_page,
+    },
     { key: "cookies", label: "Cookies", page: publicData.legal.cookies_page },
     { key: "legal", label: "Aviso legal", page: publicData.legal.legal_page },
-    { key: "inclusion", label: "Inclusion", page: publicData.legal.inclusion_page },
+    {
+      key: "inclusion",
+      label: "Inclusion",
+      page: publicData.legal.inclusion_page,
+    },
   ];
 }
 
 function getSocialSummary(publicData?: FooterPublicPayload | null) {
   if (!publicData) return [];
   return [
-    { key: "facebook", label: "Facebook", value: publicData.social.facebook_url },
-    { key: "instagram", label: "Instagram", value: publicData.social.instagram_url },
+    {
+      key: "facebook",
+      label: "Facebook",
+      value: publicData.social.facebook_url,
+    },
+    {
+      key: "instagram",
+      label: "Instagram",
+      value: publicData.social.instagram_url,
+    },
     { key: "twitter", label: "Twitter", value: publicData.social.twitter_url },
     { key: "youtube", label: "YouTube", value: publicData.social.youtube_url },
   ];
@@ -242,8 +258,9 @@ export function FooterSettingsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = getTabValue(searchParams.get("tab"));
 
-  const [settings, setSettings] = useState<FooterSettings | null>(null);
-  const [publicData, setPublicData] = useState<FooterPublicPayload | null>(null);
+  const [publicData, setPublicData] = useState<FooterPublicPayload | null>(
+    null,
+  );
   const [links, setLinks] = useState<FooterLink[]>([]);
   const [badges, setBadges] = useState<FooterBadge[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -289,7 +306,6 @@ export function FooterSettingsPage() {
         staticPagesApi.list(),
       ]);
 
-      setSettings(footerSettings);
       setPublicData(footerPublic);
       setLinks(footerLinks);
       setBadges(footerBadges);
@@ -309,7 +325,10 @@ export function FooterSettingsPage() {
   }, []);
 
   const legalSummary = useMemo(() => getLegalSummary(publicData), [publicData]);
-  const socialSummary = useMemo(() => getSocialSummary(publicData), [publicData]);
+  const socialSummary = useMemo(
+    () => getSocialSummary(publicData),
+    [publicData],
+  );
 
   const filteredLinks = useMemo(() => {
     const query = linkSearch.trim().toLowerCase();
@@ -399,7 +418,6 @@ export function FooterSettingsPage() {
     try {
       const updatedSettings = await footerSettingsApi.update(settingsForm);
       const refreshedPublicData = await footerSettingsApi.getPublic();
-      setSettings(updatedSettings);
       setPublicData(refreshedPublicData);
       setSettingsForm(mapSettingsToForm(updatedSettings));
       toast.success("Footer actualizado.");
@@ -589,7 +607,10 @@ export function FooterSettingsPage() {
                       id="footer-copyright"
                       value={settingsForm.copyright_text || ""}
                       onChange={(event) =>
-                        updateSettingsField("copyright_text", event.target.value)
+                        updateSettingsField(
+                          "copyright_text",
+                          event.target.value,
+                        )
                       }
                       placeholder="Ajuntament de..."
                     />
@@ -1150,7 +1171,9 @@ export function FooterSettingsPage() {
               <Input
                 id="footer-badge-url"
                 value={badgeForm.url}
-                onChange={(event) => updateBadgeField("url", event.target.value)}
+                onChange={(event) =>
+                  updateBadgeField("url", event.target.value)
+                }
                 placeholder="https://..."
               />
             </div>

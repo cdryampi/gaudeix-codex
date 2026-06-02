@@ -6,13 +6,13 @@ from django.core.management import call_command
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 django.setup()
 
-from core.models import Category, Tag
-from places.models import Place, PlaceCategorySingleton
-from events.models import Event, EventCategorySingleton
-from festes.models import Festa, FestaCategorySingleton
-from routes.models import Route, RouteCategorySingleton
-from news.models import News
-from media_files.models import ImageFile, DocumentFile, VideoFile
+from core.models import Category, Tag  # noqa: E402
+from places.models import Place, PlaceCategorySingleton  # noqa: E402
+from events.models import Event, EventCategorySingleton  # noqa: E402
+from festes.models import Festa, FestaCategorySingleton  # noqa: E402
+from routes.models import Route, RouteCategorySingleton  # noqa: E402
+from news.models import News  # noqa: E402
+from media_files.models import ImageFile, DocumentFile, VideoFile  # noqa: E402
 
 
 def cleanup():
@@ -55,7 +55,7 @@ def cleanup():
     Tag.objects.all().delete()
 
     # 3. Delete Media Files from DB
-    print(f"Deleting all Media Files from DB...")
+    print("Deleting all Media Files from DB...")
     ImageFile.objects.all().delete()
     DocumentFile.objects.all().delete()
     VideoFile.objects.all().delete()

@@ -13,6 +13,7 @@ import {
 
 import logoCabrera from "@/assets/logo/logo-cabrera-white.png";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/hooks/useTranslation";
 import { getFooterPublic } from "@/features/site-settings/api";
 import {
   FooterBadge,
@@ -108,17 +109,20 @@ function buildLegalItems(legal: FooterLegalBlock | undefined) {
 function FooterNavLink({
   href,
   children,
+  id,
 }: {
   href: string;
   children: ReactNode;
+  id?: string;
 }) {
   const className =
-    "text-sm leading-6 text-slate-600 transition-colors hover:text-slate-900";
+    "text-sm leading-6 text-slate-400 transition-colors hover:text-accent";
 
   if (isExternalUrl(href)) {
     return (
       <a
         href={href}
+        id={id}
         target="_blank"
         rel="noopener noreferrer"
         className={className}
@@ -129,11 +133,12 @@ function FooterNavLink({
   }
 
   return (
-    <Link to={href} className={className}>
+    <Link to={href} id={id} className={className}>
       {children}
     </Link>
   );
 }
+FooterNavLink.displayName = "FooterNavLink";
 
 function FooterBadgeLink({ badge }: { badge: FooterBadge }) {
   const imageSrc = resolveImageSrc(badge.image);
@@ -148,10 +153,13 @@ function FooterBadgeLink({ badge }: { badge: FooterBadge }) {
     />
   );
 
+  const badgeLinkId = `footer-badge-link-${badge.id}`;
+
   if (badge.url) {
     return (
       <a
         href={badge.url}
+        id={badgeLinkId}
         target={isExternalUrl(badge.url) ? "_blank" : "_self"}
         rel={isExternalUrl(badge.url) ? "noopener noreferrer" : undefined}
         className="inline-flex items-center rounded-lg px-1 py-1"
@@ -164,8 +172,10 @@ function FooterBadgeLink({ badge }: { badge: FooterBadge }) {
 
   return <div className="inline-flex items-center px-1 py-1">{content}</div>;
 }
+FooterBadgeLink.displayName = "FooterBadgeLink";
 
 export function SiteFooter() {
+  const { t } = useTranslation();
   const { data } = useQuery({
     queryKey: ["footer-public"],
     queryFn: getFooterPublic,
@@ -188,12 +198,12 @@ export function SiteFooter() {
     resolveImageSrc(data?.branding.logo) ||
     logoCabrera;
   const brandName = data?.branding.site_name || "Cabrera de Mar";
-  const eyebrow = data?.eyebrow || "Portal oficial";
+  const eyebrow = data?.eyebrow || t("Portal oficial");
   const title = data?.title || brandName;
   const description =
     data?.description ||
     data?.branding.tagline ||
-    "Informacion esencial para residentes y visitantes.";
+    t("Informacion esencial para residentes y visitantes.");
   const contactLines =
     data?.show_contact_block && data?.contact
       ? [
@@ -216,12 +226,15 @@ export function SiteFooter() {
       : [];
 
   return (
-    <footer className="mt-20 border-t border-[color:var(--color-border-soft)] bg-[#f6f4ee] text-[color:var(--color-text-primary)]">
+    <footer
+      id="site-footer"
+      className="mt-20 border-t border-white/5 bg-text-primary text-white"
+    >
       <div className="page-container py-14 md:py-18">
-        <div className="grid gap-12 border-b border-[color:var(--color-border-soft)] pb-12 md:gap-14 lg:grid-cols-[1.3fr_0.9fr_0.9fr]">
+        <div className="grid gap-12 border-b border-white/5 pb-12 md:gap-14 lg:grid-cols-[1.3fr_0.9fr_0.9fr]">
           <div className="space-y-6">
             <div className="space-y-4">
-              <span className="inline-flex items-center rounded-full border border-[color:var(--color-border-soft)] bg-white/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+              <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-accent">
                 {eyebrow}
               </span>
 
@@ -231,28 +244,28 @@ export function SiteFooter() {
                   alt={brandName}
                   className={cn(
                     "h-9 w-auto object-contain",
-                    brandLogo === logoCabrera ? "brightness-0" : "",
+                    brandLogo === logoCabrera ? "brightness-[100]" : "",
                   )}
                 />
-                <h3 className="max-w-lg text-2xl font-semibold tracking-tight text-slate-900 md:text-[2rem]">
+                <h3 className="max-w-lg text-2xl font-semibold tracking-tight text-white md:text-[2rem]">
                   {title}
                 </h3>
-                <p className="max-w-xl text-sm leading-7 text-slate-600 md:text-[15px]">
+                <p className="max-w-xl text-sm leading-7 text-slate-400 md:text-[15px]">
                   {description}
                 </p>
               </div>
             </div>
 
             {contactLines.length ? (
-              <div className="space-y-3 border-t border-[color:var(--color-border-soft)] pt-5">
+              <div className="space-y-3 border-t border-white/5 pt-5">
                 {contactLines.map((item) => {
                   const Icon = item.icon;
                   return (
                     <div
                       key={item.key}
-                      className="flex items-start gap-3 text-sm text-slate-600"
+                      className="flex items-start gap-3 text-sm text-slate-400"
                     >
-                      <Icon className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" />
+                      <Icon className="mt-0.5 h-4 w-4 shrink-0 text-slate-500" />
                       <span>{item.label}</span>
                     </div>
                   );
@@ -268,10 +281,11 @@ export function SiteFooter() {
                     <a
                       key={item.key}
                       href={item.href}
+                      id={`footer-social-link-${item.key}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={item.label}
-                      className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-[color:var(--color-border-soft)] bg-white/90 text-slate-500 transition-colors hover:border-slate-300 hover:text-slate-900"
+                      className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-400 transition-colors hover:border-white/20 hover:text-white"
                     >
                       <Icon className="h-4 w-4" />
                     </a>
@@ -281,43 +295,49 @@ export function SiteFooter() {
             ) : null}
           </div>
 
-          <div className="space-y-5">
-            <h4 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
-              Explorar
+          <nav className="space-y-5" aria-label="Explorar enlaces">
+            <h4 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">
+              {t("Explorar")}
             </h4>
             {exploreLinks.length ? (
               <ul className="space-y-3">
                 {exploreLinks.map((link) => (
                   <li key={link.id}>
-                    <FooterNavLink href={resolveLinkHref(link)}>
+                    <FooterNavLink
+                      href={resolveLinkHref(link)}
+                      id={`footer-explore-link-${link.id}`}
+                    >
                       {resolveLinkLabel(link)}
                     </FooterNavLink>
                   </li>
                 ))}
               </ul>
             ) : null}
-          </div>
+          </nav>
 
-          <div className="space-y-5">
-            <h4 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
-              Institucional
+          <nav className="space-y-5" aria-label="Enlaces institucionales">
+            <h4 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">
+              {t("Institucional")}
             </h4>
             {institutionalLinks.length ? (
               <ul className="space-y-3">
                 {institutionalLinks.map((link) => (
                   <li key={link.id}>
-                    <FooterNavLink href={resolveLinkHref(link)}>
+                    <FooterNavLink
+                      href={resolveLinkHref(link)}
+                      id={`footer-institutional-link-${link.id}`}
+                    >
                       {resolveLinkLabel(link)}
                     </FooterNavLink>
                   </li>
                 ))}
               </ul>
             ) : null}
-          </div>
+          </nav>
         </div>
 
         {badges.length ? (
-          <div className="border-b border-[color:var(--color-border-soft)] py-6">
+          <div className="border-b border-white/5 py-6">
             <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
               {badges.map((badge) => (
                 <FooterBadgeLink key={badge.id} badge={badge} />
@@ -332,12 +352,17 @@ export function SiteFooter() {
           </p>
 
           {legalItems.length ? (
-            <div className="flex flex-wrap gap-x-5 gap-y-2">
+            <div
+              className="flex flex-wrap gap-x-5 gap-y-2"
+              role="navigation"
+              aria-label="Enlaces legales"
+            >
               {legalItems.map((page) => (
                 <Link
                   key={page.id}
                   to={`/paginas/${page.slug}`}
-                  className="text-xs text-slate-500 transition-colors hover:text-slate-900"
+                  id={`footer-legal-link-${page.slug}`}
+                  className="text-xs text-slate-400 transition-colors hover:text-accent"
                 >
                   {page.titulo}
                 </Link>
@@ -349,3 +374,4 @@ export function SiteFooter() {
     </footer>
   );
 }
+SiteFooter.displayName = "SiteFooter";
