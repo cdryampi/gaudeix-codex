@@ -36,63 +36,57 @@ assets:
   order: 15
   attach_to: program_pdf
   language: null
-- path: images/sponsor_platinum.png
+- path: images/sponsor_ajuntament_cabrera.png
   type: image
-  slug_or_key: platinum
+  slug_or_key: ajuntament_cabrera
   order: 16
   attach_to: sponsor_logo
   language: null
-- path: images/sponsor_gold.png
+- path: images/sponsor_diba.png
   type: image
-  slug_or_key: gold
+  slug_or_key: diba
   order: 17
   attach_to: sponsor_logo
   language: null
-- path: images/sponsor_silver.png
+- path: images/sponsor_generalitat_cultura.png
   type: image
-  slug_or_key: silver
+  slug_or_key: generalitat_cultura
   order: 18
   attach_to: sponsor_logo
   language: null
-- path: images/sponsor_bronze.png
+- path: images/sponsor_ccmaresme.jpg
   type: image
-  slug_or_key: bronze
+  slug_or_key: ccmaresme
   order: 19
-  attach_to: sponsor_logo
-  language: null
-- path: images/sponsor_collaborator.png
-  type: image
-  slug_or_key: collaborator
-  order: 20
   attach_to: sponsor_logo
   language: null
 - path: images/gallery_castellers_tower.png
   type: image
   slug_or_key: gallery_castellers_tower.png
-  order: 21
+  order: 20
   attach_to: gallery
   language: null
 - path: images/gallery_community_dinner.png
   type: image
   slug_or_key: gallery_community_dinner.png
-  order: 22
+  order: 21
   attach_to: gallery
   language: null
 - path: images/gallery_fireworks_show.png
   type: image
   slug_or_key: gallery_fireworks_show.png
-  order: 23
+  order: 22
   attach_to: gallery
   language: null
 - path: images/gallery_gigantes_parade.png
   type: image
   slug_or_key: gallery_gigantes_parade.png
-  order: 24
+  order: 23
   attach_to: gallery
   language: null
 - path: images/gallery_live_music_band.png
   type: image
   slug_or_key: gallery_live_music_band.png
-  order: 25
+  order: 24
   attach_to: gallery
   language: null

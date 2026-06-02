@@ -122,7 +122,7 @@ export function PageHero({
             <div className="max-w-4xl space-y-4">
               <h1
                 className={cn(
-                  "text-4xl md:text-6xl",
+                  "text-4xl md:text-6xl text-balance",
                   isImmersive ? "text-white" : "text-text-primary",
                 )}
               >
@@ -133,7 +133,7 @@ export function PageHero({
                   className={cn(
                     "max-w-3xl text-base md:text-xl",
                     isImmersive
-                      ? "text-white/82 [&_p]:text-white/82"
+                      ? "text-white/90 [&_p]:text-white/90"
                       : "[&_p]:text-text-secondary",
                   )}
                 >
@@ -152,7 +152,7 @@ export function PageHero({
                     <p
                       className={cn(
                         "text-[11px] font-semibold uppercase tracking-[0.18em]",
-                        isImmersive ? "text-white/66" : "text-text-secondary",
+                        isImmersive ? "text-white/75" : "text-text-secondary",
                       )}
                     >
                       {item.label}
@@ -221,7 +221,9 @@ export function SectionHeader({
     >
       <div className="max-w-3xl space-y-3">
         {eyebrow ? <span className="section-kicker">{eyebrow}</span> : null}
-        <h2 className="text-3xl text-text-primary md:text-5xl">{title}</h2>
+        <h2 className="text-3xl text-text-primary md:text-5xl text-balance">
+          {title}
+        </h2>
         {description ? (
           <div className="max-w-2xl text-base md:text-lg text-text-secondary">
             {description}

@@ -4,14 +4,22 @@
 
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
-import { ArrowLeft, PartyPopper, Calendar } from "lucide-react";
+import { PartyPopper, Calendar, Filter } from "lucide-react";
 
 import { getFestes } from "../api";
 import { Festa } from "../types";
 import { FestaCard } from "../components/FestaCard";
+import { useTranslation } from "@/hooks/useTranslation";
+import {
+  FilterBar,
+  PageHero,
+  SectionHeader,
+} from "@/components/site/primitives";
+import { MotionReveal } from "@/components/animated/MotionReveal";
+import { AnimatedCardGrid } from "@/components/animated/AnimatedCardGrid";
 
 export const FestesPage = () => {
+  const { t } = useTranslation();
   const [selectedYear, setSelectedYear] = useState<number | "all">("all");
 
   // Fetch all festes
@@ -44,125 +52,116 @@ export const FestesPage = () => {
   }, [festesData]);
 
   return (
-    <main className="min-h-screen bg-slate-50/50">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-white pb-16 pt-32 md:pb-32 md:pt-48">
-        {/* Subtle decorative elements */}
-        <div className="absolute right-0 top-0 -mr-24 -mt-24 h-[500px] w-[500px] rounded-full bg-slate-50" />
-        <div className="absolute left-0 top-1/2 -ml-12 h-64 w-64 -translate-y-1/2 rounded-full bg-slate-50/50 blur-3xl" />
+    <main className="min-h-screen bg-background-light page-shell-offset">
+      <PageHero
+        eyebrow={t("Celebracions i Tradició")}
+        title={t("Festes Majors")}
+        description={t(
+          "Descobreix les celebracions més emblemàtiques del nostre municipi, on la tradició, la cultura i la convivència s'uneixen.",
+        )}
+        tone="immersive"
+        breadcrumbs={[
+          { label: t("Inicio"), href: "/" },
+          { label: t("Festes") },
+        ]}
+        metrics={[
+          {
+            label: t("Resultados"),
+            value: `${festes.length} ${t("celebraciones")}`,
+          },
+          {
+            label: t("Filtro"),
+            value: selectedYear === "all" ? t("Todas") : `${selectedYear}`,
+          },
+          { label: t("Ubicación"), value: t("Cabrera de Mar") },
+        ]}
+      />
 
-        <div className="container relative z-10 mx-auto px-6">
-          <Link
-            to="/"
-            className="group mb-16 inline-flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 transition-colors hover:text-primary"
-          >
-            <div className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-100 transition-colors group-hover:border-primary/20 group-hover:bg-primary/5">
-              <ArrowLeft className="h-3.5 w-3.5" />
-            </div>
-            Inici
-          </Link>
-
-          <div className="max-w-5xl">
-            <span className="mb-6 block text-[11px] font-black uppercase tracking-[0.5em] text-primary/60">
-              Celebracions i Tradició
-            </span>
-            <h1 className="text-[clamp(3.5rem,12vw,10rem)] font-black leading-[0.85] tracking-tighter text-slate-950 uppercase">
-              FESTES <br />
-              <span className="italic text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/60">
-                MAJORS
-              </span>
-            </h1>
-
-            <div className="mt-12 flex flex-col md:flex-row md:items-end justify-between gap-12">
-              <p className="max-w-xl text-xl font-medium leading-relaxed text-slate-500 md:text-2xl">
-                Descobreix les celebracions més emblemàtiques del nostre
-                municipi, on la tradició, la cultura i la convivència s'uneixen.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Filters Section */}
-      <section className="sticky top-0 z-40 border-y border-slate-200/60 bg-white/80 backdrop-blur-xl">
-        <div className="container mx-auto px-6 py-5">
-          <div className="flex flex-wrap items-center justify-between gap-6">
-            <div className="flex items-center gap-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 text-slate-400">
-                <Calendar className="h-4 w-4" />
+      <div className="page-container space-y-10 py-10">
+        <MotionReveal>
+          <FilterBar>
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center gap-2 text-sm font-semibold text-text-primary">
+                <Filter className="h-4 w-4 text-primary" />
+                {t("Filtra por año")}
               </div>
-
-              {/* Year Filter */}
-              <div className="flex items-center gap-1.5 rounded-2xl bg-slate-100/50 p-1.5">
+              <div className="flex flex-wrap gap-3">
                 <button
+                  id="btn-festes-filter-all"
                   onClick={() => setSelectedYear("all")}
-                  className={`h-9 px-5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                  className={`inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold border border-border-soft transition-all duration-200 ${
                     selectedYear === "all"
-                      ? "bg-white text-primary shadow-sm"
-                      : "text-slate-500 hover:text-slate-700"
+                      ? "bg-primary text-white border-transparent"
+                      : "bg-surface text-text-secondary border-border-soft hover:bg-surface-muted hover:text-text-primary"
                   }`}
                 >
-                  Totes
+                  <Calendar className="h-4 w-4" />
+                  {t("Todas")}
                 </button>
                 {availableYears.map((year) => (
                   <button
                     key={year}
+                    id={`btn-festes-filter-${year}`}
                     onClick={() => setSelectedYear(year)}
-                    className={`h-9 px-5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                    className={`inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold border border-border-soft transition-all duration-200 ${
                       selectedYear === year
-                        ? "bg-white text-primary shadow-sm"
-                        : "text-slate-500 hover:text-slate-700"
+                        ? "bg-primary text-white border-transparent"
+                        : "bg-surface text-text-secondary border-border-soft hover:bg-surface-muted hover:text-text-primary"
                     }`}
                   >
+                    <Calendar className="h-4 w-4" />
                     {year}
                   </button>
                 ))}
               </div>
             </div>
+          </FilterBar>
+        </MotionReveal>
 
-            <div className="hidden lg:block">
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
-                {festes.length} celebracions trobades
-              </span>
-            </div>
-          </div>
-        </div>
-      </section>
+        <section className="space-y-6 defer-render">
+          <MotionReveal>
+            <SectionHeader
+              eyebrow={t("Celebracions i Tradició")}
+              title={`${festes.length} ${t("celebraciones")}`}
+              description={t(
+                "Descobreix les celebracions més emblemàtiques del nostre municipi, on la tradició, la cultura i la convivència s'uneixen.",
+              )}
+            />
+          </MotionReveal>
 
-      {/* Festes Grid */}
-      <section className="container mx-auto px-6 py-24">
-        {isLoading ? (
-          // Loading Skeleton
-          <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3">
-            {[1, 2, 3].map((i) => (
-              <div
-                key={i}
-                className="aspect-[4/5] rounded-[3rem] bg-white border border-slate-100 animate-pulse shadow-sm"
-              />
-            ))}
-          </div>
-        ) : festes.length === 0 ? (
-          // Empty State
-          <div className="flex flex-col items-center justify-center py-40 rounded-[4rem] border border-slate-200 bg-white/50">
-            <div className="mb-8 flex h-24 w-24 items-center justify-center rounded-full bg-slate-100 text-slate-300">
-              <PartyPopper className="h-10 w-10" />
+          {isLoading ? (
+            // Loading Skeleton
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:gap-10">
+              {[1, 2, 3].map((i) => (
+                <div
+                  key={i}
+                  className="aspect-[4/5] rounded-[2.5rem] bg-surface border border-border-soft animate-pulse shadow-sm"
+                />
+              ))}
             </div>
-            <p className="text-2xl font-black uppercase tracking-tighter text-slate-400 text-center">
-              Sense resultats
-            </p>
-            <p className="mt-2 font-medium text-slate-400">
-              No s'han trobat celebracions per a aquests criteris.
-            </p>
-          </div>
-        ) : (
-          // Festes Grid
-          <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3">
-            {festes.map((festa: Festa) => (
-              <FestaCard key={festa.id} festa={festa} />
-            ))}
-          </div>
-        )}
-      </section>
+          ) : festes.length === 0 ? (
+            // Empty State
+            <div className="flex flex-col items-center justify-center py-24 rounded-[3rem] border border-border-soft bg-surface-muted/30">
+              <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-surface-muted text-text-muted">
+                <PartyPopper className="h-10 w-10" />
+              </div>
+              <p className="text-xl font-bold text-text-primary text-center">
+                {t("Sin resultados")}
+              </p>
+              <p className="mt-2 text-text-secondary">
+                {t("No se han encontrado celebraciones para estos criterios.")}
+              </p>
+            </div>
+          ) : (
+            // Festes Grid
+            <AnimatedCardGrid className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:gap-10">
+              {festes.map((festa: Festa) => (
+                <FestaCard key={festa.id} festa={festa} />
+              ))}
+            </AnimatedCardGrid>
+          )}
+        </section>
+      </div>
     </main>
   );
 };

@@ -3,7 +3,12 @@ import { Link } from "react-router-dom";
 import { ChevronRight, Image as ImageIcon } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
-import { CategoryBrandIcon } from "@/features/categories/components/CategoryBrandIcon";
+import { cn } from "@/lib/utils";
+import {
+  CategoryBrandIcon,
+  resolveCategoryBrandIconKey,
+} from "@/features/categories/components/CategoryBrandIcon";
+import { getCategoryMeta } from "@/features/categories/constants";
 
 export interface CategoryCardProps {
   id: string | number;
@@ -19,6 +24,48 @@ export interface CategoryCardProps {
 
 const PLACEHOLDER_IMAGE = "/media/categorias/placeholder.jpg";
 
+const PREMIUM_STYLES: Record<
+  string,
+  { bg: string; text: string; shadow: string; border: string }
+> = {
+  routes: {
+    bg: "bg-home-category-routes hover:bg-home-category-routes-hover",
+    text: "text-slate-950",
+    shadow: "shadow-[0_12px_24px_rgba(124,247,123,0.25)]",
+    border: "border-home-category-routes-hover/20",
+  },
+  nature: {
+    bg: "bg-home-category-nature hover:bg-home-category-nature-hover",
+    text: "text-slate-950",
+    shadow: "shadow-[0_12px_24px_rgba(194,217,134,0.25)]",
+    border: "border-home-category-nature-hover/20",
+  },
+  agenda: {
+    bg: "bg-home-category-agenda hover:bg-home-category-agenda-hover",
+    text: "text-white",
+    shadow: "shadow-[0_12px_24px_rgba(67,187,170,0.25)]",
+    border: "border-home-category-agenda-hover/20",
+  },
+  beaches: {
+    bg: "bg-home-category-beaches hover:bg-home-category-beaches-hover",
+    text: "text-white",
+    shadow: "shadow-[0_12px_24px_rgba(52,184,231,0.25)]",
+    border: "border-home-category-beaches-hover/20",
+  },
+  culture: {
+    bg: "bg-home-category-culture hover:bg-home-category-culture-hover",
+    text: "text-white",
+    shadow: "shadow-[0_12px_24px_rgba(36,17,92,0.25)]",
+    border: "border-home-category-culture-hover/20",
+  },
+  heritage: {
+    bg: "bg-home-category-heritage hover:bg-home-category-heritage-hover",
+    text: "text-slate-950",
+    shadow: "shadow-[0_12px_24px_rgba(253,187,61,0.25)]",
+    border: "border-home-category-heritage-hover/20",
+  },
+};
+
 export function FeaturedCategoryCard({
   category,
 }: {
@@ -29,6 +76,30 @@ export function FeaturedCategoryCard({
   const image = category.image_src || category.image || PLACEHOLDER_IMAGE;
   const iconName = typeof category.icon === "string" ? category.icon : null;
   const isInternal = category.href.startsWith("/");
+
+  const iconKey = iconName ? resolveCategoryBrandIconKey(iconName) : null;
+  const meta = getCategoryMeta(iconName);
+
+  let bubbleBgClass = "";
+  let bubbleTextClass = "text-white";
+  let bubbleShadowClass = "shadow-lg";
+  let bubbleBorderClass = "border-transparent";
+  let bubbleStyle: React.CSSProperties = {};
+
+  if (iconKey && PREMIUM_STYLES[iconKey]) {
+    const pStyle = PREMIUM_STYLES[iconKey];
+    bubbleBgClass = pStyle.bg;
+    bubbleTextClass = pStyle.text;
+    bubbleShadowClass = pStyle.shadow;
+    bubbleBorderClass = pStyle.border;
+  } else {
+    // Todos los demás tienen su color mapeado de meta.color o un color por defecto (el primario corporativo)
+    const defaultColor = "var(--primary)";
+    const color = meta?.color || defaultColor;
+    bubbleTextClass = "text-white";
+    bubbleShadowClass = "shadow-lg";
+    bubbleStyle = { backgroundColor: color };
+  }
 
   const Content = (
     <div className="group relative flex h-full flex-col overflow-hidden rounded-[2.5rem] bg-surface text-text-primary shadow-sm border border-border-soft transition-all duration-500 hover:shadow-[0_32px_80px_rgba(15,76,129,0.08)] hover:border-border-strong">
@@ -54,13 +125,22 @@ export function FeaturedCategoryCard({
       </div>
 
       <div className="relative flex flex-1 flex-col p-6 md:p-8">
-        <div className="absolute -top-9 right-8 flex h-[4.7rem] w-[4.7rem] items-center justify-center rounded-[1.15rem] border border-border-soft bg-surface text-primary shadow-[0_18px_44px_rgba(15,76,129,0.12)] transition-all duration-500 ease-out group-hover:-translate-y-2">
+        <div
+          className={cn(
+            "absolute -top-9 right-8 flex h-[4.7rem] w-[4.7rem] items-center justify-center rounded-[1.15rem] border transition-all duration-500 ease-out group-hover:-translate-y-2",
+            bubbleBgClass,
+            bubbleTextClass,
+            bubbleBorderClass,
+            bubbleShadowClass,
+          )}
+          style={bubbleStyle}
+        >
           {IconComponent ? (
             <IconComponent className="h-7 w-7 stroke-[2.1]" />
           ) : iconName ? (
             <CategoryBrandIcon
               iconName={iconName}
-              className="h-9 w-9 text-primary"
+              className={cn("h-9 w-9", bubbleTextClass)}
             />
           ) : (
             <ImageIcon className="h-7 w-7 stroke-[2.1]" />

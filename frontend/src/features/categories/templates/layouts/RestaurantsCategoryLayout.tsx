@@ -11,10 +11,12 @@ import {
 import { PlaceCard } from "@/features/places/components/PlaceCard";
 import { CategoryLayoutProps } from "../types";
 import { Restaurant } from "@/features/places/types";
+import { useTranslation } from "@/hooks/useTranslation";
 
 type CuisineFilter = "all" | string;
 
 function RestaurantsCategoryLayout({ category, places }: CategoryLayoutProps) {
+  const { t } = useTranslation();
   const [cuisineFilter, setCuisineFilter] = useState<CuisineFilter>("all");
   const image =
     category?.featured_media?.variant_large || category?.featured_media?.file;
@@ -39,22 +41,22 @@ function RestaurantsCategoryLayout({ category, places }: CategoryLayoutProps) {
       data-testid="category-layout-restaurants"
     >
       <PageHero
-        eyebrow="Gastronomia local"
+        eyebrow={t("Gastronomía local")}
         title={category.nombre}
         description={category.descripcion}
         tone="immersive"
         breadcrumbs={[
-          { label: "Inicio", href: "/" },
-          { label: "Categorias", href: "/categorias" },
+          { label: t("Inicio"), href: "/" },
+          { label: t("Categorías"), href: "/categorias" },
           { label: category.nombre },
         ]}
         metrics={[
-          { label: "Restaurantes", value: restaurants.length },
+          { label: t("Restaurantes"), value: restaurants.length },
           {
-            label: "Filtro",
-            value: cuisineFilter === "all" ? "Todos" : cuisineFilter,
+            label: t("Filtro"),
+            value: cuisineFilter === "all" ? t("Todos") : cuisineFilter,
           },
-          { label: "Experiencia", value: "Comer, reservar y descubrir" },
+          { label: t("Tipo"), value: t("Gastronomía local") },
         ]}
         media={
           image ? (
@@ -63,6 +65,8 @@ function RestaurantsCategoryLayout({ category, places }: CategoryLayoutProps) {
                 src={image}
                 alt={category.nombre}
                 className="h-full w-full object-cover"
+                fetchPriority="high"
+                loading="eager"
               />
             </div>
           ) : undefined
@@ -75,26 +79,26 @@ function RestaurantsCategoryLayout({ category, places }: CategoryLayoutProps) {
             <div className="flex flex-col gap-4">
               <div className="flex items-center gap-2 text-sm font-semibold text-text-primary">
                 <Filter className="h-4 w-4 text-primary" />
-                Filtra por tipo de cocina
+                {t("Filtra por tipo de cocina")}
               </div>
               <div className="flex flex-wrap gap-2">
                 <button
                   id="btn-restaurants-filter-all"
                   onClick={() => setCuisineFilter("all")}
-                  className={`rounded-full px-4 py-2 text-sm font-semibold border border-border-soft transition-all duration-200 ${
+                  className={`inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold border border-border-soft transition-all duration-200 ${
                     cuisineFilter === "all"
                       ? "bg-primary text-white"
                       : "bg-surface text-text-secondary hover:bg-surface-muted hover:text-text-primary"
                   }`}
                 >
-                  Todos ({restaurants.length})
+                  {t("Todos")} ({restaurants.length})
                 </button>
                 {cuisineTypes.map((cuisine) => (
                   <button
                     key={cuisine}
                     id={`btn-restaurants-filter-${cuisine.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
                     onClick={() => setCuisineFilter(cuisine)}
-                    className={`rounded-full px-4 py-2 text-sm font-semibold capitalize border border-border-soft transition-all duration-200 ${
+                    className={`inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold capitalize border border-border-soft transition-all duration-200 ${
                       cuisineFilter === cuisine
                         ? "bg-primary text-white"
                         : "bg-surface text-text-secondary hover:bg-surface-muted hover:text-text-primary"
@@ -108,12 +112,14 @@ function RestaurantsCategoryLayout({ category, places }: CategoryLayoutProps) {
           </FilterBar>
         </MotionReveal>
 
-        <section className="space-y-6">
+        <section className="space-y-6 defer-render">
           <MotionReveal>
             <SectionHeader
-              eyebrow="Sabores del municipio"
-              title={`${filteredPlaces.length} propuestas para comer en Cabrera de Mar`}
-              description="Una plantilla mas ligera y alegre para gastronomia, manteniendo datos utiles y acceso directo a cada ficha."
+              eyebrow={t("Sabores del municipio")}
+              title={`${filteredPlaces.length} ${t("propuestas para comer en Cabrera de Mar")}`}
+              description={t(
+                "Explora restaurantes, bodegas y locales gastronómicos para disfrutar de la cocina local.",
+              )}
             />
           </MotionReveal>
 
@@ -129,18 +135,24 @@ function RestaurantsCategoryLayout({ category, places }: CategoryLayoutProps) {
             <div className="grid gap-6 md:grid-cols-3">
               <InfoTile
                 icon={Clock}
-                title="Horarios tipicos"
-                text="Comidas 13:00 - 16:00 y cenas 20:00 - 23:00 según establecimiento."
+                title={t("Horarios tipicos")}
+                text={t(
+                  "Comidas 13:00 - 16:00 y cenas 20:00 - 23:00 según establecimiento.",
+                )}
               />
               <InfoTile
                 icon={Phone}
-                title="Reservas"
-                text="Conviene reservar con antelacion durante fines de semana y fechas señaladas."
+                title={t("Reservas")}
+                text={t(
+                  "Conviene reservar con antelacion durante fines de semana y fechas señaladas.",
+                )}
               />
               <InfoTile
                 icon={DollarSign}
-                title="Precios orientativos"
-                text="Consulta cada ficha para ver web, contacto y detalles del establecimiento."
+                title={t("Precios orientativos")}
+                text={t(
+                  "Consulta cada ficha para ver web, contacto y detalles del establecimiento.",
+                )}
               />
             </div>
           </MotionReveal>

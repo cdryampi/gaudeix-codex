@@ -8,8 +8,10 @@ import { getCategories } from "@/features/categories/api";
 import { FeaturedCategoryCard } from "@/features/categories/components/FeaturedCategoryCard";
 import type { CategoryCardProps } from "@/features/categories/components/FeaturedCategoryCard";
 import { Category } from "../types";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export function CategoriesPage() {
+  const { t } = useTranslation();
   const { data, isLoading } = useQuery({
     queryKey: ["categories"],
     queryFn: () => getCategories(),
@@ -20,18 +22,23 @@ export function CategoriesPage() {
   return (
     <main className="min-h-screen bg-background-light page-shell-offset">
       <PageHero
-        eyebrow="Descubre el municipio"
-        title="Un catalogo mas expresivo para explorar Cabrera de Mar por intereses"
-        description="Patrimonio, rutas, agenda, gastronomia y otras experiencias publicas del municipio, ahora con un lenguaje mas visual y contemporaneo."
+        eyebrow={t("Descubre el municipio")}
+        title={t("Explora Cabrera de Mar por intereses")}
+        description={t(
+          "Descubre el patrimonio, las rutas, la agenda, la gastronomía y todas las experiencias públicas de nuestro municipio.",
+        )}
         tone="immersive"
         breadcrumbs={[
-          { label: "Inicio", href: "/" },
-          { label: "Categorias" },
+          { label: t("Inicio"), href: "/" },
+          { label: t("Categorías") },
         ]}
         metrics={[
-          { label: "Categorias", value: `${categories.length} accesos` },
-          { label: "Enfoque", value: "Turismo y utilidad publica" },
-          { label: "Estilo", value: "Mosaico mediterraneo" },
+          {
+            label: t("Categorías"),
+            value: `${categories.length} ${t("disponibles")}`,
+          },
+          { label: t("Ubicación"), value: t("Maresme, Barcelona") },
+          { label: t("Enfoque"), value: t("Turismo activo y cultural") },
         ]}
       />
 
@@ -61,7 +68,9 @@ export function CategoriesPage() {
                 id: cat.id,
                 title: cat.nombre,
                 href: `/categorias/${cat.slug}`,
-                image: cat.featured_media?.variant_medium || cat.featured_media?.file,
+                image:
+                  cat.featured_media?.variant_medium ||
+                  cat.featured_media?.file,
                 icon: cat.icon,
                 description: cat.descripcion,
                 taxonomy: cat.taxonomy,

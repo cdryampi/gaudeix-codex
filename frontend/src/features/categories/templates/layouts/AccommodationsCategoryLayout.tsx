@@ -11,6 +11,7 @@ import {
 import { PlaceCard } from "@/features/places/components/PlaceCard";
 import { CategoryLayoutProps } from "../types";
 import { Accommodation } from "@/features/places/types";
+import { useTranslation } from "@/hooks/useTranslation";
 
 type StarFilter = "all" | 1 | 2 | 3 | 4 | 5;
 
@@ -18,6 +19,7 @@ function AccommodationsCategoryLayout({
   category,
   places,
 }: CategoryLayoutProps) {
+  const { t } = useTranslation();
   const [starFilter, setStarFilter] = useState<StarFilter>("all");
   const image =
     category?.featured_media?.variant_large || category?.featured_media?.file;
@@ -42,22 +44,25 @@ function AccommodationsCategoryLayout({
       data-testid="category-layout-accommodations"
     >
       <PageHero
-        eyebrow="Alojamiento"
+        eyebrow={t("Alojamiento")}
         title={category.nombre}
         description={category.descripcion}
         tone="immersive"
         breadcrumbs={[
-          { label: "Inicio", href: "/" },
-          { label: "Categorias", href: "/categorias" },
+          { label: t("Inicio"), href: "/" },
+          { label: t("Categorías"), href: "/categorias" },
           { label: category.nombre },
         ]}
         metrics={[
-          { label: "Alojamientos", value: accommodations.length },
+          { label: t("Alojamientos"), value: accommodations.length },
           {
-            label: "Filtro",
-            value: starFilter === "all" ? "Todos" : `${starFilter} estrellas`,
+            label: t("Filtro"),
+            value:
+              starFilter === "all"
+                ? t("Todos")
+                : `${starFilter} ${t("estrellas")}`,
           },
-          { label: "Plan", value: "Dormir y desplazarte mejor" },
+          { label: t("Destino"), value: t("Cabrera de Mar") },
         ]}
         media={
           image ? (
@@ -66,6 +71,8 @@ function AccommodationsCategoryLayout({
                 src={image}
                 alt={category.nombre}
                 className="h-full w-full object-cover"
+                fetchPriority="high"
+                loading="eager"
               />
             </div>
           ) : undefined
@@ -78,19 +85,19 @@ function AccommodationsCategoryLayout({
             <div className="flex flex-col gap-4">
               <div className="flex items-center gap-2 text-sm font-semibold text-text-primary">
                 <Filter className="h-4 w-4 text-primary" />
-                Filtra por categoria de estrellas
+                {t("Filtra por categoria de estrellas")}
               </div>
               <div className="flex flex-wrap gap-2">
                 <button
                   id="btn-accommodations-filter-all"
                   onClick={() => setStarFilter("all")}
-                  className={`rounded-full px-4 py-2 text-sm font-semibold border border-border-soft transition-all duration-200 ${
+                  className={`inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold border border-border-soft transition-all duration-200 ${
                     starFilter === "all"
                       ? "bg-primary text-white"
                       : "bg-surface text-text-secondary hover:bg-surface-muted hover:text-text-primary"
                   }`}
                 >
-                  Todos ({places.length})
+                  {t("Todos")} ({places.length})
                 </button>
                 {[5, 4, 3, 2, 1].map((stars) =>
                   starCounts[stars] ? (
@@ -98,13 +105,13 @@ function AccommodationsCategoryLayout({
                       key={stars}
                       id={`btn-accommodations-filter-${stars}-stars`}
                       onClick={() => setStarFilter(stars as StarFilter)}
-                      className={`rounded-full px-4 py-2 text-sm font-semibold border border-border-soft transition-all duration-200 ${
+                      className={`inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold border border-border-soft transition-all duration-200 ${
                         starFilter === stars
                           ? "bg-primary text-white"
                           : "bg-surface text-text-secondary hover:bg-surface-muted hover:text-text-primary"
                       }`}
                     >
-                      {stars} estrellas
+                      {stars} {t("estrellas")}
                     </button>
                   ) : null,
                 )}
@@ -113,12 +120,14 @@ function AccommodationsCategoryLayout({
           </FilterBar>
         </MotionReveal>
 
-        <section className="space-y-6">
+        <section className="space-y-6 defer-render">
           <MotionReveal>
             <SectionHeader
-              eyebrow="Dormir en Cabrera"
-              title={`${filteredPlaces.length} alojamientos disponibles`}
-              description="Un listado mas actual para hoteles, apartamentos y otros espacios donde alojarte."
+              eyebrow={t("Dormir en Cabrera")}
+              title={`${filteredPlaces.length} ${t("alojamientos disponibles")}`}
+              description={t(
+                "Encuentra hoteles, apartamentos y alojamientos recomendados en el municipio.",
+              )}
             />
           </MotionReveal>
 
@@ -134,18 +143,24 @@ function AccommodationsCategoryLayout({
             <div className="grid gap-6 md:grid-cols-3">
               <InfoTile
                 icon={Clock}
-                title="Horarios tipicos"
-                text="Check-in desde las 14:00 y salida hasta las 11:00, segun cada establecimiento."
+                title={t("Horarios tipicos")}
+                text={t(
+                  "Check-in desde las 14:00 y salida hasta las 11:00, segun cada establecimiento.",
+                )}
               />
               <InfoTile
                 icon={MapPin}
-                title="Ubicacion"
-                text="Opciones bien conectadas para explorar el municipio y su entorno con comodidad."
+                title={t("Ubicacion")}
+                text={t(
+                  "Opciones bien conectadas para explorar el municipio y su entorno con comodidad.",
+                )}
               />
               <InfoTile
                 icon={Phone}
-                title="Reservas"
-                text="Consulta cada ficha para contactar directamente o acceder al sistema de reserva."
+                title={t("Reservas")}
+                text={t(
+                  "Consulta cada ficha para contactar directamente o acceder al sistema de reserva.",
+                )}
               />
             </div>
           </MotionReveal>

@@ -40,31 +40,29 @@
         "name": "Ajuntament de Cabrera de Mar",
         "tier": "platinum",
         "website": "https://www.cabrerademar.cat",
-        "order": 1
+        "order": 1,
+        "logo_key": "ajuntament_cabrera"
       },
       {
         "name": "Diputació de Barcelona",
         "tier": "gold",
         "website": "https://www.diba.cat",
-        "order": 2
+        "order": 2,
+        "logo_key": "diba"
       },
       {
-        "name": "Celler de Cabrera",
+        "name": "Generalitat de Catalunya - Departament de Cultura",
+        "tier": "gold",
+        "website": "https://cultura.gencat.cat",
+        "order": 3,
+        "logo_key": "generalitat_cultura"
+      },
+      {
+        "name": "Consell Comarcal del Maresme",
         "tier": "silver",
-        "website": "",
-        "order": 3
-      },
-      {
-        "name": "Forn El Forner",
-        "tier": "bronze",
-        "website": "",
-        "order": 4
-      },
-      {
-        "name": "Bar El Racó",
-        "tier": "collaborator",
-        "website": "",
-        "order": 5
+        "website": "https://www.ccmaresme.cat",
+        "order": 4,
+        "logo_key": "ccmaresme"
       }
     ]
   },
@@ -109,13 +107,22 @@
         "name": "Ajuntament de Cabrera de Mar",
         "tier": "platinum",
         "website": "https://www.cabrerademar.cat",
-        "order": 1
+        "order": 1,
+        "logo_key": "ajuntament_cabrera"
       },
       {
         "name": "Consell Comarcal del Maresme",
         "tier": "gold",
         "website": "https://www.ccmaresme.cat",
-        "order": 2
+        "order": 2,
+        "logo_key": "ccmaresme"
+      },
+      {
+        "name": "Diputació de Barcelona",
+        "tier": "gold",
+        "website": "https://www.diba.cat",
+        "order": 3,
+        "logo_key": "diba"
       }
     ]
   },
@@ -160,7 +167,15 @@
         "name": "Ajuntament de Cabrera de Mar",
         "tier": "platinum",
         "website": "https://www.cabrerademar.cat",
-        "order": 1
+        "order": 1,
+        "logo_key": "ajuntament_cabrera"
+      },
+      {
+        "name": "Generalitat de Catalunya - Departament de Cultura",
+        "tier": "gold",
+        "website": "https://cultura.gencat.cat",
+        "order": 2,
+        "logo_key": "generalitat_cultura"
       }
     ]
   }
