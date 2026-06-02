@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Camera, Grid3X3, Map, TreePine } from "lucide-react";
+import { Camera, Filter, Grid3X3, Map, TreePine } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import { MotionReveal } from "@/components/animated/MotionReveal";
@@ -11,6 +11,7 @@ import {
 } from "@/components/site/primitives";
 import { PlaceCard } from "@/features/places/components/PlaceCard";
 import { CategoryLayoutProps } from "../types";
+import { useTranslation } from "@/hooks/useTranslation";
 
 type ViewMode = "grid" | "gallery";
 
@@ -19,6 +20,7 @@ function NatureCategoryLayout({
   places,
   isLoadingPlaces,
 }: CategoryLayoutProps) {
+  const { t } = useTranslation();
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
@@ -38,22 +40,22 @@ function NatureCategoryLayout({
       data-testid="category-layout-nature"
     >
       <PageHero
-        eyebrow="Naturaleza y territorio"
+        eyebrow={t("Naturaleza y territorio")}
         title={category.nombre}
         description={category.descripcion}
         tone="immersive"
         breadcrumbs={[
-          { label: "Inicio", href: "/" },
-          { label: "Categorias", href: "/categorias" },
+          { label: t("Inicio"), href: "/" },
+          { label: t("Categorías"), href: "/categorias" },
           { label: category.nombre },
         ]}
         metrics={[
-          { label: "Lugares", value: places.length },
+          { label: t("Lugares"), value: places.length },
           {
-            label: "Vista activa",
-            value: viewMode === "grid" ? "Recorrido" : "Galeria",
+            label: t("Vista activa"),
+            value: viewMode === "grid" ? t("Recorrido") : t("Galería"),
           },
-          { label: "Plan", value: "Explora y abre mapa" },
+          { label: t("Tipo"), value: t("Entorno natural") },
         ]}
         media={
           image ? (
@@ -62,6 +64,8 @@ function NatureCategoryLayout({
                 src={image}
                 alt={category.nombre}
                 className="h-full w-full object-cover"
+                fetchPriority="high"
+                loading="eager"
               />
             </div>
           ) : undefined
@@ -72,45 +76,45 @@ function NatureCategoryLayout({
         <MotionReveal>
           <FilterBar>
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-              <div>
-                <p className="text-sm font-semibold text-text-primary">
-                  Recorre el entorno a tu ritmo
-                </p>
-                <p className="text-sm text-text-secondary">
-                  Alterna entre una lectura tipo guia y una galeria visual para
-                  inspirarte antes de la visita.
-                </p>
+              <div className="flex items-start gap-2.5">
+                <Filter className="mt-1 h-4 w-4 text-primary shrink-0" />
+                <div>
+                  <p className="text-sm font-semibold text-text-primary">
+                    {t("Recorre el entorno a tu ritmo")}
+                  </p>
+                  <p className="text-sm text-text-secondary">
+                    {t(
+                      "Alterna entre una lectura tipo guia y una galeria visual para inspirarte antes de la visita.",
+                    )}
+                  </p>
+                </div>
               </div>
 
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-3">
                 <div className="flex items-center gap-2 rounded-full bg-surface-muted border border-border-soft p-1">
                   <button
                     id="btn-nature-view-grid"
                     onClick={() => setViewMode("grid")}
-                    className={`rounded-full px-4 py-2 text-sm font-semibold transition-all duration-200 ${
+                    className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-all duration-200 ${
                       viewMode === "grid"
                         ? "bg-surface text-primary shadow-sm"
                         : "text-text-secondary hover:text-text-primary"
                     }`}
                   >
-                    <span className="inline-flex items-center gap-2">
-                      <Grid3X3 className="h-4 w-4" />
-                      Recorrido
-                    </span>
+                    <Grid3X3 className="h-4 w-4" />
+                    {t("Recorrido")}
                   </button>
                   <button
                     id="btn-nature-view-gallery"
                     onClick={() => setViewMode("gallery")}
-                    className={`rounded-full px-4 py-2 text-sm font-semibold transition-all duration-200 ${
+                    className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-all duration-200 ${
                       viewMode === "gallery"
                         ? "bg-surface text-primary shadow-sm"
                         : "text-text-secondary hover:text-text-primary"
                     }`}
                   >
-                    <span className="inline-flex items-center gap-2">
-                      <Camera className="h-4 w-4" />
-                      Galeria
-                    </span>
+                    <Camera className="h-4 w-4" />
+                    {t("Galeria")}
                   </button>
                 </div>
 
@@ -120,23 +124,25 @@ function NatureCategoryLayout({
                   className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-2.5 text-sm font-semibold text-primary transition-all hover:bg-primary/20"
                 >
                   <Map className="h-4 w-4" />
-                  Ver mapa
+                  {t("Ver mapa")}
                 </Link>
               </div>
             </div>
           </FilterBar>
         </MotionReveal>
 
-        <section className="space-y-6">
+        <section className="space-y-6 defer-render">
           <MotionReveal>
             <SectionHeader
-              eyebrow="Explora"
+              eyebrow={t("Explora")}
               title={
                 viewMode === "grid"
-                  ? `${places.length} lugares para descubrir`
-                  : "Galeria inspiracional"
+                  ? `${places.length} ${t("lugares para descubrir")}`
+                  : t("Galeria inspiracional")
               }
-              description="Una plantilla mas luminosa y ordenada para patrimonio, naturaleza y recorridos de descubrimiento."
+              description={t(
+                "Descubre el entorno natural, el patrimonio histórico y los espacios al aire libre del municipio.",
+              )}
             />
           </MotionReveal>
 
@@ -178,17 +184,19 @@ function NatureCategoryLayout({
             {places.length === 2 ? (
               <section className="card-surface space-y-6 p-6 md:p-8 border border-border-soft">
                 <SectionHeader
-                  eyebrow="Comparativa"
-                  title="Compara las dos playas publicadas"
-                  description="Vista rapida para decidir cual visitar segun ubicacion y contacto disponible."
+                  eyebrow={t("Comparativa")}
+                  title={t("Compara las dos playas publicadas")}
+                  description={t(
+                    "Vista rapida para decidir cual visitar segun ubicacion y contacto disponible.",
+                  )}
                 />
                 <div className="overflow-x-auto">
                   <table className="min-w-full text-left text-sm text-text-secondary">
                     <thead>
                       <tr className="border-b border-border-soft text-xs uppercase tracking-[0.14em] text-text-secondary/70">
-                        <th className="px-3 py-3">Playa</th>
-                        <th className="px-3 py-3">Ubicacion</th>
-                        <th className="px-3 py-3">Telefono</th>
+                        <th className="px-3 py-3">{t("Playa")}</th>
+                        <th className="px-3 py-3">{t("Ubicación")}</th>
+                        <th className="px-3 py-3">{t("Telefono")}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -211,9 +219,13 @@ function NatureCategoryLayout({
             ) : (
               <section className="card-surface space-y-4 p-6 md:p-8 border border-border-soft">
                 <SectionHeader
-                  eyebrow="Seleccion editorial"
-                  title="El equipo municipal destaca las mejores opciones para hoy"
-                  description="Cuando hay mas o menos de dos playas publicadas, mostramos una narrativa editorial en lugar de forzar una comparativa."
+                  eyebrow={t("Seleccion editorial")}
+                  title={t(
+                    "El equipo municipal destaca las mejores opciones para hoy",
+                  )}
+                  description={t(
+                    "Selección y recomendaciones del equipo local para disfrutar de las mejores playas.",
+                  )}
                 />
               </section>
             )}
@@ -224,7 +236,7 @@ function NatureCategoryLayout({
           <div className="py-24 text-center">
             <TreePine className="mx-auto mb-6 h-16 w-16 text-text-secondary/40" />
             <p className="text-xl font-bold text-text-secondary">
-              No hay lugares en esta categoria todavia.
+              {t("No hay lugares en esta categoria todavia.")}
             </p>
           </div>
         ) : null}

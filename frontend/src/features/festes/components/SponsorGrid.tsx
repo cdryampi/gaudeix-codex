@@ -4,7 +4,6 @@
 
 import { ExternalLink } from "lucide-react";
 import { Sponsor, SponsorTier } from "../types";
-import { getTierConfig, TIER_LOGO_SIZES } from "../constants";
 
 interface SponsorGridProps {
   sponsors: Sponsor[];
@@ -20,83 +19,47 @@ const TIER_ORDER: SponsorTier[] = [
 ];
 
 export const SponsorGrid = ({ sponsors }: SponsorGridProps) => {
-  // Group sponsors by tier
-  const sponsorsByTier = TIER_ORDER.reduce(
-    (acc, tier) => {
-      const tierSponsors = sponsors
-        .filter((s) => s.tier === tier)
-        .sort((a, b) => a.order - b.order);
-      if (tierSponsors.length > 0) {
-        acc[tier] = tierSponsors;
-      }
-      return acc;
-    },
-    {} as Record<SponsorTier, Sponsor[]>,
-  );
-
   if (sponsors.length === 0) {
     return null;
   }
 
+  const sortedSponsors = [...sponsors].sort((a, b) => {
+    const tierDelta = TIER_ORDER.indexOf(a.tier) - TIER_ORDER.indexOf(b.tier);
+    return tierDelta || a.order - b.order;
+  });
+
   return (
-    <div className="flex flex-wrap justify-center items-end gap-x-12 gap-y-8">
-      {TIER_ORDER.map((tier) => {
-        const tierSponsors = sponsorsByTier[tier];
-        if (!tierSponsors || tierSponsors.length === 0) return null;
-
-        const config = getTierConfig(tier);
-        const logoSize = TIER_LOGO_SIZES[config.size];
-
-        return (
-          <div
-            key={tier}
-            className="flex flex-wrap justify-center items-center gap-6"
-          >
-            {/* Sponsors Grid without massive headers */}
-            {tierSponsors.map((sponsor) => (
-              <SponsorLogo
-                key={sponsor.id}
-                sponsor={sponsor}
-                logoSize={logoSize}
-                tierConfig={config}
-              />
-            ))}
-          </div>
-        );
-      })}
+    <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-6">
+      {sortedSponsors.map((sponsor) => (
+        <SponsorLogo key={sponsor.id} sponsor={sponsor} />
+      ))}
     </div>
   );
 };
 
 interface SponsorLogoProps {
   sponsor: Sponsor;
-  logoSize: string;
-  tierConfig: ReturnType<typeof getTierConfig>;
 }
 
-const SponsorLogo = ({ sponsor, logoSize, tierConfig }: SponsorLogoProps) => {
+const SponsorLogo = ({ sponsor }: SponsorLogoProps) => {
   const content = (
-    <div
-      className={`group relative flex items-center justify-center p-4 rounded-2xl border transition-all hover:shadow-lg ${tierConfig.bgColor} ${tierConfig.borderColor}`}
-    >
+    <div className="group relative flex h-20 w-44 items-center justify-center bg-transparent p-2 transition-opacity hover:opacity-80">
       {sponsor.logo ? (
         <img
           src={sponsor.logo.variant_medium || sponsor.logo.file}
           alt={sponsor.name}
-          className={`${logoSize} object-contain transition-transform duration-300 group-hover:scale-105`}
+          loading="lazy"
+          className="max-h-16 w-full object-contain"
         />
       ) : (
-        <div
-          className={`${logoSize} flex items-center justify-center text-center ${tierConfig.textColor}`}
-        >
-          <span className="text-sm font-bold">{sponsor.name}</span>
+        <div className="flex h-16 w-full items-center justify-center text-center text-text-secondary">
+          <span className="text-sm font-semibold">{sponsor.name}</span>
         </div>
       )}
 
-      {/* External Link Icon on Hover */}
       {sponsor.website && (
-        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-          <ExternalLink className="h-4 w-4 text-slate-400" />
+        <div className="absolute right-0 top-0 opacity-0 transition-opacity group-hover:opacity-100">
+          <ExternalLink className="h-3.5 w-3.5 text-text-muted" />
         </div>
       )}
     </div>

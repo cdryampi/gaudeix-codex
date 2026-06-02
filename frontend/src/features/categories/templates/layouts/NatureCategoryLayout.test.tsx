@@ -10,7 +10,9 @@ vi.mock("@/components/animated/MotionReveal", () => ({
 }));
 
 vi.mock("@/features/places/components/PlaceCard", () => ({
-  PlaceCard: ({ place }: { place: { title: string } }) => <div>{place.title}</div>,
+  PlaceCard: ({ place }: { place: { title: string } }) => (
+    <div>{place.title}</div>
+  ),
 }));
 
 const baseCategory = {
@@ -63,8 +65,10 @@ describe("NatureCategoryLayout beaches comparison", () => {
       </MemoryRouter>,
     );
 
-    expect(screen.getByText("Compara las dos playas publicadas")).toBeInTheDocument();
-    expect(screen.queryByText("Seleccion editorial")).not.toBeInTheDocument();
+    expect(
+      screen.getByText("Compara les dues platges publicades"),
+    ).toBeInTheDocument();
+    expect(screen.queryByText("Selecció editorial")).not.toBeInTheDocument();
   });
 
   it("shows editorial fallback when published beaches are not exactly two", () => {
@@ -72,7 +76,9 @@ describe("NatureCategoryLayout beaches comparison", () => {
       <MemoryRouter>
         <NatureCategoryLayout
           category={baseCategory as any}
-          places={[makePlace(1), makePlace(2), makePlace(3), makePlace(4)] as any}
+          places={
+            [makePlace(1), makePlace(2), makePlace(3), makePlace(4)] as any
+          }
           events={[] as any}
           isLoadingPlaces={false}
           isLoadingEvents={false}
@@ -80,7 +86,9 @@ describe("NatureCategoryLayout beaches comparison", () => {
       </MemoryRouter>,
     );
 
-    expect(screen.getByText("Seleccion editorial")).toBeInTheDocument();
-    expect(screen.queryByText("Compara las dos playas publicadas")).not.toBeInTheDocument();
+    expect(screen.getByText("Selecció editorial")).toBeInTheDocument();
+    expect(
+      screen.queryByText("Compara les dues platges publicades"),
+    ).not.toBeInTheDocument();
   });
 });

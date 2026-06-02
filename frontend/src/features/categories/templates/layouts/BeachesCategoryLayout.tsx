@@ -29,12 +29,14 @@ import {
 } from "@/features/beaches/content";
 import { Beach } from "@/features/beaches/types";
 import { CategoryLayoutProps } from "../types";
+import { useTranslation } from "@/hooks/useTranslation";
 
 function BeachesCategoryLayout({
   category,
   places,
   isLoadingPlaces,
 }: CategoryLayoutProps) {
+  const { t } = useTranslation();
   const { data, isLoading } = useQuery({
     queryKey: ["beaches", "category-layout"],
     queryFn: () => getBeaches({ is_published: true }),
@@ -74,27 +76,29 @@ function BeachesCategoryLayout({
       data-testid="category-layout-beaches"
     >
       <PageHero
-        eyebrow="Nuestro litoral"
-        title={category.nombre || "Playas de Cabrera de Mar"}
+        eyebrow={t("Nuestro litoral")}
+        title={category.nombre || t("Playas de Cabrera de Mar")}
         description={
           category.descripcion ||
-          "Descubre un frente marítimo pensado para el descanso, la familia y el disfrute responsable. Arena dorada, aguas tranquilas y todos los servicios a tu alcance."
+          t(
+            "Descubre un frente marítimo pensado para el descanso, la familia y el disfrute responsable. Arena dorada, aguas tranquilas y todos los servicios a tu alcance.",
+          )
         }
         tone="immersive"
         breadcrumbs={[
-          { label: "Inicio", href: "/" },
-          { label: "Categorías", href: "/categorias" },
+          { label: t("Inicio"), href: "/" },
+          { label: t("Categorías"), href: "/categorias" },
           { label: category.nombre },
         ]}
         metrics={[
-          { label: "Zonas de baño", value: activeCount },
+          { label: t("Zonas de baño"), value: activeCount },
           {
-            label: "Accesibilidad",
-            value: totalAccessibility > 0 ? "Garantizada" : "En proceso",
+            label: t("Accesibilidad"),
+            value: totalAccessibility > 0 ? t("Garantizada") : t("En proceso"),
           },
           {
-            label: "Servicios",
-            value: totalServices > 0 ? "Completos" : "Básicos",
+            label: t("Servicios"),
+            value: totalServices > 0 ? t("Completos") : t("Básicos"),
           },
         ]}
         actions={
@@ -124,6 +128,8 @@ function BeachesCategoryLayout({
                 src={heroImage}
                 alt={category.nombre}
                 className="h-full w-full object-cover"
+                fetchPriority="high"
+                loading="eager"
               />
             </div>
           ) : undefined
@@ -174,7 +180,7 @@ function BeachesCategoryLayout({
           />
         </MotionReveal>
 
-        <section className="space-y-6">
+        <section className="space-y-6 defer-render">
           <MotionReveal>
             <SectionHeader
               eyebrow="Panorama costero"
@@ -202,18 +208,19 @@ function BeachesCategoryLayout({
             <ContentCard className="p-10 text-center border border-border-soft bg-surface">
               <Palmtree className="mx-auto mb-4 h-12 w-12 text-secondary" />
               <p className="text-lg font-semibold text-text-primary">
-                Aún no hay playas publicadas para esta categoría.
+                {t("Aún no hay playas publicadas para esta categoría.")}
               </p>
               <p className="mt-2 text-sm text-text-secondary">
-                La plantilla ya está preparada y mostrará comparativa en cuanto
-                existan exactamente dos.
+                {t(
+                  "Próximamente se publicará información detallada y comparativas del litoral.",
+                )}
               </p>
             </ContentCard>
           )}
         </section>
 
         {comparisonEnabled ? (
-          <section className="space-y-6">
+          <section className="space-y-6 defer-render">
             <MotionReveal>
               <SectionHeader
                 eyebrow="Comparativa"

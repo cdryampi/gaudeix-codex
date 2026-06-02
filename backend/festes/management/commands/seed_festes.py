@@ -109,7 +109,8 @@ class Command(BaseCommand):
 
             for sponsor_data in data.get("sponsors", []):
                 tier = sponsor_data.get("tier", "collaborator")
-                logo = images.get(f"sponsor_logo:{tier}")
+                logo_key = sponsor_data.get("logo_key", tier)
+                logo = images.get(f"sponsor_logo:{logo_key}")
                 Sponsor.objects.create(
                     festa=festa,
                     name=sponsor_data["name"],
