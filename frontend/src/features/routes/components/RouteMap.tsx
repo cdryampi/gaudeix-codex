@@ -302,7 +302,7 @@ export const RouteMap = ({
             options={{
               suppressMarkers: false,
               polylineOptions: {
-                strokeColor: "#3b82f6", // Blue for driving route
+                strokeColor: "#0F76A4", // Secondary for driving route
                 strokeOpacity: 0.8,
                 strokeWeight: 4,
               },
@@ -318,7 +318,7 @@ export const RouteMap = ({
                 key={`track-${index}`}
                 path={path}
                 options={{
-                  strokeColor: "#e8a317", // Primary accent
+                  strokeColor: "#E7640C", // Primary accent
                   strokeOpacity: 0.9,
                   strokeWeight: 4,
                 }}
@@ -329,7 +329,7 @@ export const RouteMap = ({
           <PolylineF
             path={checkpointsPath}
             options={{
-              strokeColor: "#e8a317",
+              strokeColor: "#E7640C",
               strokeOpacity: 0.9,
               strokeWeight: 4,
             }}
@@ -339,7 +339,7 @@ export const RouteMap = ({
             <PolylineF
               path={waypointPath}
               options={{
-                strokeColor: "#e8a317",
+                strokeColor: "#E7640C",
                 strokeOpacity: 0.9,
                 strokeWeight: 4,
               }}

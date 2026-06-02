@@ -149,6 +149,7 @@ class Category(TranslatableModel, BaseModel, MetadataModel):
         # New taxonomies for legacy models
         ROUTES = "routes", "Rutas"
         FESTES = "festes", "Festes Majors"
+        STORY_TYPE = "story_type", "Storytelling"
 
     slug = models.SlugField(
         max_length=150,

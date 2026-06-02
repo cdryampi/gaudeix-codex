@@ -87,7 +87,7 @@ def test_event_checkin_endpoints(events_singleton):
 
 
 def test_ranking_endpoints():
-    user_low = User.objects.create_user(username="low", password="pass123")
+    User.objects.create_user(username="low", password="pass123")
     user_high = User.objects.create_user(username="high", password="pass123")
 
     add_points(

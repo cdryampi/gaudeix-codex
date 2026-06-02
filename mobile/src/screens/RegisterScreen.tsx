@@ -1,5 +1,12 @@
 import React from 'react';
-import { View, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform, Alert } from 'react-native';
+import {
+  View,
+  ScrollView,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
+  Alert,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -16,8 +23,12 @@ type RegisterScreenProps = {
 
 export const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
   const { register, isLoading, error: authError } = useAuthStore();
-  
-  const { control, handleSubmit, formState: { errors } } = useForm<RegisterFormData>({
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
       name: '',
@@ -32,7 +43,7 @@ export const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
     try {
       await register(data);
       navigation.replace('Main');
-    } catch (e) {
+    } catch {
       // Error handled by store
     }
   };
@@ -43,16 +54,16 @@ export const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <KeyboardAvoidingView 
+      <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         className="flex-1"
       >
-        <ScrollView 
+        <ScrollView
           contentContainerClassName="flex-grow px-6 py-8"
           keyboardShouldPersistTaps="handled"
         >
           {/* Header */}
-          <TouchableOpacity 
+          <TouchableOpacity
             onPress={() => navigation.goBack()}
             className="mb-6 w-10 h-10 items-center justify-center rounded-full bg-gray-100"
           >
@@ -206,18 +217,22 @@ export const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
           </View>
 
           {/* Actions */}
-          <Button 
-            variant="primary" 
-            size="lg" 
+          <Button
+            variant="primary"
+            size="lg"
             onPress={handleSubmit(onSubmit)}
             disabled={isLoading}
             className="mb-6 flex-row items-center justify-center space-x-2"
           >
             {isLoading ? (
-               <Text color="inverse" weight="bold">Creando cuenta...</Text>
+              <Text color="inverse" weight="bold">
+                Creando cuenta...
+              </Text>
             ) : (
               <>
-                <Text color="inverse" weight="bold">Crear cuenta y empezar a sumar</Text>
+                <Text color="inverse" weight="bold">
+                  Crear cuenta y empezar a sumar
+                </Text>
                 <Text color="inverse">✨</Text>
               </>
             )}
@@ -226,14 +241,20 @@ export const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
           <View className="flex-row justify-center mb-8">
             <Text color="secondary">¿Ya tienes cuenta? </Text>
             <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-              <Text color="primary" weight="bold">Inicia sesión</Text>
+              <Text color="primary" weight="bold">
+                Inicia sesión
+              </Text>
             </TouchableOpacity>
           </View>
 
           {/* Social Auth Divider */}
           <View className="flex-row items-center mb-6">
             <View className="flex-1 h-px bg-gray-200" />
-            <Text variant="label" weight="bold" className="mx-4 text-gray-400 uppercase tracking-widest">
+            <Text
+              variant="label"
+              weight="bold"
+              className="mx-4 text-gray-400 uppercase tracking-widest"
+            >
               O regístrate con
             </Text>
             <View className="flex-1 h-px bg-gray-200" />
@@ -241,30 +262,38 @@ export const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
 
           {/* Social Buttons */}
           <View className="flex-row space-x-4">
-             <TouchableOpacity 
+            <TouchableOpacity
               onPress={() => handleSocialLogin('Google')}
               className="flex-1 flex-row items-center justify-center h-14 border-2 border-gray-100 rounded-xl bg-white"
             >
-              <Text variant="body" weight="bold">G</Text>
-              <Text variant="body" weight="bold" className="ml-2">Google</Text>
+              <Text variant="body" weight="bold">
+                G
+              </Text>
+              <Text variant="body" weight="bold" className="ml-2">
+                Google
+              </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity 
+            <TouchableOpacity
               onPress={() => handleSocialLogin('Apple')}
               className="flex-1 flex-row items-center justify-center h-14 border-2 border-gray-100 rounded-xl bg-white"
             >
-              <Text variant="body" weight="bold"></Text>
-              <Text variant="body" weight="bold" className="ml-2">Apple</Text>
+              <Text variant="body" weight="bold">
+                
+              </Text>
+              <Text variant="body" weight="bold" className="ml-2">
+                Apple
+              </Text>
             </TouchableOpacity>
           </View>
 
           {/* Legal */}
           <View className="mt-8 mb-4">
             <Text variant="caption" color="tertiary" className="text-center">
-              Al registrarte, confirmas que has leído y aceptas nuestra Política de Privacidad y Términos de Uso.
+              Al registrarte, confirmas que has leído y aceptas nuestra Política de Privacidad y
+              Términos de Uso.
             </Text>
           </View>
-
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>

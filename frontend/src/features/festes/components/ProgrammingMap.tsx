@@ -26,12 +26,12 @@ interface EventWithCoords extends Event {
 const categoryColor = (category: string) => {
   const normalized = category.toLowerCase();
   if (normalized.includes("music") || normalized.includes("musica"))
-    return "#f97316";
+    return "#E7640C";
   if (normalized.includes("fam") || normalized.includes("infant"))
-    return "#22c55e";
+    return "#036830";
   if (normalized.includes("trad") || normalized.includes("cercavila"))
-    return "#a855f7";
-  return "#06b6d4";
+    return "#7BC2EC";
+  return "#0F76A4";
 };
 
 const normalizeKey = (value: string) => value.trim().toLowerCase();

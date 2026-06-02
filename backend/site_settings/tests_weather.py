@@ -2,7 +2,6 @@ import pytest
 from django.utils import timezone
 from datetime import timedelta
 from site_settings.models_weather import MunicipalityWeather
-from site_settings.services import WeatherService
 from core.models import Category
 from events.models import Event, EventCategorySingleton, EventDate
 from events.serializers import EventSerializer

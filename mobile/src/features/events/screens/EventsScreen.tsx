@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 
-import { Text, Icon, Badge } from '@/components/atoms';
+import { Text, Badge } from '@/components/atoms';
 import { EventCard } from '@/components/molecules';
 import { CalendarWidget } from '@/features/events/components/CalendarWidget';
 import { useUpcomingEvents } from '@/features/events/api'; // Reuse for now
@@ -15,7 +15,7 @@ export const EventsScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
 
   // Using mock/API data
-  const { data: events, refetch, isLoading } = useUpcomingEvents();
+  const { data: events, refetch } = useUpcomingEvents();
 
   // Create marked dates map from events
   const markedDates = useMemo(() => {
@@ -30,9 +30,7 @@ export const EventsScreen = () => {
   // Filter events for selected day
   const dayEvents = useMemo(() => {
     if (!events) return [];
-    return events.filter(event => 
-      format(new Date(event.start_at), 'yyyy-MM-dd') === selectedDate
-    );
+    return events.filter(event => format(new Date(event.start_at), 'yyyy-MM-dd') === selectedDate);
   }, [events, selectedDate]);
 
   const onRefresh = async () => {
@@ -51,26 +49,38 @@ export const EventsScreen = () => {
       <View className="px-6 py-4 flex-row items-center justify-between bg-white/80 backdrop-blur-md z-10">
         <View className="flex-row items-center">
           <View className="w-8 h-8 bg-primary rounded-lg items-center justify-center mr-3">
-            <Text color="inverse" weight="bold">G</Text>
+            <Text color="inverse" weight="bold">
+              G
+            </Text>
           </View>
-          <Text variant="title" weight="bold">Eventos</Text>
+          <Text variant="title" weight="bold">
+            Eventos
+          </Text>
         </View>
-        
+
         {/* View Toggle */}
         <View className="flex-row bg-gray-200 rounded-full p-1">
-          <TouchableOpacity 
+          <TouchableOpacity
             onPress={() => setViewMode('calendar')}
             className={`px-4 py-1.5 rounded-full ${viewMode === 'calendar' ? 'bg-white shadow-sm' : ''}`}
           >
-            <Text weight="bold" color={viewMode === 'calendar' ? 'primary' : 'secondary'} className="text-xs">
+            <Text
+              weight="bold"
+              color={viewMode === 'calendar' ? 'primary' : 'secondary'}
+              className="text-xs"
+            >
               Calendario
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity 
+          <TouchableOpacity
             onPress={() => setViewMode('list')}
             className={`px-4 py-1.5 rounded-full ${viewMode === 'list' ? 'bg-white shadow-sm' : ''}`}
           >
-            <Text weight="bold" color={viewMode === 'list' ? 'primary' : 'secondary'} className="text-xs">
+            <Text
+              weight="bold"
+              color={viewMode === 'list' ? 'primary' : 'secondary'}
+              className="text-xs"
+            >
               Lista
             </Text>
           </TouchableOpacity>
@@ -84,7 +94,7 @@ export const EventsScreen = () => {
         }
       >
         {viewMode === 'calendar' && (
-          <CalendarWidget 
+          <CalendarWidget
             selectedDate={selectedDate}
             markedDates={markedDates}
             onDayPress={handleDayPress}
@@ -94,12 +104,17 @@ export const EventsScreen = () => {
         {/* Agenda Section */}
         <View className="mb-4 flex-row items-center justify-between">
           <View>
-            <Text variant="label" color="secondary" weight="bold" className="uppercase tracking-widest mb-1">
+            <Text
+              variant="label"
+              color="secondary"
+              weight="bold"
+              className="uppercase tracking-widest mb-1"
+            >
               {viewMode === 'calendar' ? 'AGENDA DEL DÍA' : 'PRÓXIMOS EVENTOS'}
             </Text>
             <Text variant="title" weight="bold">
-              {viewMode === 'calendar' 
-                ? format(new Date(selectedDate), "EEEE, d 'de' MMMM", { locale: es }) 
+              {viewMode === 'calendar'
+                ? format(new Date(selectedDate), "EEEE, d 'de' MMMM", { locale: es })
                 : 'Todos los eventos'}
             </Text>
           </View>
@@ -110,7 +125,7 @@ export const EventsScreen = () => {
 
         {/* Events List */}
         <View className="space-y-4">
-          {(viewMode === 'calendar' ? dayEvents : events)?.map((event) => (
+          {(viewMode === 'calendar' ? dayEvents : events)?.map(event => (
             <EventCard
               key={event.id}
               title={event.title}
@@ -132,7 +147,7 @@ export const EventsScreen = () => {
       </ScrollView>
 
       {/* FAB */}
-      <TouchableOpacity 
+      <TouchableOpacity
         className="absolute bottom-6 right-6 w-14 h-14 bg-secondary rounded-full items-center justify-center shadow-lg shadow-secondary/40"
         onPress={() => {}} // TODO: Create event or filter action
       >

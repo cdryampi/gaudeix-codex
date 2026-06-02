@@ -1,6 +1,5 @@
 import requests
 import logging
-from django.conf import settings
 from .models import SiteSettings
 from .models_weather import MunicipalityWeather
 

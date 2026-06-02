@@ -1,6 +1,6 @@
 /**
  * API Client
- * 
+ *
  * Axios instance with interceptors for authentication and error handling.
  * Adapdated from backoffice implementation for React Native/Expo.
  */
@@ -23,14 +23,14 @@ const apiClient = axios.create({
  * Flag to prevent multiple simultaneous refresh requests
  */
 let isRefreshing = false;
-let refreshSubscribers: Array<(token: string) => void> = [];
+let refreshSubscribers: ((token: string) => void)[] = [];
 
 function subscribeTokenRefresh(cb: (token: string) => void) {
   refreshSubscribers.push(cb);
 }
 
 function onTokenRefreshed(token: string) {
-  refreshSubscribers.forEach((cb) => cb(token));
+  refreshSubscribers.forEach(cb => cb(token));
   refreshSubscribers = [];
 }
 
@@ -40,11 +40,11 @@ function onTokenRefreshed(token: string) {
 apiClient.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     const token = await authStorage.getAccessToken();
-    
+
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    
+
     return config;
   },
   (error: AxiosError) => {
@@ -56,7 +56,7 @@ apiClient.interceptors.request.use(
  * Response interceptor for error handling and token refresh
  */
 apiClient.interceptors.response.use(
-  (response) => response,
+  response => response,
   async (error: AxiosError) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
@@ -64,7 +64,7 @@ apiClient.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
         // Wait for the ongoing refresh to complete
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
           subscribeTokenRefresh(async (token: string) => {
             if (originalRequest.headers) {
               originalRequest.headers.Authorization = `Bearer ${token}`;
@@ -79,7 +79,7 @@ apiClient.interceptors.response.use(
 
       try {
         const refreshToken = await authStorage.getRefreshToken();
-        
+
         if (!refreshToken) {
           // No refresh token, clear storage and reject
           await authStorage.clearTokens();
@@ -88,14 +88,13 @@ apiClient.interceptors.response.use(
         }
 
         // Try to refresh the token
-        const response = await axios.post(
-          `${envConfig.apiBaseUrl}/auth/token/refresh/`,
-          { refresh: refreshToken }
-        );
+        const response = await axios.post(`${envConfig.apiBaseUrl}/auth/token/refresh/`, {
+          refresh: refreshToken,
+        });
 
         const { access } = response.data;
         await authStorage.setAccessToken(access);
-        
+
         isRefreshing = false;
         onTokenRefreshed(access);
 
@@ -103,7 +102,7 @@ apiClient.interceptors.response.use(
         if (originalRequest.headers) {
           originalRequest.headers.Authorization = `Bearer ${access}`;
         }
-        
+
         return apiClient(originalRequest);
       } catch (refreshError) {
         // Refresh failed, clear storage

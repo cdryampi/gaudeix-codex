@@ -1,4 +1,3 @@
-import apiClient from '@/lib/api/client';
 import { useQuery } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/lib/config/constants';
 import { Event } from '@/features/events/api';
@@ -58,7 +57,7 @@ export const profileApi = {
           end_at: new Date(Date.now() + 172800000).toISOString(),
           location_text: 'Plaza del Ayuntamiento',
           is_featured: true,
-          category: { id: 1, name: 'Cultura', icon: '🎭' }
+          category: { id: 1, name: 'Cultura', icon: '🎭' },
         },
         {
           id: '3',
@@ -69,11 +68,11 @@ export const profileApi = {
           end_at: new Date(Date.now() + 352800000).toISOString(),
           location_text: 'Centro Cívico',
           is_featured: false,
-          category: { id: 2, name: 'Talleres', icon: '🎨' }
-        }
-      ]
+          category: { id: 2, name: 'Talleres', icon: '🎨' },
+        },
+      ],
     };
-  }
+  },
 };
 
 // Hooks

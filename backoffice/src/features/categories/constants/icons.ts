@@ -1,32 +1,99 @@
-import { Castle, Flag, Leaf, LucideIcon, Mountain, PartyPopper, Umbrella } from "lucide-react";
+import agendaIcon from "@/assets/category-icons/agenda.png";
+import beachesIcon from "@/assets/category-icons/beaches.png";
+import cultureIcon from "@/assets/category-icons/culture.png";
+import heritageIcon from "@/assets/category-icons/heritage.png";
+import natureIcon from "@/assets/category-icons/nature.png";
+import routesIcon from "@/assets/category-icons/routes.png";
+
+export type CategoryIconKey =
+  | "routes"
+  | "nature"
+  | "agenda"
+  | "beaches"
+  | "culture"
+  | "heritage";
 
 export type CategoryIconOption = {
-  value: string;
+  value: CategoryIconKey;
   labelEs: string;
   labelCa: string;
-  icon: LucideIcon;
+  src: string;
 };
 
-export const CATEGORY_ICON_MAP: Record<string, LucideIcon> = {
-  mountain: Mountain,
-  leaf: Leaf,
-  "party-popper": PartyPopper,
-  umbrella: Umbrella,
-  flag: Flag,
-  castle: Castle,
+const CATEGORY_ICON_SRC: Record<CategoryIconKey, string> = {
+  routes: routesIcon,
+  nature: natureIcon,
+  agenda: agendaIcon,
+  beaches: beachesIcon,
+  culture: cultureIcon,
+  heritage: heritageIcon,
+};
+
+const LEGACY_ICON_TO_KEY: Record<string, CategoryIconKey> = {
+  route: "routes",
+  mountain: "routes",
+  navigation: "routes",
+  leaf: "nature",
+  festes: "agenda",
+  "party-popper": "agenda",
+  sparkles: "agenda",
+  waves: "beaches",
+  umbrella: "beaches",
+  "guided-visits": "culture",
+  flag: "culture",
+  castle: "heritage",
+  landmark: "heritage",
 };
 
 export const CATEGORY_ICON_OPTIONS: CategoryIconOption[] = [
-  { value: "mountain", labelEs: "Rutas autoguiadas", labelCa: "Rutes autoguiades", icon: Mountain },
-  { value: "leaf", labelEs: "Naturaleza", labelCa: "Natura", icon: Leaf },
-  { value: "party-popper", labelEs: "Fiestas y tradiciones", labelCa: "Festes i tradicions", icon: PartyPopper },
-  { value: "umbrella", labelEs: "Playas", labelCa: "Platges", icon: Umbrella },
-  { value: "flag", labelEs: "Visitas guiadas", labelCa: "Visites guiades", icon: Flag },
-  { value: "castle", labelEs: "Patrimonio histórico", labelCa: "Patrimoni històric", icon: Castle },
+  {
+    value: "routes",
+    labelEs: "Rutas autoguiadas",
+    labelCa: "Rutes autoguiades",
+    src: routesIcon,
+  },
+  {
+    value: "nature",
+    labelEs: "Naturaleza",
+    labelCa: "Natura",
+    src: natureIcon,
+  },
+  {
+    value: "agenda",
+    labelEs: "Fiestas y tradiciones",
+    labelCa: "Festes i tradicions",
+    src: agendaIcon,
+  },
+  {
+    value: "beaches",
+    labelEs: "Playas",
+    labelCa: "Platges",
+    src: beachesIcon,
+  },
+  {
+    value: "culture",
+    labelEs: "Visitas guiadas",
+    labelCa: "Visites guiades",
+    src: cultureIcon,
+  },
+  {
+    value: "heritage",
+    labelEs: "Patrimonio historico",
+    labelCa: "Patrimoni historic",
+    src: heritageIcon,
+  },
 ];
 
-export function getCategoryIcon(name?: string | null): LucideIcon | null {
+export function resolveCategoryIconKey(
+  name?: string | null,
+): CategoryIconKey | null {
   if (!name) return null;
   const normalized = name.toLowerCase();
-  return CATEGORY_ICON_MAP[normalized] || null;
+  if (normalized in CATEGORY_ICON_SRC) return normalized as CategoryIconKey;
+  return LEGACY_ICON_TO_KEY[normalized] || null;
+}
+
+export function getCategoryIconSrc(name?: string | null): string | null {
+  const key = resolveCategoryIconKey(name);
+  return key ? CATEGORY_ICON_SRC[key] : null;
 }

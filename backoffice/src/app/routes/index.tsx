@@ -33,6 +33,7 @@ import { NewsPage } from "@/features/news/pages/NewsPage";
 import { ScrapedNewsPage } from "@/features/scraper/pages/ScrapedNewsPage";
 import { RestaurantsPage } from "@/features/restaurants/pages/RestaurantsPage";
 import { AccommodationsPage } from "@/features/accommodations/pages/AccommodationsPage";
+import { StorytellingPage } from "@/features/storytelling/pages/StorytellingPage";
 import { NotFoundPage } from "@/pages/NotFoundPage";
 
 /**
@@ -194,6 +195,10 @@ export const router = createBrowserRouter(
         {
           path: "scraper",
           element: <ScrapedNewsPage />,
+        },
+        {
+          path: "storytelling",
+          element: <StorytellingPage />,
         },
       ],
     },

@@ -1,7 +1,5 @@
 import pytest
-import threading
 from unittest.mock import patch, MagicMock
-from django.utils import timezone
 from scraper.models import ScrapeJob, ScraperSource
 from scraper.services.scraper_service import ScraperService
 from rest_framework.test import APIClient

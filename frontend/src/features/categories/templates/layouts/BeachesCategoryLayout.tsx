@@ -30,7 +30,7 @@ import {
 import { Beach } from "@/features/beaches/types";
 import { CategoryLayoutProps } from "../types";
 
-export default function BeachesCategoryLayout({
+function BeachesCategoryLayout({
   category,
   places,
   isLoadingPlaces,
@@ -69,7 +69,10 @@ export default function BeachesCategoryLayout({
   );
 
   return (
-    <main className="min-h-screen bg-background-light page-shell-offset">
+    <div
+      className="min-h-screen bg-background-light page-shell-offset"
+      data-testid="category-layout-beaches"
+    >
       <PageHero
         eyebrow="Nuestro litoral"
         title={category.nombre || "Playas de Cabrera de Mar"}
@@ -98,6 +101,7 @@ export default function BeachesCategoryLayout({
           <>
             <Link
               to="/categorias/beaches"
+              id="btn-beaches-map-full"
               className="inline-flex items-center gap-2 rounded-full bg-surface px-6 py-3 text-sm font-semibold text-text-primary border border-border-soft transition-colors hover:bg-surface-muted"
             >
               <Map className="h-4 w-4 text-primary" />
@@ -105,6 +109,7 @@ export default function BeachesCategoryLayout({
             </Link>
             <Link
               to="/como-llegar"
+              id="btn-beaches-como-llegar"
               className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/15"
             >
               <Navigation className="h-4 w-4" />
@@ -195,7 +200,7 @@ export default function BeachesCategoryLayout({
             </AnimatedCardGrid>
           ) : (
             <ContentCard className="p-10 text-center border border-border-soft bg-surface">
-              <Palmtree className="mx-auto mb-4 h-12 w-12 text-cyan-500" />
+              <Palmtree className="mx-auto mb-4 h-12 w-12 text-secondary" />
               <p className="text-lg font-semibold text-text-primary">
                 Aún no hay playas publicadas para esta categoría.
               </p>
@@ -232,6 +237,7 @@ export default function BeachesCategoryLayout({
               <>
                 <Link
                   to="/categorias/beaches"
+                  id="btn-beaches-cta-map"
                   className="inline-flex items-center gap-2 rounded-full bg-surface px-7 py-4 text-sm font-bold text-text-primary border border-border-soft shadow-xl transition-all hover:scale-105 hover:bg-surface-muted"
                 >
                   Ver playas en el mapa
@@ -239,6 +245,7 @@ export default function BeachesCategoryLayout({
                 </Link>
                 <Link
                   to="/como-llegar"
+                  id="btn-beaches-cta-llegar"
                   className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-7 py-4 text-sm font-bold text-white backdrop-blur-md transition-colors hover:bg-white/20"
                 >
                   Llegar al municipio
@@ -248,9 +255,10 @@ export default function BeachesCategoryLayout({
           />
         </MotionReveal>
       </div>
-    </main>
+    </div>
   );
 }
+BeachesCategoryLayout.displayName = "BeachesCategoryLayout";
 
 function BeachShowcaseCard({ beach }: { beach: Beach }) {
   const image =
@@ -282,7 +290,7 @@ function BeachShowcaseCard({ beach }: { beach: Beach }) {
           className="h-full w-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent" />
-        <div className="absolute left-5 top-5 inline-flex items-center gap-2 rounded-full bg-surface/92 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-cyan-600 dark:text-cyan-400 shadow-sm">
+        <div className="absolute left-5 top-5 inline-flex items-center gap-2 rounded-full bg-secondary/10 border border-secondary/20 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-secondary shadow-sm">
           <Waves className="h-3.5 w-3.5" />
           {BEACH_TYPE_LABELS[beach.beach_type]}
         </div>
@@ -320,6 +328,7 @@ function BeachShowcaseCard({ beach }: { beach: Beach }) {
         <div className="flex flex-wrap gap-3 pt-2">
           <Link
             to={`/playas/${beach.slug}`}
+            id={`btn-beach-detail-${beach.slug}`}
             className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-primary/90"
           >
             Ver detalle
@@ -327,6 +336,7 @@ function BeachShowcaseCard({ beach }: { beach: Beach }) {
           </Link>
           <a
             href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${beach.title} ${beach.location_text}`)}`}
+            id={`btn-beach-route-${beach.slug}`}
             target="_blank"
             rel="noreferrer"
             className="inline-flex items-center gap-2 rounded-full border border-border-soft px-5 py-3 text-sm font-semibold text-text-secondary transition-colors hover:bg-surface-muted hover:text-text-primary"
@@ -339,6 +349,7 @@ function BeachShowcaseCard({ beach }: { beach: Beach }) {
     </article>
   );
 }
+BeachShowcaseCard.displayName = "BeachShowcaseCard";
 
 function BeachComparisonTable({ beaches }: { beaches: Beach[] }) {
   const [left, right] = beaches;
@@ -426,6 +437,7 @@ function BeachComparisonTable({ beaches }: { beaches: Beach[] }) {
     </div>
   );
 }
+BeachComparisonTable.displayName = "BeachComparisonTable";
 
 function InlineMeta({ label, value }: { label: string; value: string }) {
   return (
@@ -437,6 +449,7 @@ function InlineMeta({ label, value }: { label: string; value: string }) {
     </div>
   );
 }
+InlineMeta.displayName = "InlineMeta";
 
 function ChipRow({ title, chips }: { title: string; chips: string[] }) {
   if (!chips.length) {
@@ -452,7 +465,7 @@ function ChipRow({ title, chips }: { title: string; chips: string[] }) {
         {chips.map((chip) => (
           <span
             key={chip}
-            className="inline-flex items-center rounded-full bg-cyan-50/10 border border-cyan-500/20 px-3 py-1 text-xs font-semibold text-cyan-600 dark:text-cyan-400"
+            className="inline-flex items-center rounded-full bg-secondary/5 border border-secondary/10 px-3 py-1 text-xs font-semibold text-secondary"
           >
             {chip}
           </span>
@@ -461,6 +474,7 @@ function ChipRow({ title, chips }: { title: string; chips: string[] }) {
     </div>
   );
 }
+ChipRow.displayName = "ChipRow";
 
 function getActiveLabels<T extends string>(
   values: Partial<Record<T, boolean>>,
@@ -471,3 +485,5 @@ function getActiveLabels<T extends string>(
     .map(([key]) => meta[key as T]?.label)
     .filter((value): value is string => Boolean(value));
 }
+
+export default BeachesCategoryLayout;

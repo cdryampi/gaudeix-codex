@@ -1,4 +1,3 @@
-import apiClient from '@/lib/api/client';
 import { useQuery } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/lib/config/constants';
 
@@ -48,7 +47,7 @@ export const eventsApi = {
         end_at: new Date(Date.now() + 172800000).toISOString(),
         location_text: 'Plaza del Ayuntamiento',
         is_featured: true,
-        category: { id: 1, name: 'Cultura', icon: '🎭' }
+        category: { id: 1, name: 'Cultura', icon: '🎭' },
       },
       {
         id: '2',
@@ -59,8 +58,8 @@ export const eventsApi = {
         end_at: new Date(Date.now() + 266400000).toISOString(),
         location_text: 'Castillo de Gaudeix',
         is_featured: true,
-        category: { id: 1, name: 'Música', icon: '🎵' }
-      }
+        category: { id: 1, name: 'Música', icon: '🎵' },
+      },
     ];
   },
 
@@ -70,8 +69,8 @@ export const eventsApi = {
     // });
     // return data.results;
 
-     // MOCK DATA
-     return [
+    // MOCK DATA
+    return [
       {
         id: '3',
         title: 'Taller de Cerámica',
@@ -81,7 +80,7 @@ export const eventsApi = {
         end_at: new Date(Date.now() + 352800000).toISOString(),
         location_text: 'Centro Cívico',
         is_featured: false,
-        category: { id: 2, name: 'Talleres', icon: '🎨' }
+        category: { id: 2, name: 'Talleres', icon: '🎨' },
       },
       {
         id: '4',
@@ -92,10 +91,10 @@ export const eventsApi = {
         end_at: new Date(Date.now() + 446400000).toISOString(),
         location_text: 'Salida desde el Polideportivo',
         is_featured: false,
-        category: { id: 3, name: 'Deporte', icon: '🏃' }
-      }
+        category: { id: 3, name: 'Deporte', icon: '🏃' },
+      },
     ];
-  }
+  },
 };
 
 // React Query Hooks

@@ -90,7 +90,6 @@ export function AutomationSidebar({
   onSave,
   onRunNow,
 }: AutomationSidebarProps) {
-  const selectedStep = selectedNode ?? selectedBranch;
   const selectedStepKind = selectedNode?.node_kind ?? "result";
 
   return (

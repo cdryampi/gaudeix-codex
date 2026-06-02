@@ -10,7 +10,7 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from core.models import Category, Tag
+from core.models import Category
 from events.models import Event, EventDate, EventCategorySingleton
 from media_files.models import DocumentFile, ImageFile
 
@@ -125,7 +125,7 @@ def test_create_event_with_dates_api(
 def test_update_event_dates_api(media_root, events_singleton):
     user = User.objects.create_user(username="editor", password="pass123")
     event = Event.objects.create(title="Old")
-    d1 = EventDate.objects.create(
+    EventDate.objects.create(
         event=event, start_at=timezone.now() + timezone.timedelta(days=1)
     )
 
@@ -203,10 +203,10 @@ def test_update_event_dates_api_v2(events_singleton):
 
 def test_occurrences_endpoint(events_singleton):
     event = Event.objects.create(title="Occurrences Test")
-    d1 = EventDate.objects.create(
+    EventDate.objects.create(
         event=event, start_at=timezone.now() + timezone.timedelta(days=1)
     )
-    d2 = EventDate.objects.create(
+    EventDate.objects.create(
         event=event, start_at=timezone.now() + timezone.timedelta(days=2)
     )
 

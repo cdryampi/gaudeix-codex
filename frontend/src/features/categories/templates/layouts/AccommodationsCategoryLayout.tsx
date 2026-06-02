@@ -14,7 +14,7 @@ import { Accommodation } from "@/features/places/types";
 
 type StarFilter = "all" | 1 | 2 | 3 | 4 | 5;
 
-export default function AccommodationsCategoryLayout({
+function AccommodationsCategoryLayout({
   category,
   places,
 }: CategoryLayoutProps) {
@@ -37,7 +37,7 @@ export default function AccommodationsCategoryLayout({
   );
 
   return (
-    <main
+    <div
       className="min-h-screen bg-background-light page-shell-offset"
       data-testid="category-layout-accommodations"
     >
@@ -82,6 +82,7 @@ export default function AccommodationsCategoryLayout({
               </div>
               <div className="flex flex-wrap gap-2">
                 <button
+                  id="btn-accommodations-filter-all"
                   onClick={() => setStarFilter("all")}
                   className={`rounded-full px-4 py-2 text-sm font-semibold border border-border-soft transition-all duration-200 ${
                     starFilter === "all"
@@ -95,6 +96,7 @@ export default function AccommodationsCategoryLayout({
                   starCounts[stars] ? (
                     <button
                       key={stars}
+                      id={`btn-accommodations-filter-${stars}-stars`}
                       onClick={() => setStarFilter(stars as StarFilter)}
                       className={`rounded-full px-4 py-2 text-sm font-semibold border border-border-soft transition-all duration-200 ${
                         starFilter === stars
@@ -149,9 +151,10 @@ export default function AccommodationsCategoryLayout({
           </MotionReveal>
         ) : null}
       </div>
-    </main>
+    </div>
   );
 }
+AccommodationsCategoryLayout.displayName = "AccommodationsCategoryLayout";
 
 function InfoTile({
   icon: Icon,
@@ -170,3 +173,6 @@ function InfoTile({
     </div>
   );
 }
+InfoTile.displayName = "InfoTile";
+
+export default AccommodationsCategoryLayout;

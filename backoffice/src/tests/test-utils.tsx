@@ -3,6 +3,8 @@ import { render, RenderOptions } from "@testing-library/react";
 import { BrowserRouter, MemoryRouter } from "react-router-dom";
 import { AppProviders } from "@/app/providers/AppProviders";
 
+/* eslint-disable react-refresh/only-export-components */
+
 type RouterMode =
   | { type?: "browser" }
   | { type: "memory"; initialEntries?: string[] };
@@ -43,6 +45,5 @@ function customRender(
   });
 }
 
-// eslint-disable-next-line react-refresh/only-export-components
 export * from "@testing-library/react";
 export { customRender as render };

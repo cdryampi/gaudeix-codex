@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
-import { Heart, ArrowLeft, Loader2 } from "lucide-react";
+import { Heart, ArrowLeft } from "lucide-react";
 
 import { getFavorites } from "@/features/events/api";
 import { useAuthStore } from "@/features/auth/store";

@@ -27,7 +27,7 @@ class Command(BaseCommand):
             defaults={
                 "nombre": "Festes",
                 "taxonomy": Category.TaxonomyChoices.FESTES,
-                "icon": "party-popper",
+                "icon": "agenda",
             },
         )
 
@@ -36,8 +36,8 @@ class Command(BaseCommand):
             if category.taxonomy != Category.TaxonomyChoices.FESTES:
                 category.taxonomy = Category.TaxonomyChoices.FESTES
                 updated = True
-            if not category.icon:
-                category.icon = "party-popper"
+            if category.icon != "agenda":
+                category.icon = "agenda"
                 updated = True
             if updated:
                 category.save()

@@ -42,7 +42,7 @@ export function PageHero({
   return (
     <section
       className={cn(
-        "relative overflow-hidden border-b border-[color:var(--color-border-soft)]",
+        "relative overflow-hidden border-b border-border-soft",
         isImmersive
           ? "bg-slate-950 text-white"
           : tone === "muted"
@@ -61,9 +61,10 @@ export function PageHero({
       <div className="page-container relative py-10 md:py-14">
         {breadcrumbs?.length ? (
           <nav
+            aria-label="Breadcrumb"
             className={cn(
               "mb-7 flex flex-wrap items-center gap-2 text-sm",
-              isImmersive ? "text-white/70" : "text-slate-500",
+              isImmersive ? "text-white/70" : "text-text-secondary",
             )}
           >
             {breadcrumbs.map((item, index) => (
@@ -74,6 +75,7 @@ export function PageHero({
                 {item.href ? (
                   <Link
                     to={item.href}
+                    id={`hero-breadcrumb-link-${index}`}
                     className={cn(
                       "transition-colors",
                       isImmersive ? "hover:text-white" : "hover:text-primary",
@@ -83,14 +85,16 @@ export function PageHero({
                   </Link>
                 ) : (
                   <span
-                    className={isImmersive ? "text-white" : "text-slate-700"}
+                    className={isImmersive ? "text-white" : "text-text-primary"}
                   >
                     {item.label}
                   </span>
                 )}
                 {index < breadcrumbs.length - 1 ? (
                   <span
-                    className={isImmersive ? "text-white/30" : "text-slate-300"}
+                    className={
+                      isImmersive ? "text-white/30" : "text-text-secondary/40"
+                    }
                   >
                     /
                   </span>
@@ -108,7 +112,7 @@ export function PageHero({
                   "eyebrow",
                   isImmersive
                     ? "border-white/20 bg-white/10 text-white"
-                    : "border-secondary/15 bg-white/70 text-secondary",
+                    : "border-secondary/15 bg-surface/70 text-secondary",
                 )}
               >
                 {eyebrow}
@@ -119,7 +123,7 @@ export function PageHero({
               <h1
                 className={cn(
                   "text-4xl md:text-6xl",
-                  isImmersive ? "text-white" : "text-slate-900",
+                  isImmersive ? "text-white" : "text-text-primary",
                 )}
               >
                 {title}
@@ -130,7 +134,7 @@ export function PageHero({
                     "max-w-3xl text-base md:text-xl",
                     isImmersive
                       ? "text-white/82 [&_p]:text-white/82"
-                      : "[&_p]:text-slate-600",
+                      : "[&_p]:text-text-secondary",
                   )}
                 >
                   {description}
@@ -143,12 +147,12 @@ export function PageHero({
                 {metrics.map((item) => (
                   <div
                     key={item.label}
-                    className="flex flex-col border-l-2 border-slate-200/50 pl-4 py-1"
+                    className="flex flex-col border-l-2 border-border-soft pl-4 py-1"
                   >
                     <p
                       className={cn(
                         "text-[11px] font-semibold uppercase tracking-[0.18em]",
-                        isImmersive ? "text-white/66" : "text-slate-500",
+                        isImmersive ? "text-white/66" : "text-text-secondary",
                       )}
                     >
                       {item.label}
@@ -156,7 +160,7 @@ export function PageHero({
                     <div
                       className={cn(
                         "mt-1 text-lg font-semibold",
-                        isImmersive ? "text-white" : "text-slate-900",
+                        isImmersive ? "text-white" : "text-text-primary",
                       )}
                     >
                       {item.value}
@@ -193,6 +197,7 @@ export function PageHero({
     </section>
   );
 }
+PageHero.displayName = "PageHero";
 
 export function SectionHeader({
   eyebrow,
@@ -208,7 +213,7 @@ export function SectionHeader({
   className?: string;
 }) {
   return (
-    <div
+    <header
       className={cn(
         "flex flex-col gap-5 md:flex-row md:items-end md:justify-between",
         className,
@@ -216,16 +221,19 @@ export function SectionHeader({
     >
       <div className="max-w-3xl space-y-3">
         {eyebrow ? <span className="section-kicker">{eyebrow}</span> : null}
-        <h2 className="text-3xl text-slate-900 md:text-5xl">{title}</h2>
+        <h2 className="text-3xl text-text-primary md:text-5xl">{title}</h2>
         {description ? (
-          <div className="max-w-2xl text-base md:text-lg">{description}</div>
+          <div className="max-w-2xl text-base md:text-lg text-text-secondary">
+            {description}
+          </div>
         ) : null}
         <div className="section-divider max-w-[160px]" />
       </div>
       {action ? <div className="shrink-0">{action}</div> : null}
-    </div>
+    </header>
   );
 }
+SectionHeader.displayName = "SectionHeader";
 
 export function InfoBand({
   items,
@@ -241,13 +249,13 @@ export function InfoBand({
   className?: string;
 }) {
   return (
-    <div
+    <section
       className={cn(
-        "rounded-[2.5rem] bg-white/95 p-2 shadow-[0_24px_60px_rgba(10,35,60,0.06)] ring-1 ring-slate-100 backdrop-blur-xl md:rounded-[3rem] md:p-3",
+        "rounded-[2.5rem] bg-surface/95 p-2 shadow-[0_24px_60px_rgba(10,35,60,0.06)] ring-1 ring-border-soft backdrop-blur-xl md:rounded-[3rem] md:p-3",
         className,
       )}
     >
-      <div
+      <ul
         className={cn(
           "grid grid-cols-1 gap-1 sm:grid-cols-2",
           items.length >= 4 ? "lg:grid-cols-4" : "",
@@ -255,15 +263,15 @@ export function InfoBand({
       >
         {items.map((item) => {
           const content = (
-            <div className="group relative flex flex-col items-center justify-center gap-4 rounded-[2rem] px-5 py-6 transition-all duration-300 hover:bg-slate-50/80 sm:flex-row sm:justify-start">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-slate-100/60 text-primary transition-all duration-500 ease-out group-hover:scale-110 group-hover:bg-primary group-hover:text-white group-hover:shadow-[0_8px_16px_rgba(15,76,129,0.2)]">
+            <div className="group relative flex flex-col items-center justify-center gap-4 rounded-[2rem] px-5 py-6 transition-all duration-300 hover:bg-surface-muted/80 sm:flex-row sm:justify-start">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-surface-muted text-primary transition-all duration-500 ease-out group-hover:scale-110 group-hover:bg-primary group-hover:text-white group-hover:shadow-[0_8px_16px_rgba(15,76,129,0.2)]">
                 <item.icon className="h-6 w-6" />
               </div>
               <div className="space-y-1 text-center sm:text-left">
-                <p className="text-base font-bold leading-tight text-slate-900 transition-colors group-hover:text-primary">
+                <p className="text-base font-bold leading-tight text-text-primary transition-colors group-hover:text-primary">
                   {item.title}
                 </p>
-                <p className="text-sm font-medium leading-snug text-slate-500 transition-colors group-hover:text-slate-600 line-clamp-2 md:line-clamp-none">
+                <p className="text-sm font-medium leading-snug text-text-secondary transition-colors group-hover:text-text-secondary line-clamp-2 md:line-clamp-none">
                   {item.description}
                 </p>
               </div>
@@ -271,33 +279,44 @@ export function InfoBand({
           );
 
           if (!item.href) {
-            return <div key={item.title}>{content}</div>;
+            return <li key={item.title}>{content}</li>;
           }
+
+          const uniqueLinkId = `infoband-link-${item.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
 
           if (item.external) {
             return (
-              <a
-                key={item.title}
-                href={item.href}
-                target="_blank"
-                rel="noreferrer"
-                className="block"
-              >
-                {content}
-              </a>
+              <li key={item.title}>
+                <a
+                  href={item.href}
+                  id={uniqueLinkId}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="block rounded-[2rem]"
+                >
+                  {content}
+                </a>
+              </li>
             );
           }
 
           return (
-            <Link key={item.title} to={item.href} className="block">
-              {content}
-            </Link>
+            <li key={item.title}>
+              <Link
+                to={item.href}
+                id={uniqueLinkId}
+                className="block rounded-[2rem]"
+              >
+                {content}
+              </Link>
+            </li>
           );
         })}
-      </div>
-    </div>
+      </ul>
+    </section>
   );
 }
+InfoBand.displayName = "InfoBand";
 
 export function FilterBar({
   children,
@@ -307,16 +326,19 @@ export function FilterBar({
   className?: string;
 }) {
   return (
-    <div
+    <section
+      role="search"
+      aria-label="Filtros"
       className={cn(
-        "rounded-3xl border border-slate-200/60 bg-white/80 p-4 md:p-5 backdrop-blur-md shadow-sm",
+        "rounded-3xl border border-border-soft bg-surface/80 p-4 md:p-5 backdrop-blur-md shadow-sm",
         className,
       )}
     >
       {children}
-    </div>
+    </section>
   );
 }
+FilterBar.displayName = "FilterBar";
 
 export function ContentCard({
   children,
@@ -327,6 +349,7 @@ export function ContentCard({
 }) {
   return <div className={cn("card-surface", className)}>{children}</div>;
 }
+ContentCard.displayName = "ContentCard";
 
 export function DataCard({
   label,
@@ -342,24 +365,25 @@ export function DataCard({
   return (
     <div
       className={cn(
-        "flex flex-col h-full gap-3 p-5 rounded-3xl border border-slate-100/80 bg-slate-50/50 transition-colors hover:bg-slate-50",
+        "flex flex-col h-full gap-3 p-5 rounded-3xl border border-border-soft bg-surface-muted/50 transition-colors hover:bg-surface-muted",
         className,
       )}
     >
       {Icon ? (
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-slate-700 shadow-sm border border-slate-100">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-surface text-text-primary shadow-sm border border-border-soft">
           <Icon className="h-4 w-4" />
         </div>
       ) : null}
       <div className="space-y-1 mt-auto shrink-0">
-        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">
+        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-text-secondary">
           {label}
         </p>
-        <div className="text-xl font-bold text-slate-900">{value}</div>
+        <div className="text-xl font-bold text-text-primary">{value}</div>
       </div>
     </div>
   );
 }
+DataCard.displayName = "DataCard";
 
 export function MunicipalCTA({
   eyebrow,
@@ -377,14 +401,14 @@ export function MunicipalCTA({
   return (
     <section
       className={cn(
-        "relative overflow-hidden rounded-[2.5rem] bg-[#0B0F19] text-white shadow-[0_32px_80px_rgba(2,6,23,0.15)] ring-1 ring-white/10 cta-glowing-ring transition-all duration-700 ease-out hover:-translate-y-1.5 hover:shadow-[0_48px_96px_rgba(2,6,23,0.22)] md:rounded-[3rem]",
+        "relative overflow-hidden rounded-[2.5rem] bg-slate-950 text-white shadow-[0_32px_80px_rgba(2,6,23,0.15)] ring-1 ring-white/10 cta-glowing-ring transition-all duration-700 ease-out hover:-translate-y-1.5 hover:shadow-[0_48px_96px_rgba(2,6,23,0.22)] md:rounded-[3rem]",
         className,
       )}
     >
       {/* Mesh gradients container */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden select-none">
         {/* Deep navy base overlay */}
-        <div className="absolute inset-0 bg-[#0B0F19] opacity-80" />
+        <div className="absolute inset-0 bg-slate-950 opacity-80" />
 
         {/* Animated Bubble 1: Primary HSL soft blue */}
         <div className="absolute -top-1/4 -left-1/4 w-full h-full rounded-full bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.25),transparent_65%)] blur-[80px] animate-mesh-1" />
@@ -402,7 +426,7 @@ export function MunicipalCTA({
         <div className="max-w-4xl space-y-6">
           {eyebrow ? (
             <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4.5 py-2 text-[10px] font-bold uppercase tracking-[0.25em] text-white/90 shadow-[0_8px_32px_rgba(255,255,255,0.03)] backdrop-blur-md">
-              <span className="h-2 w-2 rounded-full bg-amber-400 shadow-[0_0_10px_#fbbf24] animate-pulse" />
+              <span className="h-2 w-2 rounded-full bg-accent shadow-[0_0_10px_var(--accent)] animate-pulse" />
               {eyebrow}
             </span>
           ) : null}
@@ -420,3 +444,4 @@ export function MunicipalCTA({
     </section>
   );
 }
+MunicipalCTA.displayName = "MunicipalCTA";

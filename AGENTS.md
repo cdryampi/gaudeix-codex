@@ -148,6 +148,37 @@ Cuando un ticket toque automatizaciones:
 - No disenes tareas cuya unica validacion sea "arranca el worker y mira si pasa"
 - En GitHub Actions, por defecto usa tests con `config.settings.test` y Celery eager
 
+### Reglas de paleta corporativa (frontend público)
+
+El frontend público usa una paleta corporativa definida en `frontend/src/index.css` (CSS vars) y `frontend/tailwind.config.js` (tokens Tailwind). Documentación completa: `docs/visual_identity.md`.
+
+Tokens principales:
+
+| Token              | HEX       | Uso                                      |
+| ------------------ | --------- | ---------------------------------------- |
+| `primary`          | `#E7640C` | Naranja enérgico: CTAs, hero, marca      |
+| `secondary`        | `#0F76A4` | Azul accesible: enlaces, interactivos    |
+| `accent`           | `#F9B31F` | Amarillo highlight: badges, hovers       |
+| `green`            | `#036830` | Verde institucional: éxito, validaciones |
+| `background-light` | `#FAFCFE` | Fondo principal                          |
+| `text-primary`     | `#111827` | Texto de lectura                         |
+| `text-secondary`   | `#475569` | Texto secundario                         |
+| `border-soft`      | `#E5E7EB` | Bordes discretos                         |
+
+**Regla: nunca usar hex hardcodeados en componentes.** Usar siempre tokens semánticos:
+
+- `bg-primary`, `bg-secondary`, `bg-green`, `bg-accent`
+- `text-text-primary`, `text-text-secondary`, `text-text-muted`
+- `border-border-soft`, `border-border-strong`
+- `bg-surface`, `bg-surface-muted`
+- Escalas: `primary-{50..950}`, `secondary-{50..950}`, `green-{50..950}`, `accent-{50..950}`
+
+Excepciones permitidas:
+
+- Colores JS/Canvas para Google Maps API (`strokeColor`, `fillColor`, etc.)
+- Colores de iconos oficiales de terceros (Facebook, Instagram, Google Play, App Store)
+- Categorías del mapa (`CATEGORY_THEME` en `InteractiveMap.tsx`) — aunque usan colores corporativos
+
 ## Frontend y backoffice
 
 Haz:

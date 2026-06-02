@@ -36,17 +36,17 @@
     "inclusion_page": "inclusion"
   },
   "theme_config": {
-    "primary": "#2563eb",
-    "secondary": "#1d4ed8",
-    "accent": "#f59e0b",
-    "background_light": "#f8fafc",
+    "primary": "#E7640C",
+    "secondary": "#0F76A4",
+    "accent": "#F9B31F",
+    "background_light": "#FAFCFE",
     "background_dark": "#0f172a",
-    "surface": "#ffffff",
-    "surface_muted": "#f1f5f9",
-    "text_primary": "#0f172a",
+    "surface": "#FFFFFF",
+    "surface_muted": "#f3f6f9",
+    "text_primary": "#111827",
     "text_secondary": "#475569",
     "radius_scale": 1.0,
     "shadow_preset": "md",
-    "theme_preset": "classic"
+    "theme_preset": "warm"
   }
 }

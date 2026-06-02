@@ -6,7 +6,7 @@ from .base import *  # noqa: F401,F403
 
 DEBUG = True
 
-default_engine = DATABASES["default"].get("ENGINE", "")
-DATABASES["default"].setdefault("TEST", {})
+default_engine = DATABASES["default"].get("ENGINE", "")  # noqa: F405
+DATABASES["default"].setdefault("TEST", {})  # noqa: F405
 if "sqlite" in default_engine:
-    DATABASES["default"]["TEST"].setdefault("NAME", ":memory:")
+    DATABASES["default"]["TEST"].setdefault("NAME", ":memory:")  # noqa: F405

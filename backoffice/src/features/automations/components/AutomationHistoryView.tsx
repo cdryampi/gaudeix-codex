@@ -1,19 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
-import {
-  CheckCircle2,
-  CircleAlert,
-  CirclePlay,
-  Clock3,
-  Copy,
-  GitBranch,
-} from "lucide-react";
+import { useEffect, useState } from "react";
+import { CircleAlert, CirclePlay, Clock3, Copy, GitBranch } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 import type {
-  AutomationEditorBranch,
   AutomationEditorNode,
   AutomationJob,
   AutomationRun,

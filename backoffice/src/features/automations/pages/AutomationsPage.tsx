@@ -148,6 +148,8 @@ export function AutomationsPage() {
 
   useEffect(() => {
     void load();
+    // Initial load only; later refreshes pass explicit template/job targets.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const selectEntry = async (entry: AutomationEntry) => {

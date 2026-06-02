@@ -23,7 +23,7 @@ import {
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import { LANGUAGES } from "@/lib/config/constants";
 import { cn } from "@/lib/utils";
-import { CATEGORY_ICON_OPTIONS, getCategoryIcon } from "../constants/icons";
+import { CATEGORY_ICON_OPTIONS, getCategoryIconSrc } from "../constants/icons";
 import { Category, CategoryPayload } from "../types";
 import { categoriesApi } from "../api/categories";
 import { mediaApi } from "@/features/media/api/media";
@@ -103,7 +103,7 @@ export function CategoryDialog({
   const imageInputRef = useRef<HTMLInputElement>(null);
   const docInputRef = useRef<HTMLInputElement>(null);
 
-  const IconPreview = getCategoryIcon(form.icon);
+  const iconPreviewSrc = getCategoryIconSrc(form.icon);
   const parentOptions = categories.filter(
     (c) => !category || c.id !== category.id,
   );
@@ -471,20 +471,24 @@ export function CategoryDialog({
                       Icono
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      Selecciona un icono (Lucide) para mostrarlo en los
-                      listados.
+                      Selecciona un icono oficial de Gaudeix Cabrera para
+                      mostrarlo en los listados.
                     </p>
                   </div>
-                  {IconPreview && (
+                  {iconPreviewSrc && (
                     <div className="flex h-10 w-10 items-center justify-center rounded-md border border-border/70 bg-background">
-                      <IconPreview className="h-5 w-5 text-foreground" />
+                      <img
+                        src={iconPreviewSrc}
+                        alt=""
+                        className="h-6 w-6 object-contain"
+                        aria-hidden="true"
+                      />
                     </div>
                   )}
                 </div>
 
                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                   {CATEGORY_ICON_OPTIONS.map((option) => {
-                    const OptionIcon = option.icon;
                     const isActive = form.icon === option.value;
                     return (
                       <label
@@ -505,7 +509,12 @@ export function CategoryDialog({
                           }
                         />
                         <div className="flex h-9 w-9 items-center justify-center rounded-md border border-border/60 bg-background">
-                          <OptionIcon className="h-4 w-4" />
+                          <img
+                            src={option.src}
+                            alt=""
+                            className="h-5 w-5 object-contain"
+                            aria-hidden="true"
+                          />
                         </div>
                         <div className="leading-tight">
                           <div className="text-sm font-semibold">
@@ -527,12 +536,17 @@ export function CategoryDialog({
                     value={form.icon || ""}
                     onChange={(e) => handleIconChange(e.target.value)}
                     list="category-icon-suggestions"
-                    placeholder="castle, flag, mountain..."
+                    placeholder="routes, nature, agenda..."
                   />
                   {form.icon && (
                     <div className="flex h-10 min-w-[2.5rem] items-center justify-center rounded-md border border-border/70 bg-background px-2">
-                      {IconPreview ? (
-                        <IconPreview className="h-5 w-5 text-foreground" />
+                      {iconPreviewSrc ? (
+                        <img
+                          src={iconPreviewSrc}
+                          alt=""
+                          className="h-6 w-6 object-contain"
+                          aria-hidden="true"
+                        />
                       ) : (
                         <span className="text-[11px] font-mono text-muted-foreground">
                           ?

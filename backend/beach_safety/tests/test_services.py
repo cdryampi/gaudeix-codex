@@ -4,7 +4,6 @@ import pytest
 from django.utils import timezone
 
 from automations.models import AutomationJob, AutomationRun
-from automations.registry import AutomationExecutionResult
 from beach_safety.models import BeachSafetyProposal, BeachSafetyStatus
 from beach_safety.services import (
     approve_proposal,

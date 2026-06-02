@@ -96,7 +96,8 @@ class NewsViewSet(viewsets.ModelViewSet):
         source_lang = request.data.get("source_lang", settings.LANGUAGE_CODE)
         configured_langs = [lang[0] for lang in settings.LANGUAGES]
         target_langs = request.data.get(
-            "target_langs", [l for l in configured_langs if l != source_lang]
+            "target_langs",
+            [language_code for language_code in configured_langs if language_code != source_lang],
         )
 
         news.set_current_language(source_lang)
@@ -107,7 +108,7 @@ class NewsViewSet(viewsets.ModelViewSet):
             )
 
         try:
-            from llm_translations.utils import translate_text, TranslationError
+            from llm_translations.utils import translate_text
         except ImportError:
             return Response(
                 {"success": False, "error": "LLM translation module not available"},

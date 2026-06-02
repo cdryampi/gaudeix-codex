@@ -14,8 +14,8 @@ from pathlib import Path
 
 import pytest
 
-BASE = Path(__file__).resolve().parents[3]
-BACKEND = BASE / "backend"
+BASE = Path(__file__).resolve().parents[2]
+BACKEND = BASE
 
 
 # Known mojibake byte signatures (UTF-8 bytes on disk)

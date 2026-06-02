@@ -1,10 +1,10 @@
 import React from 'react';
-import { View, ImageBackground } from 'react-native';
+import { View } from 'react-native';
 import { Text, Button } from '@/components/atoms';
 import { useAuthStore } from '@/stores/authStore';
 
 export const GamificationBanner = () => {
-  const { user, isAuthenticated } = useAuthStore();
+  const { isAuthenticated } = useAuthStore();
 
   if (!isAuthenticated) {
     return (
@@ -16,15 +16,17 @@ export const GamificationBanner = () => {
           <Text variant="body" color="inverse" className="mb-4 opacity-90">
             Regístrate para acumular puntos visitando lugares y asistiendo a eventos.
           </Text>
-          <Button 
-            variant="ghost" 
+          <Button
+            variant="ghost"
             className="bg-white/20 self-start"
             onPress={() => {}} // TODO: Navigate to register
           >
-            <Text color="inverse" weight="bold">Crear cuenta</Text>
+            <Text color="inverse" weight="bold">
+              Crear cuenta
+            </Text>
           </Button>
         </View>
-        
+
         {/* Decorative circle */}
         <View className="absolute -right-10 -bottom-10 w-40 h-40 rounded-full bg-white/10" />
       </View>
@@ -35,7 +37,11 @@ export const GamificationBanner = () => {
     <View className="mx-6 mb-8 rounded-2xl bg-secondary overflow-hidden shadow-lg shadow-secondary/30">
       <View className="p-6 flex-row items-center justify-between">
         <View>
-          <Text variant="label" color="inverse" className="opacity-80 uppercase tracking-widest mb-1">
+          <Text
+            variant="label"
+            color="inverse"
+            className="opacity-80 uppercase tracking-widest mb-1"
+          >
             Tus Puntos
           </Text>
           <Text className="text-4xl font-bold text-white mb-1">
@@ -50,7 +56,7 @@ export const GamificationBanner = () => {
             </Text>
           </View>
         </View>
-        
+
         <View className="items-end">
           <View className="w-16 h-16 rounded-full bg-white/20 items-center justify-center mb-2 border-2 border-white/30">
             <Text className="text-2xl font-bold text-white">#12</Text>
@@ -60,7 +66,7 @@ export const GamificationBanner = () => {
           </Text>
         </View>
       </View>
-      
+
       {/* Decorative elements */}
       <View className="absolute -right-6 -top-6 w-32 h-32 rounded-full bg-white/5" />
       <View className="absolute left-1/2 -bottom-10 w-24 h-24 rounded-full bg-white/5" />

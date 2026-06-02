@@ -1,6 +1,6 @@
 /**
  * Molecules - Component Library
- * 
+ *
  * Mid-level components composed of atoms.
  */
 
@@ -8,8 +8,11 @@
  * Card Component - Base card container
  */
 import { View, type ViewProps } from 'react-native';
-import { Text } from '../atoms';
+import { Input, Text } from '../atoms';
 
+/**
+ * SearchBar Component - Search input with icon
+ */
 export interface CardProps extends ViewProps {
   variant?: 'elevated' | 'outlined' | 'filled';
   children: React.ReactNode;
@@ -46,15 +49,23 @@ export function EventCard({ title, time, points, location }: EventCardProps) {
     <Card variant="outlined" className="mb-3">
       <View className="flex-row justify-between items-start">
         <View className="flex-1">
-          <Text variant="body" weight="semibold">{title}</Text>
-          <Text variant="caption" color="secondary" className="mt-1">{time}</Text>
+          <Text variant="body" weight="semibold">
+            {title}
+          </Text>
+          <Text variant="caption" color="secondary" className="mt-1">
+            {time}
+          </Text>
           {location && (
-            <Text variant="caption" color="tertiary" className="mt-1">{location}</Text>
+            <Text variant="caption" color="tertiary" className="mt-1">
+              {location}
+            </Text>
           )}
         </View>
         {points && (
           <View className="bg-accent px-2 py-1 rounded-full">
-            <Text variant="label" weight="bold" color="inverse">+{points}</Text>
+            <Text variant="label" weight="bold" color="inverse">
+              +{points}
+            </Text>
           </View>
         )}
       </View>
@@ -78,18 +89,19 @@ export function ListItem({ title, subtitle, leftIcon, rightIcon }: ListItemProps
     <View className="flex-row items-center py-3 px-4">
       {leftIcon && <View className="mr-3">{leftIcon}</View>}
       <View className="flex-1">
-        <Text variant="body" weight="medium">{title}</Text>
-        {subtitle && <Text variant="caption" color="secondary">{subtitle}</Text>}
+        <Text variant="body" weight="medium">
+          {title}
+        </Text>
+        {subtitle && (
+          <Text variant="caption" color="secondary">
+            {subtitle}
+          </Text>
+        )}
       </View>
       {rightIcon && <View>{rightIcon}</View>}
     </View>
   );
 }
-
-/**
- * SearchBar Component - Search input with icon
- */
-import { Input } from '../atoms';
 
 export interface SearchBarProps {
   placeholder?: string;
@@ -99,11 +111,6 @@ export interface SearchBarProps {
 
 export function SearchBar({ placeholder = 'Buscar...', value, onChangeText }: SearchBarProps) {
   return (
-    <Input
-      variant="search"
-      placeholder={placeholder}
-      value={value}
-      onChangeText={onChangeText}
-    />
+    <Input variant="search" placeholder={placeholder} value={value} onChangeText={onChangeText} />
   );
 }

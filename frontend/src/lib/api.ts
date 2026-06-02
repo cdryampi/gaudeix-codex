@@ -1,3 +1,5 @@
+import { useLanguageStore } from "@/features/site-settings/languageStore";
+
 const rawBaseUrl = import.meta.env.VITE_API_BASE_URL as string | undefined;
 
 type ApiRequestErrorOptions = {
@@ -106,6 +108,7 @@ async function requestJson<T>(
   data?: unknown,
 ): Promise<T> {
   const url = getUrl(path);
+  const lang = useLanguageStore.getState().language;
 
   let resp: Response;
   try {
@@ -114,6 +117,7 @@ async function requestJson<T>(
       ...init,
       headers: {
         Accept: "application/json",
+        "Accept-Language": lang,
         ...(data !== undefined ? { "Content-Type": "application/json" } : {}),
         ...(init?.headers ?? {}),
       },

@@ -177,7 +177,7 @@ class PlaceViewSet(viewsets.ModelViewSet):
             return Response(
                 {"success": False, "error": str(e)}, status=status.HTTP_400_BAD_REQUEST
             )
-        except Exception as e:
+        except Exception:
             return Response(
                 {"success": False, "error": "Internal server error during translation"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,

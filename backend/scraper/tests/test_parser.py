@@ -8,8 +8,6 @@ Covers:
 - Edge cases: empty pages, missing data, malformed HTML
 """
 
-import pytest
-from datetime import datetime
 
 from scraper.parsers.cabrera_de_mar import CabreraDeMarParser
 from scraper.parser_registry import ParserRegistry

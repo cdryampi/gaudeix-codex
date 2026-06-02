@@ -6,7 +6,6 @@ import {
   DirectionsRenderer,
 } from "@react-google-maps/api";
 import {
-  MapPin,
   Navigation,
   Car,
   Train,
@@ -286,7 +285,7 @@ export const HowToGetHere = () => {
                 directions: directionsResponse,
                 suppressMarkers: false,
                 polylineOptions: {
-                  strokeColor: "#00f2ea",
+                  strokeColor: "#F9B31F",
                   strokeOpacity: 0.8,
                   strokeWeight: 6,
                 },
@@ -299,7 +298,7 @@ export const HowToGetHere = () => {
               position={center}
               icon={{
                 path: window.google.maps.SymbolPath.CIRCLE,
-                fillColor: "#00f2ea",
+                fillColor: "#F9B31F",
                 fillOpacity: 1,
                 strokeColor: "#ffffff",
                 strokeWeight: 4,

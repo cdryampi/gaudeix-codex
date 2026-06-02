@@ -15,7 +15,7 @@ interface LocationState {
 
 export const useLocationStore = create<LocationState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       userLocation: null,
       permissionStatus: "unknown",
       isLocating: false,

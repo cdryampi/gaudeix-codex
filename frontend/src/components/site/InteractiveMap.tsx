@@ -28,15 +28,15 @@ interface InteractiveMapProps {
 }
 
 // Mapa visual de template_key del backend a color + icono del mapa.
-// Cada categoría de lugar tiene un color e icono distintivo en el marcador.
+// Colores alineados con la paleta corporativa.
 const CATEGORY_THEME: Record<string, { color: string; icon: any }> = {
-  restaurants: { color: "#f97316", icon: Utensils },
-  accommodations: { color: "#3b82f6", icon: Hotel },
-  nature: { color: "#22c55e", icon: Mountain },
-  culture: { color: "#a855f7", icon: Brush },
-  heritage: { color: "#64748b", icon: Landmark },
-  beaches: { color: "#06b6d4", icon: Palmtree },
-  sports: { color: "#ec4899", icon: Sailboat },
+  restaurants: { color: "#E7640C", icon: Utensils },
+  accommodations: { color: "#0F76A4", icon: Hotel },
+  nature: { color: "#036830", icon: Mountain },
+  culture: { color: "#F9B31F", icon: Brush },
+  heritage: { color: "#475569", icon: Landmark },
+  beaches: { color: "#7BC2EC", icon: Palmtree },
+  sports: { color: "#93C01F", icon: Sailboat },
 };
 
 export function InteractiveMap({
@@ -105,7 +105,7 @@ export function InteractiveMap({
             position={center}
             icon={{
               path: symbolPathCircle,
-              fillColor: "#00f2ea", // Accent color
+              fillColor: "#F9B31F", // Accent corporativo
               fillOpacity: 1,
               strokeColor: "#ffffff",
               strokeWeight: 4,
